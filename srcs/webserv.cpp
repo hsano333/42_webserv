@@ -46,9 +46,9 @@ Webserv::Webserv() : _epfd(0)
 {
     //this->_config = Config::get_instance();
     std::set<std::string> ports;
-    size_t server_cnt = Config::get_instance()->http.servers.size();
+    size_t server_cnt = Config::get_instance()->http->servers.size();
     for (size_t i = 0; i < server_cnt; i++) {
-        ports.insert(Config::get_instance()->http.servers[i]->listen);
+        ports.insert(Config::get_instance()->http->servers[i]->listen);
     }
     init_socket(ports);
 }

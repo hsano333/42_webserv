@@ -171,7 +171,7 @@ void Response::check_error()
             return ;
         }
     }
-    if (fileInfo.st_size >= Config::get_instance()->http.client_max_body_size){
+    if (fileInfo.st_size >= Config::get_instance()->http->client_max_body_size){
         _err = true;
         return ;
     }

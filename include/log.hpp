@@ -7,7 +7,7 @@ class Log
 {
     public:
         static Log *get_instance();
-        static void write(const char *file,int line, const char *level, std::string str, int log_level);
+        static void write(const char *file,int line, const char *level, const std::string &str, int log_level);
         static void check_writable();
     private:
         bool is_writable;

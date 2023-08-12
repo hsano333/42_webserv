@@ -3,17 +3,25 @@ LIB		:= ./lib
 OBJDIR	:= ./obj
 SRCDIR	:= ./srcs
 
-CONFIG 				:= config.cpp config_http.cpp config_server.cpp config_location.cpp
+FILESYSTEMDIR			:= filesystem/
+FILESYSTEMSRC 			:= file.cpp read_raw.cpp 
+FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
+
+
+CONFIGDIR			:= config/
+CONFIGSRC 			:= config.cpp config_factory.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp
+CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
+
 SOCKET 				:= fd_manager.cpp socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp content_type.cpp uri.cpp
 CGI 				:= cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
 SERVER 				:= webserv.cpp header.cpp method.cpp get_method.cpp
 UTILITY 			:= split.cpp  utility.cpp epoll_manager.cpp endian.cpp log.cpp
 EXCEPTION			:= no_request_line.cpp
 DESIGN				:= iread.cpp
-SRC					:= $(CONFIG) $(SOCKET) $(CGI) $(SERVER) $(UTILITY) $(EXCEPTION) $(DESIGN)
+SRC					:= $(CONFIG) $(FILESYSTEM) $(SOCKET) $(CGI) $(SERVER) $(UTILITY) $(EXCEPTION) $(DESIGN)
 UNIT_SRCS 			:= $(addprefix $(SRCDIR)/, $(SRC))
-MANDATORY	:= main.cpp
-BONUS		:= main_bonus.cpp
+MANDATORY			:= main.cpp
+BONUS				:= main_bonus.cpp
 
 
 
@@ -25,11 +33,14 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCS			:= ./include ./srcs/config
+INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR)
+INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
+INCS			:= ./include  $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))
 SRCS			:= $(addprefix $(SRCDIR)/, $(SRC))
 OBJS			:= $(SRCS:.cpp=.o)
 OBJECTS			:= $(addprefix $(OBJDIR)/, $(SRC:.cpp=.o))
+OBJSDIR			:= $(addprefix $(OBJDIR)/, $(INCDIRS))
 DEPS			:= $(OBJECTS:.o=.d)
 
 CXX			:= c++
@@ -49,7 +60,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 
 $(OBJDIR) :
 	@mkdir $(OBJDIR)
-	@mkdir $(OBJDIR)/config
+	@mkdir $(OBJSDIR)
 
 clean	:
 			$(RM) -r $(OBJDIR)

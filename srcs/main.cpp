@@ -5,6 +5,9 @@
 #include <string>
 
 #include "config.hpp"
+#include "config_factory.hpp"
+#include "config_raw_loader.hpp"
+#include "iconfig_raw_getter.hpp"
 #include "base64.hpp"
 #include "split.hpp"
 #include "utility.hpp"
@@ -13,6 +16,9 @@
 #include "global.hpp"
 #include "endian.hpp"
 #include "log.hpp"
+#include "file.hpp"
+#include "read_raw.hpp"
+#include <fstream>
 
 
 using std::cout;
@@ -40,7 +46,77 @@ void server(Webserv& webserv)
 
 int main(int argc, char const* argv[])
 {
+    std::string cfg_file = "./webserv.conf";
+    if(argc > 2){
+        return 0;
+    }else if(argc == 2){
+        cfg_file = argv[1];
+    }
+
+    ReadRaw read_raw;
+    File file = File(read_raw, cfg_file, READ_ONLY);
+    ConfigRawLoader raw_getter(file);
+    ConfigFactory cfg_factory = ConfigFactory(raw_getter);
+    Config *cfg = cfg_factory.create();
+    (void)cfg;
+
+    exit(1);
+
+    /*
+    ConfigRepository *repository = factory.create();
+    create(){
+        repository.set(raw_data);
+        repository.parse();
+        repository.make_http(raw_data);
+        repository.make_server(raw_data_server);
+        repository.make_location(raw_data_location);
+        return repository;
+    }
+    Config cfg(repository);
+
+
     URI uri;
+
+    std::string tmp_path = "test3";
+    try{
+        //ReadRaw* read_raw = new ReadRaw();
+        //IReader* iread_raw = new ReadRaw();
+        //j.int fd = read_raw->iread(0, buf);
+        //j.cout << fd << endl;
+        //(void)read_raw;
+        File file = File(read_raw);
+        file.open_file(tmp_path, WRITE_ONLY);
+        char buf[4000];
+        int size = file.read(buf);
+        buf[size] = '\0';
+        cout << buf << endl;
+        //cout << "Success:" << filepath.to_str() << endl;
+        std::ofstream ofs;
+        ofs.open(tmp_path.c_str());
+        if (ofs){
+
+            cout << "write test " << endl;
+            ofs << "write test1" << endl;
+            ofs << "write test2" << endl;
+            //std::string line;
+            //if(std::getline(ofs, line)){
+                //cout << line << endl;
+//
+            //}
+
+        }
+        ofs.close();
+
+
+    }catch(std::exception &e){
+
+        cout << e.what() << endl;
+        cout << "error" << endl;
+        exit(1);
+    }
+    exit(1);
+
+
     //std::string test="test=%21%22%23%24%25%26%27%28%29%3D%7E%7C%7B%60%7D%2A%2B_%3F%3E%3C%2C.%2F%5C%5D%3A%3B%5B%40%5C%5E-098765432%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%EF%BC%81%E2%80%9D%EF%BC%83%EF%BC%84%EF%BC%85%EF%BC%86%E2%80%99%EF%BC%88%EF%BC%89%EF%BC%9D%EF%BD%9E%EF%BD%9C%0D%0A";
     //uri.uri_encode(test);
     std::string test="http://test/cat.html?/?abc=test/def=te?/?st2?fgh=123/%21%22%23%24%25%26%27%28%29%3D%7E%7C%7B%60%7D%2A%2B_%3F%3E%3C%2C.%2F%5C%5D%3A%3B%5B%40%5C%5E-098765432%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%EF%BC%81%E2%80%9D%EF%BC%83%EF%BC%84%EF%BC%85%EF%BC%86%E2%80%99%EF%BC%88%EF%BC%89%EF%BC%9D%EF%BD%9E%EF%BD%9C%0D%0A/$fragmentTest#abc";
@@ -100,6 +176,7 @@ int main(int argc, char const* argv[])
         cnt++;
     }
     cout << "loop end" << endl;
+    */
 
     (void)argc;
     (void)argv;
@@ -109,6 +186,7 @@ int main(int argc, char const* argv[])
     }
     //detect_endian();
     //Config::set_filepath((argv[1]));
+    /*
     try {
         Config::set_filepath((argv[1]));
         Config::get_instance();
@@ -121,5 +199,6 @@ int main(int argc, char const* argv[])
     while (1) {
         server(webserv);
     }
+    */
     return 0;
 }
