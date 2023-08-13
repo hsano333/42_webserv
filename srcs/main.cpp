@@ -56,7 +56,18 @@ int main(int argc, char const* argv[])
     ReadRaw read_raw;
     File file = File(read_raw, cfg_file, READ_ONLY);
     ConfigRawLoader raw_getter(file);
-    ConfigFactory cfg_factory = ConfigFactory(raw_getter);
+
+    ConfigParser<ConfigHttp, ConfigServer> parser_http("hppt");
+    ConfigParser<ConfigServer, ConfigLocation> parser_server("server");
+    ConfigParser<ConfigLocation, ConfigLimit> parser_location("location");
+    ConfigParser<ConfigLimit, ConfigLastObject> parser_limit("limit_except");
+
+    ConfigFactory cfg_factory = ConfigFactory(raw_getter,
+                                              parser_http,
+                                              parser_server,
+                                              parser_location,
+                                              parser_limit
+                                                );
     Config *cfg = cfg_factory.create();
     (void)cfg;
 

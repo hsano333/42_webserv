@@ -261,6 +261,16 @@ size_t Utility::get_map_str_size(map<string, string> &data)
     return (size);
 }
 
+std::string Utility::extract_json_object(const std::string &target, std::string &str)
+{
+
+    cout << target << endl;
+    cout << str << endl;
+    std::string tmp = "test";
+    return tmp;
+}
+
+
 // 存在しないステータスコードを指定すると、空文字列を返す
 string Utility::get_http_status_message(string status_code)
 {

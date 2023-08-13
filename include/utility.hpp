@@ -45,6 +45,9 @@ class Utility
     //static int read_body_and_copy(ByteVector str, char** buf, int size);
     static int read_body_and_copy(char *src, char** dst, size_t size);
     static size_t get_map_str_size(map<std::string, std::string> &data);
+
+    static std::string extract_json_object(const std::string &target, std::string &str);
+
 };
 
 template <typename T>

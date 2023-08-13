@@ -9,7 +9,7 @@ FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 
 CONFIGDIR			:= config/
-CONFIGSRC 			:= config.cpp config_factory.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp
+CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp 
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 SOCKET 				:= fd_manager.cpp socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp content_type.cpp uri.cpp
