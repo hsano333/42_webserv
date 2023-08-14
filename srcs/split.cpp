@@ -2,11 +2,24 @@
 #include <algorithm>
 #include <iostream>
 #include <ostream>
+#include <climits>
+#include <map>
+#include <stdio.h>
 
 using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
+
+Split::Split()
+{
+    ;
+}
+Split::~Split()
+{
+    ;
+}
+
 
 
 void split_delimiters(std::string const& str, std::string delimiters, vector<string> &vec)
@@ -52,7 +65,7 @@ void split_delimiters(std::string const& str, std::string delimiters, vector<str
         }
         offset = pos + del_len;
     }
-    cout << "splitted_strs" << splitted_strs.size() << endl;
+    //cout << "splitted_strs" << splitted_strs.size() << endl;
 }
 
 static void split(std::string const& str, std::string delimiter, vector<string> &vec)
@@ -78,7 +91,18 @@ static void split(std::string const& str, std::string delimiter, vector<string> 
         }
         offset = pos + del_len;
     }
-    cout << "splitted_strs" << splitted_strs.size() << endl;
+    //cout << "splitted_strs" << splitted_strs.size() << endl;
+}
+
+void Split::set_word(std::string &str, std::string const &delimiter)
+{
+    string tmp = string(str);
+    size_t del_len = delimiter.size();
+    if (del_len == 0) {
+        this->_splitted_string.push_back(tmp);
+        return;
+    }
+    split(tmp, delimiter, this->_splitted_string);
 }
 
 void Split::split_not_delete_delimiter(std::string const& str, std::string delimiter)
@@ -136,6 +160,115 @@ Split::Split(std::string const& str, std::string delimiter, bool multi_delimiter
         split(str, delimiter, this->_splitted_string);
     }
 }
+
+//bool compare_lower(std::pair<char, int> &a, std::pair<char, int> &b)
+bool compare_lower(std::map<char, int>::iterator &a, std::map<char, int>::iterator &b)
+{
+    return (a->second > b->second);
+}
+
+static std::string find_used_delimiter(std::string const &str, std::string delimiter)
+{
+    vector<int>ascii(128,0);
+    std::string replace_delimiter = "";
+
+    for(size_t i=0;i<delimiter.size();i++){
+        char c = delimiter[i];
+        ascii[c] = INT_MAX;
+    }
+    for(size_t i=0;i<str.size();i++){
+        char c = str[i];
+        ascii[c]++;
+    }
+
+    std::multimap<int,char> ascii_count;
+    for(size_t i=42;i<ascii.size()-1;i++){
+        ascii_count.insert(std::make_pair(ascii[i],i));
+    }
+    //cout << "asci size:" << ascii.size() << endl;
+    std::multimap<int,char>::iterator ite = ascii_count.begin();
+    std::multimap<int,char>::iterator end = ascii_count.end();
+    int cnt = 0;
+    while(ite != end){
+        replace_delimiter.push_back(ite->second);
+        cnt++;
+        ite++;
+        if(cnt > 15){
+            break;
+        }
+    }
+    return replace_delimiter;
+}
+
+Split::Split(std::string const& raw_str, std::string delimiter, bool multi_delimiter, bool d_quote)
+{
+    std::vector<std::string> backup;
+    size_t replace_cnt = 0;
+    std::string str = raw_str;
+    size_t del_len = delimiter.size();
+    std::string random_word;
+    if (del_len == 0) {
+        this->_splitted_string.push_back(str);
+        return;
+    }
+
+    if(d_quote){
+        random_word = find_used_delimiter(str, delimiter);
+        size_t pos = str.find('\"');
+        while(pos != std::string::npos){
+            size_t end = str.find('\"', pos+1);
+            if(end != std::string::npos){
+                if(multi_delimiter){
+                    while(pos != end){
+                        if(delimiter.find(str[pos]) != std::string::npos){
+                            replace_cnt++;
+                            std::string tmp;
+                            tmp.push_back((str[pos]));
+                            backup.push_back(tmp);
+                            str.replace(pos, 1, random_word);
+                            pos += (random_word.size()-1);
+                            end = str.find('\"', pos+1);
+                        }
+                        pos++;
+                    }
+                }else{
+                    pos = str.find(delimiter, pos);
+                    while(pos < end){
+                        replace_cnt++;
+                        str.replace(pos, delimiter.size(), random_word);
+                        backup.push_back(delimiter);
+                        //pos += (random_word.size());
+                        pos += (random_word.size());
+                        end = str.find('\"', pos);
+                        pos = str.find(delimiter, pos);
+                    }
+                }
+            }
+            pos = str.find('\"', end+1);
+        }
+    }
+    if(multi_delimiter){
+        split_delimiters(str, delimiter, this->_splitted_string);
+    }else{
+        split(str, delimiter, this->_splitted_string);
+    }
+
+    if(d_quote && replace_cnt > 0){
+        size_t backup_i = 0;
+        for(size_t i=0;i<_splitted_string.size();i++){
+            std::string &word = _splitted_string[i];
+            cout << word << endl;
+            size_t pos = word.find(random_word);
+            while(pos != std::string::npos){
+                std::string backup_word = backup[backup_i];
+                word.replace(pos, random_word.size(), backup_word);
+                pos = word.find(random_word, pos);
+                backup_i++;
+            }
+        }
+    }
+}
+
 
 
 /*
