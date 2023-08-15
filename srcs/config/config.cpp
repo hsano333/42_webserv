@@ -41,8 +41,8 @@ void make_http(char *str)
 
 Config::Config()
 {
-    std::string tmp = "tmp";
-    this->http = new ConfigHttp(tmp);
+    //std::string tmp = "tmp";
+    //this->http = new ConfigHttp(tmp);
     /*
     _fin.open(_filepath.c_str());
     if (!_fin){
@@ -124,44 +124,47 @@ Config* Config::get_instance()
     return (NULL);
 }
 
-map<pair<string, string>, ConfigServer const*> Config::_servers_cache;
-map<pair<string, string>, vector<string> > Config::_locations_cache;
-map<pair<pair<string, string>, string>, map<string, vector<string> > > Config::_locations_content_cache;
-map<pair<pair<string, string>, string>, map<string, vector<string> > > Config::_locations_properties_cache;
+map<pair<Port, string>, ConfigServer const*> Config::_servers_cache;
+map<pair<Port, string>, vector<string> > Config::_locations_cache;
+map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_content_cache;
+map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_properties_cache;
 
-ConfigServer const* Config::get_server(string const& port, string const& host) const
+ConfigServer const* Config::get_server(Port const& port, string const& host) const
 {
-    map<pair<string, string>, ConfigServer const*>::iterator cash_ite = _servers_cache.find(make_pair(port, host));
+    /*
+    map<pair<Port, string>, ConfigServer const*>::iterator cash_ite = _servers_cache.find(make_pair(port, host));
     if (cash_ite != _servers_cache.end())
         return (cash_ite->second);
+    */
 
     vector<ConfigServer const*> servers;
     for (size_t i = 0; i < http->servers.size(); i++) {
         if (http->servers[i]->listen == port && http->servers[i]->server_name == host) {
-            _servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
+            //_servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
             return (http->servers[i]);
         }
     }
     for (size_t i = 0; i < http->servers.size(); i++) {
         if (http->servers[i]->listen == port && http->servers[i]->is_default_server) {
-            _servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
+            //_servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
             return (http->servers[i]);
         }
     }
     for (size_t i = 0; i < http->servers.size(); i++) {
         if (http->servers[i]->listen == port) {
-            _servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
+            //_servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
             return (http->servers[i]);
         }
     }
     return (NULL);
 }
 
-ConfigLocation const* Config::get_location(string const& port, string const& host, string const& path) const
+ConfigLocation const* Config::get_location(Port const& port, string const& host, string const& path) const
 {
     ConfigServer const* server = get_server(port, host);
-    if (server == NULL)
-        throw std::runtime_error("Config: ConfigServer(port: " + port + " , host: " + host + " ) not found");
+    if (server == NULL){
+        throw std::runtime_error("Config: ConfigServer(port: " + port.to_string() + " , host: " + host + " ) not found");
+    }
     vector<ConfigLocation*> locations = server->locations;
     vector<pair<ConfigLocation*, string> > candidate;
     for (size_t i = 0; i < locations.size(); i++) {
@@ -184,12 +187,14 @@ ConfigLocation const* Config::get_location(string const& port, string const& hos
     return max_match_location;
 }
 
-vector<string> Config::get_location_paths(string const& port, string const& host) const
+vector<string> Config::get_location_paths(Port const& port, string const& host) const
 {
-    map<pair<string, string>, vector<string> >::iterator cash_ite = _locations_cache.find(make_pair(port, host));
+    /*
+    map<pair<Port, string>, vector<string> >::iterator cash_ite = _locations_cache.find(make_pair(port, host));
     if (cash_ite != _locations_cache.end()) {
         return (cash_ite->second);
     }
+    */
     ConfigServer const* servers = get_server(port, host);
     vector<string> locations;
 
@@ -199,26 +204,28 @@ vector<string> Config::get_location_paths(string const& port, string const& host
         }
     }
     Utility::sort_orderby_len(locations);
-    _locations_cache.insert(make_pair(make_pair(port, host), locations));
+    //_locations_cache.insert(make_pair(make_pair(port, host), locations));
     return (locations);
 }
 
-map<string, vector<string> > Config::get_locations_contents(string const& port, string const& host,
+map<string, vector<string> > Config::get_locations_contents(Port const& port, string const& host,
                                                             string const& location) const
 {
-    map<pair<pair<string, string>, string>, map<string, vector<string> > >::iterator cash_ite =
+    /*
+    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
         _locations_content_cache.find(make_pair(make_pair(port, host), location));
     if (cash_ite != _locations_content_cache.end()) {
         return (cash_ite->second);
     }
+    */
 
     vector<map<string, vector<string> > > properties;
     ConfigServer const* servers = get_server(port, host);
     for (size_t j = 0; j < servers->locations.size(); j++) {
         for (size_t k = 0; k < servers->locations[j]->urls.size(); k++) {
             if (servers->locations[j]->urls[k] == location) {
-                _locations_content_cache.insert(
-                    make_pair(make_pair(make_pair(port, host), location), servers->locations[j]->properties));
+                //_locations_content_cache.insert(
+                    //make_pair(make_pair(make_pair(port, host), location), servers->locations[j]->properties));
 
                 return (servers->locations[j]->properties);
             }
@@ -243,15 +250,17 @@ static string get_partial_equaled_path(Split& req_path_sp, Split& cgi_path_sp)
 }
 
 
-std::map<std::string, std::vector<std::string> > Config::get_locations_properties(const string& port,
+std::map<std::string, std::vector<std::string> > Config::get_locations_properties(Port const &port,
                                                                                   const string& host,
                                                                                   const string& filepath) const
 {
-    map<pair<pair<string, string>, string>, map<string, vector<string> > >::iterator cash_ite =
+    /*
+    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
         _locations_properties_cache.find(make_pair(make_pair(port, host), filepath));
     if (cash_ite != _locations_properties_cache.end()) {
         return (cash_ite->second);
     }
+    */
 
     const std::vector<std::string> lo = Config::get_location_paths(port, host);
     Split req_path_sp(filepath, "/");
@@ -273,8 +282,34 @@ std::map<std::string, std::vector<std::string> > Config::get_locations_propertie
 
     std::map<std::string, std::vector<std::string> > properties =
         Config::get_locations_contents(port, host, tmp_path_cfg);
-    _locations_properties_cache.insert(make_pair(make_pair(make_pair(port, host), filepath), properties));
+    //_locations_properties_cache.insert(make_pair(make_pair(make_pair(port, host), filepath), properties));
     return (properties);
+}
+
+void Config::assign_properties(std::vector<std::vector<std::string> > &properties)
+{
+    if(properties.size() > 0){
+        ERROR("Invalid Config Error: There is invalid properties");
+        throw std::runtime_error("config parser error:");
+    }
+}
+
+void Config::assign_out_properties(std::vector<std::string> &properties)
+{
+    if(properties.size() > 0){
+        ERROR("Invalid Config Error: There is invalid properties");
+        throw std::runtime_error("config parser error:");
+    }
+}
+
+void Config::push_all(std::vector<ConfigHttp*> const &vec)
+{
+    if(vec.size() == 1){
+        this->http = vec[0];
+    }else{
+        ERROR("Invalid Config Error: http is only one");
+        throw std::runtime_error("config parser error: http is only one");
+    }
 }
 
 

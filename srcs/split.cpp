@@ -114,7 +114,7 @@ void Split::split_not_delete_delimiter(std::string const& str, std::string delim
         pos = str.find(delimiter, offset);
         if (pos == string::npos) {
             string last = str.substr(offset);
-            cout << "last:" << last << endl;
+            //cout << "last:" << last << endl;
             if (last != delimiter && last.size() != 0) {
                 this->_splitted_string.push_back(last);
             }
@@ -257,7 +257,7 @@ Split::Split(std::string const& raw_str, std::string delimiter, bool multi_delim
         size_t backup_i = 0;
         for(size_t i=0;i<_splitted_string.size();i++){
             std::string &word = _splitted_string[i];
-            cout << word << endl;
+            //cout << word << endl;
             size_t pos = word.find(random_word);
             while(pos != std::string::npos){
                 std::string backup_word = backup[backup_i];

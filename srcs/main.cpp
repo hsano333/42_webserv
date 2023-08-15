@@ -57,19 +57,28 @@ int main(int argc, char const* argv[])
     File file = File(read_raw, cfg_file, READ_ONLY);
     ConfigRawLoader raw_getter(file);
 
-    ConfigParser<ConfigHttp, ConfigServer> parser_http("hppt");
-    ConfigParser<ConfigServer, ConfigLocation> parser_server("server");
-    ConfigParser<ConfigLocation, ConfigLimit> parser_location("location");
-    ConfigParser<ConfigLimit, ConfigLastObject> parser_limit("limit_except");
+    ConfigParser<Config, ConfigHttp> parser_config("http");
+    ConfigParser<ConfigHttp, ConfigServer> parser_http("server");
+    ConfigParser<ConfigServer, ConfigLocation> parser_server("location");
+    ConfigParser<ConfigLocation, ConfigLimit> parser_location("limit_except");
+    ConfigParser<ConfigLimit, ConfigLastObject> parser_limit("");
 
     ConfigFactory cfg_factory = ConfigFactory(raw_getter,
+                                              parser_config,
                                               parser_http,
                                               parser_server,
                                               parser_location,
                                               parser_limit
                                                 );
+    cout << "test:parser target:" << parser_http.target << endl;
     Config *cfg = cfg_factory.create();
     (void)cfg;
+    cout << "servers.size:" << cfg->http->servers.size() << endl;
+    for(size_t i=0;i<cfg->http->servers.size();i++){
+        cout << "listen:" << cfg->http->servers[i]->listen.to_string() << endl;
+        cout << "server_name:" << cfg->http->servers[i]->server_name << endl;
+        cout << "is_default_server:" << cfg->http->servers[i]->is_default_server << endl;
+    }
 
     exit(1);
 

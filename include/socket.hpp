@@ -11,6 +11,7 @@
 #include <string>
 #include <sys/epoll.h>
 #include <sys/socket.h>
+#include "port.hpp"
 
 #define BUF_MAX (1600)
 
@@ -25,7 +26,9 @@ class Socket
 {
   public:
     Socket();
-    Socket(std::string port);
+    //Socket(std::string port);
+    Socket(Port &port);
+    Socket(Port const &port);
     Socket(const Socket& socket);
     Socket& operator=(const Socket& socket);
     virtual ~Socket();
@@ -51,7 +54,7 @@ class Socket
     int _sock_fd;
     const static int _SOCKET_NUM = 10;
     std::map<int, FDManager*> _fd_map;
-    std::string _port;
+    Port port;
     virtual void init();
     virtual int makeSocket();
     virtual void setAddrInfo(struct addrinfo& info);

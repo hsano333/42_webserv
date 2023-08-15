@@ -45,7 +45,7 @@ Webserv::Webserv(const std::vector<std::string> ports)epfd(0)
 Webserv::Webserv() : _epfd(0)
 {
     //this->_config = Config::get_instance();
-    std::set<std::string> ports;
+    std::set<Port> ports;
     size_t server_cnt = Config::get_instance()->http->servers.size();
     for (size_t i = 0; i < server_cnt; i++) {
         ports.insert(Config::get_instance()->http->servers[i]->listen);
@@ -71,11 +71,11 @@ Webserv& Webserv::operator=(const Webserv& socket)
 }
 
 
-void Webserv::init_socket(std::set<std::string> ports)
+void Webserv::init_socket(std::set<Port> ports)
 {
     try {
-        std::set<std::string>::iterator port_ite = ports.begin();
-        std::set<std::string>::iterator port_end = ports.end();
+        std::set<Port>::iterator port_ite = ports.begin();
+        std::set<Port>::iterator port_end = ports.end();
         for (; port_ite != port_end; port_ite++) {
             Socket* sock = new Socket(*port_ite);
             this->_sockets.push_back(sock);

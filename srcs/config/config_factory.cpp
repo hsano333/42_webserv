@@ -11,6 +11,7 @@ using std::string;
 
 ConfigFactory::ConfigFactory(
         IConfigRawGetter<std::string> &getter,
+        ConfigParser<Config, ConfigHttp> &parser_config,
         ConfigParser<ConfigHttp, ConfigServer> &parser_http,
         ConfigParser<ConfigServer, ConfigLocation> &parser_server,
         ConfigParser<ConfigLocation, ConfigLimit> &parser_location,
@@ -18,6 +19,7 @@ ConfigFactory::ConfigFactory(
         )
                             :
                             raw_getter(getter),
+                            parser_config(parser_config),
                             parser_http(parser_http),
                             parser_server(parser_server),
                             parser_location(parser_location),
@@ -32,46 +34,69 @@ ConfigFactory::~ConfigFactory()
 }
 
 
-
-ConfigLimit* ConfigFactory::create_limit(std::string &limit_data)
+std::vector<ConfigLimit*> ConfigFactory::create_limit(ConfigParseredData &parsered_limit_data)
 {
-    ConfigLimit *limit = new ConfigLimit();
-    vector<string> limit_strings = parser_limit.parser(limit_data, limit);
-    return (limit);
+    std::vector<ConfigLimit*> limits;
+    for(size_t i=0; i<parsered_limit_data.size();i++){
+        ConfigLimit *limit = new ConfigLimit();
+        parser_limit.parser(parsered_limit_data.raw_data(i), limit);
+        limit->assign_out_properties(parsered_limit_data.properties(i));
+        //limits.push_back(limit);
+    }
+    return (limits);
 }
 
-ConfigLocation* ConfigFactory::create_location(std::string &location_data)
+std::vector<ConfigLocation*> ConfigFactory::create_location(ConfigParseredData &parsered_location_data)
 {
-    ConfigLocation *location = new ConfigLocation();
-    vector<string> limit_strings = parser_location.parser(location_data, location);
-    for(size_t i=0; i<limit_strings.size();i++){
-        ConfigLimit *tmp = this->create_limit(limit_strings[i]);
-        location->limits.push_back(tmp);
+    std::vector<ConfigLocation*> locations;
+    for(size_t i=0; i<parsered_location_data.size();i++){
+        ConfigLocation *location = new ConfigLocation();
+        ConfigParseredData parsered_limit_data = parser_location.parser(parsered_location_data.raw_data(i), location);
+        location->assign_out_properties(parsered_location_data.properties(i));
+        //ConfigLimit *tmp = this->create_limit(parsered_limit_data);
+        //location->limits.push_back(tmp);
+        location->push_all(this->create_limit(parsered_limit_data));
+        locations.push_back(location);
     }
-    return (location);
+    return (locations);
 }
 
-ConfigServer* ConfigFactory::create_server(std::string &server_data)
+std::vector<ConfigServer*> ConfigFactory::create_server(ConfigParseredData &parsered_server_data)
 {
-    ConfigServer *server = new ConfigServer();
-    vector<string> location_strings = parser_server.parser(server_data, server);
-    for(size_t i=0; i<location_strings.size();i++){
-        ConfigLocation *tmp = this->create_location(location_strings[i]);
-        server->locations.push_back(tmp);
+    std::vector<ConfigServer* > servers;
+    cout << "server size:" << parsered_server_data.size() << endl;
+    for(size_t i=0; i<parsered_server_data.size();i++){
+        ConfigServer *server = new ConfigServer();
+        ConfigParseredData parsered_location_data = parser_server.parser(parsered_server_data.raw_data(i), server);
+        server->assign_out_properties(parsered_server_data.properties(i));
+        //ConfigLocation *tmp = this->create_location(parsered_location_data);
+        server->push_all(this->create_location(parsered_location_data));
+        servers.push_back(server);
     }
-    return (server);
+    return (servers);
 }
 
 
-ConfigHttp* ConfigFactory::create_http(std::string &raw_data)
+std::vector<ConfigHttp*> ConfigFactory::create_http(ConfigParseredData &parsered_http_data)
 {
-    ConfigHttp *http = new ConfigHttp();
-    vector<string> servers_strings = parser_http.parser(raw_data, http);
-    for(size_t i=0; i<servers_strings.size();i++){
-        ConfigServer *tmp = this->create_server(servers_strings[i]);
-        http->servers.push_back(tmp);
+
+    std::vector<ConfigHttp*> https;
+    if(parsered_http_data.size() == 1){
+        ConfigHttp *http = new ConfigHttp();
+        ConfigParseredData parsered_server_http = parser_http.parser(parsered_http_data.raw_data(0), http);
+        http->assign_out_properties(parsered_http_data.properties(0));
+        //ConfigServer *tmp = this->create_server(parsered_server_http);
+        http->push_all(this->create_server(parsered_server_http));
+        https.push_back(http);
+    }else{
+        ERROR("Invalid Config Error: There is no http directive or more than 2 ");
+        throw std::runtime_error("config parser error:http");
     }
-    return (http);
+    //for(size_t i=0; i<servers_http.target_strings.size();i++){
+        //ConfigServer *tmp = this->create_server(servers_http.target_strings[i]);
+        //http->servers.push_back(tmp);
+    //}
+    return (https);
 }
 
 
@@ -79,7 +104,14 @@ Config* ConfigFactory::create()
 {
     Config *config = new Config();
     std::string raw_data = raw_getter.get_raw_data();
-    config->http = this->create_http(raw_data);
+    ConfigParseredData servers_http = parser_config.parser(raw_data, config);
+
+    config->push_all(this->create_http(servers_http));
+    //if(servers_http.target_strings.size() == 1){
+    //}else{
+        //ERROR("Invalid Config Error: There is no http directive or more than 2 ");
+        //throw std::runtime_error("config parser error:http");
+    //}
 
     return (config);
 }

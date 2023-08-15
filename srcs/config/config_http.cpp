@@ -1,6 +1,7 @@
 #include "config_http.hpp"
 //#include "config.hpp"
 #include <iostream>
+#include "global.hpp"
 
 ConfigHttp::ConfigHttp()
 {
@@ -19,15 +20,26 @@ void ConfigHttp::parse()
 {
 }
 
-void ConfigHttp::add_properties(std::string &key, std::string &value)
+void ConfigHttp::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
-    (void)key;
-    (void)value;
+    if(properties.size() > 0){
+        ERROR("Invalid Config HTTP Error: There is invalid properties");
+        throw std::runtime_error("config parser error:http");
+    }
 }
 
-ConfigServer ConfigHttp::get_next_object()
+void ConfigHttp::assign_out_properties(std::vector<std::string> &properties)
 {
-    //std::string tmp = "";
-    ConfigServer tmp;
-    return tmp;
+    if(properties.size() > 0){
+        ERROR("Invalid Config HTTP Error: There is invalid word between \"http\" and \"{\" ");
+        throw std::runtime_error("config parser error:http");
+    }
 }
+
+void ConfigHttp::push_all(std::vector<ConfigServer*> const &vec)
+{
+    for(size_t i=0;i<vec.size();i++){
+        this->servers.push_back(vec[i]);
+    }
+}
+

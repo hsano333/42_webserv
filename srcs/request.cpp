@@ -178,14 +178,14 @@ REQUEST_STATE Request::get_state()
     return (_state);
 }
 
-void Request::set_port(string &port)
+void Request::set_port(Port &port)
 {
-    this->_port = port;
+    this->port = port;
 }
 
-const std::string& Request::get_port() const
+const Port& Request::get_port() const
 {
-    return _port;
+    return port;
 }
 
 const std::string& Request::get_host() const
@@ -255,7 +255,7 @@ void Request::print_request() const
 //      _method(HttpMethod::INVALID),
 //      _content_length(0),
 //      _err_line(""),
-//      _port(port)
+//      port(port)
 //{
 //    this->parse();
 //    const vector<Server const*> server_list = Config::get_instance()->http->server;
@@ -548,9 +548,9 @@ void Request::print_request() const
 //    return _body.size() >= static_cast<unsigned long>(_content_length);
 //}
 //
-//std::string& Request::get_port()
+//std::string& Request::getport()
 //{
-//    return _port;
+//    return port;
 //}
 //
 //std::string& Request::get_host()

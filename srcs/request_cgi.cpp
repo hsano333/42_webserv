@@ -126,10 +126,10 @@ std::string &RequestCGI::get_status_str()
     return (this->_status_str);
 }
 
-std::string &RequestCGI::get_header_line()
+Port &RequestCGI::get_header_line()
 {
     //return (_buf.getline());
-    return (this->_port);
+    return (this->port);
 }
 
 void RequestCGI::get_concat_header(string &header)

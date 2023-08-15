@@ -3,14 +3,18 @@
 #define CONFIG_OBJECT_HPP
 
 #include <string>
+#include <vector>
 
 template <class T>
 class ConfigObject
 {
     public:
         virtual ~ConfigObject(){};
-        virtual void add_properties(std::string &key, std::string &value) = 0;
-        virtual T get_next_object() = 0;
+        virtual void assign_properties(std::vector<std::vector<std::string> > &properties) = 0;
+        virtual void assign_out_properties(std::vector<std::string> &properties) = 0;
+        virtual void push_all(std::vector<T> const &object) = 0;
+        //virtual void assign_properties() = 0;
+        //virtual T check_properties() = 0;
     private:
 };
 

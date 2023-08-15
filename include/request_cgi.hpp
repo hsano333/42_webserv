@@ -1,6 +1,7 @@
 #ifndef REQUEST_CGI_HPP
 #define REQUEST_CGI_HPP
 #include "request.hpp"
+#include "port.hpp"
 #include <string>
 
 class RequestCGI : public Request
@@ -14,7 +15,7 @@ class RequestCGI : public Request
     int get_status_code();
     void set_status_code(int status_code);
     std::string& get_status_str();
-    std::string& get_header_line();
+    Port& get_header_line();
     int get_extra_buf(char **data);
     bool has_extra_buf();
     int read_result(char** buf, int size);

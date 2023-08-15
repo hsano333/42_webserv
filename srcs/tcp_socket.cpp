@@ -24,7 +24,7 @@ void TCPSocket::init()
     hint.ai_flags = AI_PASSIVE;
     hint.ai_socktype = SOCK_STREAM;
     struct addrinfo* res = NULL;
-    int err = getaddrinfo(NULL, this->_port.c_str(), &hint, &res);
+    int err = getaddrinfo(NULL, this->port.c_str(), &hint, &res);
     if (err != 0) {
         this->close_fd();
         cout << "Error getaddrinfo() :" << gai_strerror(err) << endl;

@@ -37,8 +37,8 @@ class Request : public SocketData
         Request(int fd, IRead* iread);
         void read_up_to_header();
         REQUEST_STATE get_state();
-        void set_port(string &port);
-        const std::string& get_port() const;
+        void set_port(Port &port);
+        const Port& get_port() const;
         const std::string& get_host() const;
         const string& get_path() const;
         //const Method& get_method() const;
@@ -78,7 +78,7 @@ class Request : public SocketData
         string _host;
         URI _uri;
         string _path;
-        string _port;
+        Port port;
         //string _method;
         string _version;
 

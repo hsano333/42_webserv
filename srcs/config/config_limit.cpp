@@ -1,4 +1,5 @@
 #include "config_limit.hpp"
+#include "global.hpp"
 #include <iostream>
 
 ConfigLimit::ConfigLimit()
@@ -24,14 +25,22 @@ void ConfigLimit::parse()
 }
 */
 
-void ConfigLimit::add_properties(std::string &key, std::string &value)
+void ConfigLimit::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
-    (void)key;
-    (void)value;
+    (void)properties;
 }
 
-ConfigLastObject ConfigLimit::get_next_object()
+void ConfigLimit::assign_out_properties(std::vector<std::string> &properties)
 {
-    ConfigLastObject tmp;
-    return tmp;
+    for(size_t i=0;i<properties.size();i++){
+        out_properties.push_back(properties[i]);
+    }
+}
+
+void ConfigLimit::push_all(std::vector<ConfigLastObject*> const &vec)
+{
+    if(vec.size() != 0){
+        ERROR("Invalid Config Error: don't push anything in ConfigLimit ");
+        throw std::runtime_error("config parser error:limit");
+    }
 }

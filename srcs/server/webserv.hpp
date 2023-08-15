@@ -5,6 +5,7 @@
 #include <climits>
 #include <set>
 #include <vector>
+#include "port.hpp"
 
 using std::map;
 using std::string;
@@ -26,7 +27,7 @@ class Webserv
 
   private:
     int _epfd;
-    void init_socket(std::set<std::string>);
+    void init_socket(std::set<Port>);
     bool init_epoll();
     void close_all();
     void connected_communication(int fd, struct epoll_event* event, Socket* socket);

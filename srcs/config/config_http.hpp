@@ -6,7 +6,7 @@
 #include "config_server.hpp"
 #include "config_object.hpp"
 
-class ConfigHttp : public ConfigObject<ConfigServer>
+class ConfigHttp : public ConfigObject<ConfigServer*>
 {
     public:
         ConfigHttp();
@@ -16,8 +16,9 @@ class ConfigHttp : public ConfigObject<ConfigServer>
         std::vector<ConfigServer*> servers;
         std::map<std::string, std::string> map;
         void parse();
-        void add_properties(std::string &key, std::string &value);
-        ConfigServer get_next_object();
+        void assign_properties(std::vector<std::vector<std::string> > &properties);
+        void assign_out_properties(std::vector<std::string> &properties);
+        void push_all(std::vector<ConfigServer*> const &vec);
     private:
 
 };

@@ -16,6 +16,7 @@ class ConfigFactory
     public:
         ConfigFactory(
                 IConfigRawGetter<std::string> &getter,
+                ConfigParser<Config, ConfigHttp> &parser_config,
                 ConfigParser<ConfigHttp, ConfigServer> &parser_http,
                 ConfigParser<ConfigServer, ConfigLocation> &parser_server,
                 ConfigParser<ConfigLocation, ConfigLimit> &parser_location,
@@ -26,14 +27,16 @@ class ConfigFactory
     private:
         //Reader &reader;
         IConfigRawGetter<std::string> &raw_getter;
+        ConfigParser<Config, ConfigHttp> &parser_config;
         ConfigParser<ConfigHttp, ConfigServer> &parser_http;
         ConfigParser<ConfigServer, ConfigLocation> &parser_server;
         ConfigParser<ConfigLocation, ConfigLimit> &parser_location;
         ConfigParser<ConfigLimit, ConfigLastObject> &parser_limit;
-        ConfigHttp* create_http(std::string &raw_data);
-        ConfigServer* create_server(std::string &server_data);
-        ConfigLocation* create_location(std::string &location_data);
-        ConfigLimit* create_limit(std::string &limit_data);
+
+        std::vector<ConfigHttp*> create_http(ConfigParseredData &parsered_data);
+        std::vector<ConfigServer*> create_server(ConfigParseredData &parsered_data);
+        std::vector<ConfigLocation*> create_location(ConfigParseredData &parsered_data);
+        std::vector<ConfigLimit*> create_limit(ConfigParseredData &parsered_data);
         //ConfigHttp& http;
 
 };

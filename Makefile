@@ -3,22 +3,26 @@ LIB		:= ./lib
 OBJDIR	:= ./obj
 SRCDIR	:= ./srcs
 
+
+CONFIGDIR			:= config/
+CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp  config_parsered_data.cpp
+CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
+
 FILESYSTEMDIR			:= filesystem/
 FILESYSTEMSRC 			:= file.cpp read_raw.cpp 
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
+SERVERDIR			:= server/
+SERVERSRC 			:= webserv.cpp header.cpp method.cpp get_method.cpp port.cpp
+SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
-CONFIGDIR			:= config/
-CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp 
-CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 SOCKET 				:= fd_manager.cpp socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp content_type.cpp uri.cpp
 CGI 				:= cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
-SERVER 				:= webserv.cpp header.cpp method.cpp get_method.cpp
 UTILITY 			:= split.cpp  utility.cpp epoll_manager.cpp endian.cpp log.cpp
 EXCEPTION			:= no_request_line.cpp
 DESIGN				:= iread.cpp
-SRC					:= $(CONFIG) $(FILESYSTEM) $(SOCKET) $(CGI) $(SERVER) $(UTILITY) $(EXCEPTION) $(DESIGN)
+SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(SOCKET) $(CGI) $(UTILITY) $(EXCEPTION) $(DESIGN)
 UNIT_SRCS 			:= $(addprefix $(SRCDIR)/, $(SRC))
 MANDATORY			:= main.cpp
 BONUS				:= main_bonus.cpp
@@ -33,7 +37,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR)
+INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR)
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include  $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))
@@ -55,12 +59,11 @@ $(NAME)	:	$(OBJECTS) | $(OBJDIR)
 		$(RM) $(DELENTRY:.cpp=.o)
 		$(RM) $(DELENTRY:.cpp=.d)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJSDIR)
 	$(CXX) $(CXXFLAGS) $(IFLAGS) -c $< -MMD -MP -MF $(OBJDIR)/$*.d  -o $@
 
-$(OBJDIR) :
-	@mkdir $(OBJDIR)
-	@mkdir $(OBJSDIR)
+$(OBJSDIR) : 
+	@mkdir -p $(OBJSDIR)
 
 clean	:
 			$(RM) -r $(OBJDIR)

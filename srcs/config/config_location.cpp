@@ -22,14 +22,22 @@ void ConfigLocation::parse()
 }
 */
 
-void ConfigLocation::add_properties(std::string &key, std::string &value)
+void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
-    (void)key;
-    (void)value;
+    (void)properties;
 }
 
-ConfigLimit ConfigLocation::get_next_object()
+void ConfigLocation::assign_out_properties(std::vector<std::string> &properties)
 {
-    ConfigLimit tmp;
-    return tmp;
+    for(size_t i=0;i<properties.size();i++){
+        out_properties.push_back(properties[i]);
+    }
 }
+
+void ConfigLocation::push_all(std::vector<ConfigLimit*> const &vec)
+{
+    for(size_t i=0;i<vec.size();i++){
+        this->limits.push_back(vec[i]);
+    }
+}
+

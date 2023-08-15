@@ -42,7 +42,7 @@ void Socket::init()
     memset(&hint, 0, sizeof(struct addrinfo));
     setAddrInfo(hint);
     struct addrinfo* res = NULL;
-    int err = getaddrinfo(NULL, this->_port.c_str(), &hint, &res);
+    int err = getaddrinfo(NULL, this->port.c_str(), &hint, &res);
     if (err != 0) {
         this->close_fd();
         cout << "Error getaddrinfo() :" << gai_strerror(err) << endl;
@@ -60,14 +60,24 @@ void Socket::init()
     listen(this->_sock_fd, _SOCKET_NUM);
 }
 
-Socket::Socket() : _sock_fd(0), _port("11112"),  _send_header(false)
+Socket::Socket() : _sock_fd(0),  _send_header(false)
+{
+    //this->port = Port();
+    this->port = Port::from_int(11111);
+    init();
+}
+
+Socket::Socket(Port &port)
+    : _sock_fd(0),
+      port(port),
+      _send_header(false)
 {
     init();
 }
 
-Socket::Socket(std::string port_)
+Socket::Socket(Port const &port)
     : _sock_fd(0),
-      _port(port_),
+      port(port),
       _send_header(false)
 {
     init();
@@ -78,7 +88,7 @@ Socket::~Socket()
 }
 Socket::Socket(const Socket& sock_fdet)
     : _sock_fd(sock_fdet._sock_fd),
-      _port(sock_fdet._port)
+      port(sock_fdet.port)
 {
     init();
 }
@@ -129,7 +139,7 @@ Request* Socket::recv(int fd)
     // try {
     // req = new Request(fd, _config);
     req = new Request(fd);
-    req->set_port(_port);
+    req->set_port(port);
     this->_fd_map[fd]->insert(req);
     // } catch (std::exception& e) {
     //     req = NULL;
