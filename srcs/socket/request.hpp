@@ -3,7 +3,6 @@
 
 #include "config.hpp"
 #include "global.hpp"
-#include "content_type.hpp"
 #include "iread.hpp"
 #include "socket_data.hpp"
 #include "split.hpp"
@@ -49,7 +48,7 @@ class Request : public SocketData
         virtual void parse();
     protected:
         int _fd;
-        const Method *_method;
+        Method method_;
         char _buf[MAX_BUF+1];
         bool _buf_max;
         int _buf_pos;

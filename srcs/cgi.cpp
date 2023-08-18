@@ -114,7 +114,7 @@ void CGI::fork_parse()
 
     std::vector<string> add_env;
     //HttpMethod method(this->_req->get_method());
-    std::string req_method = "REQUEST_METHOD:" + this->_req->get_method().get_name();
+    std::string req_method = "REQUEST_METHOD:" + this->_req->get_method().to_string();
     //std::string req_method = "REQUEST_METHOD:";
     add_env.push_back(req_method);
     char** env = Utility::cp_env(environ, add_env);

@@ -27,7 +27,7 @@ class Utility
 
     static std::string delete_duplicated_slash(std::string str);
     static void sort_orderby_len(std::vector<std::string>& str);
-    static char hex_string_to_int(const string& hex_string);
+    static unsigned char hex_string_to_uchar(const string& hex_string);
     static char** cp_env(char** environ, std::vector<string> vec);
     static char* strdup(const char* str);
 
@@ -35,6 +35,12 @@ class Utility
     static string to_string(T value);
     static string to_string2(int value);
     static int to_int(string &str);
+    static unsigned int to_uint(string &str);
+    static ssize_t to_ssize_t(string &str);
+    static size_t to_size_t(string &str);
+    static int to_int(string const &str);
+    static ssize_t to_ssize_t(string const &str);
+    static size_t to_size_t(string const &str);
     static std::string to_hexstr(size_t i);
 
     static string get_http_status_message(string status_code);

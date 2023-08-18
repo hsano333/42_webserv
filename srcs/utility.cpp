@@ -1,6 +1,7 @@
 
 #include "utility.hpp"
 #include "split.hpp"
+#include "global.hpp"
 #include <algorithm>
 #include <cstdlib>
 #include <dirent.h>
@@ -10,9 +11,6 @@
 #include <vector>
 #include <sys/stat.h>
 
-#ifdef UNIT_TEST
-#include "doctest.h"
-#endif
 
 using std::cout;
 using std::endl;
@@ -143,7 +141,7 @@ void Utility::sort_orderby_len(std::vector<std::string>& str)
     (sort(str.begin(), str.end(), orderby_string_len));
 }
 
-int char_to_hex(char c)
+unsigned char char_to_hex(char c)
 {
     if ('0' <= c && c <='9'){
         return (c-'0');
@@ -152,27 +150,26 @@ int char_to_hex(char c)
     }else if ('A' <= c && c <= 'F'){
         return (c-'A' + 10);
     }
-    return (-1);
+    WARNING("Utility::char_to_hex() error: invalid argument:");
+    throw std::invalid_argument("Utility::char_to_hex() error: invalid argument");
+    return (0);
 }
 
-char Utility::hex_string_to_int(const std::string& hex_string)
+unsigned char Utility::hex_string_to_uchar(const std::string& hex_string)
 {
+    //sstream ss;
+    //unsigned char tmp;
     if (hex_string.size () > 2){
-        return (0);
+        WARNING("Utility::hex_string_to_int() error: invalid argument:" + hex_string);
+        throw std::invalid_argument("Utility::hex_string_to_int() error: invalid argument");
     }
     if (hex_string.size () == 1){
         return (char_to_hex(hex_string[0]));
     }
     if (hex_string.size () == 2){
-        int tmp = char_to_hex(hex_string[0]);
-        if(tmp< 0){
-            return (tmp);
-        }
-        int val = (tmp) << 4;
+        unsigned char tmp = char_to_hex(hex_string[0]);
+        unsigned char val = (tmp) << 4;
         tmp =  char_to_hex(hex_string[1]);
-        if(tmp < 0){
-            return (tmp);
-        }
         val += (tmp);
         return (val);
     }
@@ -205,14 +202,90 @@ std::string Utility::to_hexstr(size_t i)
     ss << std::hex << i;
     return (ss.str());
 }
+
+
+static bool is_notdigit(const char &c)
+{
+    if('0' <= c && c <= '9'){
+        return false;
+    }
+    return true;
+}
+
+unsigned int Utility::to_uint(string &str)
+{
+
+    std::string::iterator ite = std::find_if(str.begin(), str.end(), is_notdigit);
+    if(ite != str.end()){
+        WARNING("Utility::to_uint() error: invalid argument:" + str);
+        throw std::invalid_argument("Utility::to_uint() error: invalid argument");
+    }
+
+    unsigned int cvt;
+    stringstream ss;
+    ss << str;
+    ss >> cvt;
+
+    return (cvt);
+}
+
+
 int Utility::to_int(string &str)
 {
+
+    std::string::iterator begin = str.begin();
+    if(str[0] == '-'){
+        begin++;
+    }
+
+    std::string::iterator ite = std::find_if(begin, str.end(), is_notdigit);
+    if(ite != str.end()){
+        WARNING("Utility::to_int() error: invalid argument:" + str);
+        throw std::invalid_argument("Utility::to_int() error: invalid argument");
+    }
+
+
     int cvt;
     stringstream ss;
     ss << str;
     ss >> cvt;
 
     return (cvt);
+}
+
+int Utility::to_int(string const &str)
+{
+    return (Utility::to_int(str));
+}
+
+ssize_t Utility::to_ssize_t(string &str)
+{
+    ssize_t cvt;
+    stringstream ss;
+    ss << str;
+    ss >> cvt;
+
+    return (cvt);
+}
+
+ssize_t Utility::to_ssize_t(string const &str)
+{
+    return (Utility::to_ssize_t(str));
+}
+
+size_t Utility::to_size_t(string &str)
+{
+    size_t cvt;
+    stringstream ss;
+    ss << str;
+    ss >> cvt;
+
+    return (cvt);
+}
+
+size_t Utility::to_size_t(string const &str)
+{
+    return Utility::to_size_t(str);
 }
 
 int Utility::read_body_and_copy(int fd, char** dst, size_t size)
@@ -345,6 +418,7 @@ string Utility::get_http_status_message(string status_code)
 }
 
 #ifdef UNIT_TEST
+#include "doctest.h"
 TEST_CASE("trim_white_space")
 {
     CHECK(Utility::trim_white_space("  \t\n\v\f\r  ") == "");
@@ -353,5 +427,17 @@ TEST_CASE("trim_white_space")
     CHECK(Utility::trim_white_space("  \t\n\v\f\r  a  \t\n\v\f\r  ") == "a");
     CHECK(Utility::trim_white_space("  \t\n\v\f\r  a  \t\n\v\f\r  b  \t\n\v\f\r  ") == "a  \t\n\v\f\r  b");
 }
+
+TEST_CASE("hex_string_to_uchar")
+{
+    CHECK(Utility::hex_string_to_uchar("11") == 17);
+    CHECK(Utility::hex_string_to_uchar("0") == 0);
+    CHECK(Utility::hex_string_to_uchar("ff") == 255);
+    CHECK(Utility::hex_string_to_uchar("F0") == 240);
+    CHECK_THROWS_AS(Utility::hex_string_to_uchar("FF0") ,std::invalid_argument);
+    CHECK_THROWS_AS(Utility::hex_string_to_uchar("fg") ,std::invalid_argument);
+    CHECK_THROWS_AS(Utility::hex_string_to_uchar("g3") ,std::invalid_argument);
+}
+
 
 #endif

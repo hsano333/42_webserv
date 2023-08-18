@@ -138,22 +138,22 @@ ConfigServer const* Config::get_server(Port const& port, string const& host) con
     */
 
     vector<ConfigServer const*> servers;
-    for (size_t i = 0; i < http->servers.size(); i++) {
-        if (http->servers[i]->listen == port && http->servers[i]->server_name == host) {
-            //_servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
-            return (http->servers[i]);
+    for (size_t i = 0; i < http->get_server_size(); i++) {
+        if (http->server(i)->listen() == port && http->server(i)->server_name() == host) {
+            //_servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            return (http->server(i));
         }
     }
-    for (size_t i = 0; i < http->servers.size(); i++) {
-        if (http->servers[i]->listen == port && http->servers[i]->is_default_server) {
-            //_servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
-            return (http->servers[i]);
+    for (size_t i = 0; i < http->get_server_size(); i++) {
+        if (http->server(i)->listen() == port && http->server(i)->is_default_server()) {
+            //_servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            return (http->server(i));
         }
     }
-    for (size_t i = 0; i < http->servers.size(); i++) {
-        if (http->servers[i]->listen == port) {
-            //_servers_cache.insert(make_pair(make_pair(port, host), http->servers[i]));
-            return (http->servers[i]);
+    for (size_t i = 0; i < http->get_server_size(); i++) {
+        if (http->server(i)->listen() == port) {
+            //_servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            return (http->server(i));
         }
     }
     return (NULL);
@@ -165,13 +165,13 @@ ConfigLocation const* Config::get_location(Port const& port, string const& host,
     if (server == NULL){
         throw std::runtime_error("Config: ConfigServer(port: " + port.to_string() + " , host: " + host + " ) not found");
     }
-    vector<ConfigLocation*> locations = server->locations;
-    vector<pair<ConfigLocation*, string> > candidate;
-    for (size_t i = 0; i < locations.size(); i++) {
-        for (size_t j = 0; j < locations[i]->urls.size(); j++) {
-            if (locations[i]->urls[j].size() <= path.size() &&
-                path.substr(0, locations[i]->urls[j].size()) == locations[i]->urls[j]) {
-                candidate.push_back(make_pair(locations[i], locations[i]->urls[j]));
+    //vector<ConfigLocation*> locations = server->locations;
+    vector<pair<const ConfigLocation*, string> > candidate;
+    for (size_t i = 0; i < server->get_location_size(); i++) {
+        for (size_t j = 0; j < server->location(i)->pathes().size(); j++) {
+            if (server->location(i)->pathes()[j].size() <= path.size() &&
+                path.substr(0, server->location(i)->pathes()[j].size()) == server->location(i)->pathes()[j]) {
+                candidate.push_back(make_pair(server->location(i), server->location(i)->pathes()[j]));
                 continue;
             }
         }
@@ -198,9 +198,9 @@ vector<string> Config::get_location_paths(Port const& port, string const& host) 
     ConfigServer const* servers = get_server(port, host);
     vector<string> locations;
 
-    for (size_t j = 0; j < servers->locations.size(); j++) {
-        for (size_t k = 0; k < servers->locations[j]->urls.size(); k++) {
-            locations.push_back(servers->locations[j]->urls[k]);
+    for (size_t j = 0; j < servers->get_location_size(); j++) {
+        for (size_t k = 0; k < servers->location(j)->pathes().size(); k++) {
+            locations.push_back(servers->location(j)->pathes()[k]);
         }
     }
     Utility::sort_orderby_len(locations);
@@ -208,83 +208,83 @@ vector<string> Config::get_location_paths(Port const& port, string const& host) 
     return (locations);
 }
 
-map<string, vector<string> > Config::get_locations_contents(Port const& port, string const& host,
-                                                            string const& location) const
-{
-    /*
-    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
-        _locations_content_cache.find(make_pair(make_pair(port, host), location));
-    if (cash_ite != _locations_content_cache.end()) {
-        return (cash_ite->second);
-    }
-    */
+//map<string, vector<string> > Config::get_locations_contents(Port const& port, string const& host,
+//                                                            string const& location) const
+//{
+//    /*
+//    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
+//        _locations_content_cache.find(make_pair(make_pair(port, host), location));
+//    if (cash_ite != _locations_content_cache.end()) {
+//        return (cash_ite->second);
+//    }
+//    */
+//
+//    vector<map<string, vector<string> > > properties;
+//    ConfigServer const* servers = get_server(port, host);
+//    for (size_t j = 0; j < servers->get_location_size(); j++) {
+//        for (size_t k = 0; k < servers->location(j)->pathes().size(); k++) {
+//            if (servers->location(j)->pathes()[k] == location) {
+//                //_locations_content_cache.insert(
+//                    //make_pair(make_pair(make_pair(port, host), location), servers->location(j)->properties));
+//
+//                return (servers->location(j)->properties);
+//            }
+//        }
+//    }
+//    map<string, vector<string> > rval;
+//    return (rval);
+//}
 
-    vector<map<string, vector<string> > > properties;
-    ConfigServer const* servers = get_server(port, host);
-    for (size_t j = 0; j < servers->locations.size(); j++) {
-        for (size_t k = 0; k < servers->locations[j]->urls.size(); k++) {
-            if (servers->locations[j]->urls[k] == location) {
-                //_locations_content_cache.insert(
-                    //make_pair(make_pair(make_pair(port, host), location), servers->locations[j]->properties));
-
-                return (servers->locations[j]->properties);
-            }
-        }
-    }
-    map<string, vector<string> > rval;
-    return (rval);
-}
-
-static string get_partial_equaled_path(Split& req_path_sp, Split& cgi_path_sp)
-{
-    string path = "";
-    for (size_t i = 0; i < cgi_path_sp.size(); i++) {
-        if (req_path_sp[i] == cgi_path_sp[i]) {
-            path += "/";
-            path += req_path_sp[i];
-        } else {
-            break;
-        }
-    }
-    return (path);
-}
+//static string get_partial_equaled_path(Split& req_path_sp, Split& cgi_path_sp)
+//{
+//    string path = "";
+//    for (size_t i = 0; i < cgi_path_sp.size(); i++) {
+//        if (req_path_sp[i] == cgi_path_sp[i]) {
+//            path += "/";
+//            path += req_path_sp[i];
+//        } else {
+//            break;
+//        }
+//    }
+//    return (path);
+//}
 
 
-std::map<std::string, std::vector<std::string> > Config::get_locations_properties(Port const &port,
-                                                                                  const string& host,
-                                                                                  const string& filepath) const
-{
-    /*
-    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
-        _locations_properties_cache.find(make_pair(make_pair(port, host), filepath));
-    if (cash_ite != _locations_properties_cache.end()) {
-        return (cash_ite->second);
-    }
-    */
-
-    const std::vector<std::string> lo = Config::get_location_paths(port, host);
-    Split req_path_sp(filepath, "/");
-
-    string path;
-    string tmp_path_cfg;
-    for (size_t i = 0; i < lo.size(); i++) {
-        tmp_path_cfg = lo[i];
-        Split cgi_path_sp(tmp_path_cfg, "/");
-        if (req_path_sp.size() > 0)
-            path = get_partial_equaled_path(req_path_sp, cgi_path_sp);
-        if (path != "") {
-            break;
-        } else if (path == "" && lo[i] == "/") {
-            path = "/";
-            break;
-        }
-    }
-
-    std::map<std::string, std::vector<std::string> > properties =
-        Config::get_locations_contents(port, host, tmp_path_cfg);
-    //_locations_properties_cache.insert(make_pair(make_pair(make_pair(port, host), filepath), properties));
-    return (properties);
-}
+//std::map<std::string, std::vector<std::string> > Config::get_locations_properties(Port const &port,
+//                                                                                  const string& host,
+//                                                                                  const string& filepath) const
+//{
+//    /*
+//    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
+//        _locations_properties_cache.find(make_pair(make_pair(port, host), filepath));
+//    if (cash_ite != _locations_properties_cache.end()) {
+//        return (cash_ite->second);
+//    }
+//    */
+//
+//    const std::vector<std::string> lo = Config::get_location_paths(port, host);
+//    Split req_path_sp(filepath, "/");
+//
+//    string path;
+//    string tmp_path_cfg;
+//    for (size_t i = 0; i < lo.size(); i++) {
+//        tmp_path_cfg = lo[i];
+//        Split cgi_path_sp(tmp_path_cfg, "/");
+//        if (req_path_sp.size() > 0)
+//            path = get_partial_equaled_path(req_path_sp, cgi_path_sp);
+//        if (path != "") {
+//            break;
+//        } else if (path == "" && lo[i] == "/") {
+//            path = "/";
+//            break;
+//        }
+//    }
+//
+//    //std::map<std::string, std::vector<std::string> > properties =
+//        //Config::get_locations_contents(port, host, tmp_path_cfg);
+//    //_locations_properties_cache.insert(make_pair(make_pair(make_pair(port, host), filepath), properties));
+//    return (properties);
+//}
 
 void Config::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
@@ -312,4 +312,65 @@ void Config::push_all(std::vector<ConfigHttp*> const &vec)
     }
 }
 
+void Config::print_cfg()
+{
+
+    Config *cfg = this;
+    cout << "Config contents:" << endl;
+    cout << "max_body_size:" << cfg->http->get_max_body_size() << endl;
+    cout << "servers.size:" << cfg->http->get_server_size() << endl;
+    for(size_t i=0;i<cfg->http->get_server_size();i++){
+        cout << endl <<"server No. << " << i << endl;
+        cout << "listen:" << cfg->http->server(i)->listen().to_string() << endl;
+        cout << "server_name:" << cfg->http->server(i)->server_name() << endl;
+        cout << "is_default_server:" << cfg->http->server(i)->is_default_server() << endl;
+        cout << "location size:" << cfg->http->server(i)->get_location_size() << endl;
+
+        for(size_t j=0;j< cfg->http->server(i)->get_location_size();j++){
+            cout << "location No." << j << endl;
+            ConfigLocation const *tmp = cfg->http->server(i)->location(j);
+            cout << "location root:" << tmp->root() << endl;
+            cout << "location cgi_pass:" << tmp->cgi_pass() << endl;
+            cout << "location autoindex:" << tmp->autoindex() << endl;
+            std::vector<std::string> const & pathes = tmp->pathes();
+            for(size_t i=0;i<pathes.size();i++){
+                cout << "location path[" << i << "]:" << pathes[i] << endl;
+            }
+            for(size_t i=0;i<tmp->indexes().size();i++){
+                cout << "location index[" << i << "]:" << tmp->indexes()[i] << endl;
+            }
+            std::map<StatusCode, std::string> const & error_page = tmp->error_pages();
+            std::map<StatusCode, std::string>::const_iterator ite = error_page.begin();
+            std::map<StatusCode, std::string>::const_iterator end = error_page.end();
+            while(ite != end){
+                cout << "location error_pages[" << ite->first.to_int() << "]:" << ite->second << endl;
+                ite++;
+            }
+            for(size_t i=0;i<tmp->get_limit_size();i++){
+                ConfigLimit const *limit = (tmp->limit(i));
+
+                for(size_t m=0;m< limit->allowed_method().size();m++){
+                    cout << "limit allowed method:" << limit->allowed_method()[i].to_string();
+                }
+
+                std::vector<std::pair<CIDR, bool> > const &allowed_cidr = tmp->limit(i)->allowed_cidr();
+                std::vector<std::pair<CIDR, bool> >::const_iterator allowed_cidr_ite = allowed_cidr.begin();
+                std::vector<std::pair<CIDR, bool> >::const_iterator allowed_cidr_end = allowed_cidr.end();
+                while(allowed_cidr_ite != allowed_cidr_end){
+
+                    cout << "allowed?:" << allowed_cidr_ite->second << endl;
+                    allowed_cidr_ite++;
+
+                }
+
+            }
+
+            cout << "" << j << endl;
+            
+
+        }
+
+    }
+
+}
 

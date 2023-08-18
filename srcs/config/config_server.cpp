@@ -2,51 +2,60 @@
 #include <iostream>
 #include "global.hpp"
 
-ConfigServer::ConfigServer() : is_default_server(false)
+ConfigServer::ConfigServer() : is_default_server_(false)
 {
     ;
-}
-
-
-ConfigServer::ConfigServer(std::string &str)
-{
-    std::cout << str << std::endl;
 }
 
 ConfigServer::~ConfigServer()
 {
 }
 
-/*
-void ConfigServer::parse()
+ConfigLocation const * ConfigServer::location(size_t i) const
 {
+    if(i < this->get_location_size()){
+        return (this->locations[i]);
+    }
+    ERROR("Invalid ConfigServer Error:Invalid index ");
+    throw std::runtime_error("config error:server");
 }
-*/
 
+size_t ConfigServer::get_location_size() const
+{
+    return (this->locations.size());
+}
+
+
+std::string const & ConfigServer::server_name() const
+{
+    return (this->server_name_);
+}
+
+Port const & ConfigServer::listen() const
+{
+    return (this->listen_);
+}
+
+bool ConfigServer::is_default_server() const
+{
+    return (this->is_default_server_);
+}
 
 void ConfigServer::set_listen(std::vector<std::string> &vec)
 {
     size_t word_cnt = vec.size();
 
-    /*
-    for(size_t i=0;i<vec.size();i++){
-        std::cout << vec[i] << std::endl;
-    }
-    */
-
-
     if(word_cnt >= 2 && word_cnt <= 3){
-        this->listen = Port::from_string(vec[1]);
+        this->listen_ = Port::from_string(vec[1]);
         if(word_cnt == 3){
             if(vec[2] == "default_server"){
-                this->is_default_server = true;
+                this->is_default_server_ = true;
             }else{
                 ERROR("Invalid Config Error:" + vec[2] + " is not server directive");
                 throw std::runtime_error("config parser error:server");
             }
         }
     }
-
 }
 
 
@@ -55,7 +64,7 @@ void ConfigServer::set_server_name(std::vector<std::string> &vec)
     size_t word_cnt = vec.size();
     if(word_cnt == 2)
     {
-        this->server_name = vec[1];
+        this->server_name_ = vec[1];
     }else{
         ERROR("Invalid Config Error:invalid word is in server_name directive");
         throw std::runtime_error("config parser error:server");

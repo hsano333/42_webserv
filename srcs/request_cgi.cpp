@@ -1,5 +1,6 @@
 #include "request_cgi.hpp"
 #include "no_request_line.hpp"
+#include "utility.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

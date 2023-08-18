@@ -55,14 +55,14 @@ void URI::uri_encode(string& raw_uri)
                 tmp_hex[0] = pos[1];
                 tmp_hex[1] = pos[2];
                 string tmp = string(tmp_hex);
-                char value = Utility::hex_string_to_int(tmp);
+                char value = (char)Utility::hex_string_to_uchar(tmp);
                 *dst = value;
                 dst++;
                 pos+=3;
                 cnt+=3;
                 continue;
             }else{
-                INFO("INFO Uri parse error");
+                MYINFO("INFO Uri parse error");
             //cout << ("INFO Uri parse start loop No.3") << endl;
                 //todo error
             }
@@ -132,20 +132,20 @@ void URI::check_invalid_word(std::string &str)
 
 void URI::parse(Request* req)
 {
-    //INFO("INFO parse URI raw_uri=" + raw_uri);
+    //MYINFO("INFO parse URI raw_uri=" + raw_uri);
     cout << "start URI class" << endl;
     string path = req->get_path();
     check_invalid_word(path);
 
-    INFO("INFO parse No.0 path=" + path);
+    MYINFO("INFO parse No.0 path=" + path);
     if (path == ""){
-    INFO("INFO parse No.1 path=" + path);
+    MYINFO("INFO parse No.1 path=" + path);
         return;
     }
-    INFO("INFO parse No.2 path=" + path);
+    MYINFO("INFO parse No.2 path=" + path);
     //this->uri_encode(path);
-    INFO("INFO parse raw_uri=" + path);
-    INFO("INFO parse encoded uri=" + _endorded_uri);
+    MYINFO("INFO parse raw_uri=" + path);
+    MYINFO("INFO parse encoded uri=" + _endorded_uri);
     this->_raw_uri = path;
     this->ignore_fragment(path);
     this->retrieve_query(path);
@@ -159,16 +159,17 @@ void URI::parse(Request* req)
     if (cfg == NULL){
         return ;
     }
-    std::map<std::string, std::vector<std::string> > props =
-        cfg->get_locations_properties(req->get_port(), req->get_host(), this->_location_path);
+    std::map<std::string, std::vector<std::string> > props;
+    //std::map<std::string, std::vector<std::string> > props =
+        //cfg->get_locations_properties(req->get_port(), req->get_host(), this->_location_path);
 
     this->print_uri();
     this->_root = get_root_dir(props);
 
     cout << "_root:" << _root << endl;
     cout << "_location_path:" << _location_path << endl;
-    INFO("INFO parse root=" + _root);
-    INFO("INFO parse _location_path=" + _location_path);
+    MYINFO("INFO parse root=" + _root);
+    MYINFO("INFO parse _location_path=" + _location_path);
 
     this->remove_file_info(this->concat_path(_root ,this->_location_path));
     this->print_uri();
@@ -264,7 +265,7 @@ void URI::print_uri() const
         ss << "_query[" << i << "]:[" << _querys[i] << "]" << endl;
     }
     ss << "_path_info:[" << _path_info << "]" << endl << endl;
-    INFO(ss.str());
+    MYINFO(ss.str());
 
 }
 
@@ -370,3 +371,26 @@ bool URI::is_cgi() const
 {
     return (this->_is_cgi);
 }
+#ifdef UNIT_TEST
+#include "doctest.h"
+TEST_CASE("URI Class")
+{
+    URI uri;
+    std::string test="";
+    uri.uri_encode(test);
+     test="http://test/cat.html?/?abc=test/def=te?/?st2?fgh=123/%21%22%23%24%25%26%27%28%29%3D%7E%7C%7B%60%7D%2A%2B_%3F%3E%3C%2C.%2F%5C%5D%3A%3B%5B%40%5C%5E-098765432%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A%EF%BC%81%E2%80%9D%EF%BC%83%EF%BC%84%EF%BC%85%EF%BC%86%E2%80%99%EF%BC%88%EF%BC%89%EF%BC%9D%EF%BD%9E%EF%BD%9C%0D%0A/$fragmentTest#abc";
+    uri.ignore_fragment(test);
+    uri.retrieve_query(test);
+    std::vector<string> const &query = uri.get_query();
+    std::string ans =  "!\"#$%&\'()=~|{`}*+_?><,./\\]:;[@\\^-098765432あいうえお！”＃＄％＆’（）＝～｜\r\n";
+
+    CHECK(query[0] == "abc=test");
+    CHECK(query[1] == "def=te");
+    CHECK(query[2] == "st2");
+    CHECK(query[3] == "fgh=123");
+    CHECK(query[4] == ans);
+    CHECK(query[5] == "$fragmentTest");
+
+
+}
+#endif

@@ -33,15 +33,15 @@ class Config : public ConfigObject<ConfigHttp*>
         ConfigServer const* get_server(Port const& port, std::string const& host) const;
         ConfigLocation const* get_location(Port const& port, std::string const& host, std::string const& path) const;
         std::vector<std::string> get_location_paths(Port const& port, std::string const& host) const;
-        std::map<std::string, std::vector<std::string> > get_locations_contents(Port const& port, std::string const& host,
-                                                            std::string const& location) const;
-        std::map<std::string, std::vector<std::string> > get_locations_properties(Port const& port, std::string const& host,
-                                                              std::string const& filepath) const;
+        //std::map<std::string, std::vector<std::string> > get_locations_contents(Port const& port, std::string const& host,
+                                                            //std::string const& location) const;
+        //std::map<std::string, std::vector<std::string> > get_locations_properties(Port const& port, std::string const& host,
+                                                              //std::string const& filepath) const;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigHttp*> const &vec);
 
-
+        void print_cfg();
     private:
 
         static Config *_singleton;

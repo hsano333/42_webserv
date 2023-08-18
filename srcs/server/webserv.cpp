@@ -46,9 +46,9 @@ Webserv::Webserv() : _epfd(0)
 {
     //this->_config = Config::get_instance();
     std::set<Port> ports;
-    size_t server_cnt = Config::get_instance()->http->servers.size();
+    size_t server_cnt = Config::get_instance()->http->get_server_size();
     for (size_t i = 0; i < server_cnt; i++) {
-        ports.insert(Config::get_instance()->http->servers[i]->listen);
+        ports.insert(Config::get_instance()->http->server(i)->listen());
     }
     init_socket(ports);
 }
@@ -149,7 +149,7 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
             req->print_request();
 
             if (req->get_state() != LOADED_STATUS_BODY) {
-                INFO("LOADED_STATUS_BODY is not END_LOAD , state=" + Utility::to_string(req->get_state()) + ", fd:" + Utility::to_string(fd));
+                MYINFO("LOADED_STATUS_BODY is not END_LOAD , state=" + Utility::to_string(req->get_state()) + ", fd:" + Utility::to_string(fd));
                 return;
             }
 

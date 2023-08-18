@@ -11,23 +11,22 @@ class ConfigServer : public ConfigObject<ConfigLocation*>
 {
     public:
         ConfigServer();
-        ConfigServer(std::string &str);
         ~ConfigServer();
-        size_t size();
-        Port listen;
-        std::string server_name;
-        bool is_default_server;
-        std::vector<ConfigLocation*> locations;
-        std::map<std::string, std::string> map;
+        ConfigLocation const *location(size_t i) const;
+        size_t get_location_size() const;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigLocation*> const &vec);
-        //void assign_properties();
+        std::string const &server_name() const;
+        Port const & listen() const;
+        bool is_default_server() const;
     private:
+        std::vector<ConfigLocation*> locations;
         void set_listen(std::vector<std::string> &vec);
         void set_server_name(std::vector<std::string> &vec);
-        //std::string listen;
-        //std::string server_name;
+        Port listen_;
+        std::string server_name_;
+        bool is_default_server_;
 
 };
 

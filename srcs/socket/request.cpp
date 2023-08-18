@@ -26,7 +26,6 @@ using std::vector;
 
 Request::Request(int fd_) : SocketData(),
                               _fd(fd_),
-                              _method(NULL),
                               _buf_max(false),
                               _buf_pos(0),
                               _end_status_line(0),
@@ -46,7 +45,6 @@ Request::Request(int fd_) : SocketData(),
 
 Request::Request(int fd_, IRead* iread) : SocketData(),
                               _fd(fd_),
-                              _method(NULL),
                               _buf_max(false),
                               _buf_pos(0),
                               _end_status_line(0),
@@ -94,7 +92,7 @@ void Request::parse_status_line(char *crlf, int read_size)
     std::transform(sp[0].begin(), sp[0].end(), sp[0].begin(), static_cast<int (*)(int)>(std::toupper));
     //GetMethod* test = new GetMethod();
     //(void)test;
-    _method = Method::make_method(sp[0]);
+    method_ = (Method::from_string(sp[0]));
     //_method = new GetMethod();
     _path = Utility::delete_duplicated_slash(Utility::trim_white_space(sp[1]));
     //_uri.set_raw(sp[1]);
@@ -106,7 +104,7 @@ void Request::parse_header()
 {
     this->body_pos = Utility::strnstr(&(this->_buf[this->_end_status_line]), "\r\n\r\n", this->_buf_pos - this->_end_status_line+1);
     if (this->body_pos){
-        this->body_pos = '\0';
+        this->body_pos[0] = '\0';
         if (&(this->_buf[this->_buf_pos]) > this->body_pos + 2){
             this->body_pos += 2;
             _state = LOADED_STATUS_HEADER;
@@ -121,10 +119,12 @@ void Request::parse_header()
 
 void Request::load_body()
 {
+    /*
     if (this->_method->is_need_body() == false){
         _state = LOADED_STATUS_BODY;
         return ;
     }
+    */
 
     if (this->body_pos){
         this->_body_size = &(this->_buf[this->_buf_pos]) - this->body_pos;
@@ -200,7 +200,7 @@ const std::string& Request::get_path() const
 
 const Method& Request::get_method() const
 {
-    return *_method;
+    return method_;
 }
 
 const URI& Request::get_uri() const
@@ -217,7 +217,7 @@ void Request::print_request() const
 {
     cout << "|-- Print Request Header --|" << endl;
     cout << " fd: " << _fd << endl;
-    cout << " method: " << _method << endl;
+    //cout << " method: " << _method << endl;
     cout << " version: " << _version << endl;
 
     //cout << " headers size: " << _headers.size() << endl;
