@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include "response_cgi.hpp"
 #include "string.h"
+#include "utility.hpp"
 #include "tcp_socket.hpp"
 #include <errno.h>
 #include <fcntl.h>
@@ -16,12 +17,29 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-int Socket::makeSocket()
+Socket::Socket() : sock_fd(0)
+{
+}
+
+Socket::~Socket()
+{
+}
+
+Socket Socket::create(Port &port_)
+{
+    Socket socket;
+    socket.port = port_;
+    socket.init();
+    return socket;
+}
+
+
+int Socket::make_socket()
 {
     return (socket(AF_INET, SOCK_STREAM, 0));
 }
 
-void Socket::setAddrInfo(struct addrinfo& info)
+void Socket::set_address_info(struct addrinfo& info)
 {
     info.ai_family = AF_INET;
     info.ai_flags = AI_PASSIVE;
@@ -30,68 +48,38 @@ void Socket::setAddrInfo(struct addrinfo& info)
 
 void Socket::init()
 {
-    this->_sock_fd = makeSocket();
-    memset(&(this->_clientinfo), 0, sizeof(s_clientinfo));
-    this->_ev.data.ptr = &_clientinfo;
-    if (this->_sock_fd < 0) {
-        cout << strerror(errno) << endl;
+    //s_clientinfo clientinfo;
+    this->sock_fd = this->make_socket();
+    //Utility::memset(&(clientinfo), 0, sizeof(s_clientinfo));
+    //this->_ev.data.ptr = &clientinfo;
+    if (this->sock_fd < 0) {
+        ERROR("Failed to create socket");
         throw std::runtime_error("Failed to create sock_fdet\n");
     }
 
     struct addrinfo hint;
-    memset(&hint, 0, sizeof(struct addrinfo));
-    setAddrInfo(hint);
+    Utility::memset(&hint, 0, sizeof(struct addrinfo));
+    this->set_address_info(hint);
     struct addrinfo* res = NULL;
     int err = getaddrinfo(NULL, this->port.c_str(), &hint, &res);
     if (err != 0) {
         this->close_fd();
-        cout << "Error getaddrinfo() :" << gai_strerror(err) << endl;
+        std::string str = gai_strerror(err);
+        ERROR("Error getaddrinfo() :" + str);
         throw std::runtime_error("Failed to init()\n");
     }
     int yes = 1;
-    setsockopt(this->_sock_fd, SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(yes));
-    if (bind(this->_sock_fd, res->ai_addr, res->ai_addrlen) != 0) {
+    setsockopt(this->sock_fd, SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(yes));
+    if (bind(this->sock_fd, res->ai_addr, res->ai_addrlen) != 0) {
         this->close_fd();
         freeaddrinfo(res);
-        cout << "Error bind1:" << strerror(errno) << endl;
+        ERROR("Error bind:");
         throw std::runtime_error("Failed to bind()\n");
     }
     freeaddrinfo(res);
-    listen(this->_sock_fd, _SOCKET_NUM);
+    listen(this->sock_fd, _SOCKET_NUM);
 }
 
-Socket::Socket() : _sock_fd(0),  _send_header(false)
-{
-    //this->port = Port();
-    this->port = Port::from_int(11111);
-    init();
-}
-
-Socket::Socket(Port &port)
-    : _sock_fd(0),
-      port(port),
-      _send_header(false)
-{
-    init();
-}
-
-Socket::Socket(Port const &port)
-    : _sock_fd(0),
-      port(port),
-      _send_header(false)
-{
-    init();
-}
-
-Socket::~Socket()
-{
-}
-Socket::Socket(const Socket& sock_fdet)
-    : _sock_fd(sock_fdet._sock_fd),
-      port(sock_fdet.port)
-{
-    init();
-}
 Socket& Socket::operator=(const Socket& sock_fdet)
 {
     if (&sock_fdet == this)
@@ -99,24 +87,24 @@ Socket& Socket::operator=(const Socket& sock_fdet)
     return (*this);
 }
 
-int Socket::getSockFD()
+int Socket::get_socket_fd()
 {
-    return (this->_sock_fd);
+    return (this->sock_fd);
 }
 
 void Socket::close_fd()
 {
-    cerr << "Socket close:" << _sock_fd << endl;
-    close(this->_sock_fd);
+    close(this->sock_fd);
 }
 
+/*
 int Socket::accept_request()
 {
     struct sockaddr_in client;
-    memset(&client, 0, sizeof(struct sockaddr_in));
+    Utility::memset(&client, 0, sizeof(struct sockaddr_in));
     socklen_t len = sizeof(client);
 
-    int fd = accept(this->_sock_fd, (struct sockaddr*)&client, &len);
+    int fd = accept(this->sock_fd, (struct sockaddr*)&client, &len);
     if (fd < 0) {
         cout << "Error accept():" << strerror(errno) << endl;
         // return ();
@@ -170,12 +158,6 @@ bool Socket::send_response(int fd)
     }
     while (open_result && size > 0) {
         //int ii=0;
-        /*
-        while(ii < size){
-            printf("%c", p_data[ii]);
-            ii++;
-        }
-        */
         int send1 = send(fd, p_data, size, MSG_DONTWAIT);
         p_data[size] = '\0';
         cout << "p_data[" << p_data << "]" << endl;
@@ -218,9 +200,7 @@ void Socket::set_response(int fd, ResponseCGI* res_cgi)
 
 void Socket::set_response(int fd, Response* res)
 {
-    cout << "set_response No.1 fd=" << fd << endl;
     this->_fd_map[fd]->insert(res);
-    cout << "set_response No.2" << endl;
 }
 
 Response* Socket::get_response(int fd)
@@ -291,3 +271,4 @@ void Socket::erase_all_fd()
     }
     this->_fd_map.clear();
 }
+*/

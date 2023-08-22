@@ -13,23 +13,30 @@ FILESYSTEMSRC 			:= file.cpp read_raw.cpp
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp header.cpp method.cpp  port.cpp status_code.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp  webserv_event.cpp header.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
+HTTPDIR				:= http/
+HTTPSRC 			:= method.cpp status_code.cpp  
+HTTP 				:= $(addprefix $(HTTPDIR)/, $(HTTPSRC))
+
 NETWORKDIR			:= network/
-NETWORKSRC 			:= ip_address.cpp cidr.cpp
+NETWORKSRC 			:= ip_address.cpp cidr.cpp  port.cpp
 NETWORK 			:= $(addprefix $(NETWORKDIR)/, $(NETWORKSRC))
 
 SOCKETDIR			:= socket/
-SOCKETSRC 			:= fd_manager.cpp socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp uri.cpp
+SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
 
-CGI 				:= cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
-UTILITY 			:= split.cpp  utility.cpp epoll_manager.cpp endian.cpp log.cpp
+#socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp uri.cpp  fd_manager.cpp 
+
+
+CGI 				:= #cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
+UTILITY 			:= split.cpp  utility.cpp endian.cpp log.cpp
 EXCEPTION			:= no_request_line.cpp
 DESIGN				:= iread.cpp
-SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(NETWORK) $(SOCKET) $(CGI) $(UTILITY) $(EXCEPTION) $(DESIGN)
+SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(HTTP) $(NETWORK) $(SOCKET) $(CGI) $(UTILITY) $(EXCEPTION) $(DESIGN)
 MANDATORY			:= main.cpp
 BONUS				:= main_bonus.cpp
 UNIT_TEST_SRCS			:= unit_test/unit_main.cpp $(SRC)
@@ -45,7 +52,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(NETWORKDIR) $(SOCKETDIR)
+INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR)
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include ./srcs/unit_test $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))

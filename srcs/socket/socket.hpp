@@ -24,52 +24,59 @@ typedef struct clientinfo {
 
 class Socket
 {
-  public:
-    Socket();
+    public:
+        Socket();
+        //Socket(Port &port);
+        ~Socket();
+        Socket& operator=(Socket const &sock_fdet);
+        static Socket create(Port &port);
     //Socket(std::string port);
-    Socket(Port &port);
-    Socket(Port const &port);
-    Socket(const Socket& socket);
-    Socket& operator=(const Socket& socket);
-    virtual ~Socket();
-    void close_fd();
-    int getSockFD();
-    Request* recv(int fd);
-    bool send_response(Response* res, int fd);
-    bool send_response(int fd);
-    int accept_request();
-    void set_response(int fd, Response* res);
-    void set_response(int fd, ResponseCGI* res);
-    void set_request(int fd, RequestCGI* req_cgi);
-    void set_cgi(int fd, Response* res);
-    Response* get_response(int fd);
-    void erase_request(int fd);
-    void erase_response(int fd);
-    std::vector<int> timeout(int time);
-    void erase_fd(int fd);
-    void erase_all_fd();
-    size_t count_fd();
+    //Socket(Port const &port);
+    //Socket(const Socket& socket);
+    //Socket& operator=(const Socket& socket);
+        int get_socket_fd();
+        void close_fd();
+    private:
+        void init();
+        int sock_fd;
+        Port port;
+        void set_address_info(struct addrinfo& info);
+        int make_socket();
+        const static int _SOCKET_NUM = 10;
+    //Request* recv(int fd);
+    //bool send_response(Response* res, int fd);
+    //bool send_response(int fd);
+    //int accept_request();
+    //void set_response(int fd, Response* res);
+    //void set_response(int fd, ResponseCGI* res);
+    //void set_request(int fd, RequestCGI* req_cgi);
+    ////void set_cgi(int fd, Response* res);
+    //Response* get_response(int fd);
+    //void erase_request(int fd);
+    //void erase_response(int fd);
+    //std::vector<int> timeout(int time);
+    //void erase_fd(int fd);
+    //void erase_all_fd();
+    //size_t count_fd();
 
-  protected:
-    int _sock_fd;
-    const static int _SOCKET_NUM = 10;
-    std::map<int, FDManager*> _fd_map;
-    Port port;
-    virtual void init();
-    virtual int makeSocket();
-    virtual void setAddrInfo(struct addrinfo& info);
-    struct epoll_event _ev;
-    s_clientinfo _clientinfo;
-    bool send_err(std::string err);
+  //protected:
+    //int _sock_fd;
+    //std::map<int, FDManager*> _fd_map;
+    //Port port;
+    //virtual void init();
+    //struct epoll_event _ev;
+    //s_clientinfo _clientinfo;
+    //bool send_err(std::string err);
     //Config const& _config;
-    std::string _location_path;
+    //std::string _location_path;
 
-    template <typename T>
-    bool increment_timeout(T& obj, int time);
-    bool _send_header;
+    //template <typename T>
+    //bool increment_timeout(T& obj, int time);
+    //bool _send_header;
     //const string crlf;
 };
 
+/*
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -88,5 +95,6 @@ bool Socket::increment_timeout(T& obj, int time)
     }
     return (false);
 }
+*/
 
 #endif /* SOCKET_H */

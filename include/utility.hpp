@@ -19,6 +19,7 @@ class Utility
 {
   public:
     static char* memcpy(char* dst, const char* src, size_t n);
+    static void   *memset(void *b, int c, size_t len);
     static size_t strlen(const char* str);
     static string delete_space(string& str);
     static char* strnstr(const char* haystack, const char* needle, size_t len);
@@ -35,7 +36,7 @@ class Utility
     static string to_string(T value);
     static string to_string2(int value);
     static int to_int(string &str);
-    static unsigned int to_uint(string &str);
+    static unsigned int to_uint(string const &str);
     static ssize_t to_ssize_t(string &str);
     static size_t to_size_t(string &str);
     static int to_int(string const &str);

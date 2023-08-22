@@ -28,6 +28,15 @@ size_t Utility::strlen(const char* str)
     return (cnt);
 }
 
+void	*Utility::memset(void *b, int c, size_t len)
+{
+    size_t i = 0;
+    while (i < len)
+        ((unsigned char *)b)[i++] = c;
+    return (b);
+}
+
+
 char* Utility::memcpy(char* dst, const char* src, size_t n)
 {
     size_t i;
@@ -212,10 +221,10 @@ static bool is_notdigit(const char &c)
     return true;
 }
 
-unsigned int Utility::to_uint(string &str)
+unsigned int Utility::to_uint(string const &str)
 {
 
-    std::string::iterator ite = std::find_if(str.begin(), str.end(), is_notdigit);
+    std::string::const_iterator ite = std::find_if(str.begin(), str.end(), is_notdigit);
     if(ite != str.end()){
         WARNING("Utility::to_uint() error: invalid argument:" + str);
         throw std::invalid_argument("Utility::to_uint() error: invalid argument");

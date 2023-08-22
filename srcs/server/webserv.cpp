@@ -20,7 +20,7 @@
 #include "utility.hpp"
 #include "log.hpp"
 #include "global.hpp"
-#include "epoll_manager.hpp"
+#include "epoll_controller.hpp"
 
 #define NEVENTS 16
 using std::cout;
@@ -42,20 +42,30 @@ Webserv::Webserv(const std::vector<std::string> ports)epfd(0)
 }
 */
 
-Webserv::Webserv() : _epfd(0)
+Webserv::Webserv(
+        Config *cfg,
+        SocketManager *socket_manager,
+        //EpollController epoll_controller,
+        WebservWaiter &waiter,
+        WebservReader &reader,
+        WebservApplication &app,
+        WebservSender &sender
+        ) :
+                     //_epfd(0),
+                     cfg(cfg),
+                     socket_manager(socket_manager),
+                     //epoll_controller(epoll_controller),
+                     waiter(waiter),
+                     reader(reader),
+                     app(app),
+                     sender(sender)
 {
-    //this->_config = Config::get_instance();
-    std::set<Port> ports;
-    size_t server_cnt = Config::get_instance()->http->get_server_size();
-    for (size_t i = 0; i < server_cnt; i++) {
-        ports.insert(Config::get_instance()->http->server(i)->listen());
-    }
-    init_socket(ports);
+    ;
 }
 
 Webserv::~Webserv()
 {
-    close_all();
+    //close_all();
 }
 /*
 Webserv::Webserv(const Webserv &webserv) : epfd(0)
@@ -71,38 +81,26 @@ Webserv& Webserv::operator=(const Webserv& socket)
 }
 
 
-void Webserv::init_socket(std::set<Port> ports)
-{
-    try {
-        std::set<Port>::iterator port_ite = ports.begin();
-        std::set<Port>::iterator port_end = ports.end();
-        for (; port_ite != port_end; port_ite++) {
-            Socket* sock = new Socket(*port_ite);
-            this->_sockets.push_back(sock);
-        }
-    } catch (std::exception& e) {
-        close_all();
-        throw std::exception();
-    }
-}
 
+/*
 void Webserv::close_all()
 {
     for (size_t i = 0; i < this->_sockets.size(); i++) {
         this->_sockets[i]->close_fd();
     }
 }
+*/
 
-bool Webserv::init_epoll()
-{
-    EpollManager* epoll_manager = EpollManager::get_instance();
+//bool Webserv::init_epoll()
+//{
+    /*
+    EpollController* epoll_controller = EpollController::get_instance();
     for (size_t i = 0; i < this->_sockets.size(); i++) {
         Socket* socket = this->_sockets[i];
         //ev.events = EPOLLIN;
-        int fd = socket->getSockFD();
-        epoll_manager->add(fd, EPOLLIN);
+        int fd = socket->get_socket_fd();
+        epoll_controller->add(fd, EPOLLIN);
     }
-    /*
     this->_epfd = epoll_create(this->_sockets.size());
     if (_epfd < 0) {
         cout << "Epoll Error:" << strerror(errno) << endl;
@@ -114,8 +112,8 @@ bool Webserv::init_epoll()
         Socket* socket = this->_sockets[i];
 
         ev.events = EPOLLIN;
-        ev.data.fd = socket->getSockFD();
-        if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, socket->getSockFD(), &ev) != 0) {
+        ev.data.fd = socket->get_socket_fd();
+        if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, socket->get_socket_fd(), &ev) != 0) {
             cout << "Epoll Ctl Error:" << strerror(errno) << endl;
             cout << "Epoll Ctl Error:" << strerror(errno) << endl;
             cout << "Epoll Ctl Error:" << strerror(errno) << endl;
@@ -124,22 +122,29 @@ bool Webserv::init_epoll()
         }
     }
     */
-    return (true);
-}
+    //return (true);
+//}
 
+/*
 Socket* Webserv::find_listen_socket(int socket_fd)
 {
     for (size_t i = 0; i < this->_sockets.size(); i++) {
-        if (this->_sockets[i]->getSockFD() == socket_fd) {
+        if (this->_sockets[i]->get_socket_fd() == socket_fd) {
             return (this->_sockets[i]);
         }
     }
     return (NULL);
 }
+*/
 
-void Webserv::connected_communication(int fd, struct epoll_event* event, Socket* socket)
-{
-    EpollManager* epoll_manager = EpollManager::get_instance();
+//void Webserv::connected_communication(int fd, struct epoll_event* event, Socket* socket)
+//{
+	//(void)fd;
+	//(void)event;
+	//(void)socket;
+	/*
+
+    EpollController* epoll_controller = EpollController::get_instance();
 
     if (event->events & EPOLLIN) {
         try{
@@ -156,7 +161,6 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
             // Body Test
             // Test (will remove)
             req->print_request();
-            /*
             if (req->get_content_type().is_multipart()) {
                 vector<ByteVector> list = req->get_body_splitted();
                 for (size_t i = 0; i < list.size(); i++) {
@@ -165,7 +169,6 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
             } else {
                 std::cout << "body: <--" << req->get_body().get_str() << "-->" << std::endl;
             }
-            */
 
             if (req->is_cgi())
             {
@@ -173,7 +176,7 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
                 int read_fd = cgi->get_result_fd();
                 RequestCGI *req_cgi = cgi->get_result();
                 socket->set_request(read_fd, req_cgi);
-                epoll_manager->add(read_fd, EPOLLIN);
+                epoll_controller->add(read_fd, EPOLLIN);
 
             } else {
 
@@ -193,7 +196,7 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
                 //if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, fd, event) != 0) {
                     //cout << strerror(errno) << endl;
                 //}
-                epoll_manager->modify(fd, EPOLLOUT);
+                epoll_controller->modify(fd, EPOLLOUT);
             }
 
         }catch(std::exception &e){
@@ -201,7 +204,7 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
             socket->erase_request(fd);
             Response* res = new Response(500);
             socket->set_response(fd, res);
-            epoll_manager->modify(fd, EPOLLOUT);
+            epoll_controller->modify(fd, EPOLLOUT);
         }
     } else if (event->events & EPOLLOUT) {
         DEBUG("EPOLLOUT fd:" + Utility::to_string(fd));
@@ -217,7 +220,7 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
         //close(fd);
         //socket->erase_fd(fd);
         //this->_fd_sockets.erase(fd);
-        epoll_manager->erase(fd);
+        epoll_controller->erase(fd);
         //if (epoll_ctl(this->_epfd, EPOLL_CTL_DEL, fd, event) != 0) {
             //cout << "connected_communication not change IN" << endl;
         //}
@@ -237,13 +240,16 @@ void Webserv::connected_communication(int fd, struct epoll_event* event, Socket*
         //todo remove fd
         socket->erase_response(fd);
         socket->erase_request(fd);
-        epoll_manager->erase(fd);
+        epoll_controller->erase(fd);
         close(fd);
     }
-}
+*/
+//}
 
-void Webserv::timeout(int time_sec)
-{
+//void Webserv::timeout(int time_sec)
+//{
+    //(void)time_sec;
+    /*
     Socket* sock;
     for (size_t i = 0; i < this->_sockets.size(); i++) {
         sock = this->_sockets[i];
@@ -255,10 +261,13 @@ void Webserv::timeout(int time_sec)
             WARNING("Timeout! close fd and delete relatived object: close fd=" + tmp_fd);
         }
     }
-}
+    */
+//}
 
-size_t Webserv::count_fd()
-{
+//size_t Webserv::count_fd()
+//{
+    //timeout
+    /*
     size_t cnt = 0;
     map<int, Socket*>::iterator ite = _fd_sockets.begin();
     map<int, Socket*>::iterator end = _fd_sockets.end();
@@ -266,41 +275,86 @@ size_t Webserv::count_fd()
         cnt += ite->second->count_fd();
     }
     return (cnt);
-}
+    */
+    //return (0);
+//}
 
-void Webserv::close_all_fd()
-{
-    map<int, Socket*>::iterator ite = _fd_sockets.begin();
-    map<int, Socket*>::iterator end = _fd_sockets.end();
+//void Webserv::close_all_fd()
+//{
+    //map<int, Socket*>::iterator ite = _fd_sockets.begin();
+    //map<int, Socket*>::iterator end = _fd_sockets.end();
+    /*
     for(; ite != end; ite++){
         ite->second->erase_all_fd();
     }
-    this->_fd_sockets.clear();
-}
+    */
+    //this->_fd_sockets.clear();
+//}
 
 void Webserv::communication()
 {
     DEBUG("Webserv::communication() start");
 
+    while(1)
+    {
+        DEBUG("Webserv::wait() ");
+        waiter.wait();
+        WebservEvent *event = waiter.place_event();
+        switch(event->which())
+        {
+            case READ_EVENT:
+                DEBUG("Webserv::Read Event ");
+                //WebservReader reader(event);
+                reader.read(event);
+                break;
+            case APPLICATION_EVENT:
+                DEBUG("Webserv::Application Event ");
+                //WebservApplication app(event);
+                app.process(event);
+                break;
+            case WRITE_EVENT:
+                DEBUG("Webserv::Write Event ");
+                //WebservSender sender(event);
+                sender.send(event);
+                break;
+        }
+    }
+
+    // wait()  EpollController class(add,modify,remove) -> (epoll-manager -> socket_repository ), map<event, fd>
+    //              map<event, request>
+    //              map<event, response>
+    //
+    // if(READ)
+    //      parse Request  RequestParser<fd, event Request>
+    //      execute server process ServerController
+    //      create response ResponseFactory -> 
+    // else if(WRITE)
+    //      send response 
+
+    /*
+    DEBUG("Webserv::communication() start");
+
     size_t size = this->_sockets.size();
     std::vector<t_epoll_event> events(size);
     struct epoll_event server_event;
-    EpollManager* epoll_manager = EpollManager::get_instance();
+    //EpollController* epoll_controller = EpollController::get_instance();
 
-    memset(&server_event, 0, sizeof(struct epoll_event));
-    if (this->init_epoll() == false) {
-        ERROR("failure to init_epoll()");
-        return;
-    }
+    Utility::memset(&server_event, 0, sizeof(struct epoll_event));
+    */
+    //if (this->init_epoll() == false) {
+        //ERROR("failure to init_epoll()");
+        //return;
+    //}
+    /*
     while (1) {
         int time_msec = -1;
         if (this->_fd_sockets.size() > 0) {
             time_msec = 5;
         }
-        if (events.size() != epoll_manager->get_fd_num()){
-            events.resize(epoll_manager->get_fd_num());
+        if (events.size() != epoll_controller->get_fd_num()){
+            events.resize(epoll_controller->get_fd_num());
         }
-        int nfds = epoll_manager->wait(&(events[0]));
+        int nfds = epoll_controller->wait(&(events[0]));
         cout << "nfds:" << nfds << ", count fd:" << this->count_fd() << endl;
 
         if (this->count_fd() > MAX_FD){
@@ -330,7 +384,6 @@ void Webserv::communication()
                 connected_communication(tmp_fd->first, &(events[i]), socket);
                 continue;
             }
-            /*
             if (cgi_fd != this->_fd_cgi.end()) {
                 CGI* cgi = cgi_fd->second;
                 Response *res = new ResponseCGI(cgi);
@@ -341,27 +394,17 @@ void Webserv::communication()
 
                 continue;
             }
-            */
             Socket* socket = find_listen_socket(fd);
             if (socket) {
-        cout << "No.5" << endl;
                 int new_fd = socket->accept_request();
-                //memset(&server_event, 0, sizeof(server_event));
-                //server_event.events = EPOLLIN;
-                //server_event.data.fd = fd;
                 this->_fd_sockets.insert(std::make_pair(new_fd, socket));
-                epoll_manager->add(new_fd, EPOLLIN);
+                epoll_controller->add(new_fd, EPOLLIN);
                 continue;
-                /*
-
-                if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, fd, &server_event)) {
-                    continue;
-                }
-                */
             }
         cout << "No.6" << endl;
         }
     }
+    */
 }
 
 /*

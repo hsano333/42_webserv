@@ -22,5 +22,4 @@ ConfigLoader::load_file(std::string &filepath)
     while(file.read(buf)){
 
     }
-
 }
