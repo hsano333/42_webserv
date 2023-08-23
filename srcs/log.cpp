@@ -50,7 +50,7 @@ void Log::write_log(const char *file,int line, string& str)
 
 void Log::write(const char *file,int line, const char *level,  const string &str, int log_level)
 {
-    cout << "log test:" << str << endl;
+    //cout << "log test:" << str << endl;
     if (log_level >= LOG_LEVEL){
         Log* log = get_instance();
 

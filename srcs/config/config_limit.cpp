@@ -83,3 +83,8 @@ std::vector<std::pair<CIDR, bool> > const & ConfigLimit::allowed_cidr() const
     return (allowd_cidr);
 }
 
+void ConfigLimit::check()
+{
+    //nothing to do;
+    ;
+}

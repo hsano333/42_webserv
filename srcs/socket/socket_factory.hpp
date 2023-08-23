@@ -8,7 +8,8 @@ class SocketFactory
     public:
         SocketFactory();
         ~SocketFactory();
-        SocketManager *create(Config *cfg);
+        //SocketManager *create(Config *cfg);
+        SocketRepository *create_from_config(Config *cfg);
     private:
         SocketRepository *create_socket_repository(Config *cfg);
         //Config const *cfg;

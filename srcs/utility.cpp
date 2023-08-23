@@ -448,5 +448,4 @@ TEST_CASE("hex_string_to_uchar")
     CHECK_THROWS_AS(Utility::hex_string_to_uchar("g3") ,std::invalid_argument);
 }
 
-
 #endif

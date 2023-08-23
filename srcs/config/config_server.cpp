@@ -110,3 +110,21 @@ void ConfigServer::push_all(std::vector<ConfigLocation*> const &vec)
         this->locations.push_back(vec[i]);
     }
 }
+
+void ConfigServer::check()
+{
+    if(this->get_location_size() == 0)
+    {
+        ERROR("ConfigServer::check(), locations size is 0");
+        throw std::runtime_error("ConfigServer::check(), locations size is 0");
+    }
+    if(!this->listen_.is_valid()){
+        ERROR("ConfigServer::check(),  Port is invalid");
+        throw std::runtime_error("ConfigServer::check(),  Port is invalid");
+    }
+    //if(this->server_name() == ""){
+
+    //}
+    //else if()
+
+}

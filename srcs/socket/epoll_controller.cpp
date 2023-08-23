@@ -1,4 +1,5 @@
 #include "epoll_controller.hpp"
+#include "global.hpp"
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -6,28 +7,40 @@
 using std::cout;
 using std::endl;
 
+
 EpollController::EpollController(
             Epoll epoll,
-            SocketManager *socket_manager
+            SocketRepository *socket_repository
         ):
         epoll(epoll),
-        socket_manager(socket_manager)
+        socket_repository(socket_repository)
 {
     ;
 }
+
+
 
 EpollController::~EpollController()
 {
     ;
 }
 
-/*
-void EpollController::init()
+void EpollController::init_epoll()
 {
     //10 is ignored; reference man;
-    this->epfd_ = epoll_create(10);
+    //this->epfd_ = epoll_create(10);
+    this->epoll.init();
+
+    std::map<int, Socket>::const_iterator ite = socket_repository->begin();
+    std::map<int, Socket>::const_iterator end = socket_repository->end();
+    while(ite != end){
+        int fd = ite->second.get_socket_fd();
+        this->add(fd, EPOLLIN);
+        ite++;
+    }
+
+
 }
-*/
 
 /*
 EpollController* EpollController::_singleton = NULL;
@@ -93,7 +106,7 @@ void EpollController::add(int fd, uint32_t event)
         ERROR("Epoll add Error");
         throw std::runtime_error("Epoll add Error");
     }
-    this->epoll.expand_events();
+    this->epoll.expand_allocated_space();
 }
 
 void EpollController::modify(int fd, uint32_t event)
@@ -153,7 +166,7 @@ void EpollController::erase(int fd)
     //delete (ev);
     //this->events.erase(ite_ev);
     //return (true);
-    this->epoll.contract_events();
+    this->epoll.contract_allocated_space();
 
 }
 
@@ -171,19 +184,27 @@ size_t EpollController::get_fd_num()
 
 void EpollController::wait()
 {
+
+    DEBUG("EpollController::wait()");
+    MYINFO("EpollController::epoll.fd():" + Utility::to_string(epoll.fd()) + ",epoll.event_size():" + Utility::to_string(epoll.allocated_event_size()));
     int time_msec = -1;
     //if (get_fd_num() > 0) {
         time_msec = 5;
     //}
 
     //std::vector<t_epoll_event> events_vec;
-    int nfds = epoll_wait(epoll.fd(), epoll.returned_events_pointer(), epoll.event_size(), time_msec * 1000);
+    int nfds = epoll_wait(epoll.fd(), epoll.returned_events_pointer(), epoll.allocated_event_size(), time_msec * 1000);
+    //int nfds = epoll_wait(epoll.fd(), epoll.returned_events_pointer(), 3, time_msec * 1000);
     if(nfds == 0){
+        MYINFO("timeout:" + Utility::to_string(time_msec) + "sec");
+        std::cout << "time out" << std::endl;
         //timeout todo 
         // add event_manager timeaut value;
+    }else{
+        std::cout << " not time out" << std::endl;
 
     }
-    epoll.set_event_number(nfds);
+    epoll.save_executable_events_number(nfds);
     //int nfds = epoll_wait(this->epfd_, (&(this->events[0])), get_fd_num(), time_msec * 1000);
     //return (nfds);
     //if (this->count_fd() > MAX_FD){

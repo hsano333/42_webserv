@@ -2,6 +2,7 @@
 #ifndef WEBSERV_DISPATCHER_HPP
 #define WEBSERV_DISPATCHER_HPP
 #include "webserv_event.hpp"
+#include "event_manager.hpp"
 #include "epoll_controller.hpp"
 
 /*

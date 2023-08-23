@@ -154,7 +154,7 @@ Socket* Webserv::find_listen_socket(int socket_fd)
             req->print_request();
 
             if (req->get_state() != LOADED_STATUS_BODY) {
-                MYINFO("LOADED_STATUS_BODY is not END_LOAD , state=" + Utility::to_string(req->get_state()) + ", fd:" + Utility::to_string(fd));
+                MYDEBUG("LOADED_STATUS_BODY is not END_LOAD , state=" + Utility::to_string(req->get_state()) + ", fd:" + Utility::to_string(fd));
                 return;
             }
 
@@ -294,7 +294,6 @@ Socket* Webserv::find_listen_socket(int socket_fd)
 void Webserv::communication()
 {
     DEBUG("Webserv::communication() start");
-
     while(1)
     {
         DEBUG("Webserv::wait() ");

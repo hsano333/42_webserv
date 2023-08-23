@@ -38,8 +38,8 @@ bool CIDR::in(IP_Address const & address) const
 
     unsigned int min_address = addr & bit;
     unsigned int max_address = (min_address | (bit ^ 0xffffffff));
-    cout << "min_address:" << min_address << endl;
-    cout << "max_address:" << max_address << endl;
+    //cout << "min_address:" << min_address << endl;
+    //cout << "max_address:" << max_address << endl;
 
     if(min_address <= target_addr && target_addr <= max_address)
     {

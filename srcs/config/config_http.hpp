@@ -17,6 +17,7 @@ class ConfigHttp : public ConfigObject<ConfigServer*>
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigServer*> const &vec);
+        void check();
         size_t get_max_body_size();
     private:
         std::vector<ConfigServer*> servers;

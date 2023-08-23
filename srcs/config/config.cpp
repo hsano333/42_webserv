@@ -374,3 +374,10 @@ void Config::print_cfg()
 
 }
 
+void Config::check()
+{
+    if(http == NULL){
+        ERROR("Config::check(),  http is null");
+        throw std::runtime_error("Config::check(),  http is null");
+    }
+}

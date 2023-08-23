@@ -13,6 +13,7 @@ class ConfigObject
         virtual void assign_properties(std::vector<std::vector<std::string> > &properties) = 0;
         virtual void assign_out_properties(std::vector<std::string> &properties) = 0;
         virtual void push_all(std::vector<T> const &object) = 0;
+        virtual void check() = 0;
         //virtual void assign_properties() = 0;
         //virtual T check_properties() = 0;
     private:

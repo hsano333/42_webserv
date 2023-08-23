@@ -19,13 +19,20 @@ using std::cerr;
 
 Socket::Socket() : sock_fd(0)
 {
+    ;
+}
+
+Socket::Socket(Socket const &socket)
+{
+    this->sock_fd = socket.sock_fd;
+    this->port = socket.port;
 }
 
 Socket::~Socket()
 {
 }
 
-Socket Socket::create(Port &port_)
+Socket Socket::create(Port const &port_)
 {
     Socket socket;
     socket.port = port_;
@@ -87,7 +94,7 @@ Socket& Socket::operator=(const Socket& sock_fdet)
     return (*this);
 }
 
-int Socket::get_socket_fd()
+int Socket::get_socket_fd() const
 {
     return (this->sock_fd);
 }

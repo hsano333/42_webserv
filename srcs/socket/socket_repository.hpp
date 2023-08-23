@@ -10,8 +10,11 @@ class SocketRepository
         void insert(Socket socket);
         void close_all();
         Socket get(int id);
+        //std::map<int, Socket> const & socket();
         size_t size();
-    public:
+        std::map<int, Socket>::const_iterator begin();
+        std::map<int, Socket>::const_iterator end();
+    private:
         std::map<int, Socket> sockets;
 };
 

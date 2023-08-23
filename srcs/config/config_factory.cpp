@@ -56,6 +56,7 @@ std::vector<ConfigLocation*> ConfigFactory::create_location(ConfigParseredData &
         //ConfigLimit *tmp = this->create_limit(parsered_limit_data);
         //location->limits.push_back(tmp);
         location->push_all(this->create_limit(parsered_limit_data));
+        location->check();
         locations.push_back(location);
     }
     return (locations);
@@ -71,6 +72,7 @@ std::vector<ConfigServer*> ConfigFactory::create_server(ConfigParseredData &pars
         server->assign_out_properties(parsered_server_data.properties(i));
         //ConfigLocation *tmp = this->create_location(parsered_location_data);
         server->push_all(this->create_location(parsered_location_data));
+        server->check();
         servers.push_back(server);
     }
     return (servers);
@@ -87,6 +89,7 @@ std::vector<ConfigHttp*> ConfigFactory::create_http(ConfigParseredData &parsered
         http->assign_out_properties(parsered_http_data.properties(0));
         //ConfigServer *tmp = this->create_server(parsered_server_http);
         http->push_all(this->create_server(parsered_server_http));
+        http->check();
         https.push_back(http);
     }else{
         ERROR("Invalid Config Error: There is no http directive or more than 2 ");
@@ -113,5 +116,6 @@ Config* ConfigFactory::create()
         //throw std::runtime_error("config parser error:http");
     //}
 
+    config->check();
     return (config);
 }

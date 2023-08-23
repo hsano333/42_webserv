@@ -69,10 +69,5 @@ class Webserv
     void close_all_fd();
     */
 
-
-
-
-
-
 };
 #endif /* WEBSERV_H */

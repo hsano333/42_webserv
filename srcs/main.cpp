@@ -81,13 +81,23 @@ Config *create_config(std::string &cfg_file)
 }
 
 
+/*
 SocketManager *create_socket_manager(Config *cfg)
 {
-
     SocketFactory  factory = SocketFactory();
-    SocketManager* socket_manager = factory.create(cfg);
-    exit(1);
-    return (socket_manager);
+    //SocketManager* socket_manager = factory.create(cfg);
+    //return (socket_manager);
+    SocketRepository* socket_repository = factory.create_from_config(cfg);
+    return (socket_repository );
+}
+*/
+SocketRepository *create_sockets(Config *cfg)
+{
+    SocketFactory  factory = SocketFactory();
+    //SocketManager* socket_manager = factory.create(cfg);
+    //return (socket_manager);
+    SocketRepository* socket_repository = factory.create_from_config(cfg);
+    return (socket_repository );
 }
 
 int main(int argc, char const* argv[])
@@ -101,11 +111,18 @@ int main(int argc, char const* argv[])
 
     Config *cfg = create_config(cfg_file);
     //cfg->print_cfg();
-    SocketManager *socket_manager = create_socket_manager(cfg);
-    exit(1);
-    Epoll epoll = Epoll::from_socket_size(socket_manager->get_base_sockets_size());
+    SocketRepository *socket_repository = create_sockets(cfg);
+    //Epoll epoll = Epoll::from_sockets(socket_repository);
+
+
+    //std::cout << epoll2.allocated_event_size() << endl;
+    //exit(1);
+    //Epoll *epoll = Epoll::from_socket_size(socket_manager->get_base_sockets_size());
+
     //Epoll *epoll = new Epoll();
-    EpollController *epoll_controller = new EpollController(epoll, socket_manager);
+    EpollController *epoll_controller = new EpollController(Epoll(), socket_repository);
+    epoll_controller->init_epoll();
+    //epoll_controller.add_sockets_fd();
     (void)cfg;
 
 
@@ -136,14 +153,16 @@ int main(int argc, char const* argv[])
     WebservApplication app;
     WebservSender sender;
 
+    SocketManager* socket_manager = new SocketManager();
+
     Webserv webserv(cfg,socket_manager,waiter,reader,app,sender);
                     
                     
                     
                     
                     
-    while (1) {
+    //while (1) {
         server(webserv);
-    }
+    //}
     return 0;
 }

@@ -40,6 +40,7 @@ class Config : public ConfigObject<ConfigHttp*>
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigHttp*> const &vec);
+        void check();
 
         void print_cfg();
     private:

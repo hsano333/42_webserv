@@ -14,6 +14,7 @@ class ConfigLimit : public ConfigObject<ConfigLastObject*>
         //std::map<std::string, std::vector<std::string> > properties;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
+        void check();
 
         std::vector<Method> const & allowed_method() const;
         std::vector<std::pair<CIDR, bool> > const &allowed_cidr() const;

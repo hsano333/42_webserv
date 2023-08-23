@@ -80,3 +80,25 @@ size_t ConfigHttp::get_max_body_size()
     return (this->client_max_body_size.to_number());
 }
 
+void ConfigHttp::check()
+{
+    if(this->get_server_size() == 0)
+    {
+        ERROR("ConfigHttp::check(), servers size is 0");
+        throw std::runtime_error("ConfigHttp::check(), servers size is 0");
+    }
+    if(this->get_server_size() >= 2){
+        size_t default_server_count = 0;
+        for(size_t i=0;i<this->get_server_size(); i++){
+            if(this->server(i)->is_default_server()){
+                default_server_count++;
+            }
+
+        }
+        if(default_server_count >=2){
+            ERROR("ConfigHttp::check(), default_servers count is >= 2");
+            throw std::runtime_error("ConfigHttp::check(), default_servers count is >= 2");
+        }
+    }
+
+}

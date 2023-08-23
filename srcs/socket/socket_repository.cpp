@@ -31,3 +31,13 @@ size_t SocketRepository::size()
 {
     return (this->sockets.size());
 }
+
+std::map<int, Socket>::const_iterator SocketRepository::begin()
+{
+    return (this->sockets.begin());
+}
+
+std::map<int, Socket>::const_iterator SocketRepository::end()
+{
+    return (this->sockets.end());
+}

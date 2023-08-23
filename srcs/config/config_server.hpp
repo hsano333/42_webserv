@@ -17,10 +17,12 @@ class ConfigServer : public ConfigObject<ConfigLocation*>
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigLocation*> const &vec);
+        void check();
         std::string const &server_name() const;
         Port const & listen() const;
         bool is_default_server() const;
     private:
+
         std::vector<ConfigLocation*> locations;
         void set_listen(std::vector<std::string> &vec);
         void set_server_name(std::vector<std::string> &vec);

@@ -13,7 +13,7 @@ FILESYSTEMSRC 			:= file.cpp read_raw.cpp
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp  webserv_event.cpp header.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp  webserv_event.cpp header.cpp event_manager.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 HTTPDIR				:= http/

@@ -26,15 +26,16 @@ class Socket
 {
     public:
         Socket();
+        Socket(Socket const &socket);
         //Socket(Port &port);
         ~Socket();
         Socket& operator=(Socket const &sock_fdet);
-        static Socket create(Port &port);
+        static Socket create(Port const &port);
     //Socket(std::string port);
     //Socket(Port const &port);
     //Socket(const Socket& socket);
     //Socket& operator=(const Socket& socket);
-        int get_socket_fd();
+        int get_socket_fd() const;
         void close_fd();
     private:
         void init();

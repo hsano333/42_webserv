@@ -2,9 +2,14 @@
 #include "global.hpp"
 #include "utility.hpp"
 
-Port::Port()
+Port::Port() : port(0)
 {
     ;
+}
+
+Port::Port(Port const &port)
+{
+    this->port = port.port;
 }
 
 Port::~Port()
@@ -23,7 +28,7 @@ Port Port::from_string(std::string const &port)
     unsigned int number = Utility::to_uint(port);
     if(65535 >= number && number > 0){
         object.port = number;
-        return object;
+        return (object);
     }
     WARNING("Port number Invalid argument:" + number);
     throw std::invalid_argument("Port number:Invalid Argument");
@@ -79,6 +84,15 @@ bool Port::operator<(Port const & port) const
 {
     return (this->port < port.port);
 }
+
+bool Port::is_valid()
+{
+    if(this->port == 0){
+        return false;
+    }
+    return true;
+}
+
 
 
 #ifdef UNIT_TEST

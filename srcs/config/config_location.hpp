@@ -23,14 +23,12 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         std::vector<std::string> const &indexes() const;
         std::map<StatusCode, std::string> const &error_pages() const;
 
-
-
-
         //std::vector<std::string> urls;
         //std::map<std::string, std::vector<std::string> > properties;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigLimit*> const &vec);
+        void check();
 
         //std::vector<std::string> out_properties;
         //std::string location;
@@ -39,6 +37,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         //std::vector<std::string> indexes;
 
     private:
+
         std::vector<ConfigLimit*> limits;
         std::vector<std::string> pathes_;
         std::string root_;

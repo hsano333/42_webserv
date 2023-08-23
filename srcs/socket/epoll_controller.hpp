@@ -12,7 +12,7 @@
 class EpollController : public IOMultiplexing
 {
     public:
-        EpollController(Epoll epoll,SocketManager *socket_manager);
+        EpollController(Epoll epoll,SocketRepository *socket_repository);
         ~EpollController();
         void wait();
         void add(int fd, uint32_t event);
@@ -21,10 +21,12 @@ class EpollController : public IOMultiplexing
         int get_fd();
         //int get_event_fd();
 
-        //void init();
+        void init_epoll();
+        //void add_sockets_fd();
     private:
+        //Epoll *epoll;
         Epoll epoll;
-        SocketManager *socket_manager;
+        SocketRepository *socket_repository;
         EventManager *event_manager;
         //t_epoll_event* get_event(int fd);
 

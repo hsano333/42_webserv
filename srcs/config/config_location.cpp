@@ -168,3 +168,18 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
         this->error_pages_.insert(std::make_pair(status_code, path));
     }
 }
+
+
+void ConfigLocation::check()
+{
+    if(pathes_.size() == 0)
+    {
+        ERROR("ConfigLocation::check(), pathes_ size is 0");
+        throw std::runtime_error("ConfigLocation::check(), pathes_ size is 0");
+    }
+    else if(root_ == "" && cgi_pass_ == "")
+    {
+        ERROR("ConfigLocation::check(), Neither root_ nor cgi_pass is set");
+        throw std::runtime_error("ConfigLocation::check(), Neither root_ nor cgi_pass is set");
+    }
+}
