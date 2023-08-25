@@ -16,8 +16,8 @@ class SocketManager
         void set_base_repository(SocketRepository *base);
         void set_rw_repository(SocketRepository *rw);
         size_t get_base_sockets_size();
-        std::map<int, Socket>::const_iterator base_begin();
-        std::map<int, Socket>::const_iterator base_end();
+        std::map<FileDiscriptor, Socket>::const_iterator base_begin();
+        std::map<FileDiscriptor, Socket>::const_iterator base_end();
         //void set_auto_pointer();
     private:
         SocketRepository *socket_base_repository;

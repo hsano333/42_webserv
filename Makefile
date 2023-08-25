@@ -25,7 +25,7 @@ NETWORKSRC 			:= ip_address.cpp cidr.cpp  port.cpp
 NETWORK 			:= $(addprefix $(NETWORKDIR)/, $(NETWORKSRC))
 
 SOCKETDIR			:= socket/
-SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp
+SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp file_discriptor.cpp
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
 

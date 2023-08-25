@@ -15,16 +15,17 @@ class Epoll
         //static Epoll from_sockets(SocketRepository const &socket_repository);
         Epoll& operator=(Epoll const & epoll);
         void init();
-        int fd();
-        t_epoll_event *returned_events_pointer();
-        t_epoll_event const *event_related_with_fd(int fd);
+        FileDiscriptor fd();
+        t_epoll_event *allocated_event_pointer();
+        t_epoll_event const *event_related_with_fd(FileDiscriptor fd);
         size_t allocated_event_size() const;
         //void resize_allocated_event_size(size_t size);
         void save_executable_events_number(int number);
         void expand_allocated_space();
         void contract_allocated_space();
+        std::vector<t_epoll_event> &get_events();
     private:
-        int epfd;
+        FileDiscriptor epfd;
         int executable_event_number;
         std::vector<t_epoll_event> allocated_events_space;
 };

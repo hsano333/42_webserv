@@ -12,11 +12,12 @@
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include "port.hpp"
+#include "file_discriptor.hpp"
 
 #define BUF_MAX (1600)
 
 typedef struct clientinfo {
-    int fd;
+    FileDiscriptor fd;
     char buf[1024];
     int n;
     int state;
@@ -35,28 +36,28 @@ class Socket
     //Socket(Port const &port);
     //Socket(const Socket& socket);
     //Socket& operator=(const Socket& socket);
-        int get_socket_fd() const;
+        FileDiscriptor get_socket_fd() const;
         void close_fd();
     private:
         void init();
-        int sock_fd;
+        FileDiscriptor sock_fd;
         Port port;
         void set_address_info(struct addrinfo& info);
-        int make_socket();
+        FileDiscriptor make_socket();
         const static int _SOCKET_NUM = 10;
-    //Request* recv(int fd);
-    //bool send_response(Response* res, int fd);
-    //bool send_response(int fd);
+    //Request* recv(FileDiscriptor fd);
+    //bool send_response(Response* res, FileDiscriptor fd);
+    //bool send_response(FileDiscriptor fd);
     //int accept_request();
-    //void set_response(int fd, Response* res);
-    //void set_response(int fd, ResponseCGI* res);
-    //void set_request(int fd, RequestCGI* req_cgi);
-    ////void set_cgi(int fd, Response* res);
-    //Response* get_response(int fd);
-    //void erase_request(int fd);
-    //void erase_response(int fd);
+    //void set_response(FileDiscriptor fd, Response* res);
+    //void set_response(FileDiscriptor fd, ResponseCGI* res);
+    //void set_request(FileDiscriptor fd, RequestCGI* req_cgi);
+    ////void set_cgi(FileDiscriptor fd, Response* res);
+    //Response* get_response(FileDiscriptor fd);
+    //void erase_request(FileDiscriptor fd);
+    //void erase_response(FileDiscriptor fd);
     //std::vector<int> timeout(int time);
-    //void erase_fd(int fd);
+    //void erase_fd(FileDiscriptor fd);
     //void erase_all_fd();
     //size_t count_fd();
 

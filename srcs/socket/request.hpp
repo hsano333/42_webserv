@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "file_discriptor.hpp"
 
 using std::map;
 using std::string;
@@ -32,8 +33,8 @@ class Request : public SocketData
     public:
         Request();
         virtual ~Request();
-        Request(int fd);
-        Request(int fd, IRead* iread);
+        Request(FileDiscriptor fd);
+        Request(FileDiscriptor fd, IRead* iread);
         void read_up_to_header();
         REQUEST_STATE get_state();
         void set_port(Port &port);
@@ -90,9 +91,9 @@ class Request : public SocketData
 //class Request : public SocketData
 //{
 //  public:
-//    Request(int fd);
-//    Request(int fd, std::string& port);
-//    Request(int fd, IRead* iread);
+//    Request(FileDiscriptor fd);
+//    Request(FileDiscriptor fd, std::string& port);
+//    Request(FileDiscriptor fd, IRead* iread);
 //    virtual ~Request();
 //
 //    void print_request() const;

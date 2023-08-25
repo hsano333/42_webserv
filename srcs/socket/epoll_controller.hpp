@@ -15,10 +15,13 @@ class EpollController : public IOMultiplexing
         EpollController(Epoll epoll,SocketRepository *socket_repository);
         ~EpollController();
         void wait();
-        void add(int fd, uint32_t event);
-        void erase(int fd);
-        void modify(int fd, uint32_t event);
-        int get_fd();
+        void add(FileDiscriptor fd, uint32_t event);
+        void erase(FileDiscriptor fd);
+        void modify(FileDiscriptor fd, uint32_t event);
+        FileDiscriptor get_fd();
+        bool have_executable_events();
+        std::vector<t_epoll_event> &take_out_event();
+        //int get_
         //int get_event_fd();
 
         void init_epoll();
@@ -28,12 +31,12 @@ class EpollController : public IOMultiplexing
         Epoll epoll;
         SocketRepository *socket_repository;
         EventManager *event_manager;
-        //t_epoll_event* get_event(int fd);
+        //t_epoll_event* get_event(FileDiscriptor fd);
 
         //static EpollController& get_instance();
-        //bool add(int fd, uint32_t event);
-        //bool modify(int fd, uint32_t event);
-        //bool erase(int fd);
+        //bool add(FileDiscriptor fd, uint32_t event);
+        //bool modify(FileDiscriptor fd, uint32_t event);
+        //bool erase(FileDiscriptor fd);
         //int wait(t_epoll_event* event);
         //size_t get_fd_num();
         //int epfd();

@@ -297,8 +297,10 @@ void Webserv::communication()
     while(1)
     {
         DEBUG("Webserv::wait() ");
-        waiter.wait();
-        WebservEvent *event = waiter.place_event();
+        if(waiter.is_not_busy()){
+            waiter.wait();
+        }
+        WebservEvent *event = waiter.serve_event();
         switch(event->which())
         {
             case READ_EVENT:

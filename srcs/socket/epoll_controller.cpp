@@ -1,5 +1,6 @@
 #include "epoll_controller.hpp"
 #include "global.hpp"
+#include "webserv_event.hpp"
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -31,10 +32,10 @@ void EpollController::init_epoll()
     //this->epfd_ = epoll_create(10);
     this->epoll.init();
 
-    std::map<int, Socket>::const_iterator ite = socket_repository->begin();
-    std::map<int, Socket>::const_iterator end = socket_repository->end();
+    std::map<FileDiscriptor, Socket>::const_iterator ite = socket_repository->begin();
+    std::map<FileDiscriptor, Socket>::const_iterator end = socket_repository->end();
     while(ite != end){
-        int fd = ite->second.get_socket_fd();
+        FileDiscriptor fd = ite->second.get_socket_fd();
         this->add(fd, EPOLLIN);
         ite++;
     }
@@ -73,7 +74,7 @@ bool EpollController::check_error()
 */
 
 /*
-t_epoll_event* EpollController::get_event(int fd)
+t_epoll_event* EpollController::get_event(FileDiscriptor fd)
 {
     std::vector<t_epoll_event*>::iterator ite = events.begin();
     std::vector<t_epoll_event*>::iterator end = events.end();
@@ -94,22 +95,24 @@ void EpollController::erase_event(t_epoll_event* ev)
 }
 */
 
-void EpollController::add(int fd, uint32_t event)
+void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
 {
     //if (check_error() == false){
         //return (false);
     //}
+
+    int fd = fd_obj.to_int();
     t_epoll_event ev;
     ev.events = event;
     ev.data.fd = fd;
-    if (epoll_ctl(this->epoll.fd(), EPOLL_CTL_ADD, fd, &ev) != 0) {
+    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_ADD, fd, &ev) != 0) {
         ERROR("Epoll add Error");
         throw std::runtime_error("Epoll add Error");
     }
     this->epoll.expand_allocated_space();
 }
 
-void EpollController::modify(int fd, uint32_t event)
+void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
 {
     //if (check_error() == false){
         //return (false);
@@ -128,10 +131,11 @@ void EpollController::modify(int fd, uint32_t event)
     //t_epoll_event const *ev = this->epoll.event_related_with_fd(fd);
     //cout << "EPOLL CTL  fd:" << fd << endl;
     //ev.data.fd = event;
+    int fd = fd_obj.to_int();
     t_epoll_event ev;
     ev.events = event;
     ev.data.fd = fd;
-    if (epoll_ctl(this->epoll.fd(), EPOLL_CTL_MOD, fd, &ev) != 0) {
+    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_MOD, fd, &ev) != 0) {
         ERROR("Epoll modify Error");
         throw std::runtime_error("Epoll modify Error");
         //return (false);
@@ -139,12 +143,13 @@ void EpollController::modify(int fd, uint32_t event)
     //return (true);
 }
 
-void EpollController::erase(int fd)
+void EpollController::erase(FileDiscriptor fd_obj)
 {
     //if (check_error() == false){
         //return (false);
     //}
-    t_epoll_event const *event = this->epoll.event_related_with_fd(fd);
+    int fd = fd_obj.to_int();
+    t_epoll_event const *event = this->epoll.event_related_with_fd(fd_obj);
     t_epoll_event ev;
     ev.data.fd = fd;
     ev.events = event->events;
@@ -157,7 +162,7 @@ void EpollController::erase(int fd)
         //return (true);
     //}
     //t_epoll_event* ev = (*ite_ev);
-    if (epoll_ctl(this->epoll.fd(), EPOLL_CTL_DEL, fd, &ev) != 0) {
+    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_DEL, fd, &ev) != 0) {
         ERROR("Epoll erase Error");
         throw std::runtime_error("Epoll erase Error");
         //return (false);
@@ -170,9 +175,9 @@ void EpollController::erase(int fd)
 
 }
 
-int EpollController::get_fd()
+FileDiscriptor EpollController::get_fd()
 {
-    return (0);
+    return (this->epoll.fd());
 }
 
 /*
@@ -193,15 +198,15 @@ void EpollController::wait()
     //}
 
     //std::vector<t_epoll_event> events_vec;
-    int nfds = epoll_wait(epoll.fd(), epoll.returned_events_pointer(), epoll.allocated_event_size(), time_msec * 1000);
-    //int nfds = epoll_wait(epoll.fd(), epoll.returned_events_pointer(), 3, time_msec * 1000);
+    int nfds = epoll_wait(epoll.fd().to_int(), epoll.allocated_event_pointer(), epoll.allocated_event_size(), time_msec * 1000);
+    //int nfds = epoll_wait(epoll.fd(), epoll.allocated_event_pointer(), 3, time_msec * 1000);
     if(nfds == 0){
         MYINFO("timeout:" + Utility::to_string(time_msec) + "sec");
         std::cout << "time out" << std::endl;
         //timeout todo 
         // add event_manager timeaut value;
     }else{
-        std::cout << " not time out" << std::endl;
+        //std::cout << " not time out" << std::endl;
 
     }
     epoll.save_executable_events_number(nfds);
@@ -212,6 +217,29 @@ void EpollController::wait()
     //}
 }
 
+bool EpollController::have_executable_events()
+{
+    if(epoll.allocated_event_size() > 0){
+        return (true);
+    }
+    return (false);
+}
+
+std::vector<t_epoll_event> & EpollController::take_out_event()
+{
+    /*
+    std::vector<t_epoll_event> io_events = epoll.get_events();
+    size_t io_events_size = epoll.allocated_event_size();
+    for(size_t i=0;i<io_events_size;i++){
+        WebservEvent *event = WebservEvent::from_epoll_event((io_events[i]));
+        (void)event;
+        //events[i];
+
+    }
+    */
+    epoll.save_executable_events_number(0);
+    return (epoll.get_events());
+}
 /*
 EpollController* EpollController::get_instance()
 {

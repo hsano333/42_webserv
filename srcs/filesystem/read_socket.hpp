@@ -8,7 +8,7 @@ class ReadSocket : IReader
     public:
         ReadSocket();
         ~ReadSocket();
-        int iread(int fd, char *buf);
+        int iread(FileDiscriptor fd, char *buf);
 
 };
 

@@ -36,7 +36,7 @@ class Webserv
     Webserv& operator=(const Webserv& sockets);
     ~Webserv();
     void communication();
-    //bool change_epoll_config_to_write(int fd, int event);
+    //bool change_epoll_config_to_write(FileDiscriptor fd, int event);
     void reset();
 
   private:
@@ -57,7 +57,7 @@ class Webserv
     //void init_socket(std::set<Port>);
     bool init_epoll();
     void close_all();
-    void connected_communication(int fd, struct epoll_event* event, Socket* socket);
+    void connected_communication(FileDiscriptor fd, struct epoll_event* event, Socket* socket);
     vector<Socket*> _sockets;
     Socket* find_listen_socket(int socket_fd);
     const static unsigned int BODY_MAX = INT_MAX;

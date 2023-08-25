@@ -48,30 +48,33 @@ Epoll Epoll::from_sockets(SocketRepository const &socket_repository)
 void Epoll::init()
 {
     //10 is ignored; reference man;
-    this->epfd = epoll_create(10);
+    int tmp_fd = epoll_create(10);
+    this->epfd = FileDiscriptor::from_int(tmp_fd);
+
+
     if(this->epfd < 0){
         ERROR("Epoll Create Error");
         std::runtime_error("Epoll Create Error:");
     }
 }
 
-int Epoll::fd()
+FileDiscriptor Epoll::fd()
 {
     return (this->epfd);
 }
 
-t_epoll_event *Epoll::returned_events_pointer()
+t_epoll_event *Epoll::allocated_event_pointer()
 {
     return &(this->allocated_events_space[0]);
 }
 
-t_epoll_event const* Epoll::event_related_with_fd(int fd)
+t_epoll_event const* Epoll::event_related_with_fd(FileDiscriptor fd)
 {
     std::vector<t_epoll_event>::const_iterator ite = this->allocated_events_space.begin();
     std::vector<t_epoll_event>::const_iterator end = this->allocated_events_space.end();
     while(ite != end){
         const t_epoll_event &ev = *ite;
-        if(ev.data.fd == fd){
+        if(fd == ev.data.fd){
             return &(*ite);
         }
         ite++;
@@ -86,6 +89,12 @@ t_epoll_event const* Epoll::event_related_with_fd(int fd)
 size_t Epoll::allocated_event_size() const
 {
     return (this->allocated_events_space.size());
+}
+
+std::vector<t_epoll_event> &Epoll::get_events()
+{
+    return (this->allocated_events_space);
+
 }
 
 /*

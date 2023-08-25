@@ -17,15 +17,17 @@ typedef enum E_WebservEvent
 class WebservWaiter
 {
     public:
-        WebservWaiter(IOMultiplexing *io_controller,
-                      EventManager event_manager
+        WebservWaiter(IOMultiplexing *io_multi_controller,
+                      EventManager *event_manager
                 );
         ~WebservWaiter();
         void wait();
-        WebservEvent* place_event();
+        bool is_not_busy();
+        WebservEvent* serve_event();
+        void copy_event_to_manager();
     private:
-        IOMultiplexing *io_controller;
-        EventManager &event_manager;
+        IOMultiplexing *io_multi_controller;
+        EventManager *event_manager;
         //WebservEvent *event;
 };
 

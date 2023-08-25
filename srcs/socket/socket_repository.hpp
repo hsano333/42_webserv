@@ -9,13 +9,13 @@ class SocketRepository
         ~SocketRepository();
         void insert(Socket socket);
         void close_all();
-        Socket get(int id);
+        //Socket get(int id);
         //std::map<int, Socket> const & socket();
         size_t size();
-        std::map<int, Socket>::const_iterator begin();
-        std::map<int, Socket>::const_iterator end();
+        std::map<FileDiscriptor, Socket>::const_iterator begin();
+        std::map<FileDiscriptor, Socket>::const_iterator end();
     private:
-        std::map<int, Socket> sockets;
+        std::map<FileDiscriptor, Socket> sockets;
 };
 
 #endif

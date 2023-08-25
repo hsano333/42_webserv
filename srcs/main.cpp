@@ -28,6 +28,7 @@
 #include "webserv_reader.hpp"
 #include "webserv_application.hpp"
 #include "webserv_sender.hpp"
+#include "event_manager.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN 
@@ -147,10 +148,10 @@ int main(int argc, char const* argv[])
     //        ResponseFactory(create(Request))
     //        ResponseSender(Socket)
 
-    EventManager event_manager;
+    EventManager *event_manager = new EventManager();
     WebservWaiter waiter(epoll_controller, event_manager);
-    WebservReader reader;
-    WebservApplication app;
+    WebservReader reader(epoll_controller, event_manager);
+    WebservApplication app(epoll_controller, event_manager);
     WebservSender sender;
 
     SocketManager* socket_manager = new SocketManager();

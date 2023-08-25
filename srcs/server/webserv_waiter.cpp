@@ -2,10 +2,10 @@
 #include "webserv_waiter.hpp"
 
 WebservWaiter::WebservWaiter(
-            IOMultiplexing *io_controller,
-            EventManager event_manager
+            IOMultiplexing *io_multi_controller,
+            EventManager *event_manager
         ):
-        io_controller(io_controller),
+        io_multi_controller(io_multi_controller),
         event_manager(event_manager)
 {
     ;
@@ -16,13 +16,35 @@ WebservWaiter::~WebservWaiter()
     ;
 }
 
+
+
 void WebservWaiter::wait()
 {
-    io_controller->wait();
+    io_multi_controller->wait();
 }
 
-WebservEvent* WebservWaiter::place_event()
+bool WebservWaiter::is_not_busy()
 {
-    WebservEvent *event = new WebservEvent();
-    return event;
+    return (event_manager->event_size());
 }
+
+void WebservWaiter::copy_event_to_manager()
+{
+    //copy_event_to_manager(event_manager);
+    //
+}
+
+
+WebservEvent* WebservWaiter::serve_event()
+{
+    std::vector<t_epoll_event> &take_out_events = io_multi_controller->take_out_event();
+    for(size_t i=0;i<take_out_events.size();i++){
+        WebservEvent *event = WebservEvent::from_epoll_event(take_out_events[i]);
+        event_manager->push(event);
+    }
+    WebservEvent *returned_event = event_manager->top();
+    event_manager->pop();
+    return (returned_event);
+}
+
+

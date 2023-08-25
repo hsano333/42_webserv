@@ -8,7 +8,7 @@
 class FDManager : public SocketData
 {
   public:
-    FDManager(int fd);
+    FDManager(FileDiscriptor fd);
     ~FDManager();
     void insert(Request* req);
     void insert(Response* res);

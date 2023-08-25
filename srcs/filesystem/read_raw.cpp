@@ -9,7 +9,7 @@ ReadRaw::~ReadRaw()
 {
 }
 
-int ReadRaw::iread(int fd, char *buf)
+int ReadRaw::iread(FileDiscriptor fd, char *buf)
 {
-    return read(fd, buf, MAX_READ_SIZE);
+    return read(fd.to_int(), buf, MAX_READ_SIZE);
 }

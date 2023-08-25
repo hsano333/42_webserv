@@ -2,7 +2,7 @@
 #include "config.hpp"
 #include <unistd.h>
 
-FDManager::FDManager(int fd) : SocketData(), _fd(fd), _req(NULL), _res(NULL) {}
+FDManager::FDManager(FileDiscriptor fd) : SocketData(), _fd(fd), _req(NULL), _res(NULL) {}
 
 FDManager::~FDManager()
 {

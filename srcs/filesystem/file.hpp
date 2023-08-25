@@ -3,6 +3,7 @@
 
 #include <string>
 #include "ireader.hpp"
+#include "file_discriptor.hpp"
 
 typedef enum E_RWOption
 {
@@ -31,6 +32,7 @@ class File
         void write(char *buf);
 
     private:
+        //File();
         std::string filepath;
         RWOption    option;
         int         fd;

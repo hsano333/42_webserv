@@ -17,7 +17,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-Socket::Socket() : sock_fd(0)
+Socket::Socket() : sock_fd(FileDiscriptor::from_int(0))
 {
     ;
 }
@@ -41,9 +41,10 @@ Socket Socket::create(Port const &port_)
 }
 
 
-int Socket::make_socket()
+FileDiscriptor Socket::make_socket()
 {
-    return (socket(AF_INET, SOCK_STREAM, 0));
+    int tmp_fd = (socket(AF_INET, SOCK_STREAM, 0));
+    return (FileDiscriptor::from_int(tmp_fd));
 }
 
 void Socket::set_address_info(struct addrinfo& info)
@@ -59,10 +60,10 @@ void Socket::init()
     this->sock_fd = this->make_socket();
     //Utility::memset(&(clientinfo), 0, sizeof(s_clientinfo));
     //this->_ev.data.ptr = &clientinfo;
-    if (this->sock_fd < 0) {
-        ERROR("Failed to create socket");
-        throw std::runtime_error("Failed to create sock_fdet\n");
-    }
+    //if (this->sock_fd < 0) {
+        //ERROR("Failed to create socket");
+        //throw std::runtime_error("Failed to create sock_fdet\n");
+    //}
 
     struct addrinfo hint;
     Utility::memset(&hint, 0, sizeof(struct addrinfo));
@@ -76,15 +77,15 @@ void Socket::init()
         throw std::runtime_error("Failed to init()\n");
     }
     int yes = 1;
-    setsockopt(this->sock_fd, SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(yes));
-    if (bind(this->sock_fd, res->ai_addr, res->ai_addrlen) != 0) {
+    setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(yes));
+    if (bind(this->sock_fd.to_int(), res->ai_addr, res->ai_addrlen) != 0) {
         this->close_fd();
         freeaddrinfo(res);
         ERROR("Error bind:");
         throw std::runtime_error("Failed to bind()\n");
     }
     freeaddrinfo(res);
-    listen(this->sock_fd, _SOCKET_NUM);
+    listen(this->sock_fd.to_int(), _SOCKET_NUM);
 }
 
 Socket& Socket::operator=(const Socket& sock_fdet)
@@ -94,14 +95,14 @@ Socket& Socket::operator=(const Socket& sock_fdet)
     return (*this);
 }
 
-int Socket::get_socket_fd() const
+FileDiscriptor Socket::get_socket_fd() const
 {
     return (this->sock_fd);
 }
 
 void Socket::close_fd()
 {
-    close(this->sock_fd);
+    this->sock_fd.close();
 }
 
 /*

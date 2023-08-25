@@ -36,12 +36,12 @@ size_t SocketManager::get_base_sockets_size()
     return (this->socket_base_repository->size());
 }
 
-std::map<int, Socket>::const_iterator SocketManager::base_begin()
+std::map<FileDiscriptor, Socket>::const_iterator SocketManager::base_begin()
 {
     return (this->socket_base_repository->begin());
 }
 
-std::map<int, Socket>::const_iterator SocketManager::base_end()
+std::map<FileDiscriptor, Socket>::const_iterator SocketManager::base_end()
 {
     return (this->socket_base_repository->end());
 }
