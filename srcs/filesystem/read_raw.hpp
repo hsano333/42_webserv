@@ -7,8 +7,8 @@ class ReadRaw : public IReader
 {
     public:
         ReadRaw();
-        virtual ~ReadRaw();
-        int iread(FileDiscriptor fd, char *buf);
+        ~ReadRaw();
+        int read(FileDiscriptor fd, char *buf, size_t size);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #ifndef WEBSERV_DISPATCHER_HPP
 #define WEBSERV_DISPATCHER_HPP
 #include "webserv_event.hpp"
+#include "webserv_event_factory.hpp"
 #include "event_manager.hpp"
 #include "epoll_controller.hpp"
 
@@ -18,7 +19,8 @@ class WebservWaiter
 {
     public:
         WebservWaiter(IOMultiplexing *io_multi_controller,
-                      EventManager *event_manager
+                      EventManager *event_manager,
+                      WebservEventFactory *event_factory
                 );
         ~WebservWaiter();
         void wait();
@@ -28,6 +30,7 @@ class WebservWaiter
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
+        WebservEventFactory *event_factory;
         //WebservEvent *event;
 };
 

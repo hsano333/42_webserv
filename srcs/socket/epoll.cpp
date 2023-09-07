@@ -52,10 +52,12 @@ void Epoll::init()
     this->epfd = FileDiscriptor::from_int(tmp_fd);
 
 
+    /*
     if(this->epfd < 0){
         ERROR("Epoll Create Error");
         std::runtime_error("Epoll Create Error:");
     }
+    */
 }
 
 FileDiscriptor Epoll::fd()
@@ -94,7 +96,11 @@ size_t Epoll::allocated_event_size() const
 std::vector<t_epoll_event> &Epoll::get_events()
 {
     return (this->allocated_events_space);
+}
 
+int Epoll::executable_event_number()
+{
+    return (this->executable_event_number_);
 }
 
 /*
@@ -106,11 +112,9 @@ void Epoll::resize_allocated_event_size(size_t size)
 
 void Epoll::save_executable_events_number(int size)
 {
-    if(size > 0){
-        this->executable_event_number = size;
-    }else if(size == 0){
-        //timeout 
-
+    MYINFO("Epoll::save_executable_events_number():" + Utility::to_string(size));
+    if(size >= 0){
+        this->executable_event_number_ = size;
     }else if(size < 0){
         ERROR("Epoll Wait Error nfds < 0");
         throw std::runtime_error("Epoll Wait Error nfds < 0");
@@ -123,6 +127,16 @@ void Epoll::expand_allocated_space()
     this->allocated_events_space.resize(size);
 }
 
+
+void Epoll::expand_allocated_space(t_epoll_event tmp)
+{
+    size_t size = this->allocated_events_space.size()+1;
+    this->allocated_events_space.resize(size);
+    this->allocated_events_space[size].data.fd = tmp.data.fd;
+    this->allocated_events_space[size].events = tmp.events;
+
+
+}
 
 void Epoll::contract_allocated_space()
 {

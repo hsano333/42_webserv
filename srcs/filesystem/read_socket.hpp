@@ -3,12 +3,12 @@
 #define READ_SOCKET_HPP
 #include "ireader.hpp"
 
-class ReadSocket : IReader
+class ReadSocket : public IReader
 {
     public:
         ReadSocket();
         ~ReadSocket();
-        int iread(FileDiscriptor fd, char *buf);
+        int read(FileDiscriptor fd, char *buf, size_t size);
 
 };
 

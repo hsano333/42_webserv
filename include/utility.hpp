@@ -40,6 +40,7 @@ class Utility
     static ssize_t to_ssize_t(string &str);
     static size_t to_size_t(string &str);
     static int to_int(string const &str);
+    static int to_int(char const *str);
     static ssize_t to_ssize_t(string const &str);
     static size_t to_size_t(string const &str);
     static std::string to_hexstr(size_t i);

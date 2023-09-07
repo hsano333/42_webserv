@@ -8,29 +8,28 @@
 #include "event_manager.hpp"
 #include "io_multiplexing.hpp"
 #include "socket_manager.hpp"
+#include "socket_controller.hpp"
 
 class EpollController : public IOMultiplexing
 {
     public:
-        EpollController(Epoll epoll,SocketRepository *socket_repository);
+        EpollController(Epoll epoll, SocketRepository *socket_repository, SocketController *socket_controller);
         ~EpollController();
         void wait();
         void add(FileDiscriptor fd, uint32_t event);
         void erase(FileDiscriptor fd);
         void modify(FileDiscriptor fd, uint32_t event);
         FileDiscriptor get_fd();
-        bool have_executable_events();
+        int executable_event_number();
         std::vector<t_epoll_event> &take_out_event();
-        //int get_
-        //int get_event_fd();
-
         void init_epoll();
-        //void add_sockets_fd();
     private:
         //Epoll *epoll;
         Epoll epoll;
         SocketRepository *socket_repository;
+        SocketController *socket_controller;
         EventManager *event_manager;
+        //std::map<int, bool> fd_map;
         //t_epoll_event* get_event(FileDiscriptor fd);
 
         //static EpollController& get_instance();

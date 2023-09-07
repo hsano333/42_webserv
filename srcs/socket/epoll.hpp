@@ -22,11 +22,13 @@ class Epoll
         //void resize_allocated_event_size(size_t size);
         void save_executable_events_number(int number);
         void expand_allocated_space();
+        void expand_allocated_space(t_epoll_event tmp);
         void contract_allocated_space();
         std::vector<t_epoll_event> &get_events();
+        int executable_event_number();
     private:
         FileDiscriptor epfd;
-        int executable_event_number;
+        int executable_event_number_;
         std::vector<t_epoll_event> allocated_events_space;
 };
 

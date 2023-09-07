@@ -18,6 +18,27 @@ WebservReader::~WebservReader()
 
 void WebservReader::read(WebservEvent *event)
 {
+    WebservReadEvent *read_event = static_cast<WebservReadEvent*>(event);
+    Request *tmp_req = read_event->req;
     (void)event;
-    io_multi_controller->modify(event->get_fd(), EPOLLOUT);
+    //event.ireader.read();
+    //char buf[MAX_BUF+1];
+    //int size = 0;
+    int space = tmp_req->raw_buf_space();
+    char* buf = tmp_req->get_raw_buf_pointer();
+    int sum = 0;
+    //size_t size = 0;
+    while(1){
+        int tmp = read_event->read(&(buf[sum]), space);
+        if(tmp <= 0){
+            break;
+        }
+        sum += tmp;
+        space -= tmp;
+        if(space <= 0){
+            break;
+        }
+    }
+    tmp_req->renew_raw_buf_space(space);
+    //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
 }

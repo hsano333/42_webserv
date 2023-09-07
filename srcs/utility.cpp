@@ -241,7 +241,6 @@ unsigned int Utility::to_uint(string const &str)
 
 int Utility::to_int(string &str)
 {
-
     std::string::iterator begin = str.begin();
     if(str[0] == '-'){
         begin++;
@@ -265,6 +264,12 @@ int Utility::to_int(string &str)
 int Utility::to_int(string const &str)
 {
     return (Utility::to_int(str));
+}
+
+int Utility::to_int(char const *str)
+{
+    std::string tmp = str;
+    return (Utility::to_int(tmp));
 }
 
 ssize_t Utility::to_ssize_t(string &str)

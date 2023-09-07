@@ -11,7 +11,7 @@ class WebservApplication
                       EventManager *event_manager
                 );
         ~WebservApplication();
-        void process(WebservEvent *event);
+        void execute(WebservEvent *event);
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;

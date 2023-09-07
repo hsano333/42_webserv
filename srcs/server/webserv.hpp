@@ -11,6 +11,7 @@
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
 #include "webserv_reader.hpp"
+#include "webserv_parser.hpp"
 #include "webserv_application.hpp"
 #include "webserv_sender.hpp"
 
@@ -27,6 +28,7 @@ class Webserv
             //EpollController epoll_controller,
             WebservWaiter &waiter,
             WebservReader &reader,
+            WebservParser &parser,
             WebservApplication &app,
             WebservSender &sender
             );
@@ -45,6 +47,7 @@ class Webserv
     //EpollController     &epoll_controller;
     WebservWaiter       &waiter;
     WebservReader       &reader;
+    WebservParser       &parser;
     WebservApplication  &app;
     WebservSender       &sender;
 

@@ -16,7 +16,7 @@ WebservApplication::~WebservApplication()
     ;
 }
 
-void WebservApplication::process(WebservEvent *event)
+void WebservApplication::execute(WebservEvent *event)
 {
     (void)event;
     ;

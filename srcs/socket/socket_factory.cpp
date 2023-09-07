@@ -19,14 +19,14 @@ SocketRepository *SocketFactory::create_socket_repository(Config *cfg)
     size_t server_cnt = cfg->http->get_server_size();
     std::set<Port> ports;
     for (size_t i = 0; i < server_cnt; i++) {
-        cout << cfg->http->server(i)->listen().to_string() << endl;
+        cout << "listen:" << cfg->http->server(i)->listen().to_string() << endl;
         ports.insert(cfg->http->server(i)->listen());
     }
 
     std::set<Port>::const_iterator ite = ports.begin();
     std::set<Port>::const_iterator end = ports.end();
     while(ite != end){
-        Socket socket = Socket::create(*ite);
+        Socket socket = Socket::create_from_port(*ite);
         socket_repository->insert(socket);
         ite++;
     }

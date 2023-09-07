@@ -8,7 +8,8 @@ class SocketController
     public:
         SocketController();
         ~SocketController();
-        int accept_request(FileDiscriptor fd)
+        FileDiscriptor accept_request(FileDiscriptor fd);
+        FileDiscriptor accept_request(int fd);
         int read();
         int write();
     private:

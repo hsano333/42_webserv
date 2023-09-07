@@ -25,7 +25,9 @@
 #include "socket_factory.hpp"
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
+#include "webserv_event_factory.hpp"
 #include "webserv_reader.hpp"
+#include "webserv_parser.hpp"
 #include "webserv_application.hpp"
 #include "webserv_sender.hpp"
 #include "event_manager.hpp"
@@ -111,6 +113,8 @@ int main(int argc, char const* argv[])
     }
 
     Config *cfg = create_config(cfg_file);
+
+    std::cout << "made config " << std::endl;
     //cfg->print_cfg();
     SocketRepository *socket_repository = create_sockets(cfg);
     //Epoll epoll = Epoll::from_sockets(socket_repository);
@@ -121,7 +125,8 @@ int main(int argc, char const* argv[])
     //Epoll *epoll = Epoll::from_socket_size(socket_manager->get_base_sockets_size());
 
     //Epoll *epoll = new Epoll();
-    EpollController *epoll_controller = new EpollController(Epoll(), socket_repository);
+    SocketController* socket_controller = new SocketController();
+    EpollController *epoll_controller = new EpollController(Epoll(), socket_repository, socket_controller);
     epoll_controller->init_epoll();
     //epoll_controller.add_sockets_fd();
     (void)cfg;
@@ -149,14 +154,16 @@ int main(int argc, char const* argv[])
     //        ResponseSender(Socket)
 
     EventManager *event_manager = new EventManager();
-    WebservWaiter waiter(epoll_controller, event_manager);
+    WebservEventFactory *event_factory = new WebservEventFactory(socket_controller);
+    WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReader reader(epoll_controller, event_manager);
+    WebservParser parser;
     WebservApplication app(epoll_controller, event_manager);
     WebservSender sender;
 
     SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg,socket_manager,waiter,reader,app,sender);
+    Webserv webserv(cfg,socket_manager,waiter,reader,parser,app,sender);
                     
                     
                     

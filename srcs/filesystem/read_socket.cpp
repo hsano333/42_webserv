@@ -10,7 +10,7 @@ ReadSocket::~ReadSocket()
 {
 }
 
-int ReadSocket::iread(int fd, char *buf)
+int ReadSocket::read(FileDiscriptor fd, char *buf, size_t size)
 {
-    return recv(fd, buf, MAX_BUF, MSG_DONTWAIT);
+    return recv(fd.to_int(), buf, size, MSG_DONTWAIT);
 }

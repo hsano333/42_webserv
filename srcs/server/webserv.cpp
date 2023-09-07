@@ -48,6 +48,7 @@ Webserv::Webserv(
         //EpollController epoll_controller,
         WebservWaiter &waiter,
         WebservReader &reader,
+        WebservParser &parser,
         WebservApplication &app,
         WebservSender &sender
         ) :
@@ -57,6 +58,7 @@ Webserv::Webserv(
                      //epoll_controller(epoll_controller),
                      waiter(waiter),
                      reader(reader),
+                     parser(parser),
                      app(app),
                      sender(sender)
 {
@@ -296,8 +298,8 @@ void Webserv::communication()
     DEBUG("Webserv::communication() start");
     while(1)
     {
-        DEBUG("Webserv::wait() ");
         if(waiter.is_not_busy()){
+            DEBUG("Webserv::wait() ");
             waiter.wait();
         }
         WebservEvent *event = waiter.serve_event();
@@ -305,18 +307,24 @@ void Webserv::communication()
         {
             case READ_EVENT:
                 DEBUG("Webserv::Read Event ");
-                //WebservReader reader(event);
                 reader.read(event);
+                parser.parse(event);
                 break;
             case APPLICATION_EVENT:
                 DEBUG("Webserv::Application Event ");
                 //WebservApplication app(event);
-                app.process(event);
+                app.execute(event);
                 break;
             case WRITE_EVENT:
                 DEBUG("Webserv::Write Event ");
                 //WebservSender sender(event);
                 sender.send(event);
+                break;
+            case TIMEOUT_EVENT:
+                DEBUG("Webserv::Timeout Event");
+                delete(event);
+                //WebservSender sender(event);
+                //sender.send(event);
                 break;
         }
     }

@@ -2,16 +2,29 @@
 #include "webserv_event_read.hpp"
 #include "global.hpp"
 #include "read_socket.hpp"
+#include "webserv_event_factory.hpp"
 
-/*
-WebservEvent *WebservEvent::from_epoll_event(t_epoll_event const &event_epoll)
+WebservEventFactory::WebservEventFactory(SocketController *socket_controller) :
+    socket_controller(socket_controller)
+
+{
+;
+}
+
+WebservEventFactory::~WebservEventFactory()
+{
+    ;
+}
+
+
+WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_epoll)
 {
     FileDiscriptor fd = FileDiscriptor::from_int(event_epoll.data.fd);
     if(event_epoll.events == EPOLLIN){
         MYINFO("WebservEvent::from_epoll_event: EPOLLIN");
         cout << "fd:" << fd << endl;
-        int tmp_fd = this->socket_controller->accept_request(fd);
-        WebservReadEvent *event = new WebservReadEvent(fd);
+        FileDiscriptor tmp_fd = this->socket_controller->accept_request(fd);
+        WebservReadEvent *event = new WebservReadEvent(tmp_fd);
         return (event);
     }else if(event_epoll.events == EPOLLOUT){
         MYINFO("WebservEvent::from_epoll_event: EPOLLOUT");
@@ -24,4 +37,3 @@ WebservEvent *WebservEvent::from_epoll_event(t_epoll_event const &event_epoll)
     }
     return (NULL);
 }
-*/

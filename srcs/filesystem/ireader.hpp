@@ -1,5 +1,5 @@
-#ifndef FILE_LOADER_HPP
-#define FILE_LOADER_HPP
+#ifndef IREADER_HPP
+#define IREADER_HPP
 #include "file_discriptor.hpp"
 
 class IReader
@@ -7,7 +7,7 @@ class IReader
     public:
         IReader(){};
         virtual ~IReader(){};
-        virtual int iread(FileDiscriptor fd, char *buf) = 0;
+        virtual int read(FileDiscriptor fd, char *buf, size_t size) = 0;
 };
 
 #endif

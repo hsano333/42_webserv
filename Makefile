@@ -9,15 +9,15 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR			:= filesystem/
-FILESYSTEMSRC 			:= file.cpp read_raw.cpp 
+FILESYSTEMSRC 			:= file.cpp read_raw.cpp read_socket.cpp
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp  webserv_event.cpp header.cpp event_manager.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_timeout_event.cpp  header.cpp event_manager.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 HTTPDIR				:= http/
-HTTPSRC 			:= method.cpp status_code.cpp  
+HTTPSRC 			:= method.cpp status_code.cpp request.cpp
 HTTP 				:= $(addprefix $(HTTPDIR)/, $(HTTPSRC))
 
 NETWORKDIR			:= network/
@@ -25,18 +25,20 @@ NETWORKSRC 			:= ip_address.cpp cidr.cpp  port.cpp
 NETWORK 			:= $(addprefix $(NETWORKDIR)/, $(NETWORKSRC))
 
 SOCKETDIR			:= socket/
-SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp file_discriptor.cpp
+SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp file_discriptor.cpp socket_controller.cpp 
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
+EXCEPTIONDIR			:= exception/
+EXCEPTIONSRC 			:= timeout_exception.cpp
+EXCEPTION 				:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
 
 #socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp uri.cpp  fd_manager.cpp 
 
 
 CGI 				:= #cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
-UTILITY 			:= split.cpp  utility.cpp endian.cpp log.cpp
-EXCEPTION			:= no_request_line.cpp
-DESIGN				:= iread.cpp
-SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(HTTP) $(NETWORK) $(SOCKET) $(CGI) $(UTILITY) $(EXCEPTION) $(DESIGN)
+UTILITY 			:= split.cpp  utility.cpp endian.cpp log.cpp 
+DESIGN				:= 
+SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(HTTP) $(NETWORK) $(SOCKET) $(EXCEPTION) $(CGI) $(UTILITY)  $(DESIGN)
 MANDATORY			:= main.cpp
 BONUS				:= main_bonus.cpp
 UNIT_TEST_SRCS			:= unit_test/unit_main.cpp $(SRC)
@@ -52,7 +54,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR)
+INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR)
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include ./srcs/unit_test $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))

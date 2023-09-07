@@ -31,7 +31,7 @@ class Socket
         //Socket(Port &port);
         ~Socket();
         Socket& operator=(Socket const &sock_fdet);
-        static Socket create(Port const &port);
+        static Socket create_from_port(Port const &port);
     //Socket(std::string port);
     //Socket(Port const &port);
     //Socket(const Socket& socket);

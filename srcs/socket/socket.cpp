@@ -32,8 +32,9 @@ Socket::~Socket()
 {
 }
 
-Socket Socket::create(Port const &port_)
+Socket Socket::create_from_port(Port const &port_)
 {
+    MYINFO("Socket::create_from_port port:" + port_.to_string());
     Socket socket;
     socket.port = port_;
     socket.init();
@@ -58,6 +59,7 @@ void Socket::init()
 {
     //s_clientinfo clientinfo;
     this->sock_fd = this->make_socket();
+    MYINFO("Socket::init() sock_fd:" + Utility::to_string(this->sock_fd));
     //Utility::memset(&(clientinfo), 0, sizeof(s_clientinfo));
     //this->_ev.data.ptr = &clientinfo;
     //if (this->sock_fd < 0) {
@@ -86,6 +88,33 @@ void Socket::init()
     }
     freeaddrinfo(res);
     listen(this->sock_fd.to_int(), _SOCKET_NUM);
+
+    /*
+
+    int epfd = epoll_create(10);
+    struct epoll_event events[10];
+
+
+    struct epoll_event ev;
+    ev.events = EPOLLIN;
+    ev.data.fd = this->sock_fd.to_int();
+
+    events[0].data.fd = this->sock_fd.to_int();
+    events[0].events = EPOLLIN;
+    std::cout << "Socket Test Start " << std::endl;
+    int nfds = epoll_ctl(epfd,EPOLL_CTL_ADD, this->sock_fd.to_int(), &ev);
+    std::cout << "Socket Wait Start " << std::endl;
+    nfds = epoll_wait(epfd, events, 1, -1);
+    std::cout << "socket nfds:" << nfds << std::endl;
+    int fd = events[0].data.fd;
+    cout << "fd:" << fd << ", socket fd:" << this->sock_fd.to_int() << endl;
+    char buf[2048];
+    int rval = recv(fd,buf, 2000, MSG_DONTWAIT);
+    std::cout << "rval:" << rval << std::endl;
+    */
+
+
+
 }
 
 Socket& Socket::operator=(const Socket& sock_fdet)

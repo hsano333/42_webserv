@@ -22,9 +22,12 @@ void EventManager::pop()
     this->events.pop();
 }
 
-WebservEvent *EventManager::top()
+WebservEvent *EventManager::pop_first()
 {
-    return (this->events.top());
+
+    WebservEvent *first = this->events.front();
+    this->events.pop();
+    return (first);
 }
 
 size_t EventManager::event_size()
@@ -33,5 +36,16 @@ size_t EventManager::event_size()
 
 }
 
+void EventManager::increase_timeout_count(int count)
+{
+    DEBUG("EventManager::increase_timeout_count()");
+    MutantStack<WebservEvent *>::iterator ite;
+    MutantStack<WebservEvent *>::iterator end;
+
+    while(ite != end){
+        (*ite)->increase_and_check_timeout_count(count);
+        ite++;
+    }
+}
 
 

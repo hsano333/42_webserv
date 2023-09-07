@@ -18,9 +18,16 @@ File::File(IReader& ireader, std::string &filepath, RWOption option)
 }
 File::~File()
 {
+
+    std::cout << "close file:" << this->filepath << std::endl;
+    std::cout << "fd:" << fd << std::endl;
+
+    MYINFO("close file:" + this->filepath);
+    //DEBUG("Close file:" + this->filepath);
     //FileDiscriptor tmp_fd = FileDiscriptor::from_int(this->fd);
     //tmp_fd.close();
     if(this->fd > 0){
+        std::cout << "fd:" << this->fd << std::endl;
         close(fd);
     }
 }
@@ -47,6 +54,7 @@ void File::open_file()
                 throw std::runtime_error("can't read file");
             }
             this->fd = open(this->filepath.c_str(), O_RDONLY);
+            MYINFO("open file:" + this->filepath + ",fd=" + Utility::to_string(this->fd));
             //this->fd = FileDiscriptor::from_int(tmp_fd);
         }
         else if (this->option == WRITE_ONLY)
@@ -89,7 +97,7 @@ int File::read(char *buf)
     //int tmp_fd = 3;
     //return ireader.iread(tmp_fd, buf);
     FileDiscriptor tmp_fd = FileDiscriptor::from_int(this->fd);
-    return ireader.iread(tmp_fd, buf);
+    return ireader.read(tmp_fd, buf, MAX_BUF);
 }
 
 /*
