@@ -18,13 +18,19 @@ WebservParser::~WebservParser()
 ;
 }
 
-void WebservParser::parse(WebservEvent *event)
+void WebservParser::parse_req(WebservEvent *event)
 {
-    DEBUG("WebservParser::parse()");
+    DEBUG("WebservParser::parse_req()");
     (void)event;
-    Request *req = event->req;
+    Request *req = event->req();
     //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
     WebservEvent *next_event = event_factory->make_application_event(event->get_fd(), req);
     delete (event);
     event_manager->push(next_event);
+}
+
+void WebservParser::parse_res(WebservEvent *event)
+{
+    DEBUG("WebservParser::parse_res()");
+    (void)event;
 }

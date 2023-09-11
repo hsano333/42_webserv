@@ -23,9 +23,10 @@ void WebservSender::send(WebservEvent *event)
     std::string str = "HTTP/1.1 200 OK\r\nContent-Length:0\r\n\r\n";
     const char *str2 = str.c_str();
     write_event->write(str2, str.size());
-    this->io_multi_controller->erase(event->get_fd());
-    this->fd_manager->close_fd(event->get_fd());
+    //this->io_multi_controller->erase(event->get_fd());
+    //this->fd_manager->close_fd(event->get_fd());
     delete (event);
+    //delete (event->res);
     (void)event;
     ;
 }

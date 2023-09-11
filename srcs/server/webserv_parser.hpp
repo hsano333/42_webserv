@@ -14,7 +14,8 @@ class WebservParser
                       WebservEventFactory *event_factory
                 );
         ~WebservParser();
-        void parse(WebservEvent *event);
+        void parse_req(WebservEvent *event);
+        void parse_res(WebservEvent *event);
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;

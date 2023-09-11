@@ -309,17 +309,28 @@ void Webserv::communication()
             case READ_EVENT:
                 DEBUG("Webserv::Read Event ");
                 reader.read(event);
-                parser.parse(event);
+                parser.parse_req(event);
                 break;
             case APPLICATION_EVENT:
                 DEBUG("Webserv::Application Event ");
                 //WebservApplication app(event);
                 app.execute(event);
+                parser.parse_res(event);
                 break;
             case WRITE_EVENT:
                 DEBUG("Webserv::Write Event ");
                 //WebservSender sender(event);
                 sender.send(event);
+                break;
+            case POST_PROCESSING_EVENT:
+                /*
+                delete event->req;
+                delete event->res;
+                this->io_multi_controller->erase(event->get_fd());
+                this->fd_manager->close_fd(event->get_fd());
+                close();
+                */
+                //close(event);
                 break;
             case TIMEOUT_EVENT:
                 DEBUG("Webserv::Timeout Event");

@@ -13,8 +13,12 @@ FILESYSTEMSRC 			:= file.cpp read_raw.cpp read_socket.cpp write_raw.cpp write_so
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_application_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp  header.cpp event_manager.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
+
+EVENTDIR			:= event/
+EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_application_event.cpp webserv_post_processing_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp  event_manager.cpp
+EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 HTTPDIR				:= http/
 HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp
@@ -38,7 +42,7 @@ EXCEPTION 				:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
 CGI 				:= #cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
 UTILITY 			:= split.cpp  utility.cpp endian.cpp log.cpp 
 DESIGN				:= 
-SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(HTTP) $(NETWORK) $(SOCKET) $(EXCEPTION) $(CGI) $(UTILITY)  $(DESIGN)
+SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(EVENT) $(HTTP) $(NETWORK) $(SOCKET) $(EXCEPTION) $(CGI) $(UTILITY)  $(DESIGN)
 MANDATORY			:= main.cpp
 BONUS				:= main_bonus.cpp
 UNIT_TEST_SRCS			:= unit_test/unit_main.cpp $(SRC)
@@ -54,7 +58,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR)
+INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR)
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include ./srcs/unit_test $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))
