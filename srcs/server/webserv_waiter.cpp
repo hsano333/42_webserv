@@ -57,9 +57,12 @@ WebservEvent* WebservWaiter::serve_event()
         std::vector<t_epoll_event> &io_event = io_multi_controller->take_out_event();
         for(int i=0;i<executable_event_size;i++){
             WebservEvent *event = this->event_factory->from_epoll_event(io_event[i]);
+            cout << "test No.2" << endl;
             event_manager->push(event);
+            cout << "test No.3" << endl;
         }
     }
+            cout << "test No.4" << endl;
     /*
     std::vector<t_epoll_event> &take_out_events = io_multi_controller->take_out_event();
     for(size_t i=0;i<take_out_events.size();i++){
@@ -68,9 +71,12 @@ WebservEvent* WebservWaiter::serve_event()
     }
     */
     if(event_manager->event_size() > 0){
+            cout << "test No.5" << endl;
         WebservEvent *returned_event = event_manager->pop_first();
+            cout << "test No.6" << endl;
         return (returned_event);
     }
+    cout << "test No.6" << endl;
 
     //return (NULL);
     return (new WebservTimeoutEvent());

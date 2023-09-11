@@ -2,6 +2,7 @@
 //#include "config.hpp"
 #include <iostream>
 #include "global.hpp"
+#include "utility.hpp"
 
 ConfigHttp::ConfigHttp()
 {
@@ -10,6 +11,10 @@ ConfigHttp::ConfigHttp()
 
 ConfigHttp::~ConfigHttp()
 {
+    DEBUG("ConfigHttp::~ConfigHttp() delete servers:" + Utility::to_string(this->servers.size()));
+    for(size_t i=0;i<this->servers.size();i++){
+        delete this->servers[i];
+    }
 }
 
 

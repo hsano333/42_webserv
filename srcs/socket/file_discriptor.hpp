@@ -32,6 +32,7 @@ class FileDiscriptor
         void close() const;
         int to_int() const;
         int to_int();
+        std::string const to_string();
         //int operator=(FileDiscriptor const &fd);
         //FileDiscriptor& operator=(int);
         

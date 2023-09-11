@@ -10,8 +10,9 @@ class WebservReader
 {
     public:
         //WebservReader();
-        WebservReader(IOMultiplexing *io_multi_controller,
-                      EventManager *event_manager
+        WebservReader(
+                    IOMultiplexing *io_multi_controller,
+                    EventManager *event_manager
                 );
         ~WebservReader();
         //void read(WebservReadEvent *event);

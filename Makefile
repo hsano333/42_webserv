@@ -9,15 +9,15 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR			:= filesystem/
-FILESYSTEMSRC 			:= file.cpp read_raw.cpp read_socket.cpp
+FILESYSTEMSRC 			:= file.cpp read_raw.cpp read_socket.cpp write_raw.cpp write_socket.cpp
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_timeout_event.cpp  header.cpp event_manager.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_application_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp  header.cpp event_manager.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 HTTPDIR				:= http/
-HTTPSRC 			:= method.cpp status_code.cpp request.cpp
+HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp
 HTTP 				:= $(addprefix $(HTTPDIR)/, $(HTTPSRC))
 
 NETWORKDIR			:= network/
@@ -25,7 +25,7 @@ NETWORKSRC 			:= ip_address.cpp cidr.cpp  port.cpp
 NETWORK 			:= $(addprefix $(NETWORKDIR)/, $(NETWORKSRC))
 
 SOCKETDIR			:= socket/
-SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp file_discriptor.cpp socket_controller.cpp 
+SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp file_discriptor.cpp socket_controller.cpp fd_manager.cpp
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
 EXCEPTIONDIR			:= exception/

@@ -1,6 +1,5 @@
 // #include "sock_fdet.hpp"
 #include "config.hpp"
-#include "response_cgi.hpp"
 #include "string.h"
 #include "utility.hpp"
 #include "tcp_socket.hpp"

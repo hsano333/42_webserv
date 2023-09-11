@@ -31,6 +31,7 @@
 #include "webserv_application.hpp"
 #include "webserv_sender.hpp"
 #include "event_manager.hpp"
+#include "fd_manager.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN 
@@ -94,9 +95,9 @@ SocketManager *create_socket_manager(Config *cfg)
     return (socket_repository );
 }
 */
-SocketRepository *create_sockets(Config *cfg)
+SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 {
-    SocketFactory  factory = SocketFactory();
+    SocketFactory  factory = SocketFactory(fd_manager);
     //SocketManager* socket_manager = factory.create(cfg);
     //return (socket_manager);
     SocketRepository* socket_repository = factory.create_from_config(cfg);
@@ -116,7 +117,8 @@ int main(int argc, char const* argv[])
 
     std::cout << "made config " << std::endl;
     //cfg->print_cfg();
-    SocketRepository *socket_repository = create_sockets(cfg);
+    FDManager *fd_manager = new FDManager();
+    SocketRepository *socket_repository = create_sockets(cfg, fd_manager);
     //Epoll epoll = Epoll::from_sockets(socket_repository);
 
 
@@ -126,7 +128,7 @@ int main(int argc, char const* argv[])
 
     //Epoll *epoll = new Epoll();
     SocketController* socket_controller = new SocketController();
-    EpollController *epoll_controller = new EpollController(Epoll(), socket_repository, socket_controller);
+    EpollController *epoll_controller = new EpollController(Epoll(), socket_repository, socket_controller, fd_manager);
     epoll_controller->init_epoll();
     //epoll_controller.add_sockets_fd();
     (void)cfg;
@@ -154,23 +156,26 @@ int main(int argc, char const* argv[])
     //        ResponseSender(Socket)
 
     EventManager *event_manager = new EventManager();
-    WebservEventFactory *event_factory = new WebservEventFactory(socket_controller);
+    WebservEventFactory *event_factory = new WebservEventFactory(socket_controller, fd_manager, epoll_controller);
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReader reader(epoll_controller, event_manager);
-    WebservParser parser;
-    WebservApplication app(epoll_controller, event_manager);
-    WebservSender sender;
+    WebservParser parser(epoll_controller, event_manager, event_factory);
+    WebservApplication app(epoll_controller, event_manager, fd_manager);
+    WebservSender sender(epoll_controller, fd_manager);
 
     SocketManager* socket_manager = new SocketManager();
 
     Webserv webserv(cfg,socket_manager,waiter,reader,parser,app,sender);
-                    
-                    
-                    
-                    
-                    
     //while (1) {
         server(webserv);
     //}
+    delete fd_manager;
+    delete socket_controller;
+    delete epoll_controller;
+    delete event_manager;
+    delete event_factory;
+    delete socket_manager;
+    delete cfg;
+    delete socket_repository;
     return 0;
 }

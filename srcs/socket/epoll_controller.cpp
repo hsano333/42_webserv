@@ -14,11 +14,13 @@ using std::endl;
 EpollController::EpollController(
             Epoll epoll,
             SocketRepository *socket_repository,
-            SocketController *socket_controller
+            SocketController *socket_controller,
+            FDManager *fd_manager
         ):
         epoll(epoll),
         socket_repository(socket_repository),
-        socket_controller(socket_controller)
+        socket_controller(socket_controller),
+        fd_manager(fd_manager)
 {
     ;
 }
@@ -44,10 +46,9 @@ void EpollController::init_epoll()
         FileDiscriptor fd = ite->second.get_socket_fd();
         std::cout << "init_epoll() fd:" << fd << std::endl;
         this->add(fd, EPOLLIN);
+        this->fd_manager->add_socket(fd);
         ite++;
     }
-
-
 }
 
 /*
@@ -117,8 +118,8 @@ void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
         ERROR("Epoll add Error");
         throw std::runtime_error("Epoll add Error");
     }
+    this->epoll.expand_allocated_space();
     //fd_map.insert(fd, true);
-    this->epoll.expand_allocated_space(ev);
 }
 
 void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
@@ -142,15 +143,13 @@ void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
     //cout << "EPOLL CTL  fd:" << fd << endl;
     //ev.data.fd = event;
     int fd = fd_obj.to_int();
-    t_epoll_event ev;
-    ev.events = event;
-    ev.data.fd = fd;
-    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_MOD, fd, &ev) != 0) {
+    t_epoll_event *ev = this->epoll.event_from_fd(fd);
+    ev->events = event;
+    //ev.data.fd = fd;
+    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_MOD, fd, ev) != 0) {
         ERROR("Epoll modify Error");
         throw std::runtime_error("Epoll modify Error");
-        //return (false);
     }
-    //return (true);
 }
 
 void EpollController::erase(FileDiscriptor fd_obj)

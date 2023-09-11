@@ -8,13 +8,15 @@ class WebservApplication
 {
     public:
         WebservApplication(IOMultiplexing *io_multi_controller,
-                      EventManager *event_manager
+                      EventManager *event_manager,
+                      FDManager *fd_manager
                 );
         ~WebservApplication();
         void execute(WebservEvent *event);
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
+        FDManager *fd_manager;
 };
 
 #endif

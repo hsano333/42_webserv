@@ -50,6 +50,11 @@ int FileDiscriptor::to_int()
     return (fd);
 }
 
+std::string const FileDiscriptor::to_string()
+{
+    return (Utility::to_string(fd));
+}
+
 
 void FileDiscriptor::close() const
 {

@@ -36,9 +36,6 @@ void make_http(char *str)
     cout << str << endl;
 }
 
-
-
-
 Config::Config()
 {
     //std::string tmp = "tmp";
@@ -58,6 +55,7 @@ Config::Config()
 
 Config::~Config()
 {
+    delete http;
     delete Config::_singleton;
 }
 

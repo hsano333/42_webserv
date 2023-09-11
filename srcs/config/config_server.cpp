@@ -1,6 +1,7 @@
 #include "config_server.hpp"
 #include <iostream>
 #include "global.hpp"
+#include "utility.hpp"
 
 ConfigServer::ConfigServer() : is_default_server_(false)
 {
@@ -9,6 +10,10 @@ ConfigServer::ConfigServer() : is_default_server_(false)
 
 ConfigServer::~ConfigServer()
 {
+    DEBUG("ConfigServer::~ConfigServer() delete locations:" + Utility::to_string(this->locations.size()));
+    for(size_t i=0;i<this->locations.size();i++){
+        delete this->locations[i];
+    }
 }
 
 ConfigLocation const * ConfigServer::location(size_t i) const

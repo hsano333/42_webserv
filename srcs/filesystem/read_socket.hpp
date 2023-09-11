@@ -1,4 +1,3 @@
-
 #ifndef READ_SOCKET_HPP
 #define READ_SOCKET_HPP
 #include "ireader.hpp"

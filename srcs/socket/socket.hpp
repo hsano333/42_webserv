@@ -3,9 +3,7 @@
 #include "config.hpp"
 #include "fd_manager.hpp"
 #include "request.hpp"
-#include "request_cgi.hpp"
 #include "response.hpp"
-#include "response_cgi.hpp"
 #include <iostream>
 #include <netdb.h>
 #include <string>

@@ -303,6 +303,7 @@ void Webserv::communication()
             waiter.wait();
         }
         WebservEvent *event = waiter.serve_event();
+
         switch(event->which())
         {
             case READ_EVENT:
@@ -322,6 +323,12 @@ void Webserv::communication()
                 break;
             case TIMEOUT_EVENT:
                 DEBUG("Webserv::Timeout Event");
+                delete(event);
+                //WebservSender sender(event);
+                //sender.send(event);
+                break;
+            case NOTHING_EVENT:
+                //DEBUG("Webserv::Nothing Event");
                 delete(event);
                 //WebservSender sender(event);
                 //sender.send(event);

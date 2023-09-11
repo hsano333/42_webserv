@@ -1,5 +1,6 @@
 #include "config_location.hpp"
 #include "global.hpp"
+#include "utility.hpp"
 #include <iostream>
 
 ConfigLocation::ConfigLocation()
@@ -9,7 +10,10 @@ ConfigLocation::ConfigLocation()
 
 ConfigLocation::~ConfigLocation()
 {
-    ;
+    DEBUG("ConfigLocation::~ConfigLocation delete limits:" + Utility::to_string(this->limits.size()));
+    for(size_t i=0;i<this->limits.size();i++){
+        delete this->limits[i];
+    }
 }
 
 ConfigLimit const *ConfigLocation::limit(size_t i) const

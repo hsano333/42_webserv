@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <sys/epoll.h>
 
-Epoll::Epoll()
+Epoll::Epoll() : allocated_events_space(1)
 {
     ;
 }
@@ -112,7 +112,7 @@ void Epoll::resize_allocated_event_size(size_t size)
 
 void Epoll::save_executable_events_number(int size)
 {
-    MYINFO("Epoll::save_executable_events_number():" + Utility::to_string(size));
+    DEBUG("Epoll::save_executable_events_number():" + Utility::to_string(size));
     if(size >= 0){
         this->executable_event_number_ = size;
     }else if(size < 0){
@@ -123,20 +123,19 @@ void Epoll::save_executable_events_number(int size)
 
 void Epoll::expand_allocated_space()
 {
+    DEBUG("Epoll::expand_allocated_space():" + Utility::to_string(this->allocated_events_space.size()));
     size_t size = this->allocated_events_space.size()+1;
     this->allocated_events_space.resize(size);
 }
 
 
+/*
 void Epoll::expand_allocated_space(t_epoll_event tmp)
 {
-    size_t size = this->allocated_events_space.size()+1;
-    this->allocated_events_space.resize(size);
-    this->allocated_events_space[size].data.fd = tmp.data.fd;
-    this->allocated_events_space[size].events = tmp.events;
-
-
+    DEBUG("Epoll::expand_allocated_space");
+    this->allocated_events_space.push_back(tmp);
 }
+*/
 
 void Epoll::contract_allocated_space()
 {
@@ -148,6 +147,19 @@ void Epoll::contract_allocated_space()
         throw std::runtime_error("Epoll::contract_allocated_space Error. can't resize 0");
     }
 }
+
+t_epoll_event *Epoll::event_from_fd(int fd)
+{
+    for(size_t i=0;i<this->allocated_events_space.size();i++){
+        if(this->allocated_events_space[i].data.fd == fd){
+            return &(this->allocated_events_space[i]);
+        }
+    }
+    WARNING("can't find fd:" + Utility::to_string(fd));
+    throw std::runtime_error("can't find fd");
+}
+
+
 
 #ifdef UNIT_TEST
 #include "doctest.h"

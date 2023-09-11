@@ -19,12 +19,12 @@ SocketController::~SocketController()
 
 FileDiscriptor SocketController::accept_request(FileDiscriptor sock_fd)
 {
-    MYINFO("SocketController::accept_request fd:" + Utility::to_string(sock_fd.to_int()));
     struct sockaddr_in client;
     Utility::memset(&client, 0, sizeof(struct sockaddr_in));
     socklen_t len = sizeof(client);
 
     int tmp_fd = accept(sock_fd.to_int(), (struct sockaddr*)&client, &len);
+    MYINFO("SocketController::accept_request fd:" + Utility::to_string(sock_fd.to_int()) + ", new fd:" + Utility::to_string(tmp_fd));
     FileDiscriptor fd = FileDiscriptor::from_int(tmp_fd);
     
     /*

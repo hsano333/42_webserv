@@ -1,7 +1,8 @@
 #include "socket_factory.hpp"
 #include <set>
 
-SocketFactory::SocketFactory()
+SocketFactory::SocketFactory(FDManager *fd_manager) : 
+                                                    fd_manager(fd_manager)
 {
 ;
 }

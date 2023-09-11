@@ -13,7 +13,7 @@
 class EpollController : public IOMultiplexing
 {
     public:
-        EpollController(Epoll epoll, SocketRepository *socket_repository, SocketController *socket_controller);
+        EpollController(Epoll epoll, SocketRepository *socket_repository, SocketController *socket_controller, FDManager *fd_manager);
         ~EpollController();
         void wait();
         void add(FileDiscriptor fd, uint32_t event);
@@ -29,6 +29,7 @@ class EpollController : public IOMultiplexing
         SocketRepository *socket_repository;
         SocketController *socket_controller;
         EventManager *event_manager;
+        FDManager *fd_manager;
         //std::map<int, bool> fd_map;
         //t_epoll_event* get_event(FileDiscriptor fd);
 
