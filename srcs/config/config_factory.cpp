@@ -41,7 +41,7 @@ std::vector<ConfigLimit*> ConfigFactory::create_limit(ConfigParseredData &parser
         ConfigLimit *limit = new ConfigLimit();
         parser_limit.parser(parsered_limit_data.raw_data(i), limit);
         limit->assign_out_properties(parsered_limit_data.properties(i));
-        //limits.push_back(limit);
+        limits.push_back(limit);
     }
     return (limits);
 }

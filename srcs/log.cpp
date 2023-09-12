@@ -21,12 +21,23 @@ Log::Log()
 Log *Log::_singleton = NULL;
 Log::~Log()
 {
+    /*
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
+    cout << "delete Log" << endl;
     cout << "delete Log" << endl;
     ofs.close();
     if(_singleton != NULL){
         delete (_singleton);
         _singleton = NULL;
     }
+    */
 }
 
 Log *Log::get_instance()
@@ -35,6 +46,14 @@ Log *Log::get_instance()
         _singleton = new Log();
     }
     return (_singleton);
+}
+
+void Log::delete_instance()
+{
+    if (_singleton != NULL){
+        delete (_singleton);
+        _singleton = NULL;
+    }
 }
 
 void Log::check_writable()
@@ -54,22 +73,18 @@ void Log::write_log(const char *file,int line, string& str)
 void Log::write(const char *file,int line, const char *level,  const string &str, int log_level)
 {
     static int cnt = 0;
-    cout << "log test: No.1" << str << endl;
     //if(str == NULL){
         //cout << "str is NULL" << endl;
     //}
     if (log_level >= LOG_LEVEL){
         Log* log = get_instance();
-        cout << "file:" << file << endl;
+        //cout << "file:" << file << endl;
 
         std::string tmp = string(level);
-        cout << "line:" << line << endl;
-        cout << "str:" << str << endl;
-        cout << "No.0 tmp:" << tmp << endl;
+        //cout << "line:" << line << endl;
+        //cout << "str:" << str << endl;
         tmp += string(str);
-        cout << "tmp:" << tmp << endl;
         log->write_log(file, line, tmp);
     }
-    cout << "log test: No.2" << str << endl;
     cnt++;
 }

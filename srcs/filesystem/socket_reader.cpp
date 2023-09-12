@@ -1,19 +1,19 @@
-#include "read_socket.hpp"
+#include "socket_reader.hpp"
 #include "global.hpp"
 #include <sys/types.h>          /* See NOTES */
 #include <sys/socket.h>
 
-ReadSocket::ReadSocket()
+SocketReader::SocketReader()
 {
-    DEBUG("ReadSocket::ReadSocket()");
+    DEBUG("SocketReader::SocketReader()");
 }
-ReadSocket::~ReadSocket()
+SocketReader::~SocketReader()
 {
 }
 
-int ReadSocket::read(FileDiscriptor fd, char *buf, size_t size)
+int SocketReader::read(FileDiscriptor fd, char *buf, size_t size)
 {
-    DEBUG("ReadSocket::read()");
+    DEBUG("SocketReader::read()");
     std::cout << "fd:" << fd.to_string() << std::endl;
     std::cout << "size:" << size << std::endl;
     return ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);

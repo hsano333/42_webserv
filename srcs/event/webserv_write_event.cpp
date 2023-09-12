@@ -1,5 +1,5 @@
 #include "webserv_write_event.hpp"
-#include "write_socket.hpp"
+#include "socket_writer.hpp"
 
 
 WebservWriteEvent::WebservWriteEvent() 
@@ -8,18 +8,23 @@ WebservWriteEvent::WebservWriteEvent()
                                         req_(NULL),
                                         res_(NULL),
                                         timeout_count(0),
-                                        writer(new WriteSocket())
+                                        writer(NULL)
 {
     ;
 }
 
-WebservWriteEvent::WebservWriteEvent(FileDiscriptor fd)
+WebservWriteEvent::WebservWriteEvent(
+        FileDiscriptor fd,
+        Request *req,
+        Response *res,
+        IWriter *writer
+        )
     :
         fd(fd),
-        req_(NULL),
-        res_(NULL),
+        req_(req),
+        res_(res),
         timeout_count(0),
-        writer(new WriteSocket())
+        writer(writer)
 {
     ;
 }
@@ -29,10 +34,17 @@ WebservWriteEvent::~WebservWriteEvent()
     ;
 }
 
-WebservWriteEvent *WebservWriteEvent::from_fd(FileDiscriptor fd)
+WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
-    WebservWriteEvent *event = new WebservWriteEvent(fd);
-    return (event);
+    //if(event->res() != NULL){
+        //delete event->res();
+    //}
+    return (new WebservWriteEvent(
+            event->get_fd(),
+            event->req(),
+            res,
+            writer
+    ));
 }
 
 

@@ -17,7 +17,7 @@
 #include "endian.hpp"
 #include "log.hpp"
 #include "file.hpp"
-#include "read_raw.hpp"
+#include "normal_reader.hpp"
 #include <fstream>
 #include "body_size.hpp"
 #include "ip_address.hpp"
@@ -28,10 +28,16 @@
 #include "webserv_event_factory.hpp"
 #include "webserv_reader.hpp"
 #include "webserv_parser.hpp"
-#include "webserv_application.hpp"
+#include "webserv_executer.hpp"
 #include "webserv_sender.hpp"
 #include "event_manager.hpp"
 #include "fd_manager.hpp"
+#include "ireader.hpp"
+#include "normal_reader.hpp"
+#include "socket_reader.hpp"
+#include "normal_writer.hpp"
+#include "socket_writer.hpp"
+#include "iwriter.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN 
@@ -44,6 +50,13 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
+
+
+#include <stdio.h>
+__attribute__((destructor)) void f(void){
+    system("leaks webserv");
+}
+
 
 // std::string base_path = "/home/sano/work/42/webserv/github/webserv/srcs/dir";
 std::string base_path = "srcs/dir";
@@ -64,8 +77,8 @@ void server(Webserv& webserv)
 
 Config *create_config(std::string &cfg_file)
 {
-    ReadRaw read_raw;
-    File file = File(read_raw, cfg_file, READ_ONLY);
+    NormalReader normal_reader;
+    File file = File(normal_reader, cfg_file, READ_ONLY);
     ConfigRawLoader raw_getter(file);
     ConfigParser<Config, ConfigHttp> parser_config("http");
     ConfigParser<ConfigHttp, ConfigServer> parser_http("server");
@@ -155,17 +168,32 @@ int main(int argc, char const* argv[])
     //        ResponseFactory(create(Request))
     //        ResponseSender(Socket)
 
+    SocketReader *socket_reader = new SocketReader();
+    NormalWriter *normal_writer = new NormalWriter();
+    SocketWriter *socket_writer = new SocketWriter();
+    NormalReader *normal_reader = new NormalReader();
+
     EventManager *event_manager = new EventManager();
-    WebservEventFactory *event_factory = new WebservEventFactory(socket_controller, fd_manager, epoll_controller);
+    WebservEventFactory *event_factory = new WebservEventFactory(
+            socket_controller,
+            fd_manager,
+            epoll_controller,
+            event_manager,
+            normal_writer,
+            socket_writer,
+            normal_reader,
+            socket_reader
+            );
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReader reader(epoll_controller, event_manager);
     WebservParser parser(epoll_controller, event_manager, event_factory);
-    WebservApplication app(epoll_controller, event_manager, fd_manager);
-    WebservSender sender(epoll_controller, fd_manager);
+    WebservExecuter app(epoll_controller, event_manager, fd_manager);
+    WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager);
+    WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
     SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg,socket_manager,waiter,reader,parser,app,sender);
+    Webserv webserv(cfg,socket_manager,waiter,reader,parser,app,sender, cleaner);
     //while (1) {
         server(webserv);
     //}
@@ -173,9 +201,15 @@ int main(int argc, char const* argv[])
     delete socket_controller;
     delete epoll_controller;
     delete event_manager;
-    delete event_factory;
     delete socket_manager;
     delete cfg;
+    delete event_factory;
+    delete (normal_writer);
+    delete (socket_writer);
+    delete (normal_reader);
+    delete (socket_reader);
     delete socket_repository;
+    DEBUG("end webserv");
+    Log::delete_instance();
     return 0;
 }

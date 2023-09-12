@@ -14,11 +14,8 @@ EventManager::~EventManager()
 
 void EventManager::push(WebservEvent *event)
 {
-            cout << "test No.2-1" << endl;
-    //DEBUG("EventManager::push()");
-            cout << "test No.2-2" << endl;
+    DEBUG("EventManager::push()");
     this->events.push(event);
-            cout << "test No.2-2" << endl;
 }
 
 void EventManager::pop()
@@ -55,4 +52,21 @@ void EventManager::increase_timeout_count(int count)
     }
 }
 
+void EventManager::add_event_waiting_writing(FileDiscriptor fd, WebservEvent* event)
+{
+    this->events_waiting_writing.insert(std::make_pair(fd, event));
+}
+
+void EventManager::erase_event_waiting_writing(FileDiscriptor fd)
+{
+    this->events_waiting_writing.erase(fd);
+}
+
+WebservEvent* EventManager::get_event_waiting_writing(FileDiscriptor fd)
+{
+    if(this->events_waiting_writing.find(fd) == this->events_waiting_writing.end()){
+        return (NULL);
+    }
+    return (this->events_waiting_writing[fd]);
+}
 

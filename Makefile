@@ -9,15 +9,15 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR			:= filesystem/
-FILESYSTEMSRC 			:= file.cpp read_raw.cpp read_socket.cpp write_raw.cpp write_socket.cpp
+FILESYSTEMSRC 			:= file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_application.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_executer.cpp webserv_cleaner.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/
-EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_application_event.cpp webserv_post_processing_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp  event_manager.cpp
+EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_application_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp  event_manager.cpp
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 HTTPDIR				:= http/

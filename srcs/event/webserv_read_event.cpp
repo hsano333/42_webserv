@@ -1,6 +1,6 @@
 #include "webserv_read_event.hpp"
-#include "read_socket.hpp"
-#include "read_raw.hpp"
+#include "socket_reader.hpp"
+#include "normal_reader.hpp"
 #include "global.hpp"
 
 WebservReadEvent::WebservReadEvent()
@@ -10,7 +10,7 @@ WebservReadEvent::WebservReadEvent()
                                         fd(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
                                         timeout_count(0),
-                                        ireader(new ReadSocket())
+                                        ireader(NULL)
 {
 }
 
@@ -19,7 +19,7 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
         req_(new Request()),
         fd(fd),
         timeout_count(0),
-        ireader(new ReadSocket())
+        ireader(NULL)
 {
     std::cout << "WebservReadEvent Constructor" << std::endl;
 
@@ -40,19 +40,14 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd, IReader *ireader)
 
 WebservReadEvent::~WebservReadEvent()
 {
-    delete ireader;
+    //delete ireader;
 }
 
-WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
+WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, IReader *reader)
 {
     DEBUG("WebservReadEvent::from_fd()");
-    WebservReadEvent *event = new WebservReadEvent(fd);
-    //WebservReadEvent *event = new WebservReadEvent();
-    DEBUG("WebservReadEvent::from_fd() 2");
-    //event->fd = fd;
-    DEBUG("WebservReadEvent::from_fd() 3");
+    WebservReadEvent *event = new WebservReadEvent(fd, reader);
     Request *req = new Request();
-    DEBUG("WebservReadEvent::from_fd() 4");
     event->req_ = req;
     return (event);
 

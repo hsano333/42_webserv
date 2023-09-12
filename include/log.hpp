@@ -9,6 +9,7 @@ class Log
         static Log *get_instance();
         static void write(const char *file,int line, const char *level, const std::string &str, int log_level);
         static void check_writable();
+        static void delete_instance();
     private:
         bool is_writable;
         static Log *_singleton;

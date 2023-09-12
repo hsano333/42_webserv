@@ -13,7 +13,7 @@ class WebservReadEvent : public WebservEvent
         ~WebservReadEvent();
         EWebservEvent which();
 
-        static WebservReadEvent *from_fd(FileDiscriptor fd);
+        static WebservReadEvent *from_fd(FileDiscriptor fd, IReader *reader);
         FileDiscriptor get_fd();
         void increase_and_check_timeout_count(int count);
         int read(char *buf, size_t size);

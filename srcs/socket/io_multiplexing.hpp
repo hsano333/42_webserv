@@ -2,7 +2,9 @@
 #define IO_MULTIPLEXING
 
 #include <climits>
+#include <stdint.h>
 #include "file_discriptor.hpp"
+#include "epoll.hpp"
 
 class IOMultiplexing
 {

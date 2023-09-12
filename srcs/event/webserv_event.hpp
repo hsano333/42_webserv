@@ -8,7 +8,7 @@ typedef enum E_WebservEvent
     READ_EVENT,
     APPLICATION_EVENT,
     WRITE_EVENT,
-    POST_PROCESSING_EVENT,
+    CLEAN_EVENT,
     TIMEOUT_EVENT,
     NOTHING_EVENT,
 } EWebservEvent;

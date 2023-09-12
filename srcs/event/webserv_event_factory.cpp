@@ -4,19 +4,28 @@
 #include "webserv_application_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
-#include "read_socket.hpp"
+#include "socket_reader.hpp"
 #include "webserv_event_factory.hpp"
-#include "webserv_post_processing_event.hpp"
+#include "webserv_clean_event.hpp"
 
 WebservEventFactory::WebservEventFactory(
         SocketController *socket_controller,
         FDManager *fd_manager,
-        IOMultiplexing *io_multi_controller
+        IOMultiplexing *io_multi_controller,
+        EventManager *event_manager,
+        IWriter *normal_writer,
+        IWriter *socket_writer,
+        IReader *normal_reader,
+        IReader *socket_reader
         ) :
         socket_controller(socket_controller),
         fd_manager(fd_manager),
-        io_multi_controller(io_multi_controller)
-
+        io_multi_controller(io_multi_controller),
+        event_manager(event_manager),
+        normal_writer(normal_writer),
+        socket_writer(socket_writer),
+        normal_reader(normal_reader),
+        socket_reader(socket_reader)
 {
 ;
 }
@@ -46,15 +55,16 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             //io_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
-            WebservReadEvent *event = WebservReadEvent::from_fd(fd);
+            WebservReadEvent *event = WebservReadEvent::from_fd(fd, this->socket_reader);
             return (event);
         }
     }else if(event_epoll.events & EPOLLOUT){
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         //FileDiscriptor io_fd = this->socket_controller->accept_request(fd);
-        WebservWriteEvent *event = WebservWriteEvent::from_fd(fd);
+        WebservEvent *saved_event = this->event_manager->get_event_waiting_writing(fd);
+        //WebservWriteEvent *event = WebservWriteEvent::from_event(saved_event, this->socket_writer);
         //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
-        return (event);
+        return (saved_event);
     }else{
         WARNING("Epoll event type is undefined");
         throw std::runtime_error("Epoll event type is undefined");
@@ -63,16 +73,20 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
     return (NULL);
 }
 
-WebservEvent *WebservEventFactory::make_application_event(FileDiscriptor fd, Request *req)
+WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 {
-    WebservApplicationEvent *event = WebservApplicationEvent::from_request(fd, req);
-    return (event);
+    return (WebservApplicationEvent::from_event(event));
+}
+
+WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, Response *res)
+{
+    return (WebservWriteEvent::from_event(event, res, socket_writer));
 }
 
 
-WebservEvent *WebservEventFactory::make_post_processing_event(WebservEvent *event)
+WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event)
 {
-    WebservPostProcessingEvent *new_event = WebservPostProcessingEvent::from_webserv_event(event);
+    WebservCleanEvent *new_event = WebservCleanEvent::from_webserv_event(event);
     return (new_event);
 }
 

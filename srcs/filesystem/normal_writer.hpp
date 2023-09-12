@@ -1,14 +1,14 @@
-#ifndef WRITE_RAW_HPP
-#define WRITE_RAW_HPP
+#ifndef NORMAL_WRITER_HPP
+#define NORMAL_WRITER_HPP
 #include "iwriter.hpp"
 #include "file_discriptor.hpp"
 #include <unistd.h>
 
-class WriteRaw : public IWriter
+class  NormalWriter: public IWriter
 {
     public:
-        WriteRaw();
-        ~WriteRaw();
+        NormalWriter();
+        ~NormalWriter();
         int write(FileDiscriptor fd, char const *buf, size_t size);
 };
 

@@ -7,9 +7,9 @@
 class WebservApplicationEvent : public WebservEvent
 {
     public:
-        WebservApplicationEvent(Request *req);
+        WebservApplicationEvent(FileDiscriptor fd, Request *req);
         ~WebservApplicationEvent();
-        static WebservApplicationEvent *from_request(FileDiscriptor fd, Request *req);
+        static WebservApplicationEvent *from_event(WebservEvent *event);
         EWebservEvent   which();
         FileDiscriptor  get_fd();
         Request         *req();
@@ -18,7 +18,7 @@ class WebservApplicationEvent : public WebservEvent
     private:
         FileDiscriptor  fd;
         Request         *req_;
-        Response        *res_;
+        //Response        *res_;
         int             timeout_count;
 
 

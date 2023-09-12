@@ -23,6 +23,7 @@ void SocketRepository::close_all()
 
     while(ite != end){
         ite->first.close();
+        ite++;
     }
     //sockets.clear();
 }

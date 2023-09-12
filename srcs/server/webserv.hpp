@@ -12,8 +12,9 @@
 #include "webserv_event.hpp"
 #include "webserv_reader.hpp"
 #include "webserv_parser.hpp"
-#include "webserv_application.hpp"
+#include "webserv_executer.hpp"
 #include "webserv_sender.hpp"
+#include "webserv_cleaner.hpp"
 
 using std::map;
 using std::string;
@@ -29,8 +30,9 @@ class Webserv
             WebservWaiter &waiter,
             WebservReader &reader,
             WebservParser &parser,
-            WebservApplication &app,
-            WebservSender &sender
+            WebservExecuter &executer,
+            WebservSender &sender,
+            WebservCleaner &cleaner
             );
     Webserv(const std::vector<std::string> ports);
     //Webserv( c);
@@ -48,8 +50,10 @@ class Webserv
     WebservWaiter       &waiter;
     WebservReader       &reader;
     WebservParser       &parser;
-    WebservApplication  &app;
+    WebservExecuter     &executer;
     WebservSender       &sender;
+    WebservCleaner      &cleaner;
+    IOMultiplexing      *io_multi_controller;
 
     void               wait_for_event();
     /*

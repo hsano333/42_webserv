@@ -1,7 +1,7 @@
 
-#include "webserv_application.hpp"
+#include "webserv_executer.hpp"
 
-WebservApplication::WebservApplication(
+WebservExecuter::WebservExecuter(
             IOMultiplexing *io_multi_controller,
             EventManager *event_manager,
             FDManager *fd_manager
@@ -13,14 +13,14 @@ WebservApplication::WebservApplication(
     ;
 }
 
-WebservApplication::~WebservApplication()
+WebservExecuter::~WebservExecuter()
 {
     ;
 }
 
-void WebservApplication::execute(WebservEvent *event)
+void WebservExecuter::execute(WebservEvent *event)
 {
-    DEBUG("WebservApplication::execute");
+    DEBUG("WebservExecuter::execute");
     (void)event;
     //Response *res = event->res;
     cout << "delete event" << endl;
@@ -28,7 +28,7 @@ void WebservApplication::execute(WebservEvent *event)
     //this->fd_manager->close_fd(event->get_fd());
     io_multi_controller->modify(event->get_fd(), EPOLLOUT);
     //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
-    delete (event);
+    //delete (event);
     //WebservEvent *next_event = event_factory->from_response(res);
     //event_manager.push(next_event);
 }

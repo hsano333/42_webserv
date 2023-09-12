@@ -13,8 +13,8 @@ ConfigLoader::~ConfigLoader()
 
 ConfigLoader::load_file(std::string &filepath)
 {
-    ReadRaw read_raw;
-    File file = File(read_raw);
+    ReadNormal read_normal;
+    File file = File(read_normal);
     file.open_file(tmp_path, WRITE_ONLY);
 
     char buf[MAX_BUF];

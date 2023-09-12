@@ -49,8 +49,9 @@ Webserv::Webserv(
         WebservWaiter &waiter,
         WebservReader &reader,
         WebservParser &parser,
-        WebservApplication &app,
-        WebservSender &sender
+        WebservExecuter &executer,
+        WebservSender &sender,
+        WebservCleaner &cleaner
         ) :
                      //_epfd(0),
                      cfg(cfg),
@@ -59,8 +60,9 @@ Webserv::Webserv(
                      waiter(waiter),
                      reader(reader),
                      parser(parser),
-                     app(app),
-                     sender(sender)
+                     executer(executer),
+                     sender(sender),
+                     cleaner(cleaner)
 {
     ;
 }
@@ -292,6 +294,7 @@ Socket* Webserv::find_listen_socket(int socket_fd)
     */
     //this->_fd_sockets.clear();
 //}
+//
 
 void Webserv::communication()
 {
@@ -304,6 +307,7 @@ void Webserv::communication()
         }
         WebservEvent *event = waiter.serve_event();
 
+        bool flag = false;
         switch(event->which())
         {
             case READ_EVENT:
@@ -314,7 +318,7 @@ void Webserv::communication()
             case APPLICATION_EVENT:
                 DEBUG("Webserv::Application Event ");
                 //WebservApplication app(event);
-                app.execute(event);
+                executer.execute(event);
                 parser.parse_res(event);
                 break;
             case WRITE_EVENT:
@@ -322,13 +326,12 @@ void Webserv::communication()
                 //WebservSender sender(event);
                 sender.send(event);
                 break;
-            case POST_PROCESSING_EVENT:
+            case CLEAN_EVENT:
+                DEBUG("Webserv::Clean Event ");
+                flag = true;
+                cleaner.clean(event);
+                //post_processing(event);
                 /*
-                delete event->req;
-                delete event->res;
-                this->io_multi_controller->erase(event->get_fd());
-                this->fd_manager->close_fd(event->get_fd());
-                close();
                 */
                 //close(event);
                 break;
@@ -339,11 +342,14 @@ void Webserv::communication()
                 //sender.send(event);
                 break;
             case NOTHING_EVENT:
-                //DEBUG("Webserv::Nothing Event");
+                DEBUG("Webserv::Nothing Event");
                 delete(event);
                 //WebservSender sender(event);
                 //sender.send(event);
                 break;
+        }
+        if(flag){
+            break;
         }
     }
 

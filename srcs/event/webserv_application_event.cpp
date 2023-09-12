@@ -1,8 +1,12 @@
 #include "webserv_application_event.hpp"
 #include "webserv_event.hpp"
 
-WebservApplicationEvent::WebservApplicationEvent(Request *req) : 
-                                                req_(req)
+WebservApplicationEvent::WebservApplicationEvent(
+                            FileDiscriptor fd,
+                            Request *req)
+                            :
+                            fd(fd),
+                            req_(req)
 {
 
 };
@@ -12,11 +16,9 @@ WebservApplicationEvent::~WebservApplicationEvent()
     //delete req;
 };
 
-WebservApplicationEvent *WebservApplicationEvent::from_request(FileDiscriptor fd, Request *req)
+WebservApplicationEvent *WebservApplicationEvent::from_event(WebservEvent *event)
 {
-    WebservApplicationEvent *event = new WebservApplicationEvent(req);
-    event->fd = fd;
-    return (event);
+    return (new WebservApplicationEvent(event->get_fd(), event->req()));
 };
 
 EWebservEvent WebservApplicationEvent::which()
@@ -36,7 +38,7 @@ Request *WebservApplicationEvent::req()
 
 Response *WebservApplicationEvent::res()
 {
-    return (res_);
+    return (NULL);
 }
 
 void WebservApplicationEvent::increase_and_check_timeout_count(int count)
