@@ -328,7 +328,7 @@ void Webserv::communication()
                 break;
             case CLEAN_EVENT:
                 DEBUG("Webserv::Clean Event ");
-                flag = true;
+                //flag = true;
                 cleaner.clean(event);
                 //post_processing(event);
                 /*

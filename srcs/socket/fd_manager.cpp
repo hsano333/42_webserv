@@ -44,8 +44,10 @@ void FDManager::add_socket_and_epoll_fd(FileDiscriptor io_fd, FileDiscriptor soc
 
 void FDManager::close_fd(FileDiscriptor fd)
 {
+    DEBUG("FDManager::close_fd():" + fd.to_string());
     std::map<FileDiscriptor, FileDiscriptor>::iterator ite = epoll_fd_and_socket.find(fd);
     if(ite != epoll_fd_and_socket.end()){
+        MYINFO("FDManager::close_fd() : Success");
         epoll_fd_and_socket.erase(fd);
         close(fd.to_int());
     }

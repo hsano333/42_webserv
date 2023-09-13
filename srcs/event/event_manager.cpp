@@ -59,6 +59,7 @@ void EventManager::add_event_waiting_writing(FileDiscriptor fd, WebservEvent* ev
 
 void EventManager::erase_event_waiting_writing(FileDiscriptor fd)
 {
+    DEBUG("erase_event_waiting_writing() fd:" + fd.to_string());
     this->events_waiting_writing.erase(fd);
 }
 

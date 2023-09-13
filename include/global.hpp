@@ -4,7 +4,7 @@
 #include "log.hpp"
 
 #define MAX_FD (200)
-#define MAX_BUF (512)
+#define MAX_BUF (8192)
 #define MAX_READ_SIZE (MAX_BUF-1)
 #define MAX_READ (1024)
 #define MAX_CONFIG_SIZE (MAX_READ_SIZE)

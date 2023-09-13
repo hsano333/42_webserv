@@ -24,7 +24,7 @@ void WebservSender::send(WebservEvent *event)
 {
     DEBUG("WebservSender::send() fd:" + event->get_fd().to_string());
     WebservWriteEvent *write_event = static_cast<WebservWriteEvent*>(event);
-    std::string str = "HTTP/1.1 200 OK\r\nContent-Length:5\r\nabcde\r\n";
+    std::string str = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length:5\r\n\r\nabcde\r\n";
     const char *str2 = str.c_str();
     DEBUG("WebservSender::send() No.1");
     cout << "str2:" << str2 << endl;
