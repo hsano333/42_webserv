@@ -45,6 +45,8 @@ Webserv::Webserv(const std::vector<std::string> ports)epfd(0)
 Webserv::Webserv(
         Config *cfg,
         SocketManager *socket_manager,
+        WebservEventFactory *event_factory,
+        EventManager        *event_manager,
         //EpollController epoll_controller,
         WebservWaiter &waiter,
         WebservReader &reader,
@@ -56,6 +58,8 @@ Webserv::Webserv(
                      //_epfd(0),
                      cfg(cfg),
                      socket_manager(socket_manager),
+                     event_factory(event_factory),
+                     event_manager(event_manager),
                      //epoll_controller(epoll_controller),
                      waiter(waiter),
                      reader(reader),
@@ -298,58 +302,65 @@ Socket* Webserv::find_listen_socket(int socket_fd)
 
 void Webserv::communication()
 {
+    //for test
+    bool exit_flag = false;
     DEBUG("Webserv::communication() start");
     while(1)
     {
         if(waiter.is_not_busy()){
-            DEBUG("Webserv::wait() ");
+            DEBUG("Webserv::wait()");
             waiter.wait();
         }
         WebservEvent *event = waiter.serve_event();
-
-        bool flag = false;
-        switch(event->which())
-        {
-            case READ_EVENT:
-                DEBUG("Webserv::Read Event ");
-                reader.read(event);
-                parser.parse_req(event);
+        try{
+            switch(event->which())
+            {
+                case READ_EVENT:
+                    DEBUG("Webserv::Read Event ");
+                    reader.read(event);
+                    parser.parse_req(event);
+                    break;
+                case APPLICATION_EVENT:
+                    DEBUG("Webserv::Application Event ");
+                    executer.execute(event);
+                    parser.parse_res(event);
+                    break;
+                case WRITE_EVENT:
+                    DEBUG("Webserv::Write Event ");
+                    sender.send(event);
+                    break;
+                case CLEAN_EVENT:
+                    DEBUG("Webserv::Clean Event ");
+                    cleaner.clean(event);
+                    break;
+                case TIMEOUT_EVENT:
+                    DEBUG("Webserv::Timeout Event");
+                    cleaner.clean_timeout_events(event);
+                    delete(event);
+                    break;
+                case NOTHING_EVENT:
+                    DEBUG("Webserv::Nothing Event");
+                    delete(event);
+                    break;
+            }
+            if(exit_flag){
                 break;
-            case APPLICATION_EVENT:
-                DEBUG("Webserv::Application Event ");
-                //WebservApplication app(event);
-                executer.execute(event);
-                parser.parse_res(event);
-                break;
-            case WRITE_EVENT:
-                DEBUG("Webserv::Write Event ");
-                //WebservSender sender(event);
-                sender.send(event);
-                break;
-            case CLEAN_EVENT:
-                DEBUG("Webserv::Clean Event ");
-                //flag = true;
-                cleaner.clean(event);
-                //post_processing(event);
-                /*
-                */
-                //close(event);
-                break;
-            case TIMEOUT_EVENT:
-                DEBUG("Webserv::Timeout Event");
-                delete(event);
-                //WebservSender sender(event);
-                //sender.send(event);
-                break;
-            case NOTHING_EVENT:
-                DEBUG("Webserv::Nothing Event");
-                delete(event);
-                //WebservSender sender(event);
-                //sender.send(event);
-                break;
-        }
-        if(flag){
-            break;
+            }
+        }catch(std::runtime_error &e){
+            WARNING("Wevserv RuntimeError:");
+            WARNING(e.what());
+            WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            this->event_manager->push(next_event);
+        }catch(std::invalid_argument &e){
+            WARNING("Wevserv InvalidArgument:");
+            WARNING(e.what());
+            WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            event_manager->push(next_event);
+        }catch(std::exception &e){
+            WARNING("Wevserv Exception:");
+            WARNING(e.what());
+            WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            event_manager->push(next_event);
         }
     }
 

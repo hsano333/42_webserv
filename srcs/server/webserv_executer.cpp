@@ -23,10 +23,10 @@ void WebservExecuter::execute(WebservEvent *event)
     DEBUG("WebservExecuter::execute");
     (void)event;
     //Response *res = event->res;
-    cout << "delete event" << endl;
+    //cout << "delete event" << endl;
     //FileDiscriptor socket_fd = this->fd_manager->socket_fd_from_epoll_fd(event->get_fd());
     //this->fd_manager->close_fd(event->get_fd());
-    io_multi_controller->modify(event->get_fd(), EPOLLOUT);
+    //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
     //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
     //delete (event);
     //WebservEvent *next_event = event_factory->from_response(res);

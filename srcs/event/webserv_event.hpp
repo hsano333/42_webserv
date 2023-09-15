@@ -25,7 +25,8 @@ class WebservEvent
         virtual Request *req() = 0;
         virtual Response *res() = 0;
 
-        virtual void increase_and_check_timeout_count(int count) = 0;
+        virtual void increase_timeout_count(int count) = 0;
+        virtual int  timeout_count() = 0;
 
     private:
         Request *req_;
@@ -33,7 +34,7 @@ class WebservEvent
         FileDiscriptor fd;
         //EWebservEvent event_type;
         std::string filepath;
-        int timeout_count;
+        int timeout_count_;
 };
 
 #endif

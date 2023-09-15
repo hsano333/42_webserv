@@ -7,7 +7,7 @@ WebservWriteEvent::WebservWriteEvent()
                                         fd(FileDiscriptor::from_int(0)),
                                         req_(NULL),
                                         res_(NULL),
-                                        timeout_count(0),
+                                        timeout_count_(0),
                                         writer(NULL)
 {
     ;
@@ -23,7 +23,7 @@ WebservWriteEvent::WebservWriteEvent(
         fd(fd),
         req_(req),
         res_(res),
-        timeout_count(0),
+        timeout_count_(0),
         writer(writer)
 {
     ;
@@ -70,13 +70,15 @@ Response *WebservWriteEvent::res()
 }
 
 
-void WebservWriteEvent::increase_and_check_timeout_count(int count)
+void WebservWriteEvent::increase_timeout_count(int count)
 {
-    this->timeout_count += count;
-    if(this->timeout_count >= TIMEOUT){
-        DEBUG("Exceed Timeout:" + Utility::to_string(TIMEOUT) + "sec");
+    this->timeout_count_ += count;
+    DEBUG("WebservWriteEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
+}
 
-    }
+int WebservWriteEvent::timeout_count()
+{
+    return (this->timeout_count_);
 }
 
 int WebservWriteEvent::write(char const *buf, size_t size)

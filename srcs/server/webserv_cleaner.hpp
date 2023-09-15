@@ -4,6 +4,7 @@
 #include "event_manager.hpp"
 #include "webserv_event.hpp"
 
+class EventManager;
 class WebservCleaner
 {
     public:
@@ -15,6 +16,7 @@ class WebservCleaner
                 );
         ~WebservCleaner();
         void clean(WebservEvent *event);
+        void clean_timeout_events(WebservEvent *event);
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;

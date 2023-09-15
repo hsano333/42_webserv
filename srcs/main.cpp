@@ -75,6 +75,14 @@ void server(Webserv& webserv)
 #include <fcntl.h>
 #include "uri.hpp"
 
+
+void clean_all(WebservCleaner &cleaner, EventManager *event_manager)
+{
+    event_manager->close_all_events_waiting_writing(cleaner);
+    event_manager->close_all_events();
+    //cleaner.clean();
+}
+
 Config *create_config(std::string &cfg_file)
 {
     NormalReader normal_reader;
@@ -119,6 +127,7 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 
 int main(int argc, char const* argv[])
 {
+
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){
         return 0;
@@ -193,10 +202,20 @@ int main(int argc, char const* argv[])
 
     SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg,socket_manager,waiter,reader,parser,app,sender, cleaner);
-    //while (1) {
-        server(webserv);
-    //}
+    Webserv webserv(cfg,socket_manager,event_factory, event_manager, waiter,reader,parser,app,sender, cleaner);
+    while (1) {
+        try{
+            server(webserv);
+        }catch(std::bad_alloc &e){
+            WARNING("Webserv BalAlloc:");
+            WARNING(e.what());
+            clean_all(cleaner, event_manager);
+        }catch(...){
+            WARNING("Webserv Exception:");
+            clean_all(cleaner, event_manager);
+        }
+    }
+    clean_all(cleaner, event_manager);
     delete fd_manager;
     delete socket_controller;
     delete epoll_controller;

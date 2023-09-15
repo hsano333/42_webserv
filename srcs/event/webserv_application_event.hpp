@@ -14,12 +14,13 @@ class WebservApplicationEvent : public WebservEvent
         FileDiscriptor  get_fd();
         Request         *req();
         Response        *res();
-        void increase_and_check_timeout_count(int count);
+        void increase_timeout_count(int count);
+        int  timeout_count();
     private:
         FileDiscriptor  fd;
         Request         *req_;
         //Response        *res_;
-        int             timeout_count;
+        int             timeout_count_;
 
 
 

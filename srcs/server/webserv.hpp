@@ -15,6 +15,7 @@
 #include "webserv_executer.hpp"
 #include "webserv_sender.hpp"
 #include "webserv_cleaner.hpp"
+#include "event_manager.hpp"
 
 using std::map;
 using std::string;
@@ -25,7 +26,9 @@ class Webserv
 {
   public:
     Webserv(Config *cfg,
-            SocketManager *socket_maanger,
+            SocketManager *socket_manager,
+            WebservEventFactory *event_factory,
+            EventManager        *event_manager,
             //EpollController epoll_controller,
             WebservWaiter &waiter,
             WebservReader &reader,
@@ -46,6 +49,8 @@ class Webserv
   private:
     Config              *cfg;
     SocketManager       *socket_manager;
+    WebservEventFactory *event_factory;
+    EventManager        *event_manager;
     //EpollController     &epoll_controller;
     WebservWaiter       &waiter;
     WebservReader       &reader;

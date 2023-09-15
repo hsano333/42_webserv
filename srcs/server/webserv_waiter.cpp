@@ -2,6 +2,7 @@
 #include "webserv_waiter.hpp"
 #include "timeout_exception.hpp"
 #include "webserv_timeout_event.hpp"
+#include "webserv_nothing_event.hpp"
 
 WebservWaiter::WebservWaiter(
             IOMultiplexing *io_multi_controller,
@@ -27,9 +28,9 @@ void WebservWaiter::wait()
     try{
         io_multi_controller->wait();
     }catch(TimeoutException &e){
-        MYINFO("waiter catch tmp timeout");
+        MYINFO("waiter catch epoll timeout");
         int count = Utility::to_int(e.what());
-        event_manager->increase_timeout_count(count);
+        event_manager->count_up_to_all_event(count);
     }
 }
 
@@ -72,8 +73,11 @@ WebservEvent* WebservWaiter::serve_event()
         return (returned_event);
     }
 
+    if(event_manager->check_timeout()){
+        return (new WebservTimeoutEvent());
+    }
+    return (new WebservNothingEvent);
     //return (NULL);
-    return (new WebservTimeoutEvent());
 }
 
 

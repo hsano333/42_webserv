@@ -20,6 +20,7 @@
 #define WARNING(STR)  (Log::write(__FILE__, __LINE__, "[WARNING]" , STR, LOG_LEVEL_WARNING))
 #define ERROR(STR)  (Log::write(__FILE__, __LINE__,  "[ERROR]", STR, LOG_LEVEL_ERROR))
 
+//unit is second
 #define TIMEOUT 100
 
 #endif

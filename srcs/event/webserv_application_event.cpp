@@ -6,7 +6,8 @@ WebservApplicationEvent::WebservApplicationEvent(
                             Request *req)
                             :
                             fd(fd),
-                            req_(req)
+                            req_(req),
+                            timeout_count_(0)
 {
 
 };
@@ -41,10 +42,13 @@ Response *WebservApplicationEvent::res()
     return (NULL);
 }
 
-void WebservApplicationEvent::increase_and_check_timeout_count(int count)
+void WebservApplicationEvent::increase_timeout_count(int count)
 {
-    this->timeout_count += count;
-    if(this->timeout_count >= TIMEOUT){
-        DEBUG("Exceed Timeout:" + Utility::to_string(TIMEOUT) + "sec");
-    }
+    this->timeout_count_ += count;
+    DEBUG("WebservApplicationEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
+}
+
+int WebservApplicationEvent::timeout_count()
+{
+    return (this->timeout_count_);
 }

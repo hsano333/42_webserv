@@ -9,7 +9,7 @@ WebservReadEvent::WebservReadEvent()
                                         req_(NULL),
                                         fd(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
-                                        timeout_count(0),
+                                        timeout_count_(0),
                                         ireader(NULL)
 {
 }
@@ -18,7 +18,7 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
     :
         req_(new Request()),
         fd(fd),
-        timeout_count(0),
+        timeout_count_(0),
         ireader(NULL)
 {
     std::cout << "WebservReadEvent Constructor" << std::endl;
@@ -29,7 +29,7 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
 WebservReadEvent::WebservReadEvent(FileDiscriptor fd, IReader *ireader)
     :
         fd(fd),
-        timeout_count(0),
+        timeout_count_(0),
         //event_type(READ_EVENT),
         ireader(ireader)
         //iread()
@@ -75,12 +75,15 @@ Response *WebservReadEvent::res()
 }
 
 
-void WebservReadEvent::increase_and_check_timeout_count(int count)
+void WebservReadEvent::increase_timeout_count(int count)
 {
-    this->timeout_count += count;
-    if(this->timeout_count >= TIMEOUT){
-        DEBUG("Exceed Timeout:" + Utility::to_string(TIMEOUT) + "sec");
-    }
+    this->timeout_count_ += count;
+    DEBUG("WebservReadEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
+}
+
+int WebservReadEvent::timeout_count()
+{
+    return (this->timeout_count_);
 }
 
 #include <stdio.h>

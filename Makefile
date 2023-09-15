@@ -13,7 +13,7 @@ FILESYSTEMSRC 			:= file.cpp normal_reader.cpp socket_reader.cpp normal_writer.c
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_executer.cpp webserv_cleaner.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_reader.cpp webserv_parser.cpp webserv_executer.cpp webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/

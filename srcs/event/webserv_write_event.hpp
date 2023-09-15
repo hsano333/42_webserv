@@ -18,7 +18,8 @@ class WebservWriteEvent : public WebservEvent
         FileDiscriptor  get_fd();
         Request         *req();
         Response        *res();
-        void increase_and_check_timeout_count(int count);
+        void increase_timeout_count(int count);
+        int  timeout_count();
         int write(char const *buf, size_t size);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
 
@@ -26,7 +27,7 @@ class WebservWriteEvent : public WebservEvent
         FileDiscriptor  fd;
         Request         *req_;
         Response        *res_;
-        int             timeout_count;
+        int             timeout_count_;
         IWriter *writer;
 };
 #endif
