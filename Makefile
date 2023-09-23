@@ -21,7 +21,7 @@ EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.c
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 HTTPDIR				:= http/
-HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp
+HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp http_version.cpp request_line.cpp uri.cpp
 HTTP 				:= $(addprefix $(HTTPDIR)/, $(HTTPSRC))
 
 NETWORKDIR			:= network/
@@ -33,7 +33,7 @@ SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_reposit
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
 EXCEPTIONDIR			:= exception/
-EXCEPTIONSRC 			:= timeout_exception.cpp
+EXCEPTIONSRC 			:= timeout_exception.cpp http_exception.cpp
 EXCEPTION 				:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
 
 #socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp uri.cpp  fd_manager.cpp 

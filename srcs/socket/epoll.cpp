@@ -165,19 +165,19 @@ t_epoll_event *Epoll::event_from_fd(int fd)
 #include "doctest.h"
 TEST_CASE("Epoll Class")
 {
-    Epoll epoll = Epoll::from_socket_size(5);
-    CHECK(epoll.allocated_event_size() == 0);
-    epoll.expand_allocated_space();
+    Epoll epoll = Epoll();
     CHECK(epoll.allocated_event_size() == 1);
     epoll.expand_allocated_space();
     CHECK(epoll.allocated_event_size() == 2);
+    epoll.expand_allocated_space();
+    CHECK(epoll.allocated_event_size() == 3);
     epoll.contract_allocated_space();
-    CHECK(epoll.allocated_event_size() == 1);
-    ;
+    CHECK(epoll.allocated_event_size() == 2);
+    epoll.contract_allocated_space();
     CHECK_THROWS_AS(epoll.contract_allocated_space(), std::runtime_error);
 
 
-    close(epoll.fd());
+    close(epoll.fd().to_int());
 }
 
 #endif

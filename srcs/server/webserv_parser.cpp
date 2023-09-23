@@ -21,9 +21,29 @@ WebservParser::~WebservParser()
 void WebservParser::parse_req(WebservEvent *event)
 {
     DEBUG("WebservParser::parse_req()");
-    (void)event;
-    //Request *req = event->req();
-    //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
+    Request *req = event->req();
+    char *body_p = Utility::strnstr(req->buf(), "\r\n\r\n",(size_t)req->buf_size());
+    if(body_p == NULL){
+        //not delete( because still use)
+        //delete event;
+        return ;
+    }
+    body_p += 2;
+    req->set_buf_body(body_p, req->buf_size()-(size_t)(body_p - req->buf()));
+    body_p -= 2;
+    *body_p = '\0';
+    Split sp(req->buf(), "\r\n");
+    if(sp.size() == 0){
+        ERROR("Invalid Request. Reques doesn't have \"\r\n\"");
+        std::runtime_error("Invalid Request");
+    }
+    //std::string start_line = sp[0];
+    req->set_request_line(sp[0]);
+
+    //std::string header = sp[0];
+
+
+
     WebservEvent *next_event = event_factory->make_application_event(event);
     delete (event);
     event_manager->push(next_event);
@@ -32,6 +52,7 @@ void WebservParser::parse_req(WebservEvent *event)
 void WebservParser::parse_res(WebservEvent *event)
 {
     DEBUG("WebservParser::parse_res()");
+
 
     io_multi_controller->modify(event->get_fd(), EPOLLOUT);
     Response *res = new Response();
