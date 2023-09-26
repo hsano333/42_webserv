@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-
 #include "config.hpp"
 #include "config_factory.hpp"
 #include "config_raw_loader.hpp"

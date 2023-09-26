@@ -1,5 +1,7 @@
 
 #include "webserv_executer.hpp"
+#include "webserv_application_event.hpp"
+#include "request.hpp"
 
 WebservExecuter::WebservExecuter(
             IOMultiplexing *io_multi_controller,
@@ -21,7 +23,11 @@ WebservExecuter::~WebservExecuter()
 void WebservExecuter::execute(WebservEvent *event)
 {
     DEBUG("WebservExecuter::execute");
-    (void)event;
+    WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
+    Request *req = app_event->req();
+    req->print_info();
+
+    //(void)event;
     //Response *res = event->res;
     //cout << "delete event" << endl;
     //FileDiscriptor socket_fd = this->fd_manager->socket_fd_from_epoll_fd(event->get_fd());

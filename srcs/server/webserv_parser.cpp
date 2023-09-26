@@ -23,7 +23,12 @@ void WebservParser::parse_req(WebservEvent *event)
     DEBUG("WebservParser::parse_req()");
     Request *req = event->req();
     char *body_p = Utility::strnstr(req->buf(), "\r\n\r\n",(size_t)req->buf_size());
+    cout << "req->buf_size():" << req->buf_size() << endl;
+    char *buf_p = req->buf();
+    buf_p[req->buf_size()] = '\0';
+    printf("buf_p=%s\n", buf_p);
     if(body_p == NULL){
+        DEBUG("WebservParser:: not still read Request header");
         //not delete( because still use)
         //delete event;
         return ;

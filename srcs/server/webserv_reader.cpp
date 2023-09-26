@@ -22,8 +22,6 @@ void WebservReader::read(WebservEvent *event)
     WebservReadEvent *read_event = static_cast<WebservReadEvent*>(event);
     Request *tmp_req = read_event->req();
 
-
-
     //(void)event;
     //event.ireader.read();
     //char buf[MAX_BUF+1];
@@ -31,9 +29,9 @@ void WebservReader::read(WebservEvent *event)
     int space = tmp_req->raw_buf_space();
     //cout << "spalce:" << space<< endl;
     char* buf = tmp_req->get_raw_buf_pointer();
-    for(size_t i=0;i<512;i++){
-        buf[i] = i;
-    }
+    //for(size_t i=0;i<512;i++){
+        //buf[i] = i;
+    //}
     int sum = 0;
     //size_t size = 0;
     while(1){
@@ -47,7 +45,12 @@ void WebservReader::read(WebservEvent *event)
             break;
         }
     }
+    cout << "read sum:" << sum << endl;
+    cout << "read space:" << space << endl;
     buf[sum] = '\0';
+    cout << "read buf:[" << buf << "]" << endl;
     tmp_req->renew_raw_buf_space(space);
+    tmp_req->increment_raw_buf_size(sum);
+    //exit(0);
     //io_multi_controller->modify(event->get_fd(), EPOLLOUT);
 }
