@@ -126,7 +126,6 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 
 int main(int argc, char const* argv[])
 {
-
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){
         return 0;
@@ -195,7 +194,7 @@ int main(int argc, char const* argv[])
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReader reader(epoll_controller, event_manager);
     WebservParser parser(epoll_controller, event_manager, event_factory);
-    WebservExecuter app(epoll_controller, event_manager, fd_manager);
+    WebservExecuter app(epoll_controller, event_manager, fd_manager, cfg);
     WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 

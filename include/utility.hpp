@@ -45,6 +45,7 @@ class Utility
     static size_t to_size_t(string const &str);
     static std::string to_hexstr(size_t i);
 
+    static char hex_string_to_int(const string& hex_string);
     static string get_http_status_message(string status_code);
     template <typename T>
     static void print_vector(vector<T> v);

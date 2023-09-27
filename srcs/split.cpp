@@ -15,11 +15,24 @@ Split::Split()
 {
     ;
 }
+
 Split::~Split()
 {
     ;
 }
 
+Split::Split(Split const &sp)
+{
+    this->_splitted_string = sp._splitted_string;
+}
+
+Split& Split::operator=(Split const &sp)
+{
+    if(this == &sp)
+        return (*this);
+    this->_splitted_string = sp._splitted_string;
+    return (*this);
+}
 
 
 void split_delimiters(std::string const& str, std::string delimiters, vector<string> &vec)

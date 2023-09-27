@@ -8,6 +8,8 @@ class Split
 {
   public:
     Split();
+    Split(Split const &sp);
+    Split& operator=(Split const &sp);
     ~Split();
     Split(char *str, std::string delimiter);
     Split(std::string const& str, std::string delimiter);
@@ -26,7 +28,7 @@ class Split
     void set_word(std::string &str, std::string const &delimiters);
 
   private:
-    bool d_quote;
+    //bool d_quote;
     std::vector<std::string> _splitted_string;
     //void split(std::string const& str, std::string delimiter, std::vector<std::string> &vec );
     void split_not_delete_delimiter(std::string const& str, std::string delimiter);

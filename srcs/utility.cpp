@@ -150,6 +150,19 @@ void Utility::sort_orderby_len(std::vector<std::string>& str)
     (sort(str.begin(), str.end(), orderby_string_len));
 }
 
+/*
+int char_to_hex(char c)
+{
+    if ('0' <= c && c <='9'){
+        return (c-'0');
+    }else if ('a' <= c && c <= 'f'){
+        return (c-'a' + 10);
+    }else if ('A' <= c && c <= 'F'){
+        return (c-'A' + 10);
+    }
+    return (-1);
+}
+*/
 unsigned char char_to_hex(char c)
 {
     if ('0' <= c && c <='9'){
@@ -163,6 +176,31 @@ unsigned char char_to_hex(char c)
     throw std::invalid_argument("Utility::char_to_hex() error: invalid argument");
     return (0);
 }
+
+char Utility::hex_string_to_int(const std::string& hex_string)
+{
+    if (hex_string.size () > 2){
+        return (0);
+    }
+    if (hex_string.size () == 1){
+        return (char_to_hex(hex_string[0]));
+    }
+    if (hex_string.size () == 2){
+        int tmp = char_to_hex(hex_string[0]);
+        if(tmp< 0){
+            return (tmp);
+        }
+        int val = (tmp) << 4;
+        tmp =  char_to_hex(hex_string[1]);
+        if(tmp < 0){
+            return (tmp);
+        }
+        val += (tmp);
+        return (val);
+    }
+    return (0);
+}
+
 
 unsigned char Utility::hex_string_to_uchar(const std::string& hex_string)
 {

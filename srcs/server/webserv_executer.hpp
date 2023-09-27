@@ -10,7 +10,8 @@ class WebservExecuter
         WebservExecuter(
                       IOMultiplexing *io_multi_controller,
                       EventManager *event_manager,
-                      FDManager *fd_manager
+                      FDManager *fd_manager,
+                      Config *cfg
                 );
         ~WebservExecuter();
         void execute(WebservEvent *event);
@@ -18,6 +19,7 @@ class WebservExecuter
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
         FDManager *fd_manager;
+        Config *cfg;
 };
 
 #endif
