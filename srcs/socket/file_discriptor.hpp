@@ -1,6 +1,7 @@
 #ifndef FILE_DISCRIPTOR_HPP
 #define FILE_DISCRIPTOR_HPP
 #include <iostream>
+#include <fstream>
 #include "utility.hpp"
 
 class FileDiscriptor

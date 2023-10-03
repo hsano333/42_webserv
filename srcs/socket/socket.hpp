@@ -1,9 +1,9 @@
 #ifndef SOCKET_H
 #define SOCKET_H
-#include "config.hpp"
-#include "fd_manager.hpp"
-#include "request.hpp"
-#include "response.hpp"
+//#include "config.hpp"
+//#include "fd_manager.hpp"
+//#include "request.hpp"
+//#include "response.hpp"
 #include <iostream>
 #include <netdb.h>
 #include <string>
@@ -11,8 +11,9 @@
 #include <sys/socket.h>
 #include "port.hpp"
 #include "file_discriptor.hpp"
+//#include "file_discriptor.hpp"
 
-#define BUF_MAX (1600)
+//#define BUF_MAX 1600
 
 typedef struct clientinfo {
     FileDiscriptor fd;
@@ -30,6 +31,7 @@ class Socket
         ~Socket();
         Socket& operator=(Socket const &sock_fdet);
         static Socket create_from_port(Port const &port);
+        int to_int();
     //Socket(std::string port);
     //Socket(Port const &port);
     //Socket(const Socket& socket);

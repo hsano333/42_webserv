@@ -127,7 +127,6 @@ std::ostream& operator<<(std::ostream& os, const FileDiscriptor &fd)
     std::string out = Utility::to_string(fd.to_int());
     os << out;
     return (os);
-
 }
 
 

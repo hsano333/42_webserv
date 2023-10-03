@@ -116,6 +116,6 @@ Config* ConfigFactory::create()
         //throw std::runtime_error("config parser error:http");
     //}
 
-    config->check();
+    //config->check();
     return (config);
 }

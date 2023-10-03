@@ -24,6 +24,7 @@ void GetMethod::parse()
 
 void GetMethod::execute()
 {
+
 }
 
 bool GetMethod::is_need_body() const

@@ -379,3 +379,19 @@ void Config::check()
         throw std::runtime_error("Config::check(),  http is null");
     }
 }
+
+/*
+void Config::check(SocketRepository *socket_repository)
+{
+    std::map<FileDiscriptor, Socket>::const_iterator ite = socket_repository->begin();
+    std::map<FileDiscriptor, Socket>::const_iterator end = socket_repository->end();
+    while(ite != end){
+        cout << "test" << endl;
+        //cout << *ite << endl;
+
+        ite++;
+    }
+
+
+}
+*/

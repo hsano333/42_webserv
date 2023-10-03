@@ -3,6 +3,7 @@
 #include "io_multiplexing.hpp"
 #include "event_manager.hpp"
 #include "webserv_event.hpp"
+#include "fd_manager.hpp"
 
 class EventManager;
 class WebservCleaner

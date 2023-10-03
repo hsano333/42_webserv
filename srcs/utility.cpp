@@ -112,7 +112,7 @@ string Utility::to_lower(string str)
     return (result);
 }
 
-string Utility::trim_white_space(string str)
+string Utility::trim_white_space(string const &str)
 {
     std::string::size_type left = str.find_first_not_of("\t\n\v\f\r ");
     if (left != std::string::npos) {

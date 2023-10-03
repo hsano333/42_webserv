@@ -29,7 +29,7 @@ NETWORKSRC 			:= ip_address.cpp cidr.cpp  port.cpp
 NETWORK 			:= $(addprefix $(NETWORKDIR)/, $(NETWORKSRC))
 
 SOCKETDIR			:= socket/
-SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp file_discriptor.cpp socket_controller.cpp fd_manager.cpp
+SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp  fd_manager.cpp file_discriptor.cpp socket_controller.cpp 
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
 EXCEPTIONDIR			:= exception/
@@ -58,7 +58,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(CONFIGDIR) $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR)
+INCDIRS			:= $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR) $(CONFIGDIR) 
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include ./srcs/unit_test $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))

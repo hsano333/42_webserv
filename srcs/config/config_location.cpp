@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigLocation::ConfigLocation()
+ConfigLocation::ConfigLocation() : root_(""), cgi_pass_("")
 {
     ;
 }
@@ -113,6 +113,11 @@ void ConfigLocation::set_root(std::vector<std::string> &vec)
         ERROR("Invalid Config Error: root directive is invalid");
         throw std::runtime_error("config parser error:location [root]");
     }
+    if (this->cgi_pass_ != "")
+    {
+        ERROR("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
+        throw std::runtime_error("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
+    }
     this->root_ = vec[1];
 }
 
@@ -123,6 +128,11 @@ void ConfigLocation::set_cgi_pass(std::vector<std::string> &vec)
     {
         ERROR("Invalid Config Error: cgi_pass directive is invalid");
         throw std::runtime_error("config parser error:location [cgi_pass]");
+    }
+    if (this->root_ != "")
+    {
+        ERROR("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
+        throw std::runtime_error("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
     }
     this->cgi_pass_ = vec[1];
 }

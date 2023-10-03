@@ -1,6 +1,6 @@
 #ifndef UTILITY_H
 #define UTILITY_H
-#include "config.hpp"
+//#include "config.hpp"
 #include "utility.hpp"
 #include <sstream>
 #include <string>
@@ -24,7 +24,7 @@ class Utility
     static string delete_space(string& str);
     static char* strnstr(const char* haystack, const char* needle, size_t len);
     static string to_lower(string str);
-    static string trim_white_space(string str);
+    static string trim_white_space(string const &str);
 
     static std::string delete_duplicated_slash(std::string str);
     static void sort_orderby_len(std::vector<std::string>& str);

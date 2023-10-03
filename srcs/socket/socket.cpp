@@ -3,6 +3,7 @@
 #include "string.h"
 #include "utility.hpp"
 #include "tcp_socket.hpp"
+#include "global.hpp"
 #include <errno.h>
 #include <fcntl.h>
 #include <iostream>
@@ -131,6 +132,11 @@ FileDiscriptor Socket::get_socket_fd() const
 void Socket::close_fd()
 {
     this->sock_fd.close();
+}
+
+int Socket::to_int()
+{
+    return (this->sock_fd.to_int());
 }
 
 /*

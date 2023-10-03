@@ -1,6 +1,5 @@
 
 #include "webserv_executer.hpp"
-#include "webserv_application_event.hpp"
 #include "request.hpp"
 
 WebservExecuter::WebservExecuter(
@@ -28,12 +27,23 @@ std::string identify_path(URI &uri)
     return ("test");
 }
 
+void WebservExecuter::make_application(WebservApplicationEvent *event)
+{
+    Request *req = event->req();
+    req->print_info();
+    //cgi
+
+}
+
 void WebservExecuter::execute(WebservEvent *event)
 {
     DEBUG("WebservExecuter::execute");
     WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
-    Request *req = app_event->req();
-    req->print_info();
+    this->make_application(app_event);
+
+    //is cgi?
+    //which get,post, delete
+    // target file
 
     //(void)event;
     //Response *res = event->res;

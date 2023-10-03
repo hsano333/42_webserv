@@ -2,6 +2,8 @@
 #define WEBSERV_EVENT_HPP
 #include "epoll.hpp"
 #include "file_discriptor.hpp"
+#include "request.hpp"
+#include "response.hpp"
 
 typedef enum E_WebservEvent
 {
