@@ -141,7 +141,7 @@ int main(int argc, char const* argv[])
     SocketRepository *socket_repository = create_sockets(cfg, fd_manager);
     //Epoll epoll = Epoll::from_sockets(socket_repository);
     //
-    //cfg->check(socket_repository);
+    cfg->check(socket_repository);
 
 
     //std::cout << epoll2.allocated_event_size() << endl;

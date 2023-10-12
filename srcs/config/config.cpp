@@ -380,18 +380,26 @@ void Config::check()
     }
 }
 
-/*
 void Config::check(SocketRepository *socket_repository)
 {
-    std::map<FileDiscriptor, Socket>::const_iterator ite = socket_repository->begin();
-    std::map<FileDiscriptor, Socket>::const_iterator end = socket_repository->end();
-    while(ite != end){
-        cout << "test" << endl;
-        //cout << *ite << endl;
+    struct addrinfo *res;
+    struct addrinfo hints;
+    Utility::memset( &hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
 
-        ite++;
+    (void)socket_repository;
+    for (size_t i = 0; i < http->get_server_size(); i++) 
+    {
+        char const *hostname = http->server(i)->server_name().c_str();
+        cout << "hostname:" << hostname << endl;
+        int rval = getaddrinfo(hostname, NULL, &hints, &res);
+        cout << "rval:" << rval << endl;
+        if (getaddrinfo(hostname, NULL, &hints, &res) < 0) {
+            ERROR("Host name is invalid:" + http->server(i)->server_name());
+            //throw std::runtime_error("hostname is invalid");
+        }
     }
-
+    freeaddrinfo(res);
 
 }
-*/

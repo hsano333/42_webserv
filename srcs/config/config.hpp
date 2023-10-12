@@ -44,7 +44,7 @@ class Config : public ConfigObject<ConfigHttp*>
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigHttp*> const &vec);
         void check();
-        //void check(SocketRepository *socket_repository);
+        void check(SocketRepository *socket_repository);
 
         void print_cfg();
     private:
