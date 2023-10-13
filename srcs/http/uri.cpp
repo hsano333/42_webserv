@@ -24,7 +24,7 @@ URI::URI(URI const &uri)
 
 URI& URI::operator=(URI const &uri)
 {
-    if (this->raw_ == uri.raw_)
+    if (this == &uri)
         return (*this);
     this->raw_ = uri.raw_;
     this->query = uri.query;

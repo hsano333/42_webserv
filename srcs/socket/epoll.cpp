@@ -23,7 +23,11 @@ Epoll::~Epoll()
 
 Epoll& Epoll::operator=(Epoll const & epoll)
 {
-    std::cout << "operator=" << std::endl;
+    if (this == &epoll){
+        return (*this);
+
+    }
+    //std::cout << "operator=" << std::endl;
     this->epfd = epoll.epfd;
     this->allocated_events_space.resize(epoll.allocated_event_size());
     for(size_t i=0;i<this->allocated_events_space.size();i++){

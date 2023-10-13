@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/14 00:57:52 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/14 02:06:32 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,35 @@
 #include "utility.hpp"
 #include <climits>
 
-Header::Header() : _err(false), _err_code(0), _chunked(false)
+Header::Header() : _not_find("")
 {
 }
 
 Header::~Header()
 {
 }
+
+Header::Header(Header const &header) : _not_find("")
+{
+    *this = header;
+}
+
+Header& Header::operator=(Header const &header)
+{
+    if (this == &header){
+        return (*this);
+    }
+    this->_headers.clear();
+    std::map<std::string, std::string >::const_iterator ite = header._headers.begin();
+    std::map<std::string, std::string >::const_iterator end = header._headers.end();
+    while(ite != end){
+        this->_headers.insert(std::make_pair(ite->first, ite->second));
+        ite++;
+    }
+    return (*this);
+}
+
+
 
 Header Header::from_splited_data(Split &sp, size_t offset)
 {
@@ -47,7 +69,6 @@ Header Header::from_splited_data(Split &sp, size_t offset)
         }
     }
     return (header);
-
 }
 
 void Header::print_info() const
@@ -60,6 +81,7 @@ void Header::print_info() const
 
 }
 
+/*
 void Header::load_data(char *buf)
 {
         Split sp_line(buf, "\r\n");
@@ -99,15 +121,16 @@ void Header::load_data(char *buf)
             }
         }
 }
+*/
 
-void Header::check_header_related_body()
+bool Header::is_chunked()
 {
     const string trans_enc_str =  "transfer-encoding";
     string &trans_enc = this->find(trans_enc_str);
     if (trans_enc == "chunked"){
-        this->_chunked = true;
+        return (true);
     }else{
-        this->_chunked = false;
+        return (false);
     }
 }
 
@@ -122,20 +145,24 @@ std::string &Header::find(const string &name)
 
 size_t Header::get_content_length()
 {
-    if (_content_length != 0){
-        return (_content_length);
-    }
     std::string name = "content-length";
     string &value = find(name);
     if (value == this->_not_find){
-        this->_content_length = INT_MAX;
-        return (_content_length);
+        return (INT_MAX);
     }
     int value_size = Utility::to_int(value);
     if (value_size <= 0){
-        this->_content_length = INT_MAX;
-        return (_content_length);
+        return (INT_MAX);
     }
-    this->_content_length = value_size;
-    return (_content_length);
+    return (value_size);
+}
+
+std::string Header::get_host()
+{
+    std::string name = "Host";
+    string &value = find(name);
+    if (value == this->_not_find){
+        return ("");
+    }
+    return (value);
 }
