@@ -2,6 +2,7 @@
 #define UTILITY_H
 //#include "config.hpp"
 #include "utility.hpp"
+#include "ip_address.hpp"
 #include <sstream>
 #include <string>
 #include <unistd.h>
@@ -44,6 +45,7 @@ class Utility
     static ssize_t to_ssize_t(string const &str);
     static size_t to_size_t(string const &str);
     static std::string to_hexstr(size_t i);
+    static IP_Address name_to_address(std::string name);
 
     static char hex_string_to_int(const string& hex_string);
     static string get_http_status_message(string status_code);

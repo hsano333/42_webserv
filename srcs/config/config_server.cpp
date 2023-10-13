@@ -1,4 +1,5 @@
 #include "config_server.hpp"
+#include "ip_address.hpp"
 #include <iostream>
 #include "global.hpp"
 #include "utility.hpp"
@@ -70,6 +71,16 @@ void ConfigServer::set_server_name(std::vector<std::string> &vec)
     if(word_cnt == 2)
     {
         this->server_name_ = vec[1];
+        try{
+            this->server_address_ = IP_Address::from_string(this->server_name_);
+        }catch(std::invalid_argument &e){
+            try{
+                this->server_address_ = IP_Address::from_name(this->server_name_);
+            }catch(std::invalid_argument &e){
+                ERROR("ConfigServer::set_server_name: invalid argument:" + this->server_name_);
+                throw std::runtime_error("ConfigServer::set_server_name: invalid hostnmae");
+            }
+        }
     }else{
         ERROR("Invalid Config Error:invalid word is in server_name directive");
         throw std::runtime_error("config parser error:server");

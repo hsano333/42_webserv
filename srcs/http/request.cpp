@@ -100,6 +100,12 @@ void Request::set_request_line(std::string &str)
     this->req_line_ = RequestLine::from_string(str);
 }
 
+void Request::set_header(Split &sp, size_t offset)
+{
+    this->header = Header::from_splited_data(sp, offset);
+}
+
+
 RequestLine& Request::req_line()
 {
     return (this->req_line_);
@@ -109,6 +115,7 @@ void Request::print_info() const
 {
     cout << "|-- Print Request Header --|" << endl;
     this->req_line_.print_info();
+    this->header.print_info();
     //cout << " uri_raw: " << this->req_line.uri().raw() << endl;
     //cout << " version: " << this->req_line.version().to_string() << endl;
 

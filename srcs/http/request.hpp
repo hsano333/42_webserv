@@ -43,6 +43,7 @@ class Request
         void    renew_raw_buf_space(int space);
         void    set_buf_body(char *body_p, int size);
         void    set_request_line(std::string &str);
+        void    set_header(Split &sp, size_t offset);
 
         void    print_info() const;
         RequestLine    &req_line();

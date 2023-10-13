@@ -1,6 +1,7 @@
 #ifndef HEADER_HPP
 #define HEADER_HPP
 
+#include "split.hpp"
 #include <map>
 #include <string>
 #include <iostream>
@@ -16,11 +17,12 @@ class Header{
         Header();
         ~Header();
         void load_data(char *buf);
-        void print() const;
+        void print_info() const;
         bool get_end();
         std::string& find(const std::string &name);
         size_t get_content_length();
         void check_header_related_body();
+        static Header from_splited_data(Split &sp, size_t offset);
     private:
         //int _fd;
         std::map<std::string, std::string > _headers;

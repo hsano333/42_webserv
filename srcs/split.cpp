@@ -187,13 +187,14 @@ static std::string find_used_delimiter(std::string const &str, std::string delim
 
     for(size_t i=0;i<delimiter.size();i++){
         char c = delimiter[i];
-        ascii[c] = INT_MAX;
+        ascii[c] = 100000;
     }
     for(size_t i=0;i<str.size();i++){
         char c = str[i];
         ascii[c]++;
     }
 
+    std::sort(ascii.begin(), ascii.end());
     std::multimap<int,char> ascii_count;
     for(size_t i=42;i<ascii.size()-1;i++){
         ascii_count.insert(std::make_pair(ascii[i],i));

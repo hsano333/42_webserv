@@ -30,6 +30,7 @@ std::string identify_path(URI &uri)
 void WebservExecuter::make_application(WebservApplicationEvent *event)
 {
     Request *req = event->req();
+    cout << "Webserv Executer No.1" << endl;
     req->print_info();
     //cgi
 

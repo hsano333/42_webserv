@@ -28,6 +28,7 @@ class ConfigServer : public ConfigObject<ConfigLocation*>
         void set_server_name(std::vector<std::string> &vec);
         Port listen_;
         std::string server_name_;
+        IP_Address server_address_;
         bool is_default_server_;
 
 };

@@ -308,12 +308,9 @@ void Webserv::communication()
     DEBUG("Webserv::communication() start");
 
     struct sockaddr_in sin;
-    //socklen_t len;
     socklen_t len = sizeof(sin);
 
     int sockfd = 3;
-    //std::map<FileDiscriptor, Socket>::const_iterator ite = this->socket_manager->begin();
-    //std::map<FileDiscriptor, Socket>::const_iterator end = this->socket_manager->end();
 
     std::vector<int> vec;
     vec.push_back(3);

@@ -36,7 +36,6 @@ void	*Utility::memset(void *b, int c, size_t len)
     return (b);
 }
 
-
 char* Utility::memcpy(char* dst, const char* src, size_t n)
 {
     size_t i;

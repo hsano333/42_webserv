@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2023/07/09 01:13:36 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/14 00:57:52 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,34 @@ Header::~Header()
 {
 }
 
-void Header::print() const
+Header Header::from_splited_data(Split &sp, size_t offset)
+{
+    Header header;
+    for(size_t i=offset;i<sp.size();i++){
+        std::string &line = sp[i];
+        Split splited_line(line, ":", false, true);
+
+        if (splited_line.size() == 2){
+            header._headers.insert(std::make_pair(
+                        Utility::trim_white_space(splited_line[0]) ,
+                        Utility::trim_white_space(splited_line[1]))
+            );
+        }else{
+            std::string cat;
+            for(size_t j=1;j<splited_line.size();j++){
+                cat += splited_line[j];
+            }
+            header._headers.insert(std::make_pair(
+                        Utility::trim_white_space(splited_line[0]) ,
+                        Utility::trim_white_space(cat)
+            ));
+        }
+    }
+    return (header);
+
+}
+
+void Header::print_info() const
 {
     map<string, string>::const_iterator ite = _headers.begin();
     map<string, string>::const_iterator end = _headers.end();
