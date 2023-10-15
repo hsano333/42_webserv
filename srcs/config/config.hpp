@@ -9,11 +9,14 @@
 #include "config_http.hpp"
 #include "config_server.hpp"
 #include "config_location.hpp"
+#include "request.hpp"
 
 #include "socket_repository.hpp"
 
 //#include "config_repository.hpp"
 //#include "config_factory.hpp"
+//
+class Request;
 
 class Config : public ConfigObject<ConfigHttp*>
 {
@@ -31,10 +34,9 @@ class Config : public ConfigObject<ConfigHttp*>
         void retrieve(const std::string &word, std::map<std::string, std::string> &map, void(*f)(char *str));
         bool getline(std::string &str);
         const std::string content_word;
-        //void make_http(char *str);
 
         ConfigServer const* get_server(Port const& port, std::string const& host) const;
-        ConfigLocation const* get_location(Port const& port, std::string const& host, std::string const& path) const;
+        ConfigLocation const* get_location(ConfigServer *server, Request *req) const;
         std::vector<std::string> get_location_paths(Port const& port, std::string const& host) const;
         //std::map<std::string, std::vector<std::string> > get_locations_contents(Port const& port, std::string const& host,
                                                             //std::string const& location) const;

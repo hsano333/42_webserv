@@ -11,6 +11,8 @@ typedef enum E_ServerApplication
 
 class ServerApplication : public Application
 {
+    public:
+    private:
 
 };
 

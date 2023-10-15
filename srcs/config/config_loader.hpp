@@ -16,7 +16,6 @@ class ConfigLoader
         //bool autoindex;
         //std::string cgi_pass;
         //std::string index;
-        
 
 };
 #endif

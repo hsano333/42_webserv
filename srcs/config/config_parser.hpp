@@ -248,16 +248,12 @@ ConfigParseredData ConfigParser<T, U>::parser(std::string const &str, T * object
         end = i;
         if(find_target(str, &end, out_strings)){
             size_t pos = str.find(target, begin);
-            //parsered_data.target_strings.push_back(this->retrieve_string(str,&end));
             parsered_data.push_back_next_string(this->retrieve_string(str,&end));
             parsered_data.push_back_next_properties(out_strings);
             out_strings.clear();
 
-            //cout << "target No.0:" << target << endl;
             if(pos != std::string::npos && pos >= begin){
-                //cout << "target No.1: i=" << i << ", pos=" << pos  << endl;
                 std::string string_before_target = str.substr(i,pos-i);
-                //cout << "string_before_target:[" << string_before_target << "]" << endl;
                 if(string_before_target.size() > 0){
                     retrieve_properties(string_before_target, properties);
                 }
@@ -273,11 +269,7 @@ ConfigParseredData ConfigParser<T, U>::parser(std::string const &str, T * object
     if(string_rest.size() > 0){
         retrieve_properties(string_rest, properties);
     }
-    //object->assign_out_properties(out_strings);
     object->assign_properties(properties);
-    //parsered_data.assign_next_target_properties(out_strings);
-    //parsered_data.set_next_string(target_string);
-
     return parsered_data;
 }
 

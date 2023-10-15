@@ -58,6 +58,8 @@ class Utility
     static size_t get_map_str_size(map<std::string, std::string> &data);
 
     static std::string extract_json_object(const std::string &target, std::string &str);
+    static bool is_regular_file(std::string const &path);
+    static bool is_executable_file(std::string const &path);
 
 };
 

@@ -20,8 +20,8 @@ class Split
     typedef std::vector<std::string>::iterator iterator;
     iterator begin();
     iterator end();
-    size_t size();
-    std::string& operator[](size_t i);
+    size_t size() const;
+    std::string const &operator[](size_t i) const;
     void concat(std::string& str, std::string delimiter);
     friend std::ostream& operator<<(std::ostream& os, Split& sp);
 

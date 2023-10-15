@@ -42,11 +42,12 @@ class Request
         int     raw_buf_space();
         void    renew_raw_buf_space(int space);
         void    set_buf_body(char *body_p, int size);
-        void    set_request_line(std::string &str);
+        void    set_request_line(std::string const &str);
         void    set_header(Split &sp, size_t offset);
 
         void    print_info() const;
-        RequestLine    &req_line();
+        RequestLine const &req_line() const;
+        Header const &header();
         //
     private:
         char    raw_buf[MAX_BUF];
@@ -57,7 +58,7 @@ class Request
         int     buf_body_size;
 
         RequestLine    req_line_;
-        Header         header;
+        Header         header_;
 
 };
 

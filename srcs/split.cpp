@@ -324,12 +324,12 @@ Split::iterator Split::end()
     return (this->_splitted_string.end());
 }
 
-std::string& Split::operator[](size_t i)
+std::string const &Split::operator[](size_t i) const
 {
     return (this->_splitted_string[i]);
 }
 
-size_t Split::size()
+size_t Split::size() const
 {
     return (this->_splitted_string.size());
 }

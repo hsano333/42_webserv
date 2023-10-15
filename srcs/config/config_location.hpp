@@ -45,6 +45,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         bool autoindex_;
         std::vector<std::string> indexes_;
         std::map<StatusCode, std::string> error_pages_;
+        std::map<std::string, std::string> cgi_;
 
         void set_root(std::vector<std::string> &vec);
         void set_cgi_pass(std::vector<std::string> &vec);

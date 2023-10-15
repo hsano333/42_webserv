@@ -5,7 +5,7 @@ SRCDIR	:= ./srcs
 
 
 CONFIGDIR			:= config/
-CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp  config_parsered_data.cpp  body_size.cpp
+CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp config_cgi.cpp config_parsered_data.cpp  body_size.cpp
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR			:= filesystem/
@@ -19,6 +19,12 @@ SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 EVENTDIR			:= event/
 EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_application_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp  event_manager.cpp
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
+
+
+APPLICATIONDIR			:= application/
+APPLICATIONSRC 			:= application_factory.cpp get_application.cpp
+APPLICATION 				:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
+
 
 HTTPDIR				:= http/
 HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp http_version.cpp request_line.cpp uri.cpp
@@ -42,7 +48,7 @@ EXCEPTION 				:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
 CGI 				:= #cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
 UTILITY 			:= split.cpp  utility.cpp endian.cpp log.cpp 
 DESIGN				:= 
-SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(EVENT) $(HTTP) $(NETWORK) $(SOCKET) $(EXCEPTION) $(CGI) $(UTILITY)  $(DESIGN)
+SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(EVENT) $(APPLICATION) $(HTTP) $(NETWORK) $(SOCKET) $(EXCEPTION) $(CGI) $(UTILITY)  $(DESIGN)
 MANDATORY			:= main.cpp
 BONUS				:= main_bonus.cpp
 UNIT_TEST_SRCS			:= unit_test/unit_main.cpp $(SRC)
@@ -58,7 +64,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR) $(CONFIGDIR) 
+INCDIRS			:= $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR) $(CONFIGDIR) $(APPLICATIONDIR)
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include ./srcs/unit_test $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))

@@ -15,7 +15,8 @@ ConfigFactory::ConfigFactory(
         ConfigParser<ConfigHttp, ConfigServer> &parser_http,
         ConfigParser<ConfigServer, ConfigLocation> &parser_server,
         ConfigParser<ConfigLocation, ConfigLimit> &parser_location,
-        ConfigParser<ConfigLimit, ConfigLastObject> &parser_limit
+        ConfigParser<ConfigLimit, ConfigCgi> &parser_limit,
+        ConfigParser<ConfigCgi, ConfigLastObject> &parser_cgi
         )
                             :
                             raw_getter(getter),
@@ -23,7 +24,8 @@ ConfigFactory::ConfigFactory(
                             parser_http(parser_http),
                             parser_server(parser_server),
                             parser_location(parser_location),
-                            parser_limit(parser_limit)
+                            parser_limit(parser_limit),
+                            parser_cgi(parser_cgi)
 {
     ;
 }
@@ -34,13 +36,30 @@ ConfigFactory::~ConfigFactory()
 }
 
 
+std::vector<ConfigCgi*> ConfigFactory::create_cgi(ConfigParseredData &parsered_cgi_data)
+{
+    std::vector<ConfigCgi*> cgis;
+    for(size_t i=0; i<parsered_cgi_data.size();i++){
+        ConfigCgi *cgi = new ConfigCgi();
+        parser_cgi.parser(parsered_cgi_data.raw_data(i), cgi);
+        //cgi->assign_out_properties(parsered_cgi_data.properties(i));
+        cgi->check();
+        cgis.push_back(cgi);
+    }
+    return (cgis);
+}
+
+
 std::vector<ConfigLimit*> ConfigFactory::create_limit(ConfigParseredData &parsered_limit_data)
 {
     std::vector<ConfigLimit*> limits;
     for(size_t i=0; i<parsered_limit_data.size();i++){
         ConfigLimit *limit = new ConfigLimit();
-        parser_limit.parser(parsered_limit_data.raw_data(i), limit);
+        ConfigParseredData parsered_cgi_data = parser_limit.parser(parsered_limit_data.raw_data(i), limit);
+
         limit->assign_out_properties(parsered_limit_data.properties(i));
+        limit->push_all(this->create_cgi(parsered_cgi_data));
+        limit->check();
         limits.push_back(limit);
     }
     return (limits);
@@ -52,9 +71,8 @@ std::vector<ConfigLocation*> ConfigFactory::create_location(ConfigParseredData &
     for(size_t i=0; i<parsered_location_data.size();i++){
         ConfigLocation *location = new ConfigLocation();
         ConfigParseredData parsered_limit_data = parser_location.parser(parsered_location_data.raw_data(i), location);
+
         location->assign_out_properties(parsered_location_data.properties(i));
-        //ConfigLimit *tmp = this->create_limit(parsered_limit_data);
-        //location->limits.push_back(tmp);
         location->push_all(this->create_limit(parsered_limit_data));
         location->check();
         locations.push_back(location);
@@ -65,12 +83,10 @@ std::vector<ConfigLocation*> ConfigFactory::create_location(ConfigParseredData &
 std::vector<ConfigServer*> ConfigFactory::create_server(ConfigParseredData &parsered_server_data)
 {
     std::vector<ConfigServer* > servers;
-    cout << "server size:" << parsered_server_data.size() << endl;
     for(size_t i=0; i<parsered_server_data.size();i++){
         ConfigServer *server = new ConfigServer();
         ConfigParseredData parsered_location_data = parser_server.parser(parsered_server_data.raw_data(i), server);
         server->assign_out_properties(parsered_server_data.properties(i));
-        //ConfigLocation *tmp = this->create_location(parsered_location_data);
         server->push_all(this->create_location(parsered_location_data));
         server->check();
         servers.push_back(server);

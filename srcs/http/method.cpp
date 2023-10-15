@@ -26,6 +26,11 @@ Method& Method::operator=(Method const &method)
     return (*this);
 }
 
+bool Method::operator==(Method const &method)
+{
+    return (this->method_ == method.method_);
+}
+
 /*
 const std::string& Method::get_name() const
 {
@@ -75,6 +80,11 @@ std::string Method::to_string() const
         return ("DELETE");
     }
     return ("");
+}
+
+e_method Method::to_enum() const
+{
+    return (this->method_);
 }
 
 #ifdef UNIT_TEST

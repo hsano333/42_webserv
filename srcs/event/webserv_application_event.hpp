@@ -16,10 +16,11 @@ class WebservApplicationEvent : public WebservEvent
         Response        *res();
         void increase_timeout_count(int count);
         int  timeout_count();
+        void            set_response(Response *res);
     private:
         FileDiscriptor  fd;
         Request         *req_;
-        //Response        *res_;
+        Response        *res_;
         int             timeout_count_;
 
 

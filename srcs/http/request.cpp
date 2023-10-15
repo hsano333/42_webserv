@@ -95,27 +95,32 @@ void Request::renew_raw_buf_space(int space)
     this->raw_buf_rest_size_ = space;
 }
 
-void Request::set_request_line(std::string &str)
+void Request::set_request_line(std::string const &str)
 {
     this->req_line_ = RequestLine::from_string(str);
 }
 
 void Request::set_header(Split &sp, size_t offset)
 {
-    this->header = Header::from_splited_data(sp, offset);
+    this->header_ = Header::from_splited_data(sp, offset);
 }
 
 
-RequestLine& Request::req_line()
+RequestLine const &Request::req_line() const
 {
     return (this->req_line_);
+}
+
+Header const &Request::header()
+{
+    return (this->header_);
 }
 
 void Request::print_info() const
 {
     cout << "|-- Print Request Header --|" << endl;
     this->req_line_.print_info();
-    this->header.print_info();
+    this->header_.print_info();
     //cout << " uri_raw: " << this->req_line.uri().raw() << endl;
     //cout << " version: " << this->req_line.version().to_string() << endl;
 

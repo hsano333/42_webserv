@@ -33,7 +33,7 @@ RequestLine& RequestLine::operator=(RequestLine const &line)
     return (*this);
 }
 
-RequestLine RequestLine::from_string(std::string &str)
+RequestLine RequestLine::from_string(std::string const &str)
 {
 
     Split sp(str, " ");
@@ -54,23 +54,23 @@ void RequestLine::print_info() const
 {
     cout << "|-- Print RequestLine --|" << endl;
     cout << this->method_.to_string() << endl;
-    cout << this->uri_ << endl;
     cout << this->version_.to_string() << endl;
+    this->uri_.print_info();
 
     cout << "|--------------------------|" << endl;
 
 }
-Method const &RequestLine::method()
+Method const &RequestLine::method() const
 {
     return (this->method_);
 }
 
-URI const &RequestLine::uri()
+URI const &RequestLine::uri() const
 {
     return (uri_);
 }
 
-HttpVersion const &RequestLine::version()
+HttpVersion const &RequestLine::version() const
 {
     return (version_);
 }

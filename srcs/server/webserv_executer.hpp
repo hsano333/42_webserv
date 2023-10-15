@@ -4,11 +4,13 @@
 #include "event_manager.hpp"
 #include "webserv_application_event.hpp"
 #include "epoll_controller.hpp"
+#include "application_factory.hpp"
 
 class WebservExecuter
 {
     public:
         WebservExecuter(
+                      ApplicationFactory *factory,
                       IOMultiplexing *io_multi_controller,
                       EventManager *event_manager,
                       FDManager *fd_manager,
@@ -17,11 +19,12 @@ class WebservExecuter
         ~WebservExecuter();
         void execute(WebservEvent *event);
     private:
+        ApplicationFactory *factory;
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
         FDManager *fd_manager;
         Config *cfg;
-        void make_application(WebservApplicationEvent *event);
+        Application *get_application(WebservApplicationEvent *event);
 };
 
 #endif

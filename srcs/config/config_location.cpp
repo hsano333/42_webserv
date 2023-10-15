@@ -48,6 +48,12 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
                 set_index(tmp_vec);
             }else if(tmp_vec[0] == "error_page"){
                 set_error_page(tmp_vec);
+            //}else if(tmp_vec[0] == "cgi"){
+                //std::cout << "cgi" << std::endl;
+                //for(size_t i=0;i<tmp_vec.size();i++){
+                    //std::cout << tmp_vec[i] << std::endl;
+                //}
+
             }else{
                 ERROR("Invalid Config Error:" + tmp_vec[0] + " is not location directive");
                 throw std::runtime_error("config parser error:location");

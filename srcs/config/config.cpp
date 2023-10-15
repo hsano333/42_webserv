@@ -16,6 +16,9 @@ using std::map;
 using std::pair;
 using std::make_pair;
 
+using std::cout;
+using std::endl;
+
 Config *Config::_singleton = NULL;
 std::string Config::_filepath = "webserv.conf";
 //std::ifstream Config::_fin;
@@ -129,40 +132,40 @@ map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_lo
 
 ConfigServer const* Config::get_server(Port const& port, string const& host) const
 {
-    /*
     map<pair<Port, string>, ConfigServer const*>::iterator cash_ite = _servers_cache.find(make_pair(port, host));
-    if (cash_ite != _servers_cache.end())
+    if (cash_ite != _servers_cache.end()){
+        if(_servers_cache.size() > 100){
+            _servers_cache.clear();
+        }
         return (cash_ite->second);
-    */
+    }
 
     vector<ConfigServer const*> servers;
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port && http->server(i)->server_name() == host) {
-            //_servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            _servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port && http->server(i)->is_default_server()) {
-            //_servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            _servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port) {
-            //_servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            _servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
     return (NULL);
 }
 
-ConfigLocation const* Config::get_location(Port const& port, string const& host, string const& path) const
+ConfigLocation const* Config::get_location(ConfigServer *server, Request *req) const
 {
-    ConfigServer const* server = get_server(port, host);
-    if (server == NULL){
-        throw std::runtime_error("Config: ConfigServer(port: " + port.to_string() + " , host: " + host + " ) not found");
-    }
+    std::string path = "";
+    (void)req;
     //vector<ConfigLocation*> locations = server->locations;
     vector<pair<const ConfigLocation*, string> > candidate;
     for (size_t i = 0; i < server->get_location_size(); i++) {
@@ -364,8 +367,6 @@ void Config::print_cfg()
             }
 
             cout << "" << j << endl;
-            
-
         }
 
     }

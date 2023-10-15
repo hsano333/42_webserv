@@ -11,12 +11,12 @@ class RequestLine
         ~RequestLine();
         RequestLine(RequestLine const &line);
         RequestLine& operator=(RequestLine const &line);
-        static RequestLine from_string(std::string &str);
+        static RequestLine from_string(std::string const &str);
         void   print_info() const;
 
-        Method      const &method();
-        URI         const &uri();
-        HttpVersion const &version();
+        Method      const &method() const;
+        URI         const &uri() const;
+        HttpVersion const &version() const;
         //std::string &version();
     private:
         Method      method_;

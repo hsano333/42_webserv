@@ -42,9 +42,8 @@ void WebservParser::parse_req(WebservEvent *event)
         ERROR("Invalid Request. Reques doesn't have \"\r\n\"");
         std::runtime_error("Invalid Request");
     }
+    req->set_request_line(sp[0]);
     req->set_header(sp, 1);
-
-
 
     WebservEvent *next_event = event_factory->make_application_event(event);
     delete (event);

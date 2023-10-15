@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/14 02:06:32 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/15 17:48:28 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,11 @@ Header& Header::operator=(Header const &header)
     return (*this);
 }
 
-
-
 Header Header::from_splited_data(Split &sp, size_t offset)
 {
     Header header;
     for(size_t i=offset;i<sp.size();i++){
-        std::string &line = sp[i];
+        std::string const &line = sp[i];
         Split splited_line(line, ":", false, true);
 
         if (splited_line.size() == 2){
@@ -60,8 +58,11 @@ Header Header::from_splited_data(Split &sp, size_t offset)
         }else{
             std::string cat;
             for(size_t j=1;j<splited_line.size();j++){
+                //cat += splited_line[j];
                 cat += splited_line[j];
+                cat += ":";
             }
+            cat = cat.substr(0, cat.size()-1);
             header._headers.insert(std::make_pair(
                         Utility::trim_white_space(splited_line[0]) ,
                         Utility::trim_white_space(cat)
@@ -126,7 +127,7 @@ void Header::load_data(char *buf)
 bool Header::is_chunked()
 {
     const string trans_enc_str =  "transfer-encoding";
-    string &trans_enc = this->find(trans_enc_str);
+    string const &trans_enc = this->find(trans_enc_str);
     if (trans_enc == "chunked"){
         return (true);
     }else{
@@ -134,9 +135,9 @@ bool Header::is_chunked()
     }
 }
 
-std::string &Header::find(const string &name)
+std::string const &Header::find(const string &name) const
 {
-     map<string, string>::iterator ite = _headers.find(name);
+     map<string, string>::const_iterator ite = _headers.find(name);
      if (ite == _headers.end()){
          return (this->_not_find);
      }
@@ -146,7 +147,7 @@ std::string &Header::find(const string &name)
 size_t Header::get_content_length()
 {
     std::string name = "content-length";
-    string &value = find(name);
+    string const &value = find(name);
     if (value == this->_not_find){
         return (INT_MAX);
     }
@@ -157,12 +158,12 @@ size_t Header::get_content_length()
     return (value_size);
 }
 
-std::string Header::get_host()
+std::string const &Header::get_host() const
 {
-    std::string name = "Host";
-    string &value = find(name);
+    std::string const name = "Host";
+    std::string const &value = find(name);
     if (value == this->_not_find){
-        return ("");
+        return (this->_not_find);
     }
     return (value);
 }

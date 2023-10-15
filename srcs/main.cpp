@@ -91,14 +91,16 @@ Config *create_config(std::string &cfg_file)
     ConfigParser<ConfigHttp, ConfigServer> parser_http("server");
     ConfigParser<ConfigServer, ConfigLocation> parser_server("location");
     ConfigParser<ConfigLocation, ConfigLimit> parser_location("limit_except");
-    ConfigParser<ConfigLimit, ConfigLastObject> parser_limit("");
+    ConfigParser<ConfigLimit, ConfigCgi> parser_limit("cgi");
+    ConfigParser<ConfigCgi, ConfigLastObject> parser_cgi("");
 
     ConfigFactory cfg_factory = ConfigFactory(raw_getter,
                                               parser_config,
                                               parser_http,
                                               parser_server,
                                               parser_location,
-                                              parser_limit
+                                              parser_limit,
+                                              parser_cgi
     );
 
     return (cfg_factory.create());
@@ -124,6 +126,7 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
     return (socket_repository );
 }
 
+#include <sys/stat.h>
 int main(int argc, char const* argv[])
 {
     std::string cfg_file = "./webserv.conf";
@@ -193,10 +196,13 @@ int main(int argc, char const* argv[])
             normal_reader,
             socket_reader
             );
+
+    ApplicationFactory *application_factory = new ApplicationFactory(cfg);
+
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReader reader(epoll_controller, event_manager);
     WebservParser parser(epoll_controller, event_manager, event_factory);
-    WebservExecuter app(epoll_controller, event_manager, fd_manager, cfg);
+    WebservExecuter app(application_factory, epoll_controller, event_manager, fd_manager, cfg);
     WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
@@ -228,6 +234,7 @@ int main(int argc, char const* argv[])
     delete (normal_reader);
     delete (socket_reader);
     delete socket_repository;
+    delete application_factory;
     DEBUG("end webserv");
     Log::delete_instance();
     return 0;

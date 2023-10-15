@@ -17,6 +17,9 @@ ConfigLimit::ConfigLimit(std::string &str)
 
 ConfigLimit::~ConfigLimit()
 {
+    for(size_t i=0;i<this->cgis.size();i++){
+        delete this->cgis[i];
+    }
 }
 
 /*
@@ -24,7 +27,19 @@ void ConfigLimit::parse()
 {
 }
 */
+ConfigCgi const *ConfigLimit::cgi(size_t i) const
+{
+    if(i < this->get_cgi_size()){
+        return (this->cgis[i]);
+    }
+    ERROR("Invalid ConfigLocation Error:Invalid index ");
+    throw std::runtime_error("config error:location");
+}
 
+size_t ConfigLimit::get_cgi_size() const
+{
+    return (this->cgis.size());
+}
 
 void ConfigLimit::set_cidr(std::vector<std::string> &vec, bool flag)
 {
@@ -65,11 +80,10 @@ void ConfigLimit::assign_out_properties(std::vector<std::string> &properties)
     }
 }
 
-void ConfigLimit::push_all(std::vector<ConfigLastObject*> const &vec)
+void ConfigLimit::push_all(std::vector<ConfigCgi*> const &vec)
 {
-    if(vec.size() != 0){
-        ERROR("Invalid Config Error: don't push anything in ConfigLimit ");
-        throw std::runtime_error("config parser error:limit");
+    for(size_t i=0;i<vec.size();i++){
+        this->cgis.push_back(vec[i]);
     }
 }
 

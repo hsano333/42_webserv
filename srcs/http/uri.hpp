@@ -20,8 +20,9 @@ class URI
     ~URI();
 
 
-    static URI from_string(std::string &str);
+    static URI from_string(std::string const &str);
     std::string raw() const;
+    void print_info() const;
 
     /*
     void print_uri() const;
@@ -42,11 +43,9 @@ class URI
 
   private:
     std::string raw_;
-    //std::string fragment;
     Split query;
     Split path_sp;
-    //Split filepath;
-    void uri_encode(std::string& raw_uri);
+    void uri_encode(std::string const &raw_uri);
     /*
     std::string domain;
     std::string encorded_uri;

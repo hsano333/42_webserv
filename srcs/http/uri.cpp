@@ -33,7 +33,7 @@ URI& URI::operator=(URI const &uri)
     return (*this);
 }
 
-URI URI::from_string(std::string &uri_raw)
+URI URI::from_string(std::string const &uri_raw)
 {
     DEBUG("URI::from_string uri_raw:" + uri_raw);
     if(uri_raw == ""){
@@ -75,8 +75,9 @@ std::string URI::raw() const
     return (this->raw_);
 }
 
-void URI::uri_encode(std::string& raw_uri)
+void URI::uri_encode(std::string const &raw_uri_)
 {
+    std::string raw_uri = raw_uri_;
     char* pos = &(raw_uri[0]);
     size_t cnt = 0;
     char tmp_hex[2];
@@ -114,6 +115,21 @@ void URI::uri_encode(std::string& raw_uri)
     //_endorded_uri = string(bk);
     raw_uri = std::string(bk);
     delete[] (bk) ;
+}
+
+void URI::print_info() const
+{
+    cout << "|-- Print URI --|" << endl;
+    cout << "raw=" << raw_ << endl;
+    for(size_t i=0;i<path_sp.size();i++){
+        cout << "path_sp[" << i << "]=" << path_sp[i] << endl;
+    }
+    for(size_t i=0;i<query.size();i++){
+        cout << "query[" << i << "]=" << query[i] << endl;
+    }
+
+
+    cout << "|--------------------------|" << endl;
 }
 
 std::ostream& operator<<(std::ostream& os, const  URI&uri)

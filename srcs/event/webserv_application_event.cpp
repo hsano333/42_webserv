@@ -7,6 +7,7 @@ WebservApplicationEvent::WebservApplicationEvent(
                             :
                             fd(fd),
                             req_(req),
+                            res_(NULL),
                             timeout_count_(0)
 {
 
@@ -51,4 +52,9 @@ void WebservApplicationEvent::increase_timeout_count(int count)
 int WebservApplicationEvent::timeout_count()
 {
     return (this->timeout_count_);
+}
+
+void WebservApplicationEvent::set_response(Response *res)
+{
+    this->res_ = res;
 }

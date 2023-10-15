@@ -162,6 +162,7 @@ int char_to_hex(char c)
     return (-1);
 }
 */
+
 unsigned char char_to_hex(char c)
 {
     if ('0' <= c && c <='9'){
@@ -394,6 +395,26 @@ std::string Utility::extract_json_object(const std::string &target, std::string 
     return tmp;
 }
 
+bool Utility::is_regular_file(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFREG);
+}
+
+bool Utility::is_executable_file(std::string const &path)
+{
+    struct stat fileInfo;
+    cout << "path;" << path << endl;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IXOTH);
+    //return (fileInfo.st_mode & S_IFREG);
+    //return true;
+}
 
 // 存在しないステータスコードを指定すると、空文字列を返す
 string Utility::get_http_status_message(string status_code)
