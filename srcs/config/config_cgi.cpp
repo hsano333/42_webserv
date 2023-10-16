@@ -38,6 +38,7 @@ std::map<std::string, std::string> &ConfigCgi::get_extensions()
 
 void ConfigCgi::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
+    DEBUG("ConfigCgi::assign_properties()");
     std::vector<std::vector<std::string> >::iterator ite = properties.begin();
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){

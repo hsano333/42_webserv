@@ -49,6 +49,7 @@ void ConfigHttp::set_max_body_size(std::vector<std::string> &vec)
 
 void ConfigHttp::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
+    DEBUG("ConfigHttp::assign_properties()");
     std::vector<std::vector<std::string> >::iterator ite = properties.begin();
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){

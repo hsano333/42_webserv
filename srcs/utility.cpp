@@ -279,12 +279,23 @@ unsigned int Utility::to_uint(string const &str)
 
 int Utility::to_int(string &str)
 {
-    std::string::iterator begin = str.begin();
+    std::string const &s = str;
+    return (Utility::to_int(s));
+}
+
+int Utility::to_int(string const &str)
+{
+    if (str == ""){
+        WARNING("Utility::to_int() error: invalid argument:" + str);
+        throw std::invalid_argument("Utility::to_int() error: invalid argument");
+    }
+
+    std::string::const_iterator begin = str.begin();
     if(str[0] == '-'){
         begin++;
     }
 
-    std::string::iterator ite = std::find_if(begin, str.end(), is_notdigit);
+    std::string::const_iterator ite = std::find_if(begin, str.end(), is_notdigit);
     if(ite != str.end()){
         WARNING("Utility::to_int() error: invalid argument:" + str);
         throw std::invalid_argument("Utility::to_int() error: invalid argument");
@@ -297,11 +308,6 @@ int Utility::to_int(string &str)
     ss >> cvt;
 
     return (cvt);
-}
-
-int Utility::to_int(string const &str)
-{
-    return (Utility::to_int(str));
 }
 
 int Utility::to_int(char const *str)

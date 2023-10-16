@@ -1,5 +1,6 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
+#include "status_code.hpp"
 
 /*
 
@@ -48,9 +49,16 @@ enum SEND_STATE{
 
 class Response
 {
-public:
-    Response();
-    ~Response();
+    public:
+        Response();
+        ~Response();
+        Response(Response const &res);
+        Response& operator=(Response const &res);
+        static Response* from_status_code(StatusCode &code);
+        void print_info();
+
+    private:
+        StatusCode status_code;
     /*
     Response(Request* request);
     Response(int status_code);

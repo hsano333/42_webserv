@@ -24,7 +24,7 @@ StatusCode StatusCode::from_int(int code)
     return (tmp_code);
 }
 
-StatusCode StatusCode::from_string(std::string &str)
+StatusCode StatusCode::from_string(std::string const &str)
 {
     int code = Utility::to_int(str);
     return StatusCode::from_int(code);

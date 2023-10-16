@@ -23,6 +23,8 @@ WebservSender::~WebservSender()
 void WebservSender::send(WebservEvent *event)
 {
     WebservWriteEvent *write_event = static_cast<WebservWriteEvent*>(event);
+    Response *res = write_event->res();
+    res->print_info();
     //std::string str = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length:5\r\n\r\nabcde\r\n";
     std::string str = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nContent-Length:5\r\nabcde\r\n";
     const char *str2 = str.c_str();

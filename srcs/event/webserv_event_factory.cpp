@@ -89,6 +89,11 @@ WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, Respons
     return (WebservWriteEvent::from_event(event, res, socket_writer));
 }
 
+WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, StatusCode &code)
+{
+    return (WebservWriteEvent::from_status_code(event, code, socket_writer));
+}
+
 
 WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event)
 {

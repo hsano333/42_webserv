@@ -322,6 +322,7 @@ vector<string> Config::get_location_paths(Port const& port, string const& host) 
 
 void Config::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
+    DEBUG("Config::assign_properties()");
     if(properties.size() > 0){
         ERROR("Invalid Config Error: There is invalid properties");
         throw std::runtime_error("config parser error:");

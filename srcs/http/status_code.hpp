@@ -8,7 +8,7 @@ class StatusCode
         StatusCode();
         ~StatusCode();
         static StatusCode from_int(int code);
-        static StatusCode from_string(std::string &code);
+        static StatusCode from_string(std::string const &code);
         std::string to_string();
         int to_int() const;
         bool operator==(StatusCode const &code);

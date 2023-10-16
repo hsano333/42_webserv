@@ -1,5 +1,6 @@
 #include "webserv_write_event.hpp"
 #include "socket_writer.hpp"
+#include "response.hpp"
 
 
 WebservWriteEvent::WebservWriteEvent() 
@@ -32,6 +33,17 @@ WebservWriteEvent::WebservWriteEvent(
 WebservWriteEvent::~WebservWriteEvent()
 {
     ;
+}
+
+WebservWriteEvent *WebservWriteEvent::from_status_code(WebservEvent *event, StatusCode &code, IWriter *writer)
+{
+    Response *res = Response::from_status_code(code);
+    return (new WebservWriteEvent(
+            event->get_fd(),
+            event->req(),
+            res,
+            writer
+    ));
 }
 
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)

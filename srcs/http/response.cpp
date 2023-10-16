@@ -16,6 +16,36 @@ Response::~Response()
 {
 ;
 }
+
+Response::Response(Response const &res)
+{
+    *this = res;
+}
+
+Response& Response::operator=(Response const &res)
+{
+    if (this == &res){
+        return (*this);
+    }
+    this->status_code = res.status_code;
+    return (*this);
+}
+
+Response* Response::from_status_code(StatusCode &code)
+{
+    Response *res = new Response();
+    res->status_code = code;
+    return (res);
+}
+
+void Response::print_info()
+{
+    cout << "|-- Print Response --|" << endl;
+    cout << "status code:" << this->status_code.to_string() << endl;
+    cout << "|--------------------------|" << endl;
+
+}
+
 /*
 
 Response::Response(Request *request)

@@ -21,6 +21,7 @@ class WebservWriteEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         int write(char const *buf, size_t size);
+        static WebservWriteEvent *from_status_code(WebservEvent *event, StatusCode &code, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
 
     private:

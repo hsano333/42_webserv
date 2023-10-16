@@ -55,6 +55,7 @@ void ConfigLimit::set_cidr(std::vector<std::string> &vec, bool flag)
 
 void ConfigLimit::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
+    DEBUG("ConfigLimit::assign_properties()");
     std::vector<std::vector<std::string> >::iterator ite = properties.begin();
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){

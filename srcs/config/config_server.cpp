@@ -89,7 +89,7 @@ void ConfigServer::set_server_name(std::vector<std::string> &vec)
 
 void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
-
+    DEBUG("ConfigServer::assign_properties()");
     std::vector<std::vector<std::string> >::iterator ite = properties.begin();
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){

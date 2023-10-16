@@ -138,7 +138,6 @@ int main(int argc, char const* argv[])
 
     Config *cfg = create_config(cfg_file);
 
-    std::cout << "made config " << std::endl;
     //cfg->print_cfg();
     FDManager *fd_manager = new FDManager();
     SocketRepository *socket_repository = create_sockets(cfg, fd_manager);

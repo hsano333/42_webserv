@@ -118,7 +118,7 @@ Header const &Request::header()
 
 void Request::print_info() const
 {
-    cout << "|-- Print Request Header --|" << endl;
+    cout << "|-- Print Request  --|" << endl;
     this->req_line_.print_info();
     this->header_.print_info();
     //cout << " uri_raw: " << this->req_line.uri().raw() << endl;
