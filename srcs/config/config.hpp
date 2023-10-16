@@ -35,8 +35,8 @@ class Config : public ConfigObject<ConfigHttp*>
         bool getline(std::string &str);
         const std::string content_word;
 
-        ConfigServer const* get_server(Port const& port, std::string const& host) const;
-        ConfigLocation const* get_location(ConfigServer *server, Request *req) const;
+        const ConfigServer *get_server(Port const& port, std::string const& host) const;
+        const ConfigLocation *get_location(const ConfigServer *server, Request *req) const;
         std::vector<std::string> get_location_paths(Port const& port, std::string const& host) const;
         //std::map<std::string, std::vector<std::string> > get_locations_contents(Port const& port, std::string const& host,
                                                             //std::string const& location) const;
@@ -54,8 +54,9 @@ class Config : public ConfigObject<ConfigHttp*>
         static Config *_singleton;
         static std::string _filepath;
         std::ifstream _fin;
-        static std::map<std::pair<Port, std::string>, ConfigServer const*> _servers_cache;
-        static std::map<std::pair<Port, std::string>, std::vector<std::string> > _locations_cache;
+        static std::map<std::pair<Port, std::string>, ConfigServer const*> servers_cache;
+        static std::map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * > locations_cache;
+        //static std::map<std::pair<Port, std::string>, std::vector<std::string> > locations_cache;
         static std::map<std::pair<std::pair<Port, std::string>, std::string>, std::map<std::string, std::vector<std::string> > > _locations_content_cache;
         static std::map<std::pair<std::pair<Port, std::string>, std::string>, std::map<std::string, std::vector<std::string> > > _locations_properties_cache;
 

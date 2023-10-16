@@ -18,7 +18,7 @@ class ApplicationFactory
         std::string get_target_path();
         std::string get_server_name();
     private:
-        ConfigServer const *get_server(Request *req);
+        const ConfigServer *get_server(Request *req);
         Config *cfg;
 
 };

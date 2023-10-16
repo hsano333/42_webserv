@@ -33,7 +33,7 @@ std::string ApplicationFactory::get_target_path()
 }
 
 
-ConfigServer const *ApplicationFactory::get_server(Request *req)
+const ConfigServer *ApplicationFactory::get_server(Request *req)
 {
     Header const &header = req->header();
 
@@ -47,7 +47,7 @@ ConfigServer const *ApplicationFactory::get_server(Request *req)
     std::string port_str = sp[1];
     Port port = Port::from_string(port_str);
 
-    ConfigServer const *server = this->cfg->get_server(port, name);
+    const ConfigServer *server = this->cfg->get_server(port, name);
     return (server);
 
 }
@@ -57,8 +57,9 @@ Application* ApplicationFactory::make_application(Request *req)
 {
     Application* app;
     RequestLine const &req_line = req->req_line();
-    ConfigServer const *server = this->get_server(req);
-    (void)server;
+    const ConfigServer *server = this->get_server(req);
+    const ConfigLocation *location= this->cfg->get_location(server, req);
+    (void)location;
     //std::string path= this->get_path(req);
     //ConfigServer const *server = this->cfg->get_location(server, req);
     //(void)req_line;

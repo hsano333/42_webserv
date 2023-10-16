@@ -21,7 +21,9 @@ class URI
 
 
     static URI from_string(std::string const &str);
-    std::string raw() const;
+    std::string const &raw() const;
+    std::string const &path() const;
+    const Split &splited_path() const;
     void print_info() const;
 
     /*
@@ -43,6 +45,7 @@ class URI
 
   private:
     std::string raw_;
+    std::string path_;
     Split query;
     Split path_sp;
     void uri_encode(std::string const &raw_uri);

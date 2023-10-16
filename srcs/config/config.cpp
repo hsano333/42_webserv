@@ -7,6 +7,7 @@
 #include <string>
 #include "log.hpp"
 #include "global.hpp"
+#include "http_exception.hpp"
 
 using std::cout;
 using std::endl;
@@ -125,74 +126,106 @@ Config* Config::get_instance()
     return (NULL);
 }
 
-map<pair<Port, string>, ConfigServer const*> Config::_servers_cache;
-map<pair<Port, string>, vector<string> > Config::_locations_cache;
+map<pair<Port, string>, const ConfigServer*> Config::servers_cache;
+//map<pair<Port, string>, vector<string> > Config::locations_cache;
+map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * > Config::locations_cache;
 map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_content_cache;
 map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_properties_cache;
 
 ConfigServer const* Config::get_server(Port const& port, string const& host) const
 {
-    map<pair<Port, string>, ConfigServer const*>::iterator cash_ite = _servers_cache.find(make_pair(port, host));
-    if (cash_ite != _servers_cache.end()){
-        if(_servers_cache.size() > 100){
-            _servers_cache.clear();
-        }
+    map<pair<Port, string>, ConfigServer const*>::iterator cash_ite = servers_cache.find(make_pair(port, host));
+    if (cash_ite != servers_cache.end()){
         return (cash_ite->second);
+    }
+    if(servers_cache.size() > 100){
+        servers_cache.clear();
     }
 
     vector<ConfigServer const*> servers;
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port && http->server(i)->server_name() == host) {
-            _servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port && http->server(i)->is_default_server()) {
-            _servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port) {
-            _servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
     return (NULL);
 }
 
-ConfigLocation const* Config::get_location(ConfigServer *server, Request *req) const
+ConfigLocation const *Config::get_location(ConfigServer const *server, Request *req) const
 {
-    std::string path = "";
+    //std::string path = "";
     (void)req;
-    //vector<ConfigLocation*> locations = server->locations;
-    vector<pair<const ConfigLocation*, string> > candidate;
+
+    string const &path = req->req_line().uri().path();
+    const Split &path_sp = req->req_line().uri().splited_path();
+
+    map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * >::iterator cash_ite = Config::locations_cache.find(make_pair(server, path));
+    cout << "cache No.0" << endl;
+    cout << "cache No.0" << endl;
+    cout << "cache No.0" << endl;
+    cout << "cache No.0 size:" << Config::locations_cache.size() << endl;
+    if (cash_ite != Config::locations_cache.end()){
+        cout << "cache No.1" << endl;
+        cout << "cache No.1" << endl;
+        cout << "cache No.1" << endl;
+        return (cash_ite->second);
+    }
+
+    //vector<pair<const ConfigLocation*, string> > candidate;
+    //vector<ConfigLocation*> candidate;
+    const ConfigLocation* tmp_location = NULL;
+    int max_point = 0;
     for (size_t i = 0; i < server->get_location_size(); i++) {
         for (size_t j = 0; j < server->location(i)->pathes().size(); j++) {
-            if (server->location(i)->pathes()[j].size() <= path.size() &&
-                path.substr(0, server->location(i)->pathes()[j].size()) == server->location(i)->pathes()[j]) {
-                candidate.push_back(make_pair(server->location(i), server->location(i)->pathes()[j]));
-                continue;
+            std::string const &location_path = server->location(i)->pathes()[j];
+            //std::string const &root = server->location(i)->root();
+            Split lp(location_path, "/");
+
+            size_t min_num = std::min(location_path.size(), path_sp.size());
+            int tmp_point = 0;
+            for(size_t i=0;i<min_num;i++){
+                if (lp[i] == path_sp[i]){
+                    tmp_point++;
+                }else{
+                    if (tmp_point > max_point){
+                        tmp_location = server->location(i);
+                    }
+                    break;
+                }
             }
         }
     }
-    size_t max_match_character_count = 0;
-    ConfigLocation const* max_match_location = NULL;
-    for (size_t i = 0; i < candidate.size(); i++) {
-        if (candidate[i].second.size() > max_match_character_count) {
-            max_match_character_count = candidate[i].second.size();
-            max_match_location = candidate[i].first;
-        }
+
+    if (tmp_location == NULL){
+        ERROR("Config::get_location() cant't find location");
+        throw HttpException("404");
     }
-    return max_match_location;
+    if(Config::locations_cache.size() > 100){
+        Config::locations_cache.clear();
+    }
+    Config::locations_cache.insert(std::make_pair(std::make_pair(server, path), tmp_location));
+
+    return tmp_location;
 }
 
 vector<string> Config::get_location_paths(Port const& port, string const& host) const
 {
     /*
-    map<pair<Port, string>, vector<string> >::iterator cash_ite = _locations_cache.find(make_pair(port, host));
-    if (cash_ite != _locations_cache.end()) {
+    map<pair<Port, string>, vector<string> >::iterator cash_ite = locations_cache.find(make_pair(port, host));
+    if (cash_ite != locations_cache.end()) {
         return (cash_ite->second);
     }
     */
@@ -205,7 +238,7 @@ vector<string> Config::get_location_paths(Port const& port, string const& host) 
         }
     }
     Utility::sort_orderby_len(locations);
-    //_locations_cache.insert(make_pair(make_pair(port, host), locations));
+    //locations_cache.insert(make_pair(make_pair(port, host), locations));
     return (locations);
 }
 

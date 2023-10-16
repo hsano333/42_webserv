@@ -29,7 +29,7 @@ URI& URI::operator=(URI const &uri)
     this->raw_ = uri.raw_;
     this->query = uri.query;
     this->path_sp = uri.path_sp;
-    this->path_sp = uri.path_sp;
+    this->path_ = uri.path_;
     return (*this);
 }
 
@@ -60,19 +60,31 @@ URI URI::from_string(std::string const &uri_raw)
         uri_last = tmp_fragment[0];
     }
 
+    uri.path_ = "";
     for(size_t i=0;i<uri.path_sp.size();i++){
         uri.uri_encode(uri.path_sp[i]);
+        uri.path_ = uri.path_ + "/" + uri.path_sp[i];
     }
     for(size_t i=0;i<uri.query.size();i++){
-        uri.uri_encode(uri.path_sp[i]);
+        uri.uri_encode(uri.query[i]);
     }
 
     return (uri);
 }
 
-std::string URI::raw() const
+std::string const &URI::raw() const
 {
     return (this->raw_);
+}
+
+std::string const &URI::path() const
+{
+    return (this->path_);
+}
+
+const Split &URI::splited_path() const
+{
+    return (this->path_sp);
 }
 
 void URI::uri_encode(std::string const &raw_uri_)
@@ -120,10 +132,11 @@ void URI::uri_encode(std::string const &raw_uri_)
 void URI::print_info() const
 {
     cout << "|-- Print URI --|" << endl;
-    cout << "raw=" << raw_ << endl;
+    cout << "raw=" << this->raw() << endl;
     for(size_t i=0;i<path_sp.size();i++){
         cout << "path_sp[" << i << "]=" << path_sp[i] << endl;
     }
+    cout << "path=" << this->path() << endl;
     for(size_t i=0;i<query.size();i++){
         cout << "query[" << i << "]=" << query[i] << endl;
     }
