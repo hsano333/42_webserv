@@ -15,7 +15,7 @@ class ConfigCgi : public ConfigObject<ConfigLastObject*>
     public:
         ConfigCgi();
         ~ConfigCgi();
-        std::map<std::string, std::string> &get_extensions();
+        const std::map<std::string, std::string> &get_extensions() const;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigLastObject*> const &vec);

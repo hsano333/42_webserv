@@ -31,7 +31,7 @@ void ConfigCgi::parse()
 */
 
 
-std::map<std::string, std::string> &ConfigCgi::get_extensions()
+const std::map<std::string, std::string> &ConfigCgi::get_extensions() const
 {
     return (this->extensions);
 }

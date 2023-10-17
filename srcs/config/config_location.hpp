@@ -14,7 +14,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
     public:
         ConfigLocation();
         ~ConfigLocation();
-        ConfigLimit const *limit(size_t i) const;
+        const ConfigLimit *limit() const;
         size_t get_limit_size() const;
         std::vector<std::string> const & pathes() const;
         std::string const & root() const;
@@ -38,10 +38,11 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
 
     private:
 
-        std::vector<ConfigLimit*> limits;
+        //std::vector<ConfigLimit*> limits;
         std::vector<std::string> pathes_;
         std::string root_;
         std::string cgi_pass_;
+        ConfigLimit* limit_;
         bool autoindex_;
         std::vector<std::string> indexes_;
         std::map<StatusCode, std::string> error_pages_;

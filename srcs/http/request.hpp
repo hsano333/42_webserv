@@ -9,6 +9,7 @@
 #include "uri.hpp"
 #include "header.hpp"
 #include "method.hpp"
+#include "file.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -44,6 +45,14 @@ class Request
         void    set_buf_body(char *body_p, int size);
         void    set_request_line(std::string const &str);
         void    set_header(Split &sp, size_t offset);
+        void    set_requested_filepath(const ConfigLocation *location);
+        bool    is_file() const;
+        bool    is_directory();
+        void    set_is_file(bool flag);
+        void    set_is_directory(bool flag);
+        std::string const &requested_filepath() const;
+        std::string const &requested_path() const;
+        //File    get_target_file(const ConfigLocation *location);
 
         void    print_info() const;
         RequestLine const &req_line() const;
@@ -56,6 +65,10 @@ class Request
         int     raw_buf_rest_size_;
         char    *buf_body;
         int     buf_body_size;
+        bool    is_file_;
+        bool    is_directory_;
+        std::string requested_filepath_;
+        std::string requested_path_;
 
         RequestLine    req_line_;
         Header         header_;

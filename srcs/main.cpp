@@ -37,6 +37,8 @@
 #include "normal_writer.hpp"
 #include "socket_writer.hpp"
 #include "iwriter.hpp"
+#include "application_factory.hpp"
+#include "cgi.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN 
@@ -84,8 +86,8 @@ void clean_all(WebservCleaner &cleaner, EventManager *event_manager)
 
 Config *create_config(std::string &cfg_file)
 {
-    NormalReader normal_reader;
-    File file = File(normal_reader, cfg_file, READ_ONLY);
+    NormalReader *normal_reader = NormalReader::get_instance();
+    File file = File::from_string(normal_reader, cfg_file, READ_ONLY);
     ConfigRawLoader raw_getter(file);
     ConfigParser<Config, ConfigHttp> parser_config("http");
     ConfigParser<ConfigHttp, ConfigServer> parser_http("server");
@@ -129,6 +131,9 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 #include <sys/stat.h>
 int main(int argc, char const* argv[])
 {
+
+
+
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){
         return 0;
@@ -179,10 +184,10 @@ int main(int argc, char const* argv[])
     //        ResponseFactory(create(Request))
     //        ResponseSender(Socket)
 
-    SocketReader *socket_reader = new SocketReader();
-    NormalWriter *normal_writer = new NormalWriter();
-    SocketWriter *socket_writer = new SocketWriter();
-    NormalReader *normal_reader = new NormalReader();
+    SocketReader *socket_reader = SocketReader::get_instance();
+    NormalWriter *normal_writer = NormalWriter::get_instance();
+    SocketWriter *socket_writer = SocketWriter::get_instance();
+    NormalReader *normal_reader = NormalReader::get_instance();
 
     EventManager *event_manager = new EventManager();
     WebservEventFactory *event_factory = new WebservEventFactory(
@@ -196,7 +201,9 @@ int main(int argc, char const* argv[])
             socket_reader
             );
 
-    ApplicationFactory *application_factory = new ApplicationFactory(cfg);
+    CGI *cgi = new CGI();
+    ApplicationFactory *application_factory = new ApplicationFactory(cfg, cgi);
+
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReader reader(epoll_controller, event_manager);

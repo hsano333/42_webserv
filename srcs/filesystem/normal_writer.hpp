@@ -7,9 +7,12 @@
 class  NormalWriter: public IWriter
 {
     public:
-        NormalWriter();
+        static NormalWriter *get_instance();
         ~NormalWriter();
         int write(FileDiscriptor fd, char const *buf, size_t size);
+    private:
+        static NormalWriter *singleton;
+        NormalWriter();
 };
 
 #endif

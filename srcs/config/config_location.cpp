@@ -3,31 +3,25 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigLocation::ConfigLocation() : root_(""), cgi_pass_("")
+ConfigLocation::ConfigLocation() : root_(""), cgi_pass_(""), limit_(NULL)
 {
     ;
 }
 
 ConfigLocation::~ConfigLocation()
 {
-    DEBUG("ConfigLocation::~ConfigLocation delete limits:" + Utility::to_string(this->limits.size()));
-    for(size_t i=0;i<this->limits.size();i++){
-        delete this->limits[i];
-    }
+    DEBUG("ConfigLocation::~ConfigLocation delete limit:");
+    delete this->limit_;
 }
 
-ConfigLimit const *ConfigLocation::limit(size_t i) const
+const ConfigLimit *ConfigLocation::limit() const
 {
-    if(i < this->get_limit_size()){
-        return (this->limits[i]);
-    }
-    ERROR("Invalid ConfigLocation Error:Invalid index ");
-    throw std::runtime_error("config error:location");
+    return (this->limit_);
 }
 
 size_t ConfigLocation::get_limit_size() const
 {
-    return (this->limits.size());
+    return (1);
 }
 
 
@@ -73,9 +67,12 @@ void ConfigLocation::assign_out_properties(std::vector<std::string> &properties)
 
 void ConfigLocation::push_all(std::vector<ConfigLimit*> const &vec)
 {
-    for(size_t i=0;i<vec.size();i++){
-        this->limits.push_back(vec[i]);
+    if (vec.size() != 1){
+        ERROR("ConfigLocation::push_all() limit_except directive is not one. delete unnecessary limit_except directive or add");
+        throw std::runtime_error("ConfigLocation::push_all() limit_except directive is more than one");
+
     }
+    this->limit_ = vec[0];
 }
 
 

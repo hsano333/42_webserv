@@ -9,7 +9,19 @@ SocketReader::SocketReader()
 }
 SocketReader::~SocketReader()
 {
+    delete (singleton);
 }
+
+
+SocketReader* SocketReader::singleton = NULL;
+SocketReader *SocketReader::get_instance()
+{
+    if (SocketReader::singleton == NULL){
+        singleton = new SocketReader();
+    }
+    return (singleton);
+}
+
 
 int SocketReader::read(FileDiscriptor fd, char *buf, size_t size)
 {

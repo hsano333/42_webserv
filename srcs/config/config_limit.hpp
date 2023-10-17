@@ -13,8 +13,8 @@ class ConfigLimit : public ConfigObject<ConfigCgi*>
         ConfigLimit();
         ~ConfigLimit();
         //std::map<std::string, std::vector<std::string> > properties;
-        ConfigCgi const *cgi(size_t i) const;
-        size_t get_cgi_size() const;
+        const ConfigCgi *cgi() const;
+        //size_t get_cgi_size() const;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigCgi*> const &vec);
@@ -26,7 +26,8 @@ class ConfigLimit : public ConfigObject<ConfigCgi*>
     private:
         //std::vector<std::string> deny;
         //std::vector<std::string> allow;
-        std::vector<ConfigCgi*> cgis;
+        //std::vector<ConfigCgi*> cgis;
+        ConfigCgi* cgi_;
         std::vector<Method> allowed_method_;
         std::vector<std::pair<CIDR, bool> > allowd_cidr;
         //void push_all(std::vector<ConfigCgi*> const &vec);

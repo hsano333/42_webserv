@@ -2,7 +2,7 @@
 #include "global.hpp"
 #include <iostream>
 
-ConfigLimit::ConfigLimit()
+ConfigLimit::ConfigLimit() : cgi_(NULL)
 {
     ;
 }
@@ -17,9 +17,9 @@ ConfigLimit::ConfigLimit(std::string &str)
 
 ConfigLimit::~ConfigLimit()
 {
-    for(size_t i=0;i<this->cgis.size();i++){
-        delete this->cgis[i];
-    }
+    //for(size_t i=0;i<this->cgis.size();i++){
+    delete this->cgi_;
+    //}
 }
 
 /*
@@ -27,19 +27,17 @@ void ConfigLimit::parse()
 {
 }
 */
-ConfigCgi const *ConfigLimit::cgi(size_t i) const
+const ConfigCgi *ConfigLimit::cgi() const
 {
-    if(i < this->get_cgi_size()){
-        return (this->cgis[i]);
-    }
-    ERROR("Invalid ConfigLocation Error:Invalid index ");
-    throw std::runtime_error("config error:location");
+    return (this->cgi_);
 }
 
+/*
 size_t ConfigLimit::get_cgi_size() const
 {
     return (this->cgis.size());
 }
+*/
 
 void ConfigLimit::set_cidr(std::vector<std::string> &vec, bool flag)
 {
@@ -83,9 +81,15 @@ void ConfigLimit::assign_out_properties(std::vector<std::string> &properties)
 
 void ConfigLimit::push_all(std::vector<ConfigCgi*> const &vec)
 {
-    for(size_t i=0;i<vec.size();i++){
-        this->cgis.push_back(vec[i]);
+    if (vec.size() > 1){
+        ERROR("ConfigLimit::push_all()  cgi directive is not one. delete unnecessary  cgi directive or add");
+        throw std::runtime_error("ConfigLimit::push_all()  cgi directive is not one");
     }
+    if (vec.size() == 0){
+        this->cgi_ = NULL;
+        return;
+    }
+    this->cgi_ = vec[0];
 }
 
 std::vector<Method> const & ConfigLimit::allowed_method() const

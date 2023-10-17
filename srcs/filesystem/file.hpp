@@ -22,9 +22,8 @@ typedef enum E_FileState
 class File
 {
     public:
-        IReader& ireader;
-        File(IReader& iread, std::string &filepath, RWOption option);
         ~File();
+        static File from_string(IReader* iread, std::string &filepath, RWOption option);
         //std::string& filepath();
         void open_file();
         void close_file();
@@ -32,7 +31,9 @@ class File
         void write(char *buf);
 
     private:
-        //File();
+        File();
+        File(IReader* iread, std::string &filepath, RWOption option);
+        IReader *ireader;
         std::string filepath;
         RWOption    option;
         int         fd;

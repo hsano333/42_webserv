@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string.h>
 
-File::File(IReader& ireader, std::string &filepath, RWOption option)
+File::File(IReader* ireader, std::string &filepath, RWOption option)
     :
         ireader(ireader),
         filepath(filepath),
@@ -16,6 +16,12 @@ File::File(IReader& ireader, std::string &filepath, RWOption option)
 {
     ;
 }
+
+File::File()
+{
+    ;
+}
+
 File::~File()
 {
 
@@ -23,13 +29,16 @@ File::~File()
     std::cout << "fd:" << fd << std::endl;
 
     MYINFO("close file:" + this->filepath);
-    //DEBUG("Close file:" + this->filepath);
-    //FileDiscriptor tmp_fd = FileDiscriptor::from_int(this->fd);
-    //tmp_fd.close();
     if(this->fd > 0){
         std::cout << "fd:" << this->fd << std::endl;
         close(fd);
     }
+}
+
+
+File File::from_string(IReader* ireader, std::string &filepath, RWOption option)
+{
+    return (File(ireader, filepath, option));
 }
 
 void File::open_file()
@@ -70,7 +79,6 @@ void File::open_file()
         {
             ERROR("cannot open file");
             throw std::runtime_error("can't  open file");
-
         }
 
     }catch(std::invalid_argument &e){
@@ -97,7 +105,7 @@ int File::read(char *buf)
     //int tmp_fd = 3;
     //return ireader.iread(tmp_fd, buf);
     FileDiscriptor tmp_fd = FileDiscriptor::from_int(this->fd);
-    return ireader.read(tmp_fd, buf, MAX_BUF);
+    return ireader->read(tmp_fd, buf, MAX_BUF);
 }
 
 /*

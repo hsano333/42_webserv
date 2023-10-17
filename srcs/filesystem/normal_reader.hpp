@@ -7,9 +7,12 @@ class NormalReader
  : public IReader
 {
     public:
-        NormalReader();
+        static NormalReader *get_instance();
         ~NormalReader();
         int read(FileDiscriptor fd, char *buf, size_t size);
+    private:
+        static NormalReader *singleton;
+        NormalReader();
 };
 
 #endif

@@ -8,6 +8,7 @@ class Application
         //Application();
         virtual ~Application(){};
         virtual void execute() = 0;
+        virtual void check_permission() = 0;
         virtual Response* make_response() = 0;
     private:
 

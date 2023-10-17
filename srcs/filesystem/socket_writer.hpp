@@ -6,9 +6,12 @@
 class SocketWriter : public IWriter
 {
     public:
-        SocketWriter();
+        static SocketWriter *get_instance();
         ~SocketWriter();
         int write(FileDiscriptor fd, char const *buf, size_t size);
+    private:
+        static SocketWriter *singleton;
+        SocketWriter();
 };
 
 #endif

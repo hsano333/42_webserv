@@ -27,7 +27,9 @@ using std::vector;
 Request::Request() :
     raw_buf_point(0),
     // -1 is for '\0'
-    raw_buf_rest_size_(MAX_BUF-1)
+    raw_buf_rest_size_(MAX_BUF-1),
+    is_file_(false),
+    is_directory_(false)
 {
     DEBUG("Request::Request()");
 ;
@@ -77,12 +79,30 @@ void Request::set_buf_body(char *body_p, int size)
     this->buf_body_size = size;
 }
 
-
 char *Request::get_raw_buf_pointer()
 {
     DEBUG("Request::get_raw_buf_pointer()  raw_buf_point:" + Utility::to_string(this->raw_buf_point));
     return &(this->raw_buf[this->raw_buf_point]);
 }
+
+std::string const &Request::requested_filepath() const
+{
+    return (this->requested_filepath_);
+}
+
+std::string const &Request::requested_path() const
+{
+    return (this->requested_path_);
+}
+
+
+/*
+File Request::get_target_file(const ConfigLocation *location)
+{
+
+    //return &(this->raw_buf[this->raw_buf_point]);
+}
+*/
 
 int Request::raw_buf_space()
 {
@@ -103,6 +123,52 @@ void Request::set_request_line(std::string const &str)
 void Request::set_header(Split &sp, size_t offset)
 {
     this->header_ = Header::from_splited_data(sp, offset);
+}
+
+void Request::set_requested_filepath(const ConfigLocation *location)
+{
+    URI const &requested_uri = this->req_line().uri();
+    const Split &uri_sp = requested_uri.splited_path();
+    std::string const &uri_path = requested_uri.path();
+    std::string const &root = location->root();
+
+    std::string path = root + uri_path;
+    this->requested_path_ = path;
+
+    for(int i=uri_sp.size()-1; i >= 0;i--){
+        if (Utility::is_regular_file(path)){
+            this->requested_filepath_ = path;
+            this->is_file_ = true;
+            this->is_directory_ = false;
+            MYINFO("Request::set_requested_filepath filepath=" + path);
+            return;
+        }
+        size_t pos = path.rfind(uri_sp[i]);
+        path = path.substr(0, pos-1);
+    }
+    this->requested_filepath_ = "";
+    this->is_directory_ = true;
+    this->is_file_ = false;
+}
+
+void Request::set_is_file(bool flag)
+{
+    this->is_file_ = flag;
+}
+
+bool Request::is_file() const
+{
+    return (this->is_file_);
+}
+
+void Request::set_is_directory(bool flag)
+{
+    this->is_directory_ = flag;
+}
+
+bool Request::is_directory()
+{
+    return (this->is_directory_);
 }
 
 

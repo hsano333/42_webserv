@@ -143,24 +143,23 @@ ConfigServer const* Config::get_server(Port const& port, string const& host) con
     }
 
     vector<ConfigServer const*> servers;
+
+    /*
+    for (size_t i = 0; i < http->get_server_size(); i++) {
+        if (http->server(i)->listen() == port && http->server(i)->server_name() == host && http->server(i)->is_default_server()) {
+            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
+            return (http->server(i));
+        }
+    }
+    */
+
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port && http->server(i)->server_name() == host) {
             servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
             return (http->server(i));
         }
     }
-    for (size_t i = 0; i < http->get_server_size(); i++) {
-        if (http->server(i)->listen() == port && http->server(i)->is_default_server()) {
-            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
-            return (http->server(i));
-        }
-    }
-    for (size_t i = 0; i < http->get_server_size(); i++) {
-        if (http->server(i)->listen() == port) {
-            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
-            return (http->server(i));
-        }
-    }
+
     return (NULL);
 }
 
@@ -196,8 +195,8 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, Request *
 
             size_t min_num = std::min(location_path.size(), path_sp.size());
             int tmp_point = 0;
-            for(size_t i=0;i<min_num;i++){
-                if (lp[i] == path_sp[i]){
+            for(size_t k=0;k<min_num;k++){
+                if (lp[k] == path_sp[k]){
                     tmp_point++;
                 }else{
                     if (tmp_point > max_point){
@@ -382,13 +381,13 @@ void Config::print_cfg()
                 ite++;
             }
             for(size_t i=0;i<tmp->get_limit_size();i++){
-                ConfigLimit const *limit = (tmp->limit(i));
+                const ConfigLimit *limit = tmp->limit();
 
                 for(size_t m=0;m< limit->allowed_method().size();m++){
                     cout << "limit allowed method:" << limit->allowed_method()[i].to_string();
                 }
 
-                std::vector<std::pair<CIDR, bool> > const &allowed_cidr = tmp->limit(i)->allowed_cidr();
+                std::vector<std::pair<CIDR, bool> > const &allowed_cidr = tmp->limit()->allowed_cidr();
                 std::vector<std::pair<CIDR, bool> >::const_iterator allowed_cidr_ite = allowed_cidr.begin();
                 std::vector<std::pair<CIDR, bool> >::const_iterator allowed_cidr_end = allowed_cidr.end();
                 while(allowed_cidr_ite != allowed_cidr_end){

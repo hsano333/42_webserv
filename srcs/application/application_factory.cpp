@@ -9,8 +9,12 @@
 //#include "post_application.hpp"
 //#include "delete_application.hpp"
 
-ApplicationFactory::ApplicationFactory(Config *cfg) : cfg(cfg)
+ApplicationFactory::ApplicationFactory(Config *cfg, CGI *cgi) 
+    : 
+        cfg(cfg),
+        cgi(cgi)
 {
+    ;
 }
 
 ApplicationFactory::~ApplicationFactory()
@@ -22,10 +26,12 @@ std::string ApplicationFactory::get_server_name()
     return ("");
 }
 
+/*
 bool ApplicationFactory::is_cgi()
 {
     return (true);
 }
+*/
 
 std::string ApplicationFactory::get_target_path()
 {
@@ -59,25 +65,24 @@ Application* ApplicationFactory::make_application(Request *req)
     RequestLine const &req_line = req->req_line();
     const ConfigServer *server = this->get_server(req);
     const ConfigLocation *location= this->cfg->get_location(server, req);
-    (void)location;
-    //std::string path= this->get_path(req);
-    //ConfigServer const *server = this->cfg->get_location(server, req);
-    //(void)req_line;
-
+    req->set_requested_filepath(location);
 
     Method const &method = req_line.method();
     switch(method.to_enum())
     {
         case GET:
-            app = new GetApplication();
+            DEBUG("ApplicationFactory::make_application() make Get");
+            app = GetApplication::from_location(location, req, cgi);
             break;
         case POST:
             //todo
-            app = new GetApplication();
+            DEBUG("ApplicationFactory::make_application() make Post");
+            app = GetApplication::from_location(location, req, cgi);
             break;
         case DELETE:
             //todo
-            app = new GetApplication();
+            DEBUG("ApplicationFactory::make_application() make Delete");
+            app = GetApplication::from_location(location, req, cgi);
             break;
         default:
             ERROR("ApplicationFactory::make_application(): Invalid method");;

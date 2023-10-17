@@ -16,7 +16,7 @@
 //#include "file_utility.hpp"
 #include "request.hpp"
 #include "response.hpp"
-#include "response_cgi.hpp"
+//#include "response_cgi.hpp"
 #include "tcp_socket.hpp"
 #include "utility.hpp"
 #include "log.hpp"
