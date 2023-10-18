@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/16 23:25:21 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/18 14:34:19 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ std::string identify_path(URI &uri)
 Application *WebservExecuter::get_application(WebservApplicationEvent *event)
 {
     Request *req = event->req();
-    //req->print_info();
     return (factory->make_application(req));
 }
 

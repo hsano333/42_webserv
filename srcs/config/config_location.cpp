@@ -32,27 +32,19 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){
         std::vector<std::string> &tmp_vec = *ite;
-        for(size_t i=0;i<tmp_vec.size();i++){
-            if(tmp_vec[0] == "root"){
-                set_root(tmp_vec);
-            }else if(tmp_vec[0] == "cgi_pass"){
-                set_cgi_pass(tmp_vec);
-            }else if(tmp_vec[0] == "autoindex"){
-                set_autoindex(tmp_vec);
-            }else if(tmp_vec[0] == "index"){
-                set_index(tmp_vec);
-            }else if(tmp_vec[0] == "error_page"){
-                set_error_page(tmp_vec);
-            //}else if(tmp_vec[0] == "cgi"){
-                //std::cout << "cgi" << std::endl;
-                //for(size_t i=0;i<tmp_vec.size();i++){
-                    //std::cout << tmp_vec[i] << std::endl;
-                //}
-
-            }else{
-                ERROR("Invalid Config Error:" + tmp_vec[0] + " is not location directive");
-                throw std::runtime_error("config parser error:location");
-            }
+        if(tmp_vec[0] == "root"){
+            set_root(tmp_vec);
+        }else if(tmp_vec[0] == "cgi_pass"){
+            set_cgi_pass(tmp_vec);
+        }else if(tmp_vec[0] == "autoindex"){
+            set_autoindex(tmp_vec);
+        }else if(tmp_vec[0] == "index"){
+            set_index(tmp_vec);
+        }else if(tmp_vec[0] == "error_page"){
+            set_error_page(tmp_vec);
+        }else{
+            ERROR("Invalid Config Error:" + tmp_vec[0] + " is not location directive");
+            throw std::runtime_error("config parser error:location");
         }
         ite++;
     }

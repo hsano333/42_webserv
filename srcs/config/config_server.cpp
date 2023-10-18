@@ -4,7 +4,10 @@
 #include "global.hpp"
 #include "utility.hpp"
 
-ConfigServer::ConfigServer() : is_default_server_(false)
+using std::cout;
+using std::endl;
+
+ConfigServer::ConfigServer() : is_default_server_(false), is_redirect_(false)
 {
     ;
 }
@@ -47,6 +50,16 @@ bool ConfigServer::is_default_server() const
     return (this->is_default_server_);
 }
 
+bool ConfigServer::is_redirect() const
+{
+    return (this->is_redirect_);
+}
+
+const std::pair<StatusCode, std::string> &ConfigServer::redirect() const
+{
+    return (this->redirect_);
+}
+
 void ConfigServer::set_listen(std::vector<std::string> &vec)
 {
     size_t word_cnt = vec.size();
@@ -71,19 +84,31 @@ void ConfigServer::set_server_name(std::vector<std::string> &vec)
     if(word_cnt == 2)
     {
         this->server_name_ = vec[1];
-        try{
-            this->server_address_ = IP_Address::from_string(this->server_name_);
-        }catch(std::invalid_argument &e){
-            try{
-                this->server_address_ = IP_Address::from_name(this->server_name_);
-            }catch(std::invalid_argument &e){
-                ERROR("ConfigServer::set_server_name: invalid argument:" + this->server_name_);
-                throw std::runtime_error("ConfigServer::set_server_name: invalid hostnmae");
-            }
-        }
     }else{
         ERROR("Invalid Config Error:invalid word is in server_name directive");
         throw std::runtime_error("config parser error:server");
+    }
+}
+
+void ConfigServer::set_return(std::vector<std::string> &vec)
+{
+    cout << "redirect No.1 " << endl;
+    if (this->is_redirect_){
+        ERROR("Redirect directive is multipled");
+        throw std::runtime_error("Redirect directive is multipled");
+    }
+    cout << "redirect No.2 " << endl;
+
+    size_t word_cnt = vec.size();
+    if(word_cnt == 3)
+    {
+        StatusCode status_code = StatusCode::from_string(vec[1]);
+        this->redirect_ = std::make_pair(status_code, vec[2]);
+        this->is_redirect_ = true;
+    }else{
+        this->is_redirect_ = false;
+        ERROR("Redirect(return) directive is Invalid");
+        throw std::runtime_error("Redirect(return) directive is Invalid :" + vec[0]);
     }
 }
 
@@ -94,15 +119,16 @@ void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &pro
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){
         std::vector<std::string> &tmp_vec = *ite;
-        for(size_t i=0;i<tmp_vec.size();i++){
-            if(tmp_vec[0] == "listen"){
-                set_listen(tmp_vec);
-            }else if(tmp_vec[0] == "server_name"){
-                set_server_name(tmp_vec);
-            }else{
-                ERROR("Invalid Config Error:" + tmp_vec[0] + " is not server directive");
-                throw std::runtime_error("config parser error:server");
-            }
+        cout << "tmp_vec = " << tmp_vec[0] << endl;
+        if(tmp_vec[0] == "listen"){
+            set_listen(tmp_vec);
+        }else if(tmp_vec[0] == "server_name"){
+            set_server_name(tmp_vec);
+        }else if(tmp_vec[0] == "return"){
+            set_return(tmp_vec);
+        }else{
+            ERROR("Invalid Config Error:" + tmp_vec[0] + " is not server directive");
+            throw std::runtime_error("config parser error:server");
         }
         ite++;
     }

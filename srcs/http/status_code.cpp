@@ -2,6 +2,7 @@
 #include "utility.hpp"
 #include "global.hpp"
 
+
 StatusCode::StatusCode()
 {
     ;
@@ -10,6 +11,43 @@ StatusCode::StatusCode()
 StatusCode::~StatusCode()
 {
     ;
+}
+
+const char* StatusCode::message()
+{
+    switch (this->code)
+    {
+        case 200:
+            return MESSAGE200;
+        case 204:
+            return MESSAGE204;
+        case 206:
+            return MESSAGE206;
+        case 301:
+            return MESSAGE301;
+        case 302:
+            return MESSAGE302;
+        case 303:
+            return MESSAGE303;
+        case 304:
+            return MESSAGE304;
+        case 307:
+            return MESSAGE307;
+        case 400:
+            return MESSAGE400;
+        case 401:
+            return MESSAGE401;
+        case 403:
+            return MESSAGE403;
+        case 404:
+            return MESSAGE404;
+        case 500:
+            return MESSAGE500;
+        case 503:
+            return MESSAGE503;
+        default:
+            return MESSAGEUnknown;
+    }
 }
 
 StatusCode StatusCode::from_int(int code)

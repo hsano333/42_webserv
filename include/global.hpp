@@ -14,6 +14,24 @@
 #define LOG_LEVEL_WARNING 3
 #define LOG_LEVEL_DEBUG 2
 #define LOG_LEVEL_INFO 1
+
+#define MESSAGE200 ("OK")
+#define MESSAGE204 ("No Content")
+#define MESSAGE206 ("Partial Content")
+#define MESSAGE301 ("Moved Permanently")
+#define MESSAGE302 ("Found")
+#define MESSAGE303 ("See Other")
+#define MESSAGE304 ("Not Modified")
+#define MESSAGE307 ("Temporary Redirect")
+#define MESSAGE400 ("Bad Request")
+#define MESSAGE401 ("Unauthorized")
+#define MESSAGE403 ("Forbidden")
+#define MESSAGE404 ("Not Found")
+#define MESSAGE500 ("Internal Server Error")
+#define MESSAGE503 ("Service Unavailable")
+#define MESSAGEUnknown ("Unknown Status")
+
+
 #define LOG_LEVEL LOG_LEVEL_INFO
 #define MYINFO(STR)  (Log::write(__FILE__, __LINE__, "[INFO]", STR, LOG_LEVEL_INFO))
 #define DEBUG(STR)  (Log::write(__FILE__, __LINE__, "[DEBUG]",  STR, LOG_LEVEL_DEBUG))

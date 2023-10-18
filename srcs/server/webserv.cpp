@@ -37,7 +37,7 @@ Webserv::Webserv(
         EventManager        *event_manager,
         //EpollController epoll_controller,
         WebservWaiter &waiter,
-        WebservReader &reader,
+        WebservReceiver &reader,
         WebservParser &parser,
         WebservExecuter &executer,
         WebservSender &sender,

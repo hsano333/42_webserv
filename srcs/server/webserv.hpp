@@ -10,7 +10,7 @@
 #include "epoll_controller.hpp"
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
-#include "webserv_reader.hpp"
+#include "webserv_receiver.hpp"
 #include "webserv_parser.hpp"
 #include "webserv_executer.hpp"
 #include "webserv_sender.hpp"
@@ -31,7 +31,7 @@ class Webserv
             EventManager        *event_manager,
             //EpollController epoll_controller,
             WebservWaiter &waiter,
-            WebservReader &reader,
+            WebservReceiver &reader,
             WebservParser &parser,
             WebservExecuter &executer,
             WebservSender &sender,
@@ -53,7 +53,7 @@ class Webserv
     EventManager        *event_manager;
     //EpollController     &epoll_controller;
     WebservWaiter       &waiter;
-    WebservReader       &reader;
+    WebservReceiver       &reader;
     WebservParser       &parser;
     WebservExecuter     &executer;
     WebservSender       &sender;

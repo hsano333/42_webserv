@@ -39,6 +39,7 @@ std::string ApplicationFactory::get_target_path()
 }
 
 
+/*
 const ConfigServer *ApplicationFactory::get_server(Request *req)
 {
     Header const &header = req->header();
@@ -57,13 +58,14 @@ const ConfigServer *ApplicationFactory::get_server(Request *req)
     return (server);
 
 }
+*/
 
 
 Application* ApplicationFactory::make_application(Request *req)
 {
     Application* app;
     RequestLine const &req_line = req->req_line();
-    const ConfigServer *server = this->get_server(req);
+    const ConfigServer *server = cfg->get_server(req);
     const ConfigLocation *location= this->cfg->get_location(server, req);
     req->set_requested_filepath(location);
 
@@ -72,17 +74,17 @@ Application* ApplicationFactory::make_application(Request *req)
     {
         case GET:
             DEBUG("ApplicationFactory::make_application() make Get");
-            app = GetApplication::from_location(location, req, cgi);
+            app = GetApplication::from_location(cfg, req, cgi);
             break;
         case POST:
             //todo
             DEBUG("ApplicationFactory::make_application() make Post");
-            app = GetApplication::from_location(location, req, cgi);
+            app = GetApplication::from_location(cfg, req, cgi);
             break;
         case DELETE:
             //todo
             DEBUG("ApplicationFactory::make_application() make Delete");
-            app = GetApplication::from_location(location, req, cgi);
+            app = GetApplication::from_location(cfg, req, cgi);
             break;
         default:
             ERROR("ApplicationFactory::make_application(): Invalid method");;

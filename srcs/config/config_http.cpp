@@ -54,13 +54,11 @@ void ConfigHttp::assign_properties(std::vector<std::vector<std::string> > &prope
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){
         std::vector<std::string> &tmp_vec = *ite;
-        for(size_t i=0;i<tmp_vec.size();i++){
-            if(tmp_vec[0] == "client_max_body_size"){
-                set_max_body_size(tmp_vec);
-            }else{
-                ERROR("Invalid Config Error:" + tmp_vec[0] + " is not server directive");
-                throw std::runtime_error("config parser error:server");
-            }
+        if(tmp_vec[0] == "client_max_body_size"){
+            set_max_body_size(tmp_vec);
+        }else{
+            ERROR("Invalid Config Error:" + tmp_vec[0] + " is not server directive");
+            throw std::runtime_error("config parser error:server");
         }
         ite++;
     }

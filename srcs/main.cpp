@@ -25,7 +25,7 @@
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
 #include "webserv_event_factory.hpp"
-#include "webserv_reader.hpp"
+#include "webserv_receiver.hpp"
 #include "webserv_parser.hpp"
 #include "webserv_executer.hpp"
 #include "webserv_sender.hpp"
@@ -206,7 +206,7 @@ int main(int argc, char const* argv[])
 
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
-    WebservReader reader(epoll_controller, event_manager);
+    WebservReceiver reader(epoll_controller, event_manager);
     WebservParser parser(epoll_controller, event_manager, event_factory);
     WebservExecuter app(application_factory, epoll_controller, event_manager, fd_manager, cfg);
     WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager);

@@ -141,6 +141,21 @@ IP_Address IP_Address::from_string(std::string const &str)
     return (object);
 }
 
+IP_Address IP_Address::from_string_or_name(std::string const &str)
+{
+    try{
+        return (IP_Address::from_string(str));
+    }catch(std::invalid_argument &e){
+        try{
+            return (IP_Address::from_name(str));
+        }catch(std::invalid_argument &e){
+            ERROR("IP_Address::from_string_or_name(): string is not ip address :" + str);
+            throw std::invalid_argument("IP_Address::from_string_or_name(): string is not ip address");
+        }
+    }
+}
+
+
 
 std::string IP_Address::to_string()
 {
@@ -158,6 +173,10 @@ std::string IP_Address::to_string()
 
 }
 
+bool IP_Address::operator==(IP_Address const ip)
+{
+    return (this->to_uint() == ip.to_uint());
+}
 
 
 #ifdef UNIT_TEST

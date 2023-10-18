@@ -166,7 +166,7 @@ void Request::set_is_directory(bool flag)
     this->is_directory_ = flag;
 }
 
-bool Request::is_directory()
+bool Request::is_directory() const
 {
     return (this->is_directory_);
 }
@@ -177,7 +177,7 @@ RequestLine const &Request::req_line() const
     return (this->req_line_);
 }
 
-Header const &Request::header()
+Header const &Request::header() const
 {
     return (this->header_);
 }

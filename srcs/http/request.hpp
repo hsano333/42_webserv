@@ -47,7 +47,7 @@ class Request
         void    set_header(Split &sp, size_t offset);
         void    set_requested_filepath(const ConfigLocation *location);
         bool    is_file() const;
-        bool    is_directory();
+        bool    is_directory() const;
         void    set_is_file(bool flag);
         void    set_is_directory(bool flag);
         std::string const &requested_filepath() const;
@@ -56,7 +56,7 @@ class Request
 
         void    print_info() const;
         RequestLine const &req_line() const;
-        Header const &header();
+        Header const &header() const;
         //
     private:
         char    raw_buf[MAX_BUF];

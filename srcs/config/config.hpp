@@ -35,8 +35,9 @@ class Config : public ConfigObject<ConfigHttp*>
         bool getline(std::string &str);
         const std::string content_word;
 
+        const ConfigServer *get_server(Request const *req) const;
         const ConfigServer *get_server(Port const& port, std::string const& host) const;
-        const ConfigLocation *get_location(const ConfigServer *server, Request *req) const;
+        const ConfigLocation *get_location(const ConfigServer *server, const Request *req) const;
         std::vector<std::string> get_location_paths(Port const& port, std::string const& host) const;
         //std::map<std::string, std::vector<std::string> > get_locations_contents(Port const& port, std::string const& host,
                                                             //std::string const& location) const;

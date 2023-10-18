@@ -58,15 +58,13 @@ void ConfigLimit::assign_properties(std::vector<std::vector<std::string> > &prop
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){
         std::vector<std::string> &tmp_vec = *ite;
-        for(size_t i=0;i<tmp_vec.size();i++){
-            if(tmp_vec[0] == "deny"){
-                set_cidr(tmp_vec, false);
-            }else if(tmp_vec[0] == "allow"){
-                set_cidr(tmp_vec, true);
-            }else{
-                ERROR("Invalid Config Error:" + tmp_vec[0] + " is not limit_except directive");
-                throw std::runtime_error("config parser error:limit");
-            }
+        if(tmp_vec[0] == "deny"){
+            set_cidr(tmp_vec, false);
+        }else if(tmp_vec[0] == "allow"){
+            set_cidr(tmp_vec, true);
+        }else{
+            ERROR("Invalid Config Error:" + tmp_vec[0] + " is not limit_except directive");
+            throw std::runtime_error("config parser error:limit");
         }
         ite++;
     }

@@ -38,12 +38,25 @@ Response* Response::from_status_code(StatusCode &code)
     return (res);
 }
 
+Response* Response::from_file(std::string const &filepath)
+{
+    (void)filepath;
+    Response *res = new Response();
+    return (res);
+}
+
+Response* Response::from_directory(std::string const &filepath)
+{
+    (void)filepath;
+    Response *res = new Response();
+    return (res);
+}
+
 void Response::print_info()
 {
     cout << "|-- Print Response --|" << endl;
     cout << "status code:" << this->status_code.to_string() << endl;
     cout << "|--------------------------|" << endl;
-
 }
 
 /*
@@ -113,42 +126,6 @@ std::string Response::get_error()
     return (Response::get_status_line() + "\r\nContent-Length: 0\r\n\r\n");
 }
 
-std::string Response::get_status_message(int code)
-{
-    switch (code)
-    {
-        case 200:
-            return MESSAGE200;
-        case 204:
-            return MESSAGE204;
-        case 206:
-            return MESSAGE206;
-        case 301:
-            return MESSAGE301;
-        case 302:
-            return MESSAGE302;
-        case 303:
-            return MESSAGE303;
-        case 304:
-            return MESSAGE304;
-        case 307:
-            return MESSAGE307;
-        case 400:
-            return MESSAGE400;
-        case 401:
-            return MESSAGE401;
-        case 403:
-            return MESSAGE403;
-        case 404:
-            return MESSAGE404;
-        case 500:
-            return MESSAGE500;
-        case 503:
-            return MESSAGE503;
-        default:
-            return MESSAGEUnknown;
-    }
-}
 
 string &Response::get_filepath()
 {

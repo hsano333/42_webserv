@@ -29,6 +29,8 @@ void WebservSender::send(WebservEvent *event)
     std::string str = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nContent-Length:5\r\nabcde\r\n";
     const char *str2 = str.c_str();
     write_event->write(str2, str.size());
+
+
     //(void)event;
     WebservEvent *next_event = this->event_factory->make_clean_event(event);
     event_manager->push(next_event);
