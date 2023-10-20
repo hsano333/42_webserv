@@ -22,9 +22,6 @@ void WebservCleaner::clean(WebservEvent *event)
 {
     WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
     DEBUG("WebservCleaner::clean:" + event->fd().to_string());
-    cout << "clean No.1 " << endl;
-    printf("event->req()=%p\n", app_event->req());
-    printf("event->res()=%p\n", app_event->res());
 
     Request *req = app_event->req();
     req->print_info();
@@ -32,15 +29,11 @@ void WebservCleaner::clean(WebservEvent *event)
     //exit(1);
 
     delete app_event->req();
-    cout << "clean No.2" << endl;
     delete app_event->res();
-    cout << "clean No.3" << endl;
-    this->io_multi_controller->erase(app_event->fd());
-    cout << "clean No.4" << endl;
+    //this->io_multi_controller->erase(app_event->fd());
+    this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
     this->fd_manager->close_fd(app_event->fd());
-    cout << "clean No.5" << endl;
     this->event_manager->erase_event_waiting_writing(app_event->fd());
-    cout << "clean No.6" << endl;
     delete app_event;
 }
 

@@ -8,9 +8,9 @@ CONFIGDIR			:= config/
 CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp config_cgi.cpp config_parsered_data.cpp  body_size.cpp
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
-FILESYSTEMDIR			:= filesystem/
-FILESYSTEMSRC 			:= normal_file.cpp directory_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp
-FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
+FILESYSTEMDIR		:= filesystem/
+FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp
+FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
 SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_parser.cpp webserv_executer.cpp webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
@@ -21,9 +21,9 @@ EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.c
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 
-APPLICATIONDIR			:= application/
-APPLICATIONSRC 			:= application_factory.cpp get_application.cpp cgi.cpp
-APPLICATION 				:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
+APPLICATIONDIR		:= application/
+APPLICATIONSRC 		:= application_factory.cpp get_application.cpp cgi.cpp
+APPLICATION 		:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
 
 
 HTTPDIR				:= http/
@@ -38,15 +38,18 @@ SOCKETDIR			:= socket/
 SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_repository.cpp epoll.cpp epoll_controller.cpp  fd_manager.cpp file_discriptor.cpp socket_controller.cpp 
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
-EXCEPTIONDIR			:= exception/
-EXCEPTIONSRC 			:= timeout_exception.cpp http_exception.cpp
-EXCEPTION 				:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
+EXCEPTIONDIR		:= exception/
+EXCEPTIONSRC 		:= timeout_exception.cpp http_exception.cpp
+EXCEPTION 			:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
+
+UTILITYDIR			:= utility/
+UTILITYSRC 			:= split.cpp  utility.cpp endian.cpp log.cpp 
+UTILITY 			:= $(addprefix $(UTILITYDIR)/, $(UTILITYSRC))
 
 #socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp uri.cpp  fd_manager.cpp 
 
 
 CGI 				:= #cgi.cpp base64.cpp response_cgi.cpp request_cgi.cpp
-UTILITY 			:= split.cpp  utility.cpp endian.cpp log.cpp 
 DESIGN				:= 
 SRC					:= $(CONFIG) $(FILESYSTEM) $(SERVER) $(EVENT) $(APPLICATION) $(HTTP) $(NETWORK) $(SOCKET) $(EXCEPTION) $(CGI) $(UTILITY)  $(DESIGN)
 MANDATORY			:= main.cpp
@@ -64,7 +67,7 @@ SRC	+= $(MANDATORY)
 DELENTRY	:= $(addprefix $(OBJDIR)/, $(BONUS))
 endif
 
-INCDIRS			:= $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR) $(CONFIGDIR) $(APPLICATIONDIR)
+INCDIRS			:= $(FILESYSTEMDIR) $(SERVERDIR) $(EVENTDIR) $(HTTPDIR) $(NETWORKDIR) $(SOCKETDIR) $(EXCEPTIONDIR) $(CONFIGDIR) $(APPLICATIONDIR) $(UTILITYDIR)
 INCDIR			:= $(addprefix $(SRCDIR)/, $(INCDIRS))
 INCS			:= ./include ./srcs/unit_test $(INCDIR)
 IFLAGS			:= $(addprefix -I,$(INCS))

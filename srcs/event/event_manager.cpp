@@ -56,6 +56,8 @@ void EventManager::increase_timeout_count(int count)
 
 void EventManager::add_event_waiting_reading(FileDiscriptor fd, WebservEvent* event)
 {
+    event->increase_timeout_count(1);
+    DEBUG("add_event_waiting_reading() fd:" + fd.to_string());
     this->events_waiting_reading.insert(std::make_pair(fd, event));
 }
 
@@ -102,7 +104,9 @@ void EventManager::count_up_to_all_event(int time)
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
         while(ite != end){
+            cout << "No.1 die?" << endl;
             ite->second->increase_timeout_count(time);
+            cout << "No.2 die?" << endl;
             ite++;
         }
     }
