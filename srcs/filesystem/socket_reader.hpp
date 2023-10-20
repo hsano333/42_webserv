@@ -7,7 +7,7 @@ class SocketReader : public IReader
     public:
         static SocketReader *get_instance();
         ~SocketReader();
-        int read(FileDiscriptor fd, char *buf, size_t size);
+        int read(FileDiscriptor fd, char *buf, size_t size, std::ifstream *ifs);
     private:
         static SocketReader *singleton;
         SocketReader();

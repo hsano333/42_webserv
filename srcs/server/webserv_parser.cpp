@@ -45,6 +45,7 @@ void WebservParser::parse_req(WebservEvent *event)
     req->set_request_line(sp[0]);
     req->set_header(sp, 1);
 
+
     WebservEvent *next_event = event_factory->make_application_event(event);
     delete (event);
     event_manager->push(next_event);
@@ -54,11 +55,11 @@ void WebservParser::parse_res(WebservEvent *event)
 {
     DEBUG("WebservParser::parse_res()");
 
-
-    io_multi_controller->modify(event->get_fd(), EPOLLOUT);
-    Response *res = new Response();
+    io_multi_controller->modify(event->fd(), EPOLLOUT);
+    Response *res = event->res();
+    //printf("res=%p\n", res);
     WebservEvent *next_event = event_factory->make_write_event(event, res);
-    this->event_manager->add_event_waiting_writing(next_event->get_fd(), next_event);
-    this->event_manager->erase_event_waiting_reading(event->get_fd());
+    this->event_manager->add_event_waiting_writing(next_event->fd(), next_event);
+    this->event_manager->erase_event_waiting_reading(event->fd());
     delete (event);
 }

@@ -5,7 +5,7 @@
 
 WebservWriteEvent::WebservWriteEvent() 
                                         :
-                                        fd(FileDiscriptor::from_int(0)),
+                                        fd_(FileDiscriptor::from_int(0)),
                                         req_(NULL),
                                         res_(NULL),
                                         timeout_count_(0),
@@ -21,7 +21,7 @@ WebservWriteEvent::WebservWriteEvent(
         IWriter *writer
         )
     :
-        fd(fd),
+        fd_(fd),
         req_(req),
         res_(res),
         timeout_count_(0),
@@ -39,7 +39,7 @@ WebservWriteEvent *WebservWriteEvent::from_status_code(WebservEvent *event, Stat
 {
     Response *res = Response::from_status_code(code);
     return (new WebservWriteEvent(
-            event->get_fd(),
+            event->fd(),
             event->req(),
             res,
             writer
@@ -52,7 +52,7 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *
         //delete event->res();
     //}
     return (new WebservWriteEvent(
-            event->get_fd(),
+            event->fd(),
             event->req(),
             res,
             writer
@@ -66,9 +66,9 @@ EWebservEvent WebservWriteEvent::which()
 }
 
 
-FileDiscriptor WebservWriteEvent::get_fd()
+FileDiscriptor WebservWriteEvent::fd()
 {
-    return (this->fd);
+    return (this->fd_);
 }
 
 Request *WebservWriteEvent::req()
@@ -97,5 +97,5 @@ int WebservWriteEvent::write(char const *buf, size_t size)
 {
 
     //char buf[] = "HTTP/1.1 200 OK";
-    return (this->writer->write(fd, buf, size));
+    return (this->writer->write(fd_, buf, size));
 }

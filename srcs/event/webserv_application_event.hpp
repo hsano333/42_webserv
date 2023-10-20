@@ -11,14 +11,14 @@ class WebservApplicationEvent : public WebservEvent
         ~WebservApplicationEvent();
         static WebservApplicationEvent *from_event(WebservEvent *event);
         EWebservEvent   which();
-        FileDiscriptor  get_fd();
+        FileDiscriptor  fd();
         Request         *req();
         Response        *res();
         void increase_timeout_count(int count);
         int  timeout_count();
         void            set_response(Response *res);
     private:
-        FileDiscriptor  fd;
+        FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
         int             timeout_count_;

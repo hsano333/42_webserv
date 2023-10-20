@@ -172,7 +172,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
             ite++;
         }
         for(size_t i=0;i<event_return.size();i++){
-            this->events_waiting_reading.erase(event_return[i]->get_fd());
+            this->events_waiting_reading.erase(event_return[i]->fd());
         }
     }
     {
@@ -185,7 +185,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
             ite++;
         }
         for(size_t i=0;i<event_return.size();i++){
-            this->events_waiting_writing.erase(event_return[i]->get_fd());
+            this->events_waiting_writing.erase(event_return[i]->fd());
         }
     }
     {
@@ -238,7 +238,7 @@ void EventManager::close_all_events()
 {
     while(events.size() > 0){
         WebservEvent *event = this->pop_first();
-        close(event->get_fd().to_int());
+        close(event->fd().to_int());
         delete event->req();
         delete event;
     }

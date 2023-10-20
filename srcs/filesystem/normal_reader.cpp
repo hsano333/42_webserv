@@ -21,7 +21,8 @@ NormalReader *NormalReader::get_instance()
     return (singleton);
 }
 
-int NormalReader::read(FileDiscriptor fd, char *buf, size_t size)
+int NormalReader::read(FileDiscriptor fd, char *buf, size_t size, std::ifstream *ifs)
 {
+    (void)ifs;
     return ::read(fd.to_int(), buf, size);
 }

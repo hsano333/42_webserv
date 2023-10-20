@@ -57,7 +57,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
             WebservEvent *cached_event = this->event_manager->get_event_waiting_reading(fd);
             if(cached_event == NULL){
-                WebservEvent *event = WebservReadEvent::from_fd(fd, this->socket_reader);
+                WebservEvent *event = WebservReadEvent::from_fd(fd);
                 this->event_manager->add_event_waiting_reading(io_fd, event);
                 return (event);
             }

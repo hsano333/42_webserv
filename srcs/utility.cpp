@@ -346,26 +346,7 @@ size_t Utility::to_size_t(string const &str)
     return Utility::to_size_t(str);
 }
 
-int Utility::read_body_and_copy(int fd, char** dst, size_t size)
-{
-    char *tmp = *dst;
-    if (fd <= 0){
-        return (0);
-    }
-    int chunk_size = 20;
-    int read_size = read(fd, &(tmp[chunk_size]), size - chunk_size);
-    if (read_size <= 0){
-        return 0;
-    }
-    // chunkサイズは16進数
-    string size_str = Utility::to_hexstr(read_size);
-    size_str += "\r\n";
-    size_t len = size_str.size();
-    Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
-    *dst = &(tmp[chunk_size-len]);
-    return (read_size+len);
-}
-
+/*
 int Utility::read_body_and_copy(char *src, char** dst, size_t size)
 {
     char *tmp = *dst;
@@ -380,6 +361,7 @@ int Utility::read_body_and_copy(char *src, char** dst, size_t size)
     *dst= &(tmp[chunk_size-len]);
     return (size+len);
 }
+*/
 
 size_t Utility::get_map_str_size(map<string, string> &data)
 {
@@ -410,16 +392,68 @@ bool Utility::is_regular_file(std::string const &path)
     return (fileInfo.st_mode & S_IFREG);
 }
 
+
 bool Utility::is_executable_file(std::string const &path)
 {
     struct stat fileInfo;
-    cout << "path;" << path << endl;
     if (stat(path.c_str(), &fileInfo) != 0){
         return false;
     }
     return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IXOTH);
-    //return (fileInfo.st_mode & S_IFREG);
-    //return true;
+}
+
+bool Utility::is_redable_file(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IRUSR);
+}
+
+bool Utility::is_writable_file(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IWUSR);
+}
+
+bool Utility::is_directory(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFDIR);
+}
+
+bool Utility::is_redable_directory(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFDIR) && (fileInfo.st_mode & S_IRUSR);
+}
+
+
+std::string Utility::time_to_string()
+{
+    char datetime[64];
+    std::time_t now = std::time(NULL);
+    std::strftime(datetime, sizeof(datetime), "%a, %d %b %Y %T GMT", std::gmtime(&now));
+    return (datetime);
+}
+
+size_t Utility::get_file_size(std::string const &filepath)
+{
+    struct stat fileInfo;
+    if (stat(filepath.c_str(), &fileInfo) != 0){
+        return (0);
+    }
+    return (fileInfo.st_size);
 }
 
 // 存在しないステータスコードを指定すると、空文字列を返す

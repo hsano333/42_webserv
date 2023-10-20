@@ -7,12 +7,12 @@
 class ConfigRawLoader : public IConfigRawGetter<std::string>
 {
     public:
-        ConfigRawLoader(File &file);
+        ConfigRawLoader(File *file);
         ~ConfigRawLoader();
         std::string get_raw_data();
     private:
         //std::basic_string<T, std::char_traits<T>, std::allocator<T> > get_raw_data();
-        File& file;
+        File* file;
 };
 
 /*

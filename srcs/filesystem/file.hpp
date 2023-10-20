@@ -1,15 +1,7 @@
-#ifndef FILE_HPP
-#define FILE_HPP
+#ifndef MYFILE_HPP
+#define MYFILE_HPP
+#include <unistd.h>
 
-#include <string>
-#include "ireader.hpp"
-#include "file_discriptor.hpp"
-
-typedef enum E_RWOption
-{
-    READ_ONLY,
-    WRITE_ONLY,
-}RWOption;
 
 typedef enum E_FileState
 {
@@ -19,25 +11,20 @@ typedef enum E_FileState
     FILE_ERROR,
 }FileState;
 
+
 class File
 {
     public:
-        ~File();
-        static File from_string(IReader* iread, std::string &filepath, RWOption option);
-        //std::string& filepath();
-        void open_file();
-        void close_file();
-        int  read(char *buf);
-        void write(char *buf);
+        //File(){};
+        virtual ~File(){};
+        virtual int open() = 0;
+        virtual int read(char *data, size_t size) = 0;
+        virtual int close() = 0;
+        virtual bool can_read() = 0;
+        virtual size_t size() = 0;
 
+        //virtual File close() = 0;
     private:
-        File();
-        File(IReader* iread, std::string &filepath, RWOption option);
-        IReader *ireader;
-        std::string filepath;
-        RWOption    option;
-        int         fd;
-        FileState   state;
 
 };
 

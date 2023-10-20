@@ -185,7 +185,7 @@ void EpollController::erase(FileDiscriptor fd_obj)
 
 }
 
-FileDiscriptor EpollController::get_fd()
+FileDiscriptor EpollController::fd()
 {
     return (this->epoll.fd());
 }

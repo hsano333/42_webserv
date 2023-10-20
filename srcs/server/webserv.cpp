@@ -37,7 +37,7 @@ Webserv::Webserv(
         EventManager        *event_manager,
         //EpollController epoll_controller,
         WebservWaiter &waiter,
-        WebservReceiver &reader,
+        WebservReceiver &receiver,
         WebservParser &parser,
         WebservExecuter &executer,
         WebservSender &sender,
@@ -50,7 +50,7 @@ Webserv::Webserv(
                      event_manager(event_manager),
                      //epoll_controller(epoll_controller),
                      waiter(waiter),
-                     reader(reader),
+                     receiver(receiver),
                      parser(parser),
                      executer(executer),
                      sender(sender),
@@ -119,13 +119,13 @@ void Webserv::communication()
             {
                 case READ_EVENT:
                     DEBUG("Webserv::Read Event ");
-                    reader.read(event);
+                    receiver.receiver(event);
                     parser.parse_req(event);
                     break;
                 case APPLICATION_EVENT:
                     DEBUG("Webserv::Application Event ");
                     executer.execute(event);
-                    parser.parse_res(event);
+                    //parser.parse_res(event);
                     break;
                 case WRITE_EVENT:
                     DEBUG("Webserv::Write Event ");

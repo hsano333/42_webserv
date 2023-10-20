@@ -1,7 +1,10 @@
 #ifndef GLOBAL_HPP
 #define GLOBAL_HPP
 #include <string>
+#include <ctime>
 #include "log.hpp"
+
+#define WEBSERV_VERSION "0.0.1"
 
 #define MAX_FD (200)
 #define MAX_BUF (8192)
@@ -40,5 +43,6 @@
 
 //unit is second
 #define TIMEOUT 100
+
 
 #endif

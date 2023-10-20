@@ -7,14 +7,19 @@
 #include <fcntl.h>
 #include "config.hpp"
 
-Response::Response()
+Response::Response() :
+    file(NULL),
+    is_redirect(false),
+    send_state(STILL_NOT_SEND),
+    exist_body_(false)
 {
-;
+    this->headers.insert(std::make_pair("Server", WEBSERV_VERSION));
+    this->headers.insert(std::make_pair("Date", Utility::time_to_string()));
 }
 
 Response::~Response()
 {
-;
+    delete this->file;
 }
 
 Response::Response(Response const &res)
@@ -28,6 +33,11 @@ Response& Response::operator=(Response const &res)
         return (*this);
     }
     this->status_code = res.status_code;
+    this->file = res.file;
+    this->is_redirect = res.is_redirect;
+    this->send_state = res.send_state;
+    this->status_line = res.status_line;
+    this->exist_body_ = res.exist_body_;
     return (*this);
 }
 
@@ -35,13 +45,116 @@ Response* Response::from_status_code(StatusCode &code)
 {
     Response *res = new Response();
     res->status_code = code;
+    res->file = NULL;
     return (res);
 }
 
+Response* Response::from_file(File *file)
+{
+    Response *res = new Response();
+    res->file = file;
+    if (file->can_read()){
+        res->status_code = StatusCode::from_int(200);
+    }else{
+        res->status_code = StatusCode::from_int(406);
+    }
+    return (res);
+}
+
+void Response::set_exist_body(bool flag)
+{
+    this->exist_body_ = flag;
+}
+
+void Response::add_header(std::string const &key, std::string const &value)
+{
+    this->headers.insert(std::make_pair(key, value));
+}
+
+int Response::open_file()
+{
+    return (this->file->open());
+}
+
+int Response::close_file()
+{
+    return (this->file->close());
+}
+
+void Response::make_status_line()
+{
+    this->status_line = ("HTTP/1.1 " +  status_code.to_string() + " " + status_code.message());
+}
+
+void Response::make_header_line()
+{
+    //this->header_line = ("HTTP/1.1 " +  status_code.to_string() + " " + status_code.message());
+    if (this->exist_body_){
+        this->header_line = "Content-Type: text/plain\r\nTransfer-Encoding: chunked\r\n";
+    }
+    std::map<std::string, std::string>::iterator ite = this->headers.begin();
+    std::map<std::string, std::string>::iterator end = this->headers.end();
+    while(ite != end){
+        this->header_line += ite->first + ": " + ite->second + "\r\n";
+        ite++;
+    }
+    this->header_line += "\r\n";
+}
+
+int Response::read_body_and_copy(char** dst, size_t size)
+{
+    //printf("No.3 data=%p\n", *dst);
+    char *tmp = *dst;
+    //printf("No.4 data=%p\n", tmp);
+    int chunk_size = 20;
+    int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
+    if (read_size <= 0){
+        return 0;
+    }
+    // chunkサイズは16進数
+    string size_str = Utility::to_hexstr(read_size);
+    size_str += "\r\n";
+    size_t len = size_str.size();
+    Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
+    *dst = &(tmp[chunk_size-len]);
+    return (read_size+len);
+}
+
+ssize_t Response::get_data(char** data)
+{
+    //printf("No.2 data=%p\n", *data);
+    if (this->send_state == STILL_NOT_SEND) {
+        if (this->file){
+            this->file->open();
+        }
+        this->make_status_line();
+        *data= const_cast<char*>(&(this->status_line[0]));
+        this->send_state = SENT_STATUS_LINE;
+        return (this->status_line.size());
+    }else if (this->send_state == SENT_STATUS_LINE){
+        this->make_header_line();
+        *data= const_cast<char*>(&(this->header_line[0]));
+        this->send_state = SENT_HEADER;
+        return (this->header_line.size());
+    }else if (this->send_state == SENT_HEADER && this->exist_body_){
+        size_t size = this->read_body_and_copy(data, MAX_READ_SIZE);
+        if (size == 0){
+            this->close_file();
+        }
+        return (size);
+    }
+    return (0);
+}
+
+
+
+/*
 Response* Response::from_file(std::string const &filepath)
 {
     (void)filepath;
     Response *res = new Response();
+    res->file = file
+
     return (res);
 }
 
@@ -51,6 +164,7 @@ Response* Response::from_directory(std::string const &filepath)
     Response *res = new Response();
     return (res);
 }
+*/
 
 void Response::print_info()
 {
@@ -67,7 +181,7 @@ Response::Response(Request *request)
       _auto_index(false),
       _file_path("./Makefile"),
       _code(0),
-      _send_state(STILL_NOT_SEND),
+      this->send_state(STILL_NOT_SEND),
       _fd(-1),
       _status_line("")
 {
@@ -80,7 +194,7 @@ Response::Response( int code)
       _auto_index(false),
       _file_path(""),
       _code(code),
-      _send_state(STILL_NOT_SEND),
+      this->send_state(STILL_NOT_SEND),
       _fd(-1),
       _status_line("")
 {
@@ -132,7 +246,7 @@ string &Response::get_filepath()
     return (_file_path);
 }
 
-bool Response::open_responsed_file()
+bool Response::open_file()
 {
     string &filepath = this->get_filepath();
     if (filepath != ""){
@@ -145,14 +259,14 @@ bool Response::open_responsed_file()
     }
     return (true);
 }
-void Response::close_responsed_file()
+void Response::close_file()
 {
-    if (_send_state == SENT_BODY || _send_state == ERROR) {
+    if (this->send_state == SENT_BODY || this->send_state == ERROR) {
         if (_fd > 0){
             close(_fd);
         }
         _fd = -1;
-        _send_state = CLOSE;
+        this->send_state = CLOSE;
     }
 }
 
@@ -200,7 +314,7 @@ void Response::check_error()
 
 ssize_t Response::get_data(char** data)
 {
-    if (_send_state == STILL_NOT_SEND) {
+    if (this->send_state == STILL_NOT_SEND) {
         check_error();
         if (_err){
             _code = 500;
@@ -210,18 +324,18 @@ ssize_t Response::get_data(char** data)
         }
         string &status = get_status_line();
         *data = const_cast<char*>(&(status[0]));
-        _send_state = SENT_STATUS_LINE;
+        this->send_state = SENT_STATUS_LINE;
         return (status.size());
-    }else if (_send_state == SENT_STATUS_LINE){
+    }else if (this->send_state == SENT_STATUS_LINE){
         string tmp = "Content-Type: text/plain\r\nTransfer-Encoding: chunked\r\n";
         *data = const_cast<char*>(&(tmp[0]));
-        _send_state = SENT_HEADER;
+        this->send_state = SENT_HEADER;
         return (tmp.size());
 
-    }else if (_send_state == SENT_HEADER){
+    }else if (this->send_state == SENT_HEADER){
         int size = Utility::read_body_and_copy(_fd, data, BUF_MAX);
         if (size <= 0){
-            _send_state = SENT_BODY;
+            this->send_state = SENT_BODY;
         }
         return (size);
     }

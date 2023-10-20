@@ -23,7 +23,7 @@ class WebservEvent
         virtual EWebservEvent which() = 0;
         //static WebservEvent *from_epoll_event(t_epoll_event const &event);
 
-        virtual FileDiscriptor get_fd() = 0;
+        virtual FileDiscriptor fd() = 0;
         virtual Request *req() = 0;
         virtual Response *res() = 0;
 
@@ -33,7 +33,7 @@ class WebservEvent
     private:
         Request *req_;
         Response *res_;
-        FileDiscriptor fd;
+        FileDiscriptor fd_;
         //EWebservEvent event_type;
         std::string filepath;
         int timeout_count_;

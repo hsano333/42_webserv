@@ -4,6 +4,7 @@
 #include "cgi.hpp"
 #include "config_location.hpp"
 #include "request.hpp"
+#include "file.hpp"
 
 class GetApplication : public Application
 {
@@ -17,7 +18,7 @@ class GetApplication : public Application
         //static GetApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
         static GetApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         Response* make_response();
-        std::string const &get_requested_path() const;
+        File *get_requested_file();
     private:
 
         void execute_cgi();
@@ -29,6 +30,7 @@ class GetApplication : public Application
         CGI *cgi;
         std::string cgi_application_path;
         bool is_cgi;
+        std::map<std::string, std::string> tmp_headers;
 
         //StatusCode res_status_code;
         //std::string 

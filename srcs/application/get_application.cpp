@@ -1,6 +1,8 @@
 #include "get_application.hpp"
 #include "http_exception.hpp"
 #include "normal_reader.hpp"
+#include "normal_file.hpp"
+#include "directory_file.hpp"
 
 GetApplication::GetApplication()
 {
@@ -12,16 +14,19 @@ GetApplication::~GetApplication()
 ;
 }
 
-std::string const &GetApplication::get_requested_path() const
+File *GetApplication::get_requested_file()
 {
     if (this->is_cgi){
-        return (this->req->requested_filepath());
+        //return (this->req->requested_filepath());
+        return (NULL);
     }
 
     if (this->req->is_file()){
-        return (this->req->requested_filepath());
+        File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);
+        return (file);
     }
-    return (this->req->requested_path());
+    File *file = DirectoryFile::from_path(this->req->requested_path());
+    return (file);
 }
 
 
@@ -34,6 +39,9 @@ bool GetApplication::is_cgi() const
 
 void GetApplication::execute_not_cgi()
 {
+    //this->tmp_headers.insert(std::make_pair("Date", Utility::time_to_string()));
+    //this->tmp_headers.insert(std::make_pair("Server", WEBSERV_VERSION));
+    //this->tmp_headers.insert(std::make_pair("Content-Length", Utility::get_file_size());
     // Nothing to do
     return;
     if(this->server->is_redirect())
@@ -57,8 +65,10 @@ void GetApplication::execute()
 {
     this->check_permission();
     if (this->is_cgi){
+        DEBUG("GetApplication::execute() CGI");
         this->execute_cgi();
     }else{
+        DEBUG("GetApplication::execute() Not CGI");
         this->execute_not_cgi();
     }
 
@@ -107,18 +117,29 @@ GetApplication* GetApplication::from_location(const Config *cfg, const Request *
 
 Response* GetApplication::make_response()
 {
-    std::string const &filepath = this->get_requested_path();
+    DEBUG("GetApplication::make_response()");
+    File *file = this->get_requested_file();
+    Response *res;
 
     if(this->server->is_redirect()){
-        return (Response::from_file(filepath));
-    }else if (this->req->is_file()){
-        return (Response::from_file(filepath));
+        res = Response::from_file(file);
+    }else if (this->req->is_file() || this->req->is_directory()){
+        res = Response::from_file(file);
     }else if (this->req->is_directory()){
-        return (Response::from_directory(filepath));
+        res = Response::from_file(file);
+    }else{
+        ERROR("GetApplication::make_response(): Neither file nor directory");
+        throw HttpException("500");
     }
+    res->set_exist_body(true);
 
-    ERROR("GetApplication::make_response(): Neither file nor directory");
-    throw HttpException("500");
+    std::map<std::string, std::string>::iterator ite = this->tmp_headers.begin();
+    std::map<std::string, std::string>::iterator end = this->tmp_headers.end();
+    while(ite != end){
+        res->add_header(ite->first, ite->second);
+        ite++;
+    }
+    return (res);
 }
 
 

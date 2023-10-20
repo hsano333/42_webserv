@@ -9,7 +9,7 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR			:= filesystem/
-FILESYSTEMSRC 			:= file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp
+FILESYSTEMSRC 			:= normal_file.cpp directory_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp
 FILESYSTEM 				:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/

@@ -2,10 +2,15 @@
 #include "global.hpp"
 #include <stdio.h>
 #include <iostream>
+#include <iomanip>
+#include "utility.hpp"
+
 
 using std::string;
 using std::cout;
 using std::endl;
+
+std::time_t Log::boot_time = std::time(NULL);
 
 Log::Log()
 {
@@ -21,23 +26,6 @@ Log::Log()
 Log *Log::_singleton = NULL;
 Log::~Log()
 {
-    /*
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    cout << "delete Log" << endl;
-    ofs.close();
-    if(_singleton != NULL){
-        delete (_singleton);
-        _singleton = NULL;
-    }
-    */
 }
 
 Log *Log::get_instance()
@@ -55,7 +43,6 @@ void Log::delete_instance()
         _singleton = NULL;
     }
 }
-
 void Log::check_writable()
 {
     Log* log = get_instance();
@@ -66,23 +53,21 @@ void Log::check_writable()
 
 void Log::write_log(const char *file,int line, string& str)
 {
+    std::time_t now = std::time(NULL);
+    //std::time_t local = std::localtime(&now);
+    ofs << std::setw(5) << now - Log::boot_time << " ";
     ofs << file << " " << line << ", ";
     ofs << "[" << str << "]" << endl << std::flush;
 }
 
+
+
 void Log::write(const char *file,int line, const char *level,  const string &str, int log_level)
 {
     static int cnt = 0;
-    //if(str == NULL){
-        //cout << "str is NULL" << endl;
-    //}
     if (log_level >= LOG_LEVEL){
         Log* log = get_instance();
-        //cout << "file:" << file << endl;
-
         std::string tmp = string(level);
-        //cout << "line:" << line << endl;
-        //cout << "str:" << str << endl;
         tmp += string(str);
         log->write_log(file, line, tmp);
     }

@@ -13,7 +13,7 @@ class WebservNothingEvent : public WebservEvent
         EWebservEvent which();
 
         static WebservNothingEvent *from_fd(FileDiscriptor fd);
-        FileDiscriptor get_fd();
+        FileDiscriptor fd();
         Request *req();
         Response *res();
         void increase_timeout_count(int count);

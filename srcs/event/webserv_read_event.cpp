@@ -7,35 +7,25 @@ WebservReadEvent::WebservReadEvent()
                                         :
                                         //req_(new Request()),
                                         req_(NULL),
-                                        fd(FileDiscriptor::from_int(0)),
+                                        fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
-                                        timeout_count_(0),
-                                        ireader(NULL)
+                                        timeout_count_(0)
+                                        //ireader(NULL)
 {
 }
 
 WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
     :
         req_(new Request()),
-        fd(fd),
-        timeout_count_(0),
-        ireader(NULL)
+        fd_(fd),
+        timeout_count_(0)
+        //ireader(NULL)
 {
     std::cout << "WebservReadEvent Constructor" << std::endl;
 
     ;
 }
 
-WebservReadEvent::WebservReadEvent(FileDiscriptor fd, IReader *ireader)
-    :
-        fd(fd),
-        timeout_count_(0),
-        //event_type(READ_EVENT),
-        ireader(ireader)
-        //iread()
-{
-    ;
-}
 
 
 WebservReadEvent::~WebservReadEvent()
@@ -43,10 +33,10 @@ WebservReadEvent::~WebservReadEvent()
     //delete ireader;
 }
 
-WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, IReader *reader)
+WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
 {
     DEBUG("WebservReadEvent::from_fd()");
-    WebservReadEvent *event = new WebservReadEvent(fd, reader);
+    WebservReadEvent *event = new WebservReadEvent(fd);
     Request *req = new Request();
     event->req_ = req;
     return (event);
@@ -59,9 +49,9 @@ EWebservEvent WebservReadEvent::which()
 }
 
 
-FileDiscriptor WebservReadEvent::get_fd()
+FileDiscriptor WebservReadEvent::fd()
 {
-    return (this->fd);
+    return (this->fd_);
 }
 
 Request *WebservReadEvent::req()
@@ -86,6 +76,7 @@ int WebservReadEvent::timeout_count()
     return (this->timeout_count_);
 }
 
+/*
 #include <stdio.h>
 int WebservReadEvent::read(char *buf, size_t size)
 {
@@ -97,3 +88,4 @@ int WebservReadEvent::read(char *buf, size_t size)
     printf("buf=%p", buf);
     return this->ireader->read(fd, buf, size);
 }
+*/

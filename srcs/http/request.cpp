@@ -37,7 +37,7 @@ Request::Request() :
 
 Request::~Request()
 {
-    ;
+    //cout << "~Request()" << endl;
 }
 
 /*

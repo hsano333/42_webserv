@@ -17,14 +17,14 @@ class WebservCleanEvent : public WebservEvent
         EWebservEvent which();
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
-        FileDiscriptor get_fd();
+        FileDiscriptor fd();
         void increase_timeout_count(int count);
         int  timeout_count();
         static WebservCleanEvent *from_webserv_event(WebservEvent *event);
         Request *req();
         Response *res();
     private:
-        FileDiscriptor  fd;
+        FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
         int             timeout_count_;

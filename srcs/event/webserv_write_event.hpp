@@ -15,7 +15,7 @@ class WebservWriteEvent : public WebservEvent
         ~WebservWriteEvent();
         EWebservEvent which();
 
-        FileDiscriptor  get_fd();
+        FileDiscriptor  fd();
         Request         *req();
         Response        *res();
         void increase_timeout_count(int count);
@@ -25,7 +25,7 @@ class WebservWriteEvent : public WebservEvent
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
 
     private:
-        FileDiscriptor  fd;
+        FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
         int             timeout_count_;

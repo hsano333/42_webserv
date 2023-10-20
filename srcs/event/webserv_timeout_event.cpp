@@ -2,7 +2,7 @@
 
 WebservTimeoutEvent::WebservTimeoutEvent() 
                                         :
-                                        fd(FileDiscriptor::from_int(0)),
+                                        fd_(FileDiscriptor::from_int(0)),
                                         event_type(TIMEOUT_EVENT),
                                         timeout_count_(0)
 {
@@ -20,9 +20,9 @@ EWebservEvent WebservTimeoutEvent::which()
 }
 
 
-FileDiscriptor WebservTimeoutEvent::get_fd()
+FileDiscriptor WebservTimeoutEvent::fd()
 {
-    return (this->fd);
+    return (this->fd_);
 }
 
 Request *WebservTimeoutEvent::req()

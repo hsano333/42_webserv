@@ -8,7 +8,7 @@ WebservCleanEvent::WebservCleanEvent(
                             Request *req,
                             Response *res
                             ):
-                            fd(fd),
+                            fd_(fd),
                             req_(req),
                             res_(res),
                             timeout_count_(0)
@@ -26,9 +26,9 @@ EWebservEvent WebservCleanEvent::which()
     return (CLEAN_EVENT);
 }
 
-FileDiscriptor WebservCleanEvent::get_fd()
+FileDiscriptor WebservCleanEvent::fd()
 {
-    return (this->fd);
+    return (this->fd_);
 }
 
 Request *WebservCleanEvent::req()
@@ -54,7 +54,7 @@ int WebservCleanEvent::timeout_count()
 
 WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event)
 {
-    WebservCleanEvent *new_event = new WebservCleanEvent(event->get_fd(), event->req(), event->res());
+    WebservCleanEvent *new_event = new WebservCleanEvent(event->fd(), event->req(), event->res());
     return (new_event);
 }
 

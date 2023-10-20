@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <ctime>
 
 using std::map;
 using std::pair;
@@ -51,16 +52,23 @@ class Utility
     static string get_http_status_message(string status_code);
     template <typename T>
     static void print_vector(vector<T> v);
-    static int read_body_and_copy(int fd, char** dst, size_t size);
+    //static int read_body_and_copy(int fd, char** dst, size_t size);
     //static int read_body_and_copy(int fd, char** buf, int size, std::string str);
     //static int read_body_and_copy(ByteVector str, char** buf, int size);
-    static int read_body_and_copy(char *src, char** dst, size_t size);
+    //static int read_body_and_copy(char *src, char** dst, size_t size);
     static size_t get_map_str_size(map<std::string, std::string> &data);
 
     static std::string extract_json_object(const std::string &target, std::string &str);
     static bool is_regular_file(std::string const &path);
     static bool is_executable_file(std::string const &path);
+    static bool is_redable_file(std::string const &path);
+    static bool is_writable_file(std::string const &path);
 
+    static bool is_directory(std::string const &path);
+    static bool is_redable_directory(std::string const &path);
+
+    static std::string time_to_string();
+    static size_t get_file_size(std::string const &filepath);
 };
 
 template <typename T>

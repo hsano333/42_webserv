@@ -1,6 +1,5 @@
 
 #include <stdlib.h>
-
 #include <iostream>
 #include <string>
 #include "config.hpp"
@@ -16,7 +15,9 @@
 #include "endian.hpp"
 #include "log.hpp"
 #include "file.hpp"
+#include "normal_file.hpp"
 #include "normal_reader.hpp"
+#include "stream_reader.hpp"
 #include <fstream>
 #include "body_size.hpp"
 #include "ip_address.hpp"
@@ -86,8 +87,7 @@ void clean_all(WebservCleaner &cleaner, EventManager *event_manager)
 
 Config *create_config(std::string &cfg_file)
 {
-    NormalReader *normal_reader = NormalReader::get_instance();
-    File file = File::from_string(normal_reader, cfg_file, READ_ONLY);
+    File *file = NormalFile::from_filepath(cfg_file, std::ios::in);
     ConfigRawLoader raw_getter(file);
     ConfigParser<Config, ConfigHttp> parser_config("http");
     ConfigParser<ConfigHttp, ConfigServer> parser_http("server");
@@ -128,11 +128,12 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
     return (socket_repository );
 }
 
+//boot_time = std::time(NULL);
+
 #include <sys/stat.h>
 int main(int argc, char const* argv[])
 {
-
-
+    //boot_time = std::time(NULL);
 
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){
@@ -188,6 +189,7 @@ int main(int argc, char const* argv[])
     NormalWriter *normal_writer = NormalWriter::get_instance();
     SocketWriter *socket_writer = SocketWriter::get_instance();
     NormalReader *normal_reader = NormalReader::get_instance();
+    //StreamReader *stream_reader = StreamReader::get_instance();
 
     EventManager *event_manager = new EventManager();
     WebservEventFactory *event_factory = new WebservEventFactory(
@@ -205,11 +207,12 @@ int main(int argc, char const* argv[])
     ApplicationFactory *application_factory = new ApplicationFactory(cfg, cgi);
 
 
+
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
-    WebservReceiver reader(epoll_controller, event_manager);
+    WebservReceiver reader(epoll_controller, event_manager, socket_reader);
     WebservParser parser(epoll_controller, event_manager, event_factory);
-    WebservExecuter app(application_factory, epoll_controller, event_manager, fd_manager, cfg);
-    WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager);
+    WebservExecuter app(application_factory, epoll_controller, event_factory, event_manager, fd_manager, cfg);
+    WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager, socket_writer);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
     SocketManager* socket_manager = new SocketManager();

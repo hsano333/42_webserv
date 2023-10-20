@@ -31,7 +31,7 @@ class Webserv
             EventManager        *event_manager,
             //EpollController epoll_controller,
             WebservWaiter &waiter,
-            WebservReceiver &reader,
+            WebservReceiver &receiver,
             WebservParser &parser,
             WebservExecuter &executer,
             WebservSender &sender,
@@ -53,7 +53,7 @@ class Webserv
     EventManager        *event_manager;
     //EpollController     &epoll_controller;
     WebservWaiter       &waiter;
-    WebservReceiver       &reader;
+    WebservReceiver     &receiver;
     WebservParser       &parser;
     WebservExecuter     &executer;
     WebservSender       &sender;

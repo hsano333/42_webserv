@@ -18,7 +18,7 @@ EWebservEvent WebservNothingEvent::which()
     return (NOTHING_EVENT);
 }
 
-FileDiscriptor WebservNothingEvent::get_fd()
+FileDiscriptor WebservNothingEvent::fd()
 {
     return (FileDiscriptor::from_int(0));
 }

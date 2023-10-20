@@ -14,7 +14,7 @@ class IOMultiplexing
         virtual void erase(FileDiscriptor fd) = 0;
         virtual void add(FileDiscriptor fd, uint32_t event) = 0;
         virtual void modify(FileDiscriptor fd, uint32_t event) = 0;
-        virtual FileDiscriptor  get_fd() = 0;
+        virtual FileDiscriptor  fd() = 0;
         //virtual bool have_executable_events() = 0;
         virtual std::vector<t_epoll_event> &take_out_event() = 0;
         virtual int executable_event_number() = 0;

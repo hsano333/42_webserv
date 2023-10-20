@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigRawLoader::ConfigRawLoader(File &file)
+ConfigRawLoader::ConfigRawLoader(File *file)
                                 :
                                 file(file)
 {
@@ -12,25 +12,26 @@ ConfigRawLoader::ConfigRawLoader(File &file)
 
 ConfigRawLoader::~ConfigRawLoader()
 {
-    ;
+    delete file;
 }
 
 std::string ConfigRawLoader::get_raw_data()
 {
     std::string all_data;
-    file.open_file();
+    file->open();
     char buf[MAX_BUF];
-    int size = file.read(buf);
+    //char *buf = &(tmp_buf[0]);
+    int size = file->read(&(buf[0]), MAX_BUF);
 
     while(size > 0){
         buf[size] = '\0';
         all_data += buf;
-        size = file.read(buf);
+        size = file->read(&(buf[0]), MAX_READ_SIZE);
         if(size >= MAX_READ_SIZE){
             ERROR("Config file is bigger than:" + Utility::to_string(MAX_READ_SIZE));
             throw std::runtime_error("Config file is bigger than readable size");
         }
     }
-    file.close_file();
+    file->close();
     return all_data;
 }

@@ -5,7 +5,7 @@ WebservApplicationEvent::WebservApplicationEvent(
                             FileDiscriptor fd,
                             Request *req)
                             :
-                            fd(fd),
+                            fd_(fd),
                             req_(req),
                             res_(NULL),
                             timeout_count_(0)
@@ -15,12 +15,11 @@ WebservApplicationEvent::WebservApplicationEvent(
 
 WebservApplicationEvent::~WebservApplicationEvent()
 {
-    //delete req;
 };
 
 WebservApplicationEvent *WebservApplicationEvent::from_event(WebservEvent *event)
 {
-    return (new WebservApplicationEvent(event->get_fd(), event->req()));
+    return (new WebservApplicationEvent(event->fd(), event->req()));
 };
 
 EWebservEvent WebservApplicationEvent::which()
@@ -28,9 +27,9 @@ EWebservEvent WebservApplicationEvent::which()
     return (APPLICATION_EVENT);
 }
 
-FileDiscriptor WebservApplicationEvent::get_fd()
+FileDiscriptor WebservApplicationEvent::fd()
 {
-    return (this->fd);
+    return (this->fd_);
 }
 
 Request *WebservApplicationEvent::req()

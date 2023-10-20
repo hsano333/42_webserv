@@ -19,7 +19,7 @@ class EpollController : public IOMultiplexing
         void add(FileDiscriptor fd, uint32_t event);
         void erase(FileDiscriptor fd);
         void modify(FileDiscriptor fd, uint32_t event);
-        FileDiscriptor get_fd();
+        FileDiscriptor fd();
         int executable_event_number();
         std::vector<t_epoll_event> &take_out_event();
         void init_epoll();
