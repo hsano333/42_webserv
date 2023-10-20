@@ -78,6 +78,7 @@ void Webserv::communication()
     bool exit_flag = false;
     DEBUG("Webserv::communication() start");
 
+    /*
     struct sockaddr_in sin;
     socklen_t len = sizeof(sin);
 
@@ -106,6 +107,7 @@ void Webserv::communication()
         printf("len=%d\n", len);
         ite++;
     }
+    */
 
     while(1)
     {
