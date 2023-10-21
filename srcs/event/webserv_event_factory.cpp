@@ -61,8 +61,12 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 printf("event=%p\n", event);
                 this->event_manager->add_event_waiting_reading(fd, event);
                 return (event);
-            }
+            }else{
+                WebservEvent *new_event = this->make_read_event_from_event(cached_event);
+                delete (cached_event);
+                return (new_event);
 
+            }
             return (cached_event);
         }
     }else if(event_epoll.events & EPOLLOUT){
@@ -78,6 +82,12 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
     }
     return (NULL);
+}
+
+
+WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *event)
+{
+    return (WebservReadEvent::from_event(event));
 }
 
 WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)

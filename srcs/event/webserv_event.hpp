@@ -12,6 +12,7 @@ typedef enum E_WebservEvent
     WRITE_EVENT,
     CLEAN_EVENT,
     TIMEOUT_EVENT,
+    KEEPA_ALIVE_EVENT,
     NOTHING_EVENT,
 } EWebservEvent;
 

@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 08:44:30 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/20 16:03:31 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/22 02:11:58 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class Response
 
         void make_status_line();
         void make_header_line();
+        int read_body_and_copy_chunk(char** dst, size_t size);
         int read_body_and_copy(char** dst, size_t size);
         bool exist_body_;
 };

@@ -39,6 +39,36 @@ size_t EventManager::event_size()
     return (this->events.size());
 }
 
+size_t EventManager::keep_alive_event_size()
+{
+    size_t cnt = 0;
+    MutantStack<WebservEvent *>::iterator ite;
+    MutantStack<WebservEvent *>::iterator end;
+    while(ite != end){
+        WebservEvent *event = *ite;
+        if(event->which() == KEEPA_ALIVE_EVENT){
+            cnt++;
+        }
+        ite++;
+    }
+    return (cnt);
+}
+
+bool EventManager::find(FileDiscriptor fd)
+{
+
+    MutantStack<WebservEvent *>::iterator ite;
+    MutantStack<WebservEvent *>::iterator end;
+    while(ite != end){
+        WebservEvent *event = *ite;
+        if(fd == event->fd()){
+            return (true);
+        }
+        ite++;
+    }
+    return (false);
+}
+
 /*
 void EventManager::increase_timeout_count(int count)
 {
@@ -103,10 +133,9 @@ void EventManager::count_up_to_all_event(int time)
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
+
         while(ite != end){
-            cout << "No.1 die?" << endl;
             ite->second->increase_timeout_count(time);
-            cout << "No.2 die?" << endl;
             ite++;
         }
     }
@@ -166,6 +195,7 @@ bool EventManager::check_timeout()
 
 void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_return)
 {
+    DEBUG("retrieve_timeout_events()");
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
@@ -220,7 +250,7 @@ void EventManager::close_all_events_waiting_reading(WebservCleaner &cleaner)
         ite++;
     }
     for(size_t i=0;i<tmp.size();i++){
-        cleaner.clean(tmp[i]);
+        cleaner.clean(tmp[i], true);
     }
 }
 
@@ -234,7 +264,7 @@ void EventManager::close_all_events_waiting_writing(WebservCleaner &cleaner)
         ite++;
     }
     for(size_t i=0;i<tmp.size();i++){
-        cleaner.clean(tmp[i]);
+        cleaner.clean(tmp[i], true);
     }
 }
 

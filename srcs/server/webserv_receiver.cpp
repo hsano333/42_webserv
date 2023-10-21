@@ -1,4 +1,5 @@
 #include "webserv_receiver.hpp"
+#include "http_exception.hpp"
 
 WebservReceiver::WebservReceiver(
             IOMultiplexing *io_multi_controller,
@@ -45,6 +46,10 @@ void WebservReceiver::receiver(WebservEvent *event)
     cout << "read buf:[" << buf << "]" << endl;
     tmp_req->renew_raw_buf_space(space);
     tmp_req->increment_raw_buf_size(sum);
+    if (sum == 0){
+        ERROR("Request data is zero");
+        throw HttpException("400");
+    }
     //exit(0);
     //io_multi_controller->modify(event->fd(), EPOLLOUT);
 }

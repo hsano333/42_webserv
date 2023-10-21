@@ -27,6 +27,7 @@ class WebservEventFactory
         WebservEvent *make_write_event(WebservEvent *event, Response *res);
         WebservEvent *make_error_event(WebservEvent *event, StatusCode &code);
         WebservEvent *make_clean_event(WebservEvent *event);
+        WebservEvent *make_read_event_from_event(WebservEvent *event);
     private:
         SocketController *socket_controller;
         FDManager *fd_manager;

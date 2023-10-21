@@ -23,6 +23,7 @@
 #include "global.hpp"
 #include "epoll_controller.hpp"
 #include "http_exception.hpp"
+#include "event_controller.hpp"
 
 #define NEVENTS 16
 using std::cout;
@@ -35,6 +36,7 @@ Webserv::Webserv(
         SocketManager *socket_manager,
         WebservEventFactory *event_factory,
         EventManager        *event_manager,
+        EventController     *event_controller,
         //EpollController epoll_controller,
         WebservWaiter &waiter,
         WebservReceiver &receiver,
@@ -48,6 +50,7 @@ Webserv::Webserv(
                      socket_manager(socket_manager),
                      event_factory(event_factory),
                      event_manager(event_manager),
+                     event_controller(event_controller),
                      //epoll_controller(epoll_controller),
                      waiter(waiter),
                      receiver(receiver),
@@ -135,12 +138,17 @@ void Webserv::communication()
                     break;
                 case CLEAN_EVENT:
                     DEBUG("Webserv::Clean Event ");
-                    cleaner.clean(event);
+                    cleaner.clean(event, false);
                     break;
                 case TIMEOUT_EVENT:
                     DEBUG("Webserv::Timeout Event");
                     cleaner.clean_timeout_events(event);
                     delete(event);
+                    break;
+                case KEEPA_ALIVE_EVENT:
+                    DEBUG("Webserv::Keep Alive Event");
+                    event_controller->restart_communication(event);
+                    // nothing to do
                     break;
                 case NOTHING_EVENT:
                     DEBUG("Webserv::Nothing Event");
@@ -153,6 +161,7 @@ void Webserv::communication()
         }catch(HttpException &e){
             std::string code_str = e.what();
             StatusCode code;
+            //delete event;
             try{
                 code = StatusCode::from_string(code_str);
             }catch (std::runtime_error &e){
@@ -161,21 +170,25 @@ void Webserv::communication()
             }
             WebservEvent *next_event = this->event_factory->make_error_event(event, code);
             this->event_manager->push(next_event);
+            delete event;
         }catch(std::runtime_error &e){
             WARNING("Wevserv RuntimeError:");
             WARNING(e.what());
             WebservEvent *next_event = this->event_factory->make_clean_event(event);
             this->event_manager->push(next_event);
+            delete event;
         }catch(std::invalid_argument &e){
             WARNING("Wevserv InvalidArgument:");
             WARNING(e.what());
             WebservEvent *next_event = this->event_factory->make_clean_event(event);
             event_manager->push(next_event);
+            delete event;
         }catch(std::exception &e){
             WARNING("Wevserv Exception:");
             WARNING(e.what());
             WebservEvent *next_event = this->event_factory->make_clean_event(event);
             event_manager->push(next_event);
+            delete event;
         }
     }
 }

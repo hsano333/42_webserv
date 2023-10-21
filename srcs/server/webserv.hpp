@@ -16,6 +16,7 @@
 #include "webserv_sender.hpp"
 #include "webserv_cleaner.hpp"
 #include "event_manager.hpp"
+#include "event_controller.hpp"
 
 using std::map;
 using std::string;
@@ -29,6 +30,7 @@ class Webserv
             SocketManager *socket_manager,
             WebservEventFactory *event_factory,
             EventManager        *event_manager,
+            EventController     *event_controller,
             //EpollController epoll_controller,
             WebservWaiter &waiter,
             WebservReceiver &receiver,
@@ -51,6 +53,7 @@ class Webserv
     SocketManager       *socket_manager;
     WebservEventFactory *event_factory;
     EventManager        *event_manager;
+    EventController     *event_controller;
     //EpollController     &epoll_controller;
     WebservWaiter       &waiter;
     WebservReceiver     &receiver;

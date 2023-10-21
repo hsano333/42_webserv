@@ -4,11 +4,11 @@
 #include <ctime>
 #include "log.hpp"
 
-#define WEBSERV_VERSION "0.0.1"
+#define WEBSERV_VERSION "Webserv Version:0.0.1"
 
 #define MAX_FD (200)
 #define MAX_BUF (8192)
-#define MAX_READ_SIZE (MAX_BUF-1)
+#define MAX_READ_SIZE (MAX_BUF-10)
 #define MAX_READ (1024)
 #define MAX_CONFIG_SIZE (MAX_READ_SIZE)
 #define LOG_FILE "./webserv.log"
@@ -42,7 +42,9 @@
 #define ERROR(STR)  (Log::write(__FILE__, __LINE__,  "[ERROR]", STR, LOG_LEVEL_ERROR))
 
 //unit is second
-#define TIMEOUT 100
+#define TIMEOUT 10
+#define CRLF "\r\n"
+#define CRLF2 "\r\n\r\n"
 
 
 #endif

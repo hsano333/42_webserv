@@ -43,6 +43,21 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
 
 }
 
+WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event)
+{
+    WebservReadEvent *new_event = new WebservReadEvent(event->fd());
+    if (event->req()){
+        delete event->req();
+    }
+    if (event->res()){
+        delete event->res();
+    }
+    Request *req = new Request();
+    new_event->req_ = req;
+    return (new_event);
+
+}
+
 EWebservEvent WebservReadEvent::which()
 {
     return (READ_EVENT);

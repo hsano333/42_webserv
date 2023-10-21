@@ -4,6 +4,11 @@
 
 WebservNothingEvent::WebservNothingEvent() : timeout_count_(0)
 {
+    this->fd_ = FileDiscriptor::from_int(0);
+}
+
+WebservNothingEvent::WebservNothingEvent(FileDiscriptor fd) : timeout_count_(0), fd_(fd)
+{
     ;
 }
 
@@ -13,6 +18,12 @@ WebservNothingEvent::~WebservNothingEvent()
     ;
 }
 
+WebservNothingEvent *WebservNothingEvent::from_fd(FileDiscriptor fd)
+{
+    WebservNothingEvent *event = new WebservNothingEvent(fd);
+    return (event);
+}
+
 EWebservEvent WebservNothingEvent::which()
 {
     return (NOTHING_EVENT);
@@ -20,7 +31,7 @@ EWebservEvent WebservNothingEvent::which()
 
 FileDiscriptor WebservNothingEvent::fd()
 {
-    return (FileDiscriptor::from_int(0));
+    return (fd_);
 }
 
 Request *WebservNothingEvent::req()

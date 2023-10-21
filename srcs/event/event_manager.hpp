@@ -17,6 +17,7 @@ class EventManager
         void pop();
         WebservEvent *pop_first();
         size_t event_size();
+        size_t keep_alive_event_size();
         //void increase_timeout_count(int count);
         void add_event_waiting_reading(FileDiscriptor fd, WebservEvent* event);
         void erase_event_waiting_reading(FileDiscriptor fd);
@@ -30,6 +31,7 @@ class EventManager
         void close_all_events_waiting_writing(WebservCleaner &cleaner);
         void close_all_events();
         void retrieve_timeout_events(std::vector<WebservEvent *> &event_return);
+        bool find(FileDiscriptor fd);
     private:
         MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::queue<WebservEvent*> > events;
         std::map<FileDiscriptor, WebservEvent*> events_waiting_reading;

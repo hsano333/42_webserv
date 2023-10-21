@@ -14,6 +14,7 @@ class WebservReadEvent : public WebservEvent
 
         //static WebservReadEvent *from_fd(FileDiscriptor fd, IReader *reader);
         static WebservReadEvent *from_fd(FileDiscriptor fd);
+        static WebservReadEvent *from_event(WebservEvent *event);
         FileDiscriptor fd();
         Request *req();
         Response *res();

@@ -31,6 +31,7 @@
 #include "webserv_executer.hpp"
 #include "webserv_sender.hpp"
 #include "event_manager.hpp"
+#include "event_controller.hpp"
 #include "fd_manager.hpp"
 #include "ireader.hpp"
 #include "normal_reader.hpp"
@@ -80,6 +81,7 @@ void server(Webserv& webserv)
 
 void clean_all(WebservCleaner &cleaner, EventManager *event_manager)
 {
+    event_manager->close_all_events_waiting_reading(cleaner);
     event_manager->close_all_events_waiting_writing(cleaner);
     event_manager->close_all_events();
     //cleaner.clean();
@@ -192,6 +194,7 @@ int main(int argc, char const* argv[])
     //StreamReader *stream_reader = StreamReader::get_instance();
 
     EventManager *event_manager = new EventManager();
+    EventController *event_controller = new EventController(event_manager);
     WebservEventFactory *event_factory = new WebservEventFactory(
             socket_controller,
             fd_manager,
@@ -217,7 +220,7 @@ int main(int argc, char const* argv[])
 
     SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg,socket_manager,event_factory, event_manager, waiter,reader,parser,app,sender, cleaner);
+    Webserv webserv(cfg,socket_manager,event_factory, event_manager, event_controller,waiter,reader,parser,app,sender, cleaner);
     while (1) {
         try{
             server(webserv);
@@ -235,6 +238,7 @@ int main(int argc, char const* argv[])
     delete socket_controller;
     delete epoll_controller;
     delete event_manager;
+    delete event_controller;
     delete socket_manager;
     delete cfg;
     delete event_factory;

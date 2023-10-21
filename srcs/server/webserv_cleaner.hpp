@@ -16,7 +16,7 @@ class WebservCleaner
 
                 );
         ~WebservCleaner();
-        void clean(WebservEvent *event);
+        void clean(WebservEvent *event, bool force_close);
         void clean_timeout_events(WebservEvent *event);
     private:
         IOMultiplexing *io_multi_controller;

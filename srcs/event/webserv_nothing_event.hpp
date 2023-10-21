@@ -20,5 +20,7 @@ class WebservNothingEvent : public WebservEvent
         int  timeout_count();
     private:
         int             timeout_count_;
+        FileDiscriptor fd_;
+        WebservNothingEvent(FileDiscriptor fd);
 };
 #endif

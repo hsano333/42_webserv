@@ -212,35 +212,11 @@ void EpollController::wait()
         throw std::runtime_error("EPOLL WAIT ERROR");
     }
     epoll.save_executable_events_number(nfds);
-    //int nfds = epoll_wait(epoll.fd(), epoll.allocated_event_pointer(), 3, time_msec * 1000);
     if(nfds == 0){
         MYINFO("timeout:" + Utility::to_string(time_msec) + "sec");
         std::string tmp = Utility::to_string(time_msec);
         throw TimeoutException(tmp);
     }
-
-    /*
-    std::vector<t_epoll_event> events(3);
-    t_epoll_event *tmp_event = &(events[0]);
-    int nfds = epoll_wait(epoll.fd().to_int(), tmp_event, 3, -1);
-    char buf[2048];
-    std::cout  << "nfds:" << nfds << endl;
-    for(int i=0;i<nfds;i++){
-        int fd = events[i].data.fd;
-        int tmp_fd = this->socket_controller->accept_request(fd);
-
-        if(events[i].events &  EPOLLIN){
-            std::cout  << "Epollin test fd:" << tmp_fd << endl;
-            int rval = recv(tmp_fd, buf, 2048, MSG_DONTWAIT);
-            std::cout  << "rval:" << rval  << endl;
-            //std::cout  << errno << rval  << endl;
-            std::cout  << strerror(errno) << rval  << endl;
-            buf[rval] = '\0';
-            cout << "buf:" << buf << endl;
-
-        }
-    }
-    */
 }
 
 int EpollController::executable_event_number()
