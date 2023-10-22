@@ -50,14 +50,12 @@ void WebservSender::send(WebservEvent *event)
     //delete write_event->res();
     //exit(0);
     cout << "sender No.1" << endl;
-    DEBUG("WebservSender::send() No.1");
     while(size > 0)
     {
-        DEBUG("WebservSender::send() No.1-1");
         cout << p_data << endl;
         DEBUG("WebservSender::send() No.1-2");
         printf("p_data=%p\n", p_data);
-        printf("p_data=%s, size=%zu\n", p_data,size);
+        printf("p_data=[%s], size=%zu\n", p_data,size);
         int result = writer->write(fd, p_data, size);
         if (result < 0){
             //break;
@@ -66,11 +64,8 @@ void WebservSender::send(WebservEvent *event)
             break;
         }
         p_data = &(data[0]);
-        DEBUG("WebservSender::send() No.3:" + Utility::to_string(result));
         size = res->get_data(&p_data);
-        DEBUG("WebservSender::send() No.4:" + Utility::to_string(size));
         p_data[size] = '\0';
-        DEBUG("WebservSender::send() No.5:" + Utility::to_string(size));
     }
 
     res->close_file();

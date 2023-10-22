@@ -114,13 +114,13 @@ void Response::make_header_line()
         this->header_line += ite->first + ": " + ite->second + "\r\n";
         ite++;
     }
-    //this->header_line += "\r\n";
+    this->header_line += "\r\n";
 }
 
 int Response::read_body_and_copy(char** dst, size_t size)
 {
     int result = (this->file->read(dst, size));
-    cout << "read test:" << *dst << endl;
+    cout << "read test:" << *dst << "], size=" << result << endl;
     return (result);
     /*
     //printf("No.3 data=%p\n", *dst);
@@ -152,14 +152,14 @@ int Response::read_body_and_copy_chunk(char** dst, size_t size)
     //int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
 
     // chunkサイズは16進数
-    string size_str = CRLF;
-    size_str += Utility::to_hexstr(read_size);
+    //string size_str = CRLF;
+    std::string size_str = Utility::to_hexstr(read_size);
     size_str += CRLF;
     size_t len = size_str.size();
     Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
     *dst = &(tmp[chunk_size-len]);
-    if (read_size == 0){
-        //転送終了を表す[0\r\n\r\n]の最後の改行をコピー
+    if (read_size > 0){
+        //転送終了痔だけ改行を付けない
         tmp2[0] = '\r';
         tmp2[1] = '\n';
         read_size += 2;
@@ -182,26 +182,19 @@ ssize_t Response::get_data(char** data)
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER && this->exist_body_){
-        size_t size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
 
-    cout << "read test No.2:" << *data<< endl;
-
-        size_t i = 0;
-        cout << "BODY:[";
-        while(i < size){
-            printf("%d ", (*data)[i]);
-            i++;
-        }
-        cout << "]BODY" << endl;
-        cout << "sizse:" << size << endl;
-        //cout << "data=[" << *data << "]" << endl;
-        //(*data)[size] = '\r';
-        ////(*data)[size + 1] = '\n';
-        if (size <= 7){
-            // \r\n0\r\n\r\nで7文字
-            //Utility::memcpy(&((*data)[size]), CRLF, 2);
-            this->send_state = SENT_BODY;
-            //this->close_file();
+        int size;
+        if (this->file->is_chunk()){
+            size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
+            if (size <= 7){
+                this->send_state = SENT_BODY;
+            }
+        }else{
+            size = this->read_body_and_copy(data, MAX_READ_SIZE);
+            cout << "not chunk size=" << size << endl;
+            if (size <= 0){
+                this->send_state = SENT_BODY;
+            }
         }
         return (size);
     }
