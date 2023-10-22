@@ -1,5 +1,6 @@
 #include "webserv_receiver.hpp"
 #include "http_exception.hpp"
+#include "connection_exception.hpp"
 
 WebservReceiver::WebservReceiver(
             IOMultiplexing *io_multi_controller,
@@ -31,7 +32,9 @@ void WebservReceiver::receiver(WebservEvent *event)
     int sum = 0;
     while(1){
         int tmp = reader->read(fd, &(buf[sum]), space, NULL);
-        if(tmp <= 0){
+        if(tmp < 0){
+            throw ConnectionException("Read Error");
+        }else if(tmp == 0){
             break;
         }
         sum += tmp;

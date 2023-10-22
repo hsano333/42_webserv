@@ -1,6 +1,7 @@
 #include "webserv_sender.hpp"
 #include "webserv_write_event.hpp"
 #include "global.hpp"
+#include "connection_exception.hpp"
 
 WebservSender::WebservSender(
             IOMultiplexing *io_multi_controller,
@@ -50,9 +51,10 @@ void WebservSender::send(WebservEvent *event)
         printf("p_data=%p\n", p_data);
         printf("p_data=%s, size=%zu\n", p_data,size);
         int result = writer->write(fd, p_data, size);
-        //DEBUG("WebservSender::send() No.2:" + Utility::to_string(result));
-        if(result < 0){
-            ERROR("Failure to send data to client");
+        if (result < 0){
+            break;
+            throw ConnectionException("Write Error");
+        }else if(result == 0){
             break;
         }
         p_data = &(data[0]);

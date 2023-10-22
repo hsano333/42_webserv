@@ -23,6 +23,7 @@
 #include "global.hpp"
 #include "epoll_controller.hpp"
 #include "http_exception.hpp"
+#include "connection_exception.hpp"
 #include "event_controller.hpp"
 
 #define NEVENTS 16
@@ -116,6 +117,8 @@ void Webserv::communication()
     {
         if(waiter.is_not_busy()){
             DEBUG("Webserv::wait()");
+            cout << "gai_strerror:" << gai_strerror(errno) << endl;
+
             waiter.wait();
         }
         WebservEvent *event = waiter.serve_event();
@@ -158,6 +161,11 @@ void Webserv::communication()
             if(exit_flag){
                 break;
             }
+        //}catch(ConnectionException &e){
+            //ERROR(e.what());
+            //WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            //this->event_manager->push(next_event);
+            //delete event;
         }catch(HttpException &e){
             std::string code_str = e.what();
             StatusCode code;

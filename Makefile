@@ -40,7 +40,7 @@ SOCKETSRC 			:= socket.cpp socket_factory.cpp socket_manager.cpp  socket_reposit
 SOCKET 				:= $(addprefix $(SOCKETDIR)/, $(SOCKETSRC))
 
 EXCEPTIONDIR		:= exception/
-EXCEPTIONSRC 		:= timeout_exception.cpp http_exception.cpp
+EXCEPTIONSRC 		:= timeout_exception.cpp http_exception.cpp connection_exception.cpp
 EXCEPTION 			:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
 
 UTILITYDIR			:= utility/
