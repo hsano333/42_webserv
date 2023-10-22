@@ -18,7 +18,11 @@ class GetApplication : public Application
         //static GetApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
         static GetApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         Response* make_response();
+        void set_path_info(std::string const &path_info);
+        //std::string &get_path_info();
+        //std::string const &path_info() const;
         File *get_requested_file();
+        bool is_cgi() const;
     private:
 
         void execute_cgi();
@@ -29,8 +33,9 @@ class GetApplication : public Application
         const Request *req;
         CGI *cgi;
         std::string cgi_application_path;
-        bool is_cgi;
+        bool is_cgi_;
         std::map<std::string, std::string> tmp_headers;
+        std::string path_info_;
 
         //StatusCode res_status_code;
         //std::string 

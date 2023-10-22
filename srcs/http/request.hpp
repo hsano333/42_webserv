@@ -52,6 +52,7 @@ class Request
         void    set_is_directory(bool flag);
         std::string const &requested_filepath() const;
         std::string const &requested_path() const;
+        std::string const &tmp_path_info() const;
         //File    get_target_file(const ConfigLocation *location);
 
         void    print_info() const;
@@ -72,6 +73,7 @@ class Request
 
         RequestLine    req_line_;
         Header         header_;
+        std::string    tmp_path_info_;
 
 };
 

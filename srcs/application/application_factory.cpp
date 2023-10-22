@@ -69,6 +69,7 @@ Application* ApplicationFactory::make_application(Request *req)
     const ConfigLocation *location= this->cfg->get_location(server, req);
     req->set_requested_filepath(location);
 
+
     Method const &method = req_line.method();
     switch(method.to_enum())
     {
@@ -90,6 +91,7 @@ Application* ApplicationFactory::make_application(Request *req)
             ERROR("ApplicationFactory::make_application(): Invalid method");;
             std::runtime_error("invalid Method");
     }
+
 
     return (app);
 }

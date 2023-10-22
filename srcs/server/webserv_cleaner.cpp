@@ -45,26 +45,20 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     if (is_close)
     {
         MYINFO("close fd:" + event->fd().to_string());
-        cout << "close" << endl;
         //ヘッダーでcloseするように指定されているので、closeする
         this->io_multi_controller->erase(app_event->fd());
         this->fd_manager->close_fd(app_event->fd());
     }else{
         MYINFO("not close fd:" + event->fd().to_string());
-        cout << "not close No.1?" << endl;
         // HTTP1.1はデフォルトでコネクションを切断しない
         this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
         WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
         this->event_manager->add_event_waiting_reading(app_event->fd(), new_event);
     }
-    cout << "clean No.5" << endl;
-
-    //this->fd_manager->close_fd(app_event->fd());
 
     delete app_event->req();
     delete app_event->res();
     delete app_event;
-    cout << "clean No.6" << endl;
 }
 
 void WebservCleaner::clean_timeout_events(WebservEvent *event)
@@ -73,7 +67,6 @@ void WebservCleaner::clean_timeout_events(WebservEvent *event)
     std::vector<WebservEvent *> timeout_events;
 
     this->event_manager->retrieve_timeout_events(timeout_events);
-    cout << "timeout_events.size(): " << timeout_events.size() << endl;
     for(size_t i=0;i<timeout_events.size();i++){
         this->clean(timeout_events[i], true);
     }

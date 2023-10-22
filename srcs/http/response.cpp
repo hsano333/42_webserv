@@ -119,28 +119,7 @@ void Response::make_header_line()
 
 int Response::read_body_and_copy(char** dst, size_t size)
 {
-    int result = (this->file->read(dst, size));
-    cout << "read test:" << *dst << "], size=" << result << endl;
-    return (result);
-    /*
-    //printf("No.3 data=%p\n", *dst);
-    char *tmp = *dst;
-    //printf("No.4 data=%p\n", tmp);
-    int chunk_size = 20;
-    char *tmp2 = &(tmp[chunk_size]);
-    int read_size = this->file->read(&(tmp2), size - chunk_size);
-    if (read_size <= 0){
-        return 0;
-    }
-    // chunkサイズは16進数
-    string size_str = CRLF;
-    size_str += Utility::to_hexstr(read_size);
-    size_str += CRLF;
-    size_t len = size_str.size();
-    Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
-    *dst = &(tmp[chunk_size-len]);
-    */
-    //return (read_size+len);
+    return (this->file->read(dst, size));
 }
 
 int Response::read_body_and_copy_chunk(char** dst, size_t size)
@@ -170,7 +149,6 @@ int Response::read_body_and_copy_chunk(char** dst, size_t size)
 
 ssize_t Response::get_data(char** data)
 {
-    //printf("No.2 data=%p\n", *data);
     if (this->send_state == STILL_NOT_SEND) {
         this->make_status_line();
         *data= const_cast<char*>(&(this->status_line[0]));
@@ -186,32 +164,18 @@ ssize_t Response::get_data(char** data)
         int size;
         if (this->file->is_chunk()){
             size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
-            if (size <= 7){
+            if (size <= 5){
+                // 5 is [0\r\n\r\n]
                 this->send_state = SENT_BODY;
             }
         }else{
             size = this->read_body_and_copy(data, MAX_READ_SIZE);
-            cout << "not chunk size=" << size << endl;
             if (size <= 0){
                 this->send_state = SENT_BODY;
             }
         }
         return (size);
     }
-    //}else if (this->send_state != CLOSE){
-        //cout << "CLOSE " << endl;
-        //(*data)[0] = '\r';
-        //(*data)[1] = '\n';
-        //this->send_state = CLOSE;
-        //return (2);
-    //}
-    cout << "END" << endl;
-        //Utility::memcpy(&((*data)[1]), CRLF2, 4);
-        //(*data)[3] = '\r';
-        //(*data)[4] = '\n';
-        //this->send_state = CLOSE;
-        //return (5);
-    //}
     return (0);
 }
 

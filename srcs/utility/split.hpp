@@ -26,6 +26,7 @@ class Split
     friend std::ostream& operator<<(std::ostream& os, Split& sp);
 
     void set_word(std::string &str, std::string const &delimiters);
+    void print();
 
   private:
     //bool d_quote;

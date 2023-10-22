@@ -356,3 +356,9 @@ void Split::split_cp(std::string const& str, std::string delimiter, std::vector<
     //cout << "dst size:" << dst.size() << endl;
 }
 
+void Split::print()
+{
+    for(size_t i=0;i<this->size();i++){
+        cout << "split[" << i << "]=" << this->_splitted_string[i] << endl;
+    }
+}

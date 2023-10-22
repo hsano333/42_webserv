@@ -95,6 +95,11 @@ std::string const &Request::requested_path() const
     return (this->requested_path_);
 }
 
+std::string const &Request::tmp_path_info() const
+{
+    return (this->tmp_path_info_);
+}
+
 
 /*
 File Request::get_target_file(const ConfigLocation *location)
@@ -133,10 +138,24 @@ void Request::set_requested_filepath(const ConfigLocation *location)
     std::string const &root = location->root();
 
     std::string path = root + uri_path;
+    cout << "root:" << root << endl;
+    cout << "uri_path:" << uri_path << endl;
     this->requested_path_ = path;
+    this->tmp_path_info_ = "";
 
     for(int i=uri_sp.size()-1; i >= 0;i--){
         if (Utility::is_regular_file(path)){
+            size_t k = i+1;
+            while (k <= uri_sp.size()-1){
+                this->tmp_path_info_ += uri_sp[k] + "/";
+                k++;
+            }
+            cout << "tmp path info:" << this->tmp_path_info_ << endl;
+            cout << "tmp path info:" << this->tmp_path_info_ << endl;
+            cout << "tmp path info:" << this->tmp_path_info_ << endl;
+            cout << "tmp path info:" << this->tmp_path_info_ << endl;
+            //requested_uri.set_path_info(tmp_path_info);
+
             this->requested_filepath_ = path;
             this->is_file_ = true;
             this->is_directory_ = false;
@@ -145,6 +164,7 @@ void Request::set_requested_filepath(const ConfigLocation *location)
         }
         size_t pos = path.rfind(uri_sp[i]);
         path = path.substr(0, pos-1);
+        //tmp_path_info += uri_sp[i];
     }
     this->requested_filepath_ = "";
     this->is_directory_ = true;

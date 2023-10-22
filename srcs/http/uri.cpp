@@ -42,32 +42,45 @@ URI URI::from_string(std::string const &uri_raw)
     }
 
     URI uri;
-
     uri.raw_ = Utility::delete_duplicated_slash(Utility::trim_white_space(uri_raw));
-    uri.path_sp = Split(uri.raw_, "/");
 
-    std::string &uri_last = *(uri.path_sp.end() -1);
-    Split tmp_query(uri_last, "?");
-    uri_last = tmp_query[0];
+    //std::string &uri_last = *(uri.path_sp.end() -1);
+    size_t pos = uri.raw_.find("?");
+    std::string tmp_uri;
+    if (pos != std::string::npos){
+        uri.query = Split(uri.raw_.substr(pos+1), "&");
 
-    if (tmp_query.size() > 1){
-        uri.query = Split(tmp_query[1], "&");
         std::string &query_last = *(uri.query.end() -1);
         Split tmp_fragment(query_last, "#");
-        query_last = tmp_fragment[0];
+        if (query_last[0] != '#'){
+            query_last = tmp_fragment[0];
+        }else{
+            query_last = "";
+        }
+        tmp_uri = uri.raw_.substr(0,pos);
     }else{
-        Split tmp_fragment(uri_last, "#");
-        uri_last = tmp_fragment[0];
+        pos = uri.raw_.find("#");
+        if (pos != std::string::npos){
+            tmp_uri = uri.raw_.substr(0,pos);
+        }else{
+            tmp_uri = uri.raw_;
+        }
     }
 
-    uri.path_ = "";
-    for(size_t i=0;i<uri.path_sp.size();i++){
-        uri.uri_encode(uri.path_sp[i]);
-        uri.path_ = uri.path_ + "/" + uri.path_sp[i];
+
+    uri.path_sp = Split(tmp_uri , "/");
+    uri.encoded_path_sp = uri.path_sp;
+    //uri.path_ = tmp_uri;
+
+    for(size_t i=0;i<uri.encoded_path_sp.size();i++){
+        uri.uri_encode(uri.encoded_path_sp[i]);
+        uri.path_ = uri.path_ + "/" + uri.encoded_path_sp[i];
     }
+    /*
     for(size_t i=0;i<uri.query.size();i++){
         uri.uri_encode(uri.query[i]);
     }
+    */
 
     return (uri);
 }
@@ -128,6 +141,17 @@ void URI::uri_encode(std::string const &raw_uri_)
     raw_uri = std::string(bk);
     delete[] (bk) ;
 }
+
+std::string const &URI::get_path_info() const
+{
+    return (this->path_info_);
+}
+
+void URI::set_path_info(std::string &path)
+{
+    this->path_info_ = path;
+}
+
 
 void URI::print_info() const
 {

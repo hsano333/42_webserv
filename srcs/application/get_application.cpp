@@ -16,11 +16,18 @@ GetApplication::~GetApplication()
 
 File *GetApplication::get_requested_file()
 {
-    if (this->is_cgi){
+    if (this->is_cgi_){
         //return (this->req->requested_filepath());
         return (NULL);
     }
 
+    cout << "bool=" << this->req->is_file() << endl;
+    cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
+    cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
+    cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
+    cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
+    cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
+    cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
     try{
         if (this->req->is_file()){
             File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);
@@ -36,12 +43,10 @@ File *GetApplication::get_requested_file()
 }
 
 
-/*
 bool GetApplication::is_cgi() const
 {
-    return (this->cgi->is_cgi(this->req, this->location));
+    return (this->is_cgi_);
 }
-*/
 
 void GetApplication::execute_not_cgi()
 {
@@ -70,7 +75,7 @@ void GetApplication::execute_cgi()
 void GetApplication::execute()
 {
     this->check_permission();
-    if (this->is_cgi){
+    if (this->is_cgi_){
         DEBUG("GetApplication::execute() CGI");
         this->execute_cgi();
     }else{
@@ -110,12 +115,13 @@ GetApplication* GetApplication::from_location(const Config *cfg, const Request *
     app->location = cfg->get_location(app->server, req);
     app->req = req;
     app->cgi = cgi;
+    app->path_info_ = req->tmp_path_info();
 
     try{
         app->cgi_application_path = string(cgi->get_cgi_application_path(req, app->location));
-        app->is_cgi = true;
+        app->is_cgi_ = true;
     }catch(std::invalid_argument &e){
-        app->is_cgi = false;
+        app->is_cgi_ = false;
     }
 
     return (app);
@@ -148,5 +154,21 @@ Response* GetApplication::make_response()
     return (res);
 }
 
+/*
+void GetApplication::set_path_info(std::string const &path_info)
+{
+    this->path_info_ = path_info;
+}
+
+std::string &GetApplication::get_path_info()
+{
+    return (this->path_info_);
+}
+
+std::string const &GetApplication::path_info() const
+{
+    return (this->path_info_);
+}
+*/
 
 
