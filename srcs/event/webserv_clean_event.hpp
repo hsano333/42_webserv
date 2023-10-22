@@ -20,16 +20,16 @@ class WebservCleanEvent : public WebservEvent
         FileDiscriptor fd();
         void increase_timeout_count(int count);
         int  timeout_count();
-        static WebservCleanEvent *from_webserv_event(WebservEvent *event);
+        static WebservCleanEvent *from_webserv_event(WebservEvent *event, bool force_close);
         Request *req();
         Response *res();
+        bool    is_force_close();
     private:
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
         int             timeout_count_;
-
-
+        bool            force_close;
 };
 
 #endif

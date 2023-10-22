@@ -52,7 +52,7 @@ void WebservSender::send(WebservEvent *event)
         printf("p_data=%s, size=%zu\n", p_data,size);
         int result = writer->write(fd, p_data, size);
         if (result < 0){
-            break;
+            //break;
             throw ConnectionException("Write Error");
         }else if(result == 0){
             break;
@@ -70,7 +70,7 @@ void WebservSender::send(WebservEvent *event)
 
     //delete write_event->res();
     //exit(0);
-    WebservEvent *next_event = this->event_factory->make_clean_event(event);
+    WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
     event_manager->push(next_event);
     cout << "sender No.100" << endl;
     delete (event);

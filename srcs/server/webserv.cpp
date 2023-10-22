@@ -161,11 +161,11 @@ void Webserv::communication()
             if(exit_flag){
                 break;
             }
-        //}catch(ConnectionException &e){
-            //ERROR(e.what());
-            //WebservEvent *next_event = this->event_factory->make_clean_event(event);
-            //this->event_manager->push(next_event);
-            //delete event;
+        }catch(ConnectionException &e){
+            ERROR(e.what());
+            WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
+            this->event_manager->push(next_event);
+            delete event;
         }catch(HttpException &e){
             std::string code_str = e.what();
             StatusCode code;
@@ -182,19 +182,19 @@ void Webserv::communication()
         }catch(std::runtime_error &e){
             WARNING("Wevserv RuntimeError:");
             WARNING(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
             this->event_manager->push(next_event);
             delete event;
         }catch(std::invalid_argument &e){
             WARNING("Wevserv InvalidArgument:");
             WARNING(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
             event_manager->push(next_event);
             delete event;
         }catch(std::exception &e){
             WARNING("Wevserv Exception:");
             WARNING(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event);
+            WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
             event_manager->push(next_event);
             delete event;
         }

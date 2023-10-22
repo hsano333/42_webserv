@@ -30,4 +30,5 @@ int SocketReader::read(FileDiscriptor fd, char *buf, size_t size, std::ifstream 
     //std::cout << "fd:" << fd.to_string() << std::endl;
     //std::cout << "size:" << size << std::endl;
     return ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);
+    //return ::recv(fd.to_int(), buf, size, 0);
 }

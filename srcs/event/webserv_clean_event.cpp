@@ -11,7 +11,8 @@ WebservCleanEvent::WebservCleanEvent(
                             fd_(fd),
                             req_(req),
                             res_(res),
-                            timeout_count_(0)
+                            timeout_count_(0),
+                            force_close(false)
 {
     ;
 }
@@ -52,9 +53,16 @@ int WebservCleanEvent::timeout_count()
     return (this->timeout_count_);
 }
 
-WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event)
+bool WebservCleanEvent::is_force_close()
+{
+    return (this->force_close);
+}
+
+
+WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
 {
     WebservCleanEvent *new_event = new WebservCleanEvent(event->fd(), event->req(), event->res());
+    new_event->force_close = force_close;
     return (new_event);
 }
 

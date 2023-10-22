@@ -106,9 +106,9 @@ WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, StatusC
 }
 
 
-WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event)
+WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool force_close)
 {
-    WebservCleanEvent *new_event = WebservCleanEvent::from_webserv_event(event);
+    WebservCleanEvent *new_event = WebservCleanEvent::from_webserv_event(event, force_close);
     return (new_event);
 }
 

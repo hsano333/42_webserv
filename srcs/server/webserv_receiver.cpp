@@ -1,6 +1,7 @@
 #include "webserv_receiver.hpp"
 #include "http_exception.hpp"
 #include "connection_exception.hpp"
+#include <string.h>
 
 WebservReceiver::WebservReceiver(
             IOMultiplexing *io_multi_controller,
@@ -32,9 +33,17 @@ void WebservReceiver::receiver(WebservEvent *event)
     int sum = 0;
     while(1){
         int tmp = reader->read(fd, &(buf[sum]), space, NULL);
+        //cout << "Recv read result=" << tmp << endl;
         if(tmp < 0){
-            throw ConnectionException("Read Error");
+            break;
+            ERROR("Receiver Error:" + Utility::to_string(tmp));
+            //cout << "Recv read errno=" << errno << endl;
+            //cout << "gai_strerror:" << strerror(errno) << endl;
+            //cout << "gai_strerror:" << gai_strerror(errno) << endl;
+            //break;
+            //throw ConnectionException("Read Error");
         }else if(tmp == 0){
+            throw ConnectionException("Read Error");
             break;
         }
         sum += tmp;
