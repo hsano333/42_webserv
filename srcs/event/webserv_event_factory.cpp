@@ -102,7 +102,7 @@ WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, Respons
 
 WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, StatusCode &code)
 {
-    return (WebservWriteEvent::from_status_code(event, code, socket_writer));
+    return (WebservWriteEvent::from_error_status_code(event, code, socket_writer));
 }
 
 

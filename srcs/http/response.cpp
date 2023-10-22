@@ -6,6 +6,7 @@
 #include <utility.hpp>
 #include <fcntl.h>
 #include "config.hpp"
+#include "error_file.hpp"
 
 Response::Response() :
     file(NULL),
@@ -32,6 +33,8 @@ Response& Response::operator=(Response const &res)
     if (this == &res){
         return (*this);
     }
+    delete this->file;
+
     this->status_code = res.status_code;
     this->file = res.file;
     this->is_redirect = res.is_redirect;
@@ -41,11 +44,12 @@ Response& Response::operator=(Response const &res)
     return (*this);
 }
 
-Response* Response::from_status_code(StatusCode &code)
+Response* Response::from_error_status_code(StatusCode &code)
 {
     Response *res = new Response();
     res->status_code = code;
-    res->file = NULL;
+    res->file = ErrorFile::from_status_code(code);
+    res->exist_body_ = true;
     return (res);
 }
 
@@ -73,12 +77,18 @@ void Response::add_header(std::string const &key, std::string const &value)
 
 int Response::open_file()
 {
-    return (this->file->open());
+    if (this->file){
+        return (this->file->open());
+    }
+    return 0;
 }
 
 int Response::close_file()
 {
-    return (this->file->close());
+    if (this->file){
+        return (this->file->close());
+    }
+    return 0;
 }
 
 void Response::make_status_line()
@@ -89,10 +99,12 @@ void Response::make_status_line()
 void Response::make_header_line()
 {
     //this->header_line = ("HTTP/1.1 " +  status_code.to_string() + " " + status_code.message());
-    if (this->exist_body_){
-        //this->header_line = "Content-Type: text/plain\r\nTransfer-Encoding: chunked\r\n";
-        this->header_line = "Transfer-Encoding: chunked\r\n";
-        //this->header_line = "Content-Length: 0\r\n";
+    if (this->exist_body_ ){
+        if (this->file->is_chunk()){
+            this->header_line = "Transfer-Encoding: chunked\r\n";
+        }else{
+            this->header_line = "Content-Length: " + Utility::to_string(this->file->size()) + "\r\n";
+        }
     }else{
         this->header_line = "Content-Length: 0\r\n";
     }
@@ -105,13 +117,18 @@ void Response::make_header_line()
     //this->header_line += "\r\n";
 }
 
-int Response::read_body_and_copy_chunk(char** dst, size_t size)
+int Response::read_body_and_copy(char** dst, size_t size)
 {
+    int result = (this->file->read(dst, size));
+    cout << "read test:" << *dst << endl;
+    return (result);
+    /*
     //printf("No.3 data=%p\n", *dst);
     char *tmp = *dst;
     //printf("No.4 data=%p\n", tmp);
     int chunk_size = 20;
-    int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
+    char *tmp2 = &(tmp[chunk_size]);
+    int read_size = this->file->read(&(tmp2), size - chunk_size);
     if (read_size <= 0){
         return 0;
     }
@@ -122,21 +139,17 @@ int Response::read_body_and_copy_chunk(char** dst, size_t size)
     size_t len = size_str.size();
     Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
     *dst = &(tmp[chunk_size-len]);
-    return (read_size+len);
+    */
+    //return (read_size+len);
 }
 
-int Response::read_body_and_copy(char** dst, size_t size)
+int Response::read_body_and_copy_chunk(char** dst, size_t size)
 {
-    //printf("No.3 data=%p\n", *dst);
     char *tmp = *dst;
-    //printf("No.4 data=%p\n", tmp);
     int chunk_size = 20;
-    int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
-
-    //Utility::memcpy(&(tmp[chunk_size+read_size]), CRLF, 2);
-    //if (read_size <= 0){
-        //return 5;
-    //}
+    char *tmp2 = &(tmp[chunk_size]);
+    int read_size = this->file->read(&(tmp2), size - chunk_size);
+    //int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
 
     // chunkサイズは16進数
     string size_str = CRLF;
@@ -145,8 +158,13 @@ int Response::read_body_and_copy(char** dst, size_t size)
     size_t len = size_str.size();
     Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
     *dst = &(tmp[chunk_size-len]);
+    if (read_size == 0){
+        //転送終了を表す[0\r\n\r\n]の最後の改行をコピー
+        tmp2[0] = '\r';
+        tmp2[1] = '\n';
+        read_size += 2;
+    }
 
-    //read_size += 2;
     return (read_size+len);
 }
 
@@ -154,9 +172,6 @@ ssize_t Response::get_data(char** data)
 {
     //printf("No.2 data=%p\n", *data);
     if (this->send_state == STILL_NOT_SEND) {
-        if (this->file){
-            this->file->open();
-        }
         this->make_status_line();
         *data= const_cast<char*>(&(this->status_line[0]));
         this->send_state = SENT_STATUS_LINE;
@@ -167,7 +182,10 @@ ssize_t Response::get_data(char** data)
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER && this->exist_body_){
-        size_t size = this->read_body_and_copy(data, MAX_READ_SIZE);
+        size_t size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
+
+    cout << "read test No.2:" << *data<< endl;
+
         size_t i = 0;
         cout << "BODY:[";
         while(i < size){
@@ -179,29 +197,21 @@ ssize_t Response::get_data(char** data)
         //cout << "data=[" << *data << "]" << endl;
         //(*data)[size] = '\r';
         ////(*data)[size + 1] = '\n';
-        if (size <= 5){
-            // \r\n0\r\nで5文字
+        if (size <= 7){
+            // \r\n0\r\n\r\nで7文字
             //Utility::memcpy(&((*data)[size]), CRLF, 2);
-            //size += 2;
-            //(*data)[size+2] = '0';
-            //(*data)[size+3] = '\r';
-            //(*data)[size+4] = '\n';
-            //cout << "size No.1:" << size << endl;
-            //(*data)[size+2] = '0';
-            //(*data)[size+3] = '\r';
-            //(*data)[size+4] = '\n';
-            //cout << "size No.3:" << size << endl;
             this->send_state = SENT_BODY;
             //this->close_file();
         }
         return (size);
-    }else if (this->send_state != CLOSE){
-        cout << "CLOSE " << endl;
-        (*data)[0] = '\r';
-        (*data)[1] = '\n';
-        this->send_state = CLOSE;
-        return (2);
     }
+    //}else if (this->send_state != CLOSE){
+        //cout << "CLOSE " << endl;
+        //(*data)[0] = '\r';
+        //(*data)[1] = '\n';
+        //this->send_state = CLOSE;
+        //return (2);
+    //}
     cout << "END" << endl;
         //Utility::memcpy(&((*data)[1]), CRLF2, 4);
         //(*data)[3] = '\r';

@@ -104,7 +104,7 @@ IP_Address IP_Address::from_string(std::string const &str)
     IP_Address object;
     Split number(str, ".");
     if(number.size() != 4){
-        ERROR("IP_Address class: invalid argument:" + str);
+        WARNING("IP_Address class: invalid argument:" + str);
         throw std::invalid_argument("IP_Address class: invalid argument");
     }
     size_t i = 0;
@@ -116,7 +116,7 @@ IP_Address IP_Address::from_string(std::string const &str)
         i++;
     }
     if(dot_cnt != 3){
-        ERROR("IP_Address class: invalid argument:" + str);
+        WARNING("IP_Address class: invalid argument:" + str);
         throw std::invalid_argument("IP_Address class: invalid argument");
     }
 

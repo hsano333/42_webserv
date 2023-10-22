@@ -6,10 +6,15 @@
 class EventController
 {
     public:
-        EventController(EventManager *event_manager);
+        EventController(
+                EventManager *event_manager,
+                IOMultiplexing *io_multi_controller
+                );
         ~EventController();
         void restart_communication(WebservEvent *event);
+        void change_write_event(WebservEvent *event);
     private:
         EventManager        *event_manager;
+        IOMultiplexing *io_multi_controller;
 };
 #endif

@@ -1,8 +1,13 @@
 #include "event_controller.hpp"
+#include "event_controller.hpp"
 
-EventController::EventController(EventManager *event_manager) 
+EventController::EventController(
+            EventManager *event_manager,
+            IOMultiplexing *io_multi_controller
+        )
     :
-        event_manager(event_manager)
+        event_manager(event_manager),
+        io_multi_controller(io_multi_controller)
 {
 ;
 }
@@ -23,4 +28,11 @@ void EventController::restart_communication(WebservEvent *event)
         //再度HTTP通信が始まったことを意味するので、イベントを削除する。
         //つまり、再登録しない。
     }
+}
+
+void EventController::change_write_event(WebservEvent *event)
+{
+    (void)event;
+    this->io_multi_controller->modify(event->fd(), EPOLLIN);
+
 }

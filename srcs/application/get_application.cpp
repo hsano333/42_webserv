@@ -21,12 +21,18 @@ File *GetApplication::get_requested_file()
         return (NULL);
     }
 
-    if (this->req->is_file()){
-        File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);
+    try{
+        if (this->req->is_file()){
+            File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);
+            return (file);
+        }
+        File *file = DirectoryFile::from_path(this->req->requested_path());
         return (file);
+    }catch(std::invalid_argument &e){
+        ERROR("GetApplication::get_requested_file:" + string(e.what()));
+        throw HttpException("404");
+
     }
-    File *file = DirectoryFile::from_path(this->req->requested_path());
-    return (file);
 }
 
 

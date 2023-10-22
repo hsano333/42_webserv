@@ -33,7 +33,6 @@ void WebservReceiver::receiver(WebservEvent *event)
     int sum = 0;
     while(1){
         int tmp = reader->read(fd, &(buf[sum]), space, NULL);
-        //cout << "Recv read result=" << tmp << endl;
         if(tmp < 0){
             break;
             ERROR("Receiver Error:" + Utility::to_string(tmp));

@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 08:44:30 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/22 02:11:58 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/22 20:01:00 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Response
         ~Response();
         Response(Response const &res);
         Response& operator=(Response const &res);
-        static Response* from_status_code(StatusCode &code);
+        static Response* from_error_status_code(StatusCode &code);
         static Response* from_error_page(ErrorPage &page);
 
         static Response* from_redirect(StatusCode &code, std::string const &filepath);

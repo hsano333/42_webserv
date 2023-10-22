@@ -13,7 +13,7 @@ StatusCode::~StatusCode()
     ;
 }
 
-const char* StatusCode::message()
+const char* StatusCode::message() const
 {
     switch (this->code)
     {
@@ -73,7 +73,7 @@ int StatusCode::to_int() const
     return (this->code);
 }
 
-std::string StatusCode::to_string()
+std::string StatusCode::to_string() const
 {
     return (Utility::to_string(code));
 }

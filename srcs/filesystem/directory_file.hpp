@@ -13,9 +13,10 @@ class DirectoryFile : public File
         static DirectoryFile* from_path(std::string const &path);
         int open();
         int close();
-        int read(char *buf, size_t size);
+        int read(char **buf, size_t size);
         bool can_read();
         size_t size();
+        bool is_chunk();
     private:
         DIR *dir;
         std::string path;

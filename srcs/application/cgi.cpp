@@ -17,18 +17,18 @@ std::string const &CGI::get_cgi_application_path(const Request *req, const Confi
     const ConfigLimit *limit = location->limit();
 
     if (req->is_file() == false){
-        ERROR("not CGI");
+        WARNING("not CGI");
         throw std::invalid_argument("not CGI");
     }
 
     if (limit == NULL){
-        ERROR("not CGI");
+        WARNING("not CGI");
         throw std::invalid_argument("not CGI");
     }
 
     const ConfigCgi *config_cgi = limit->cgi();
     if (config_cgi == NULL){
-        ERROR("not CGI");
+        WARNING("not CGI");
         throw std::invalid_argument("not CGI");
     }
 
@@ -50,6 +50,6 @@ std::string const &CGI::get_cgi_application_path(const Request *req, const Confi
         }
         ite++;
     }
-    ERROR("not CGI");
+    WARNING("not CGI");
     throw std::invalid_argument("not CGI");
 }

@@ -17,6 +17,7 @@ DirectoryFile* DirectoryFile::from_path(std::string const &path)
 {
     if(Utility::is_directory(path) == false){
         ERROR("DirectoryFile::from_path() not directory:" + path);
+        throw std::invalid_argument("DirectoryFile::from_path() not directory");
     }
     DirectoryFile *dir = new DirectoryFile();
     dir->path = path;
@@ -40,7 +41,7 @@ int DirectoryFile::open()
     return 0;
 }
 
-int DirectoryFile::read(char *buf, size_t size)
+int DirectoryFile::read(char **buf, size_t size)
 {
     (void)size;
     if (this->state != FILE_OPEN){
@@ -51,7 +52,7 @@ int DirectoryFile::read(char *buf, size_t size)
     if (dirr == NULL){
         return (-1);
     }
-    Utility::memcpy(buf, dirr->d_name, Utility::strlen(dirr->d_name));
+    Utility::memcpy(*buf, dirr->d_name, Utility::strlen(dirr->d_name));
     return 0;
 }
 
@@ -75,5 +76,14 @@ bool DirectoryFile::can_read()
 
 size_t DirectoryFile::size()
 {
+    std::cout << "directory file????:"  << std::endl;
+    std::cout << "directory file????:"  << std::endl;
+    std::cout << "directory file????:"  << std::endl;
+    std::cout << "directory file????:"  << std::endl;
     return (0);
+}
+
+bool DirectoryFile::is_chunk()
+{
+    return (true);
 }

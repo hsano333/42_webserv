@@ -21,12 +21,13 @@ std::string ConfigRawLoader::get_raw_data()
     file->open();
     char buf[MAX_BUF];
     //char *buf = &(tmp_buf[0]);
-    int size = file->read(&(buf[0]), MAX_BUF);
+    char *tmp = &(buf[0]);
+    int size = file->read(&tmp, MAX_BUF);
 
     while(size > 0){
         buf[size] = '\0';
         all_data += buf;
-        size = file->read(&(buf[0]), MAX_READ_SIZE);
+        size = file->read(&(tmp), MAX_READ_SIZE);
         if(size >= MAX_READ_SIZE){
             ERROR("Config file is bigger than:" + Utility::to_string(MAX_READ_SIZE));
             throw std::runtime_error("Config file is bigger than readable size");

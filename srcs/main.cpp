@@ -194,7 +194,10 @@ int main(int argc, char const* argv[])
     //StreamReader *stream_reader = StreamReader::get_instance();
 
     EventManager *event_manager = new EventManager();
-    EventController *event_controller = new EventController(event_manager);
+    EventController *event_controller = new EventController(
+            event_manager,
+            epoll_controller
+            );
     WebservEventFactory *event_factory = new WebservEventFactory(
             socket_controller,
             fd_manager,

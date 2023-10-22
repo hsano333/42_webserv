@@ -82,11 +82,11 @@ int NormalFile::close()
     return (-1);
 }
 
-int NormalFile::read(char *buf, size_t size)
+int NormalFile::read(char **buf, size_t size)
 {
     //return (0);
     FileDiscriptor tmp_fd = FileDiscriptor::from_int(0);
-    return (this->ireader->read(fd, buf, size, &(this->iofs)));
+    return (this->ireader->read(fd, *buf, size, &(this->iofs)));
 }
 
 
@@ -102,7 +102,17 @@ bool NormalFile::can_read()
 
 size_t NormalFile::size()
 {
+    std::cout << "normal file:" <<  std::endl;
+    std::cout << "normal file:" <<  std::endl;
+    std::cout << "normal file:" <<  std::endl;
+    std::cout << "normal file:" <<  std::endl;
+    std::cout << "normal file:" <<  std::endl;
     return (Utility::get_file_size(this->filepath));
+}
+
+bool NormalFile::is_chunk()
+{
+    return (false);
 }
 
 /*

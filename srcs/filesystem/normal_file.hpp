@@ -32,11 +32,12 @@ class NormalFile : public File
         static NormalFile* from_filepath(std::string const &filepath, std::ios_base::openmode);
         int open();
         int close();
-        int read(char *buf, size_t size);
+        int read(char **buf, size_t size);
         void write(char *buf);
         bool can_read();
         bool can_write();
         size_t size();
+        bool is_chunk();
 
     private:
         NormalFile();

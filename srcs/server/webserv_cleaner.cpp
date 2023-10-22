@@ -29,12 +29,6 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
     DEBUG("WebservCleaner::clean:" + event->fd().to_string());
 
-    //Request *req = app_event->req();
-    //req->print_info();
-    //delete req;
-    //exit(1);
-    //
-    
 
     bool is_close = force_close || app_event->is_force_close();
     if (app_event->req()){

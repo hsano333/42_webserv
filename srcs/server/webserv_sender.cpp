@@ -2,6 +2,7 @@
 #include "webserv_write_event.hpp"
 #include "global.hpp"
 #include "connection_exception.hpp"
+#include "http_exception.hpp"
 
 WebservSender::WebservSender(
             IOMultiplexing *io_multi_controller,
@@ -36,6 +37,13 @@ void WebservSender::send(WebservEvent *event)
     //printf("No.1 data=%p\n", data);
     char* p_data = &(data[0]);
 
+    try{
+        res->open_file();
+    }catch(std::runtime_error &e){
+        ERROR("WebservSender::send():" + string(e.what()));
+        throw HttpException("403");
+    }
+
     FileDiscriptor fd = write_event->fd();
     ssize_t size = res->get_data(&p_data);
     p_data[size] = '\0';
@@ -64,6 +72,9 @@ void WebservSender::send(WebservEvent *event)
         p_data[size] = '\0';
         DEBUG("WebservSender::send() No.5:" + Utility::to_string(size));
     }
+
+    res->close_file();
+
     DEBUG("WebservSender::send() No.2");
     cout << "sender No.2" << endl;
     //writer->write(fd, p_data, size);

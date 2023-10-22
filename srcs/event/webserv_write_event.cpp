@@ -1,6 +1,7 @@
 #include "webserv_write_event.hpp"
 #include "socket_writer.hpp"
 #include "response.hpp"
+#include "error_file.hpp"
 
 
 WebservWriteEvent::WebservWriteEvent() 
@@ -35,9 +36,9 @@ WebservWriteEvent::~WebservWriteEvent()
     ;
 }
 
-WebservWriteEvent *WebservWriteEvent::from_status_code(WebservEvent *event, StatusCode &code, IWriter *writer)
+WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, IWriter *writer)
 {
-    Response *res = Response::from_status_code(code);
+    Response *res = Response::from_error_status_code(code);
     return (new WebservWriteEvent(
             event->fd(),
             event->req(),
