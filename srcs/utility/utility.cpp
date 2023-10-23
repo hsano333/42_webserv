@@ -454,7 +454,49 @@ size_t Utility::get_file_size(std::string const &filepath)
         return (0);
     }
     return (fileInfo.st_size);
+    //return (fileInfo.st_blocks);
 }
+
+std::string Utility::get_file_updated_date(std::string const &filepath)
+{
+    struct stat fileInfo;
+    if (stat(filepath.c_str(), &fileInfo) != 0){
+        return (0);
+    }
+
+    char datetime[64];
+    Utility::memset(datetime, 0, 64);
+    //std::time_t now = std::time(NULL);
+    //std::time_t now = fileInfo.st_ctime;
+    //std::strftime(datetime, sizeof(datetime), " %T", std::gmtime(&now));
+    std::strftime(datetime, sizeof(datetime), "%d-%b-%Y %T", std::gmtime(&fileInfo.st_ctime));
+    return (datetime);
+    //return std::ctime(&fileInfo.st_ctime);
+}
+
+std::string Utility::adjust_filesize(size_t filesize)
+{
+    int cnt = 0;
+    size_t filesize_cp = filesize;
+    while(filesize_cp){
+        filesize_cp/= 1024;
+        cnt++;
+    }
+    std::string size_str = "";
+    if (cnt <= 1){
+        size_str = Utility::to_string(filesize);
+    }else if(cnt == 2){
+        size_str = Utility::to_string(filesize/1024) + "k";
+    }else if(cnt == 3){
+        size_str = Utility::to_string(filesize/1024/1024) + "M";
+    }else if(cnt == 4){
+        size_str = Utility::to_string(filesize/1024/1024/1024) + "G";
+    }else if(cnt >= 5){
+        size_str = Utility::to_string(filesize/1024/1024/1024/1024) + "T";
+    }
+    return (size_str);
+}
+
 
 // 存在しないステータスコードを指定すると、空文字列を返す
 string Utility::get_http_status_message(string status_code)

@@ -148,8 +148,8 @@ int Response::read_body_and_copy_chunk(char** dst, size_t size)
     *dst = &(tmp[chunk_size-len]);
     if (read_size > 0){
         //転送終了痔だけ改行を付けない
-        tmp2[0] = '\r';
-        tmp2[1] = '\n';
+        tmp2[read_size] = '\r';
+        tmp2[read_size+1] = '\n';
         read_size += 2;
     }
 
@@ -169,12 +169,10 @@ ssize_t Response::get_data(char** data)
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER && this->exist_body_){
-
         int size;
         if (this->file->is_chunk()){
             size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
             if (size <= 5){
-                // 5 is [0\r\n\r\n]
                 this->send_state = SENT_BODY;
             }
         }else{

@@ -69,6 +69,8 @@ class Utility
 
     static std::string time_to_string();
     static size_t get_file_size(std::string const &filepath);
+    static std::string get_file_updated_date(std::string const &filepath);
+    static std::string adjust_filesize(size_t filesize);
 };
 
 template <typename T>

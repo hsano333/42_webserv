@@ -1,5 +1,7 @@
 #include "directory_file.hpp"
 #include "global.hpp"
+#include <sstream>
+#include <iomanip>
 
 DirectoryFile::DirectoryFile()
 {
@@ -13,7 +15,7 @@ DirectoryFile::~DirectoryFile()
     }
 }
 
-DirectoryFile* DirectoryFile::from_path(std::string const &path)
+DirectoryFile* DirectoryFile::from_path(std::string const &path, std::string const &relative_path, std::string const &domain)
 {
     if(Utility::is_directory(path) == false){
         ERROR("DirectoryFile::from_path() not directory:" + path);
@@ -22,6 +24,12 @@ DirectoryFile* DirectoryFile::from_path(std::string const &path)
     DirectoryFile *dir = new DirectoryFile();
     dir->path = path;
     dir->state = FILE_NOT_OPEN;
+
+    //size_t pos = path.find(root);
+    //pos += root.size();
+
+    dir->relative_path = relative_path;
+    dir->domain = domain;
     return (dir);
 }
 
@@ -41,19 +49,64 @@ int DirectoryFile::open()
     return 0;
 }
 
+
 int DirectoryFile::read(char **buf, size_t size)
 {
     (void)size;
-    if (this->state != FILE_OPEN){
-        ERROR("DirectoryFile::read() state is  not FILE_OPEN");
-        throw std::runtime_error("DirectoryFile::read() state is  not FILE_OPEN");
+    if (this->state == FILE_OPEN){
+
+        size_t pos = this->path.find(this->relative_path);
+        //size_t pos = this->dir.rfind("/");
+        //std::string up_dir = this->dir.rfind("/");
+        std::string relative = this->path.substr(pos);
+        std::string up_dir = "http://" + this->domain + "/";
+        pos = relative.rfind("/");
+        if(pos != std::string::npos){
+            up_dir += relative.substr(0, pos);
+        }
+        
+
+        //std::string up_dir = relative.
+        std::string directory_path = WRITE_OPEN1 + relative + WRITE_OPEN2 + up_dir + WRITE_OPEN3 + "<br>";
+        Utility::memcpy(*buf, &(directory_path[0]), directory_path.size());
+        this->state = FILE_READING;
+        return directory_path.size();
     }
-    struct dirent *dirr = readdir(this->dir);
-    if (dirr == NULL){
-        return (-1);
+
+    if (this->state != FILE_READING){
+        ERROR("DirectoryFile::read() state is not READING");
+        throw std::runtime_error("DirectoryFile::read() state is not READING");
     }
-    Utility::memcpy(*buf, dirr->d_name, Utility::strlen(dirr->d_name));
-    return 0;
+    struct dirent *dirr;
+    //dirr = readdir(this->dir);
+    while(1){
+        dirr = readdir(this->dir);
+        if (!dirr){
+            return (0);
+        }
+        std::string tmp = dirr->d_name;
+        if (!(tmp == "." || tmp == "..")){
+            break;
+        }
+    }
+
+    std::string uri = "http://" + this->domain + "/" + relative_path + "/" + dirr->d_name;
+    std::string filepath = this->path + "/" +  dirr->d_name;
+    size_t filesize = Utility::get_file_size(filepath);
+    std::string filesize_str = Utility::adjust_filesize(filesize);
+    if (Utility::is_directory(filepath)){
+        filesize_str = "-";
+    }
+    std::string date = Utility::get_file_updated_date(this->path);
+    std::string tmp = WRITE_READING1 + uri + WRITE_READING2 + dirr->d_name + WRITE_READING3;
+
+    stringstream ss;
+    ss  << std::setfill(' ') << std::left << std::setw(128) << tmp << date << " " << std::setfill(' ') << std::right << std::setw(8) << filesize_str << "<br>";
+    //ss  << std::setfill('\r') << std::left << std::setw(64) << tmp << "<br>";
+    std::string returned_str = ss.str();
+
+    Utility::memcpy(*buf, &(returned_str[0]), returned_str.size());
+    return (returned_str.size());
 }
 
 int DirectoryFile::close()

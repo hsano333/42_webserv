@@ -17,29 +17,22 @@ GetApplication::~GetApplication()
 File *GetApplication::get_requested_file()
 {
     if (this->is_cgi_){
-        //return (this->req->requested_filepath());
         return (NULL);
     }
 
-    cout << "bool=" << this->req->is_file() << endl;
-    cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
-    cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
-    cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
-    cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
-    cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
-    cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
-
     try{
+        this->req->print_info();
         if (this->req->is_file()){
             File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);
             return (file);
         }
-        File *file = DirectoryFile::from_path(this->req->requested_path());
+        std::string const &host = this->req->header().get_host();
+        std::string const &relative_path= this->req->req_line().uri().path();
+        File *file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
         return (file);
     }catch(std::invalid_argument &e){
         ERROR("GetApplication::get_requested_file:" + string(e.what()));
         throw HttpException("404");
-
     }
 }
 

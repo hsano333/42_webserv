@@ -205,6 +205,9 @@ Header const &Request::header() const
 void Request::print_info() const
 {
     cout << "|-- Print Request  --|" << endl;
+    cout << "requested_filepath_ = " << this->requested_filepath_ << endl;
+    cout << "requested_path_ = " << this->requested_path_ << endl;
+    cout << "tmp_path_info_ = " << this->tmp_path_info_ << endl;
     this->req_line_.print_info();
     this->header_.print_info();
     //cout << " uri_raw: " << this->req_line.uri().raw() << endl;

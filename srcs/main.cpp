@@ -133,9 +133,20 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 //boot_time = std::time(NULL);
 
 #include <sys/stat.h>
+#include <iomanip>
 int main(int argc, char const* argv[])
 {
     //boot_time = std::time(NULL);
+    std::string abc = "abc";
+    std::string def = "defghi";
+    std::string ghi = "ghia";
+    cout << std::setfill('1') << std::left << std::setw(12) << abc << def << endl;
+    cout << std::setfill('1') << std::right<< std::setw(12) << abc << def << endl;
+    cout << abc << std::setfill('1') << std::left  << std::setw(12) << def << endl;
+    cout << abc << std::setfill('1') << std::right  << std::setw(12) << def << endl;
+    cout << abc << std::setfill('1') << std::left  << std::setw(12) << ghi << endl;
+    cout << abc << std::setfill('1') << std::right  << std::setw(12) << ghi << endl;
+    //exit(0);
 
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){

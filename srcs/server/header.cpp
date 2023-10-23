@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/15 17:48:28 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/23 23:45:53 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,9 @@ Header& Header::operator=(Header const &header)
     std::map<std::string, std::string >::const_iterator ite = header._headers.begin();
     std::map<std::string, std::string >::const_iterator end = header._headers.end();
     while(ite != end){
-        this->_headers.insert(std::make_pair(ite->first, ite->second));
+        std::string key = ite->first;
+        std::transform(key.begin(), key.end(), key.begin(), tolower);
+        this->_headers.insert(std::make_pair(key, ite->second));
         ite++;
     }
     return (*this);
@@ -160,7 +162,7 @@ size_t Header::get_content_length()
 
 std::string const &Header::get_host() const
 {
-    std::string const name = "Host";
+    std::string const name = "host";
     std::string const &value = find(name);
     if (value == this->_not_find){
         return (this->_not_find);
