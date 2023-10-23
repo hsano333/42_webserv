@@ -51,10 +51,6 @@ bool ConfigServer::is_default_server() const
 }
 
 
-std::map<StatusCode, std::string> const & ConfigServer::error_pages() const
-{
-    return (this->error_pages_);
-}
 
 size_t ConfigServer::get_max_body_size() const
 {
@@ -105,8 +101,6 @@ void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &pro
             set_listen(tmp_vec);
         }else if(tmp_vec[0] == "server_name"){
             set_server_name(tmp_vec);
-        }else if(tmp_vec[0] == "error_page"){
-            set_error_page(tmp_vec);
         }else if(tmp_vec[0] == "client_max_body_size"){
             set_max_body_size(tmp_vec);
         }else{
@@ -154,20 +148,6 @@ void ConfigServer::check()
 
 }
 
-void ConfigServer::set_error_page(std::vector<std::string> &vec)
-{
-    size_t word_cnt = vec.size();
-    if(word_cnt <= 1)
-    {
-        ERROR("Invalid Config Error: error_page directive is invalid");
-        throw std::runtime_error("config parser error:server [error_page]");
-    }
-    std::string path = vec[vec.size()-1];
-    for(size_t i=1;i<vec.size()-1;i++){
-        StatusCode status_code = StatusCode::from_string(vec[i]);
-        this->error_pages_.insert(std::make_pair(status_code, path));
-    }
-}
 
 void ConfigServer::set_max_body_size(std::vector<std::string> &vec)
 {

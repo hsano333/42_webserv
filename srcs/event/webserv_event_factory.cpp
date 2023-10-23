@@ -9,6 +9,7 @@
 #include "webserv_clean_event.hpp"
 
 WebservEventFactory::WebservEventFactory(
+        Config *cfg,
         SocketController *socket_controller,
         FDManager *fd_manager,
         IOMultiplexing *io_multi_controller,
@@ -18,6 +19,7 @@ WebservEventFactory::WebservEventFactory(
         IReader *normal_reader,
         IReader *socket_reader
         ) :
+        cfg(cfg),
         socket_controller(socket_controller),
         fd_manager(fd_manager),
         io_multi_controller(io_multi_controller),
@@ -100,9 +102,27 @@ WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, Respons
     return (WebservWriteEvent::from_event(event, res, socket_writer));
 }
 
-WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, StatusCode &code)
+WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, char const *code_c)
 {
-    return (WebservWriteEvent::from_error_status_code(event, code, socket_writer));
+    File *file = NULL;
+    Request *req = event->req();
+
+    std::string code_str = code_c;
+    StatusCode code;
+    try{
+        code = StatusCode::from_string(code_str);
+    }catch (std::runtime_error &e){
+        code = StatusCode::from_string("500");
+    }
+
+    if (req){
+        file = cfg->get_error_file(req, code);
+        if (file->can_read() == false){
+            delete file;
+            file = NULL;
+        }
+    }
+    return (WebservWriteEvent::from_error_status_code(event, code, file, socket_writer));
 }
 
 

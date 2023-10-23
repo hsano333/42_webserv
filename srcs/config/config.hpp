@@ -10,6 +10,7 @@
 #include "config_server.hpp"
 #include "config_location.hpp"
 #include "request.hpp"
+#include "file.hpp"
 
 #include "socket_repository.hpp"
 
@@ -48,6 +49,8 @@ class Config : public ConfigObject<ConfigHttp*>
         void push_all(std::vector<ConfigHttp*> const &vec);
         void check();
         void check(SocketRepository *socket_repository);
+
+        File *get_error_file(Request const *req, StatusCode &code) const;
 
         void print_cfg();
     private:

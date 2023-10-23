@@ -205,6 +205,7 @@ int main(int argc, char const* argv[])
             epoll_controller
             );
     WebservEventFactory *event_factory = new WebservEventFactory(
+            cfg,
             socket_controller,
             fd_manager,
             epoll_controller,

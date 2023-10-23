@@ -8,6 +8,7 @@
 #include "log.hpp"
 #include "global.hpp"
 #include "http_exception.hpp"
+#include "normal_file.hpp"
 
 using std::cout;
 using std::endl;
@@ -134,6 +135,9 @@ map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_lo
 
 const ConfigServer* Config::get_server(Request const *req) const
 {
+    if(req == NULL){
+        return NULL;
+    }
     Header const &header = req->header();
 
     std::string const &header_hostname = header.get_host();
@@ -371,14 +375,6 @@ void Config::print_cfg()
         cout << "location size:" << cfg->http->server(i)->get_location_size() << endl;
         cout << "max_body_size:" << cfg->http->server(i)->get_max_body_size() << endl;
 
-        std::map<StatusCode, std::string> const & error_page = cfg->http->server(i)->error_pages();
-        std::map<StatusCode, std::string>::const_iterator ite = error_page.begin();
-        std::map<StatusCode, std::string>::const_iterator end = error_page.end();
-        while(ite != end){
-            cout << "server error_pages[" << ite->first.to_int() << "]:" << ite->second << endl;
-            ite++;
-        }
-
 
 
         for(size_t j=0;j< cfg->http->server(i)->get_location_size();j++){
@@ -387,6 +383,17 @@ void Config::print_cfg()
             cout << "location root:" << tmp->root() << endl;
             cout << "location cgi_pass:" << tmp->cgi_pass() << endl;
             cout << "location autoindex:" << tmp->autoindex() << endl;
+
+            std::map<StatusCode, std::string> const & error_page = tmp->error_pages();
+            std::map<StatusCode, std::string>::const_iterator ite = error_page.begin();
+            std::map<StatusCode, std::string>::const_iterator end = error_page.end();
+            while(ite != end){
+                cout << "server error_pages[" << ite->first.to_int() << "]:" << ite->second << endl;
+                ite++;
+            }
+
+
+
             std::vector<std::string> const & pathes = tmp->pathes();
             for(size_t i=0;i<pathes.size();i++){
                 cout << "location path[" << i << "]:" << pathes[i] << endl;
@@ -451,3 +458,30 @@ void Config::check(SocketRepository *socket_repository)
     freeaddrinfo(res);
 
 }
+
+File *Config::get_error_file(Request const *req, StatusCode &code) const
+{
+    const ConfigServer *server = NULL;
+    const ConfigLocation *location= NULL;
+    File *file = NULL;
+
+    try{
+        server = this->get_server(req);
+        location = this->get_location(server, req);
+    }catch (...){
+        file = NULL;
+    }
+
+    if(server){
+        try{
+            std::string page_path = location->get_error_file_path(code);
+            //cout << page_path << endl;
+            file = NormalFile::from_filepath(page_path, std::ios::in | std::ios::binary);
+        }catch(std::runtime_error &e){
+            return (NULL);
+        }
+    }
+    return (file);
+
+}
+

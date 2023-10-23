@@ -53,6 +53,15 @@ Response* Response::from_error_status_code(StatusCode &code)
     return (res);
 }
 
+Response* Response::from_error_file(File *file, StatusCode &code)
+{
+    Response *res = new Response();
+    res->status_code = code;
+    res->file = file;
+    res->exist_body_ = true;
+    return (res);
+}
+
 Response* Response::from_file(File *file)
 {
     Response *res = new Response();

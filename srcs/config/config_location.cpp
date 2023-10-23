@@ -42,6 +42,8 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
             set_index(tmp_vec);
         }else if(tmp_vec[0] == "return"){
             set_return(tmp_vec);
+        }else if(tmp_vec[0] == "error_page"){
+            set_error_page(tmp_vec);
         }else{
             ERROR("Invalid Config Error:" + tmp_vec[0] + " is not location directive");
             throw std::runtime_error("config parser error:location");
@@ -196,6 +198,36 @@ void ConfigLocation::set_return(std::vector<std::string> &vec)
         throw std::runtime_error("Redirect(return) directive is Invalid :" + vec[0]);
     }
 }
+
+std::map<StatusCode, std::string> const &ConfigLocation::error_pages() const
+{
+    return (this->error_pages_);
+}
+
+std::string ConfigLocation::get_error_file_path(StatusCode &code) const
+{
+    if(this->error_pages_.find(code) == this->error_pages_.end()){
+        throw std::runtime_error("Not Found");
+    }
+    return (root_ + this->error_pages_.at(code));
+}
+
+void ConfigLocation::set_error_page(std::vector<std::string> &vec)
+{
+    size_t word_cnt = vec.size();
+    if(word_cnt <= 1)
+    {
+        ERROR("Invalid Config Error: error_page directive is invalid");
+        throw std::runtime_error("config parser error:server [error_page]");
+    }
+    std::string path = vec[vec.size()-1];
+    for(size_t i=1;i<vec.size()-1;i++){
+        StatusCode status_code = StatusCode::from_string(vec[i]);
+        this->error_pages_.insert(std::make_pair(status_code, path));
+    }
+}
+
+
 /*
 void ConfigLocation::set_error_page(std::vector<std::string> &vec)
 {

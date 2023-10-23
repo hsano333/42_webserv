@@ -5,6 +5,7 @@
 #include "file_discriptor.hpp"
 #include "iwriter.hpp"
 #include "response.hpp"
+#include "file.hpp"
 
 class WebservWriteEvent : public WebservEvent
 {
@@ -21,7 +22,7 @@ class WebservWriteEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         int write(char const *buf, size_t size);
-        static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, IWriter *writer);
+        static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
 
     private:

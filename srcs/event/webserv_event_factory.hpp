@@ -12,6 +12,7 @@ class WebservEventFactory
 {
     public:
         WebservEventFactory(
+                Config *cfg,
                 SocketController *socket_controller,
                 FDManager *fd_manager,
                 IOMultiplexing *io_multi_controller,
@@ -25,10 +26,11 @@ class WebservEventFactory
         WebservEvent *from_epoll_event(t_epoll_event const &event);
         WebservEvent *make_application_event(WebservEvent *event);
         WebservEvent *make_write_event(WebservEvent *event, Response *res);
-        WebservEvent *make_error_event(WebservEvent *event, StatusCode &code);
+        WebservEvent *make_error_event(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
         WebservEvent *make_read_event_from_event(WebservEvent *event);
     private:
+        Config *cfg;
         SocketController *socket_controller;
         FDManager *fd_manager;
         IOMultiplexing *io_multi_controller;

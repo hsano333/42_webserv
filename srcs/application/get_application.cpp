@@ -28,6 +28,7 @@ File *GetApplication::get_requested_file()
     cout << "filename=[" << this->req->requested_filepath() << "]" << endl;
     cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
     cout << "direcotry=[" << this->req->requested_path() << "]" << endl;
+
     try{
         if (this->req->is_file()){
             File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);

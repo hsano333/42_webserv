@@ -167,15 +167,8 @@ void Webserv::communication()
             this->event_manager->push(next_event);
             delete event;
         }catch(HttpException &e){
-            std::string code_str = e.what();
-            ERROR("HttpException:" + code_str);
-            StatusCode code;
-            try{
-                code = StatusCode::from_string(code_str);
-            }catch (std::runtime_error &e){
-                code = StatusCode::from_string("500");
-            }
-            WebservEvent *next_event = this->event_factory->make_error_event(event, code);
+            ERROR("HttpException");
+            WebservEvent *next_event = this->event_factory->make_error_event(event, e.what());
             this->event_manager->push(next_event);
             this->event_controller->change_write_event(next_event);
             delete event;

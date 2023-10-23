@@ -36,9 +36,16 @@ WebservWriteEvent::~WebservWriteEvent()
     ;
 }
 
-WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, IWriter *writer)
+WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer)
 {
-    Response *res = Response::from_error_status_code(code);
+    delete event->res();
+
+    Response *res;
+    if (file){
+        res = Response::from_error_file(file, code);
+    }else{
+        res = Response::from_error_status_code(code);
+    }
     return (new WebservWriteEvent(
             event->fd(),
             event->req(),
@@ -49,9 +56,9 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
 
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
-    //if(event->res() != NULL){
-        //delete event->res();
-    //}
+    if(event->res() != NULL){
+        delete event->res();
+    }
     return (new WebservWriteEvent(
             event->fd(),
             event->req(),

@@ -23,6 +23,8 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         std::vector<std::string> const &indexes() const;
         bool is_redirect() const;
         const std::pair<StatusCode, std::string> &redirect() const;
+        std::map<StatusCode, std::string> const &error_pages() const;
+        std::string get_error_file_path(StatusCode &code) const;
         //std::map<StatusCode, std::string> const &error_pages() const;
 
         //std::vector<std::string> urls;
@@ -52,11 +54,11 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         ConfigLimit* limit_;
         bool autoindex_;
         std::vector<std::string> indexes_;
-        //std::map<StatusCode, std::string> error_pages_;
+        std::map<StatusCode, std::string> error_pages_;
         std::map<std::string, std::string> cgi_;
         bool is_redirect_;
         std::pair<StatusCode, std::string> redirect_;
-        //void set_error_page(std::vector<std::string> &vec);
+        void set_error_page(std::vector<std::string> &vec);
 
 };
 
