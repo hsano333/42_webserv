@@ -55,7 +55,7 @@ void GetApplication::execute_not_cgi()
     //this->tmp_headers.insert(std::make_pair("Content-Length", Utility::get_file_size());
     // Nothing to do
     return;
-    if(this->server->is_redirect())
+    if(this->location->is_redirect())
     {
         DEBUG("Redirect");
         // Nothing to do
@@ -133,7 +133,7 @@ Response* GetApplication::make_response()
     File *file = this->get_requested_file();
     Response *res;
 
-    if(this->server->is_redirect()){
+    if(this->location->is_redirect()){
         res = Response::from_file(file);
     }else if (this->req->is_file() || this->req->is_directory()){
         res = Response::from_file(file);

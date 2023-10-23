@@ -12,7 +12,7 @@ class BodySize
         static BodySize from_string (std::string const &size);
         static BodySize from_string (std::string &size);
         static BodySize from_number (ssize_t size);
-        size_t to_number();
+        size_t to_number() const;
     private:
         size_t size;
         //bool check_over(ssize_t value, ssize_t unit);

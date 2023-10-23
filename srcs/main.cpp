@@ -144,7 +144,13 @@ int main(int argc, char const* argv[])
         cfg_file = argv[1];
     }
 
-    Config *cfg = create_config(cfg_file);
+    Config *cfg;
+    try{
+        cfg = create_config(cfg_file);
+    }catch(std::runtime_error &e){
+        cout << "Config Error exit:" << e.what() << endl;
+        exit(1);
+    }
 
     //cfg->print_cfg();
     FDManager *fd_manager = new FDManager();

@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigLocation::ConfigLocation() : root_(""), cgi_pass_(""), limit_(NULL)
+ConfigLocation::ConfigLocation() : root_(""), cgi_pass_(""), limit_(NULL), is_redirect_(false)
 {
     ;
 }
@@ -40,8 +40,8 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
             set_autoindex(tmp_vec);
         }else if(tmp_vec[0] == "index"){
             set_index(tmp_vec);
-        }else if(tmp_vec[0] == "error_page"){
-            set_error_page(tmp_vec);
+        }else if(tmp_vec[0] == "return"){
+            set_return(tmp_vec);
         }else{
             ERROR("Invalid Config Error:" + tmp_vec[0] + " is not location directive");
             throw std::runtime_error("config parser error:location");
@@ -90,16 +90,29 @@ bool ConfigLocation::autoindex() const
     return (this->autoindex_);
 }
 
+/*
 std::map<StatusCode, std::string> const & ConfigLocation::error_pages() const
 {
     return (this->error_pages_);
 }
+*/
 
 
 std::vector<std::string> const & ConfigLocation::indexes() const
 {
     return (this->indexes_);
 }
+
+bool ConfigLocation::is_redirect() const
+{
+    return (this->is_redirect_);
+}
+
+const std::pair<StatusCode, std::string> &ConfigLocation::redirect() const
+{
+    return (this->redirect_);
+}
+
 
 void ConfigLocation::set_root(std::vector<std::string> &vec)
 {
@@ -164,6 +177,26 @@ void ConfigLocation::set_index(std::vector<std::string> &vec)
     }
 }
 
+void ConfigLocation::set_return(std::vector<std::string> &vec)
+{
+    if (this->is_redirect_){
+        ERROR("Redirect directive is multipled");
+        throw std::runtime_error("Redirect directive is multipled");
+    }
+
+    size_t word_cnt = vec.size();
+    if(word_cnt == 3)
+    {
+        StatusCode status_code = StatusCode::from_string(vec[1]);
+        this->redirect_ = std::make_pair(status_code, vec[2]);
+        this->is_redirect_ = true;
+    }else{
+        this->is_redirect_ = false;
+        ERROR("Redirect(return) directive is Invalid");
+        throw std::runtime_error("Redirect(return) directive is Invalid :" + vec[0]);
+    }
+}
+/*
 void ConfigLocation::set_error_page(std::vector<std::string> &vec)
 {
     size_t word_cnt = vec.size();
@@ -178,6 +211,7 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
         this->error_pages_.insert(std::make_pair(status_code, path));
     }
 }
+*/
 
 
 void ConfigLocation::check()

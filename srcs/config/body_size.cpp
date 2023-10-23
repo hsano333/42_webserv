@@ -108,7 +108,7 @@ BodySize BodySize::from_string(std::string const &const_file_size)
     return (from_string(file_size));
 }
 
-size_t BodySize::to_number()
+size_t BodySize::to_number() const
 {
     return (size);
 

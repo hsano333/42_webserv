@@ -362,7 +362,6 @@ void Config::print_cfg()
 
     Config *cfg = this;
     cout << "Config contents:" << endl;
-    cout << "max_body_size:" << cfg->http->get_max_body_size() << endl;
     cout << "servers.size:" << cfg->http->get_server_size() << endl;
     for(size_t i=0;i<cfg->http->get_server_size();i++){
         cout << endl <<"server No. << " << i << endl;
@@ -370,6 +369,17 @@ void Config::print_cfg()
         cout << "server_name:" << cfg->http->server(i)->server_name() << endl;
         cout << "is_default_server:" << cfg->http->server(i)->is_default_server() << endl;
         cout << "location size:" << cfg->http->server(i)->get_location_size() << endl;
+        cout << "max_body_size:" << cfg->http->server(i)->get_max_body_size() << endl;
+
+        std::map<StatusCode, std::string> const & error_page = cfg->http->server(i)->error_pages();
+        std::map<StatusCode, std::string>::const_iterator ite = error_page.begin();
+        std::map<StatusCode, std::string>::const_iterator end = error_page.end();
+        while(ite != end){
+            cout << "server error_pages[" << ite->first.to_int() << "]:" << ite->second << endl;
+            ite++;
+        }
+
+
 
         for(size_t j=0;j< cfg->http->server(i)->get_location_size();j++){
             cout << "location No." << j << endl;
@@ -383,13 +393,6 @@ void Config::print_cfg()
             }
             for(size_t i=0;i<tmp->indexes().size();i++){
                 cout << "location index[" << i << "]:" << tmp->indexes()[i] << endl;
-            }
-            std::map<StatusCode, std::string> const & error_page = tmp->error_pages();
-            std::map<StatusCode, std::string>::const_iterator ite = error_page.begin();
-            std::map<StatusCode, std::string>::const_iterator end = error_page.end();
-            while(ite != end){
-                cout << "location error_pages[" << ite->first.to_int() << "]:" << ite->second << endl;
-                ite++;
             }
             for(size_t i=0;i<tmp->get_limit_size();i++){
                 const ConfigLimit *limit = tmp->limit();

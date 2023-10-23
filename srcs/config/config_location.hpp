@@ -21,7 +21,9 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         std::string const & cgi_pass() const;
         bool autoindex() const;
         std::vector<std::string> const &indexes() const;
-        std::map<StatusCode, std::string> const &error_pages() const;
+        bool is_redirect() const;
+        const std::pair<StatusCode, std::string> &redirect() const;
+        //std::map<StatusCode, std::string> const &error_pages() const;
 
         //std::vector<std::string> urls;
         //std::map<std::string, std::vector<std::string> > properties;
@@ -38,21 +40,23 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
 
     private:
 
-        //std::vector<ConfigLimit*> limits;
+        void set_root(std::vector<std::string> &vec);
+        void set_cgi_pass(std::vector<std::string> &vec);
+        void set_autoindex(std::vector<std::string> &vec);
+        void set_index(std::vector<std::string> &vec);
+        void set_return(std::vector<std::string> &vec);
+
         std::vector<std::string> pathes_;
         std::string root_;
         std::string cgi_pass_;
         ConfigLimit* limit_;
         bool autoindex_;
         std::vector<std::string> indexes_;
-        std::map<StatusCode, std::string> error_pages_;
+        //std::map<StatusCode, std::string> error_pages_;
         std::map<std::string, std::string> cgi_;
-
-        void set_root(std::vector<std::string> &vec);
-        void set_cgi_pass(std::vector<std::string> &vec);
-        void set_autoindex(std::vector<std::string> &vec);
-        void set_index(std::vector<std::string> &vec);
-        void set_error_page(std::vector<std::string> &vec);
+        bool is_redirect_;
+        std::pair<StatusCode, std::string> redirect_;
+        //void set_error_page(std::vector<std::string> &vec);
 
 };
 

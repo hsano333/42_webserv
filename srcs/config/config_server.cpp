@@ -7,7 +7,7 @@
 using std::cout;
 using std::endl;
 
-ConfigServer::ConfigServer() : is_default_server_(false), is_redirect_(false)
+ConfigServer::ConfigServer() : is_default_server_(false)
 {
     ;
 }
@@ -50,15 +50,17 @@ bool ConfigServer::is_default_server() const
     return (this->is_default_server_);
 }
 
-bool ConfigServer::is_redirect() const
+
+std::map<StatusCode, std::string> const & ConfigServer::error_pages() const
 {
-    return (this->is_redirect_);
+    return (this->error_pages_);
 }
 
-const std::pair<StatusCode, std::string> &ConfigServer::redirect() const
+size_t ConfigServer::get_max_body_size() const
 {
-    return (this->redirect_);
+    return (this->client_max_body_size.to_number());
 }
+
 
 void ConfigServer::set_listen(std::vector<std::string> &vec)
 {
@@ -90,27 +92,6 @@ void ConfigServer::set_server_name(std::vector<std::string> &vec)
     }
 }
 
-void ConfigServer::set_return(std::vector<std::string> &vec)
-{
-    cout << "redirect No.1 " << endl;
-    if (this->is_redirect_){
-        ERROR("Redirect directive is multipled");
-        throw std::runtime_error("Redirect directive is multipled");
-    }
-    cout << "redirect No.2 " << endl;
-
-    size_t word_cnt = vec.size();
-    if(word_cnt == 3)
-    {
-        StatusCode status_code = StatusCode::from_string(vec[1]);
-        this->redirect_ = std::make_pair(status_code, vec[2]);
-        this->is_redirect_ = true;
-    }else{
-        this->is_redirect_ = false;
-        ERROR("Redirect(return) directive is Invalid");
-        throw std::runtime_error("Redirect(return) directive is Invalid :" + vec[0]);
-    }
-}
 
 void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
@@ -124,8 +105,10 @@ void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &pro
             set_listen(tmp_vec);
         }else if(tmp_vec[0] == "server_name"){
             set_server_name(tmp_vec);
-        }else if(tmp_vec[0] == "return"){
-            set_return(tmp_vec);
+        }else if(tmp_vec[0] == "error_page"){
+            set_error_page(tmp_vec);
+        }else if(tmp_vec[0] == "client_max_body_size"){
+            set_max_body_size(tmp_vec);
         }else{
             ERROR("Invalid Config Error:" + tmp_vec[0] + " is not server directive");
             throw std::runtime_error("config parser error:server");
@@ -170,3 +153,31 @@ void ConfigServer::check()
     //else if()
 
 }
+
+void ConfigServer::set_error_page(std::vector<std::string> &vec)
+{
+    size_t word_cnt = vec.size();
+    if(word_cnt <= 1)
+    {
+        ERROR("Invalid Config Error: error_page directive is invalid");
+        throw std::runtime_error("config parser error:server [error_page]");
+    }
+    std::string path = vec[vec.size()-1];
+    for(size_t i=1;i<vec.size()-1;i++){
+        StatusCode status_code = StatusCode::from_string(vec[i]);
+        this->error_pages_.insert(std::make_pair(status_code, path));
+    }
+}
+
+void ConfigServer::set_max_body_size(std::vector<std::string> &vec)
+{
+    size_t word_cnt = vec.size();
+    if(word_cnt == 2)
+    {
+        this->client_max_body_size = BodySize::from_string(vec[1]);
+    }else{
+        ERROR("Invalid Config Server Error:invalid word is in server directive");
+        throw std::runtime_error("config parser error:server");
+    }
+}
+

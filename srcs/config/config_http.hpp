@@ -5,7 +5,6 @@
 #include <string>
 #include "config_server.hpp"
 #include "config_object.hpp"
-#include "body_size.hpp"
 
 class ConfigHttp : public ConfigObject<ConfigServer*>
 {
@@ -18,11 +17,8 @@ class ConfigHttp : public ConfigObject<ConfigServer*>
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigServer*> const &vec);
         void check();
-        size_t get_max_body_size();
     private:
         std::vector<ConfigServer*> servers;
-        BodySize client_max_body_size;
-        void set_max_body_size(std::vector<std::string> &vec);
 
 };
 

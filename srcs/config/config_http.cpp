@@ -35,17 +35,6 @@ size_t ConfigHttp::get_server_size() const
 }
 
 
-void ConfigHttp::set_max_body_size(std::vector<std::string> &vec)
-{
-    size_t word_cnt = vec.size();
-    if(word_cnt == 2)
-    {
-        this->client_max_body_size = BodySize::from_string(vec[1]);
-    }else{
-        ERROR("Invalid Config Error:invalid word is in server_name directive");
-        throw std::runtime_error("config parser error:server");
-    }
-}
 
 void ConfigHttp::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
@@ -54,9 +43,7 @@ void ConfigHttp::assign_properties(std::vector<std::vector<std::string> > &prope
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){
         std::vector<std::string> &tmp_vec = *ite;
-        if(tmp_vec[0] == "client_max_body_size"){
-            set_max_body_size(tmp_vec);
-        }else{
+        if(tmp_vec[0] != ""){
             ERROR("Invalid Config Error:" + tmp_vec[0] + " is not server directive");
             throw std::runtime_error("config parser error:server");
         }
@@ -77,11 +64,6 @@ void ConfigHttp::push_all(std::vector<ConfigServer*> const &vec)
     for(size_t i=0;i<vec.size();i++){
         this->servers.push_back(vec[i]);
     }
-}
-
-size_t ConfigHttp::get_max_body_size()
-{
-    return (this->client_max_body_size.to_number());
 }
 
 void ConfigHttp::check()
