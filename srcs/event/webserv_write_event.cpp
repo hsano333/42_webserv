@@ -38,6 +38,7 @@ WebservWriteEvent::~WebservWriteEvent()
 
 WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer)
 {
+    DEBUG("WebservWriteEvent::from_error_status_code()");
     delete event->res();
 
     Response *res;

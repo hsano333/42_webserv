@@ -461,6 +461,7 @@ void Config::check(SocketRepository *socket_repository)
 
 File *Config::get_error_file(Request const *req, StatusCode &code) const
 {
+    DEBUG("Config::get_error_file");
     const ConfigServer *server = NULL;
     const ConfigLocation *location= NULL;
     File *file = NULL;
@@ -472,7 +473,7 @@ File *Config::get_error_file(Request const *req, StatusCode &code) const
         file = NULL;
     }
 
-    if(server){
+    if(server && location){
         try{
             std::string page_path = location->get_error_file_path(code);
             //cout << page_path << endl;

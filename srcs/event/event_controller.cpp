@@ -32,6 +32,7 @@ void EventController::restart_communication(WebservEvent *event)
 
 void EventController::change_write_event(WebservEvent *event)
 {
+    DEBUG("EventController::change_write_event()");
     (void)event;
     this->io_multi_controller->modify(event->fd(), EPOLLIN);
 

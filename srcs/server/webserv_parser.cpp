@@ -48,6 +48,7 @@ void WebservParser::parse_req(WebservEvent *event)
     WebservEvent *next_event = event_factory->make_application_event(event);
     delete (event);
     event_manager->push(next_event);
+    req->print_info();
 }
 
 void WebservParser::parse_res(WebservEvent *event)

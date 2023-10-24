@@ -104,6 +104,7 @@ WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, Respons
 
 WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, char const *code_c)
 {
+    DEBUG("WebservEventFactory::make_error_event");
     File *file = NULL;
     Request *req = event->req();
 
@@ -117,7 +118,7 @@ WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, char co
 
     if (req){
         file = cfg->get_error_file(req, code);
-        if (file->can_read() == false){
+        if (!file || file->can_read() == false){
             delete file;
             file = NULL;
         }
