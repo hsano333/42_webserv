@@ -162,6 +162,8 @@ ssize_t Response::get_data(char** data)
         this->make_status_line();
         *data= const_cast<char*>(&(this->status_line[0]));
         this->send_state = SENT_STATUS_LINE;
+
+        MYINFO("\nResponse Status Line:" + this->status_line);
         return (this->status_line.size());
     }else if (this->send_state == SENT_STATUS_LINE){
         this->make_header_line();

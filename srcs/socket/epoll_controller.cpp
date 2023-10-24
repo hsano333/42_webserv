@@ -159,10 +159,10 @@ void EpollController::erase(FileDiscriptor fd_obj)
         //return (false);
     //}
     int fd = fd_obj.to_int();
-    t_epoll_event const *event = this->epoll.event_related_with_fd(fd_obj);
+    //t_epoll_event const *event = this->epoll.event_related_with_fd(fd_obj);
     t_epoll_event ev;
     ev.data.fd = fd;
-    ev.events = event->events;
+    //ev.events = event->events;
     //if (ite_ev == events.end()){
         //return (true);
     //}

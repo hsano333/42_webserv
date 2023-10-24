@@ -204,6 +204,13 @@ Header const &Request::header() const
 
 void Request::print_info() const
 {
+    MYINFO("|-- Print Request  --|");
+    MYINFO("requested_filepath_ = " + this->requested_filepath_);
+    MYINFO("requested_path_ = " + this->requested_path_);
+    MYINFO("tmp_path_info_ = " + this->tmp_path_info_);
+    MYINFO("|--------------------------|");
+
+
     cout << "|-- Print Request  --|" << endl;
     cout << "requested_filepath_ = " << this->requested_filepath_ << endl;
     cout << "requested_path_ = " << this->requested_path_ << endl;
