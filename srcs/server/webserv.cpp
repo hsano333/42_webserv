@@ -113,6 +113,7 @@ void Webserv::communication()
     }
     */
 
+    int cnt = 0;
     while(1)
     {
         if(waiter.is_not_busy()){
@@ -142,6 +143,19 @@ void Webserv::communication()
                 case CLEAN_EVENT:
                     DEBUG("Webserv::Clean Event ");
                     cleaner.clean(event, false);
+
+                    if (cnt >= 10){
+                        //delete event;
+                        cout << "end break" << endl;
+                        cout << "end break" << endl;
+                        cout << "end break" << endl;
+                        cout << "end break" << endl;
+                        cout << "end break" << endl;
+                        return ;
+                        break;
+                    }
+                    cnt++;
+
                     break;
                 case TIMEOUT_EVENT:
                     DEBUG("Webserv::Timeout Event");
@@ -156,6 +170,8 @@ void Webserv::communication()
                 case NOTHING_EVENT:
                     DEBUG("Webserv::Nothing Event");
                     delete(event);
+                    break;
+                default:
                     break;
             }
             if(exit_flag){
@@ -192,6 +208,19 @@ void Webserv::communication()
             delete event;
         }
     }
+
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
+    cout << "end No.0000" << endl;
 }
 
 void Webserv::reset()

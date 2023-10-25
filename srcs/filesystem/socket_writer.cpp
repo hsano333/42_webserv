@@ -8,7 +8,7 @@ SocketWriter::SocketWriter()
 
 SocketWriter::~SocketWriter()
 {
-    delete (singleton);
+    //delete (singleton);
 }
 
 SocketWriter* SocketWriter::singleton = NULL;

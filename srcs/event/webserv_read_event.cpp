@@ -16,7 +16,8 @@ WebservReadEvent::WebservReadEvent()
 
 WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
     :
-        req_(new Request()),
+        //req_(new Request()),
+        req_(NULL),
         fd_(fd),
         timeout_count_(0)
         //ireader(NULL)
@@ -46,13 +47,18 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
 WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event)
 {
     WebservReadEvent *new_event = new WebservReadEvent(event->fd());
-    if (event->req()){
-        delete event->req();
-    }
+    //if (event->req()){
+        //delete event->req();
+    //}
     if (event->res()){
         delete event->res();
     }
-    Request *req = new Request();
+    Request *req;
+    if(event->req()){
+        req = event->req();
+    }else{
+        req = new Request();
+    }
     new_event->req_ = req;
     return (new_event);
 

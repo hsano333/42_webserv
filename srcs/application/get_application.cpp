@@ -19,7 +19,7 @@ File *GetApplication::get_requested_file()
     if (this->is_cgi_){
         return (NULL);
     }
-
+    File *file = NULL;
     try{
         this->req->print_info();
         if (this->req->is_file()){
@@ -31,6 +31,7 @@ File *GetApplication::get_requested_file()
         File *file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
         return (file);
     }catch(std::invalid_argument &e){
+        delete file;
         ERROR("GetApplication::get_requested_file:" + string(e.what()));
         throw HttpException("404");
     }
@@ -125,7 +126,7 @@ Response* GetApplication::make_response()
 {
     DEBUG("GetApplication::make_response()");
     File *file = this->get_requested_file();
-    Response *res;
+    Response *res = NULL;
 
     if(this->location->is_redirect()){
         res = Response::from_file(file);
@@ -135,6 +136,8 @@ Response* GetApplication::make_response()
         res = Response::from_file(file);
     }else{
         ERROR("GetApplication::make_response(): Neither file nor directory");
+        delete file;
+        delete res;
         throw HttpException("500");
     }
     res->set_exist_body(true);

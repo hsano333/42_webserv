@@ -9,7 +9,7 @@ StreamReader::StreamReader()
 
 StreamReader::~StreamReader()
 {
-    delete (singleton);
+    //delete (singleton);
 }
 
 StreamReader* StreamReader::singleton = NULL;
