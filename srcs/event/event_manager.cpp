@@ -242,6 +242,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
 
 void EventManager::close_all_events_waiting_reading(WebservCleaner &cleaner)
 {
+    DEBUG("EventManager::close_all_events_waiting_reading");
     std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
     std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
     std::vector<WebservEvent*> tmp;
@@ -256,6 +257,7 @@ void EventManager::close_all_events_waiting_reading(WebservCleaner &cleaner)
 
 void EventManager::close_all_events_waiting_writing(WebservCleaner &cleaner)
 {
+    DEBUG("EventManager::close_all_events_waiting_writing");
     std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_writing.begin();
     std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_writing.end();
     std::vector<WebservEvent*> tmp;
@@ -263,13 +265,16 @@ void EventManager::close_all_events_waiting_writing(WebservCleaner &cleaner)
         tmp.push_back(ite->second);
         ite++;
     }
+    DEBUG("EventManager:: tmp.size():" + Utility::to_string(tmp.size()));
     for(size_t i=0;i<tmp.size();i++){
+        DEBUG("EventManager:: which):" + Utility::to_string(tmp[i]->which()));
         cleaner.clean(tmp[i], true);
     }
 }
 
 void EventManager::close_all_events()
 {
+    DEBUG("EventManager::close_all_events()");
     while(events.size() > 0){
         WebservEvent *event = this->pop_first();
         close(event->fd().to_int());

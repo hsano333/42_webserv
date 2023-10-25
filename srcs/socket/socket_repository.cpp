@@ -1,5 +1,6 @@
 
 #include "socket_repository.hpp"
+#include "global.hpp"
 
 SocketRepository::SocketRepository()
 {
@@ -18,10 +19,13 @@ void SocketRepository::insert(Socket socket)
 
 void SocketRepository::close_all()
 {
+    DEBUG("SocketRepository::close_all()");
     std::map<FileDiscriptor, Socket>::iterator ite = this->sockets.begin();
     std::map<FileDiscriptor, Socket>::iterator end = this->sockets.end();
 
     while(ite != end){
+
+        DEBUG("SocketRepository::fd:" + Utility::to_string(ite->first.to_int()));
         ite->first.close();
         ite++;
     }

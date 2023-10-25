@@ -9,7 +9,7 @@ NormalWriter::NormalWriter()
 }
 NormalWriter::~NormalWriter()
 {
-    delete (singleton);
+    //delete (singleton);
 }
 
 NormalWriter* NormalWriter::singleton = NULL;

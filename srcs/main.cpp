@@ -245,6 +245,7 @@ int main(int argc, char const* argv[])
     while (1) {
         try{
             server(webserv);
+            break;
         }catch(std::bad_alloc &e){
             WARNING("Webserv BalAlloc:");
             WARNING(e.what());
@@ -254,22 +255,48 @@ int main(int argc, char const* argv[])
             clean_all(cleaner, event_manager);
         }
     }
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
+    cout << "end No.1" << endl;
     clean_all(cleaner, event_manager);
+    cout << "end No.2" << endl;
     delete fd_manager;
     delete socket_controller;
     delete epoll_controller;
+    cout << "end No.3" << endl;
     delete event_manager;
     delete event_controller;
     delete socket_manager;
+    cout << "end No.4" << endl;
     delete cfg;
+    cout << "end No.5" << endl;
     delete event_factory;
+    cout << "end No.6" << endl;
     delete (normal_writer);
+    cout << "end No.7" << endl;
     delete (socket_writer);
+    cout << "end No.8" << endl;
     delete (normal_reader);
+    cout << "end No.9" << endl;
     delete (socket_reader);
+    cout << "end No.10" << endl;
+    cout << "end No.5" << endl;
+    //delete cfg;
+    cout << "end No.6" << endl;
     delete socket_repository;
+    cout << "end No.7" << endl;
     delete application_factory;
+    //delete stream_reader;
+    delete cgi;
     DEBUG("end webserv");
     Log::delete_instance();
+    cout << "end No.7" << endl;
+    delete StreamReader::get_instance();
+    cout << "end No.8" << endl;
     return 0;
 }

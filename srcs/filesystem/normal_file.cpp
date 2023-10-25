@@ -32,6 +32,7 @@ NormalFile::NormalFile()
 
 NormalFile::~NormalFile()
 {
+    //delete StreamReader::get_instance();
     if (this->state == FILE_OPEN){
         if(this->fd.to_int() > 0){
             //std::cout << "fd:" << this->fd << std::endl;

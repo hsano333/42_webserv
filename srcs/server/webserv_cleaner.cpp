@@ -29,7 +29,6 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
     DEBUG("WebservCleaner::clean:" + event->fd().to_string());
 
-
     bool is_close = force_close || app_event->is_force_close();
     if (app_event->req()){
         std::string const &conect = app_event->req()->header().find("Connection");

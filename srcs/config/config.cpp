@@ -60,8 +60,9 @@ Config::Config()
 
 Config::~Config()
 {
+    DEBUG("Config::~Config Destructor");
     delete http;
-    delete Config::_singleton;
+    //delete Config::_singleton;
 }
 
 void Config::load()
@@ -444,18 +445,18 @@ void Config::check(SocketRepository *socket_repository)
     hints.ai_socktype = SOCK_STREAM;
 
     (void)socket_repository;
-    for (size_t i = 0; i < http->get_server_size(); i++) 
+    for (size_t i = 0; i < http->get_server_size(); i++)
     {
         char const *hostname = http->server(i)->server_name().c_str();
         cout << "hostname:" << hostname << endl;
         int rval = getaddrinfo(hostname, NULL, &hints, &res);
         cout << "rval:" << rval << endl;
-        if (getaddrinfo(hostname, NULL, &hints, &res) < 0) {
+        if (rval < 0) {
             ERROR("Host name is invalid:" + http->server(i)->server_name());
             //throw std::runtime_error("hostname is invalid");
         }
+        freeaddrinfo(res);
     }
-    freeaddrinfo(res);
 
 }
 
@@ -479,6 +480,7 @@ File *Config::get_error_file(Request const *req, StatusCode &code) const
             //cout << page_path << endl;
             file = NormalFile::from_filepath(page_path, std::ios::in | std::ios::binary);
         }catch(std::runtime_error &e){
+            delete file;
             return (NULL);
         }
     }

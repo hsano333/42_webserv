@@ -9,7 +9,7 @@ NormalReader::NormalReader()
 
 NormalReader::~NormalReader()
 {
-    delete (singleton);
+    //delete (singleton);
 }
 
 NormalReader* NormalReader::singleton = NULL;

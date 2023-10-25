@@ -9,7 +9,7 @@ SocketReader::SocketReader()
 }
 SocketReader::~SocketReader()
 {
-    delete (singleton);
+    //delete (singleton);
 }
 
 

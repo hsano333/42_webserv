@@ -34,7 +34,7 @@ WebservEventFactory::WebservEventFactory(
 
 WebservEventFactory::~WebservEventFactory()
 {
-    ;
+    DEBUG("WebservEventFactory::~WebservEventFactory Destructor");
 }
 
 

@@ -1,4 +1,5 @@
 #include "webserv_parser.hpp"
+#include "http_exception.hpp"
 #include "webserv_application_event.hpp"
 
 WebservParser::WebservParser(
@@ -37,8 +38,10 @@ void WebservParser::parse_req(WebservEvent *event)
     *body_p = '\0';
     Split sp(req->buf(), "\r\n");
     if(sp.size() == 0){
+        delete (event);
         ERROR("Invalid Request. Reques doesn't have \"\r\n\"");
-        std::runtime_error("Invalid Request");
+        //std::runtime_error("Invalid Request");
+        throw HttpException("400");
     }
     req->set_request_line(sp[0]);
     req->set_header(sp, 1);
