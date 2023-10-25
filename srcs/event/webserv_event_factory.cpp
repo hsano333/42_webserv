@@ -59,13 +59,17 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
             WebservEvent *cached_event = this->event_manager->get_event_waiting_reading(fd);
             if(cached_event == NULL){
+                MYINFO("cached_event is NULL");
                 WebservEvent *event = WebservReadEvent::from_fd(fd);
                 printf("event=%p\n", event);
                 this->event_manager->add_event_waiting_reading(fd, event);
                 return (event);
             }else{
-                WebservEvent *new_event = this->make_read_event_from_event(cached_event);
+                MYINFO("cached_event exists");
+                //WebservEvent *new_event = this->make_read_event_from_event(cached_event);
+                WebservEvent *new_event = WebservReadEvent::from_fd(fd);
                 delete (cached_event);
+                this->event_manager->add_event_waiting_reading(fd, new_event);
                 return (new_event);
 
             }
