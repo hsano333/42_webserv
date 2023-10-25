@@ -124,24 +124,8 @@ void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
 
 void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
 {
-    MYINFO("EpollController::modify() fd:" + Utility::to_string(fd_obj.to_int()));
-    //if (check_error() == false){
-        //return (false);
-    //}
+    MYINFO("EpollController::modify() fd:" + Utility::to_string(fd_obj.to_int()) + ", event:" + Utility::to_string(event));
 
-    //std::vector<epoll_event*>::iterator ite_ev = events.find(fd);
-    //if(ev == events.end()){
-        //return (false);
-    //}
-    //std::vector<t_epoll_event>::iterator ite_ev = get_event(fd);
-    //if (ite_ev == events.end()){
-        //return (false);
-    //}
-    //t_epoll_event* ev = &(*ite_ev);
-    //ev->events = this->epoll.event();
-    //t_epoll_event const *ev = this->epoll.event_related_with_fd(fd);
-    //cout << "EPOLL CTL  fd:" << fd << endl;
-    //ev.data.fd = event;
     int fd = fd_obj.to_int();
     t_epoll_event *ev = this->epoll.event_from_fd(fd);
     ev->events = event;
@@ -216,6 +200,11 @@ void EpollController::wait()
         MYINFO("timeout:" + Utility::to_string(time_msec) + "sec");
         std::string tmp = Utility::to_string(time_msec);
         throw TimeoutException(tmp);
+    }else{
+        t_epoll_event *ev = epoll.allocated_event_pointer();
+        for(int i=0;i<nfds;i++){
+            MYINFO("wait end fd:" + Utility::to_string(ev[i].data.fd) );
+        }
     }
 }
 

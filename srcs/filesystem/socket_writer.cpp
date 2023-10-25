@@ -26,12 +26,12 @@ int SocketWriter::write(FileDiscriptor fd, char const *buf, size_t size)
     //std::cout << "socket::write():" << buf << std::endl;
     //std::cout << "socket::write():" << fd.to_int() << std::endl;
     try{
-        int result =  ::send(fd.to_int(), buf, size, MSG_DONTWAIT);
+        int result =  ::send(fd.to_int(), buf, size, MSG_DONTWAIT | MSG_NOSIGNAL);
         std::cout << "socket::result:" << result << std::endl;
         return (result);
     }catch(...){
         std::cout << "TEST" << std::endl;
     }
-        return (-1);
+    return (-1);
     //return ::send(fd.to_int(), buf, size, MSG_DONTWAIT);
 }
