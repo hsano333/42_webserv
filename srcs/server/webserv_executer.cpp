@@ -6,13 +6,14 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/26 02:56:51 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/26 22:55:45 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "webserv_executer.hpp"
 #include "request.hpp"
+#include "http_exception.hpp"
 
 WebservExecuter::WebservExecuter(
             ApplicationFactory *factory,
@@ -56,7 +57,14 @@ void WebservExecuter::execute(WebservEvent *event)
 
     Application *app = this->get_application(app_event);
     app->execute();
-    Response *res = app->make_response();
+    Response *res;
+    try{
+        res = app->make_response();
+    }catch (HttpException &e){
+        delete app;
+        throw HttpException(e.what());
+
+    }
     //printf("res=%p\n", res);
     app_event->set_response(res);
     delete app;
