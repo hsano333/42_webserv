@@ -46,10 +46,9 @@ void WebservSender::send(WebservEvent *event)
     p_data[size] = '\0';
     while(size > 0)
     {
-        //cout << p_data << endl;
         int result = writer->write(fd, p_data, size);
         if (result < 0){
-            throw ConnectionException("Write Error");
+            this->event_manager->add_event_waiting_writing(fd, event);
         }else if(result == 0){
             break;
         }
@@ -59,8 +58,8 @@ void WebservSender::send(WebservEvent *event)
         cout << "data=[" << p_data << "]" << endl;
     }
 
+    //todo
     res->close_file();
-
     WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
     event_manager->push(next_event);
     delete (event);

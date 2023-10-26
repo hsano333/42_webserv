@@ -78,9 +78,17 @@ void Socket::init()
         ERROR("Error getaddrinfo() :" + str);
         throw std::runtime_error("Failed to init()\n");
     }
+
+
+    int yes = 1;
+    setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(yes));
+    setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_KEEPALIVE, (const char*)&yes, sizeof(yes));
+
     //int kee_palive_time= 5;
     //setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_KEEPIDLE, (const char*)&kee_palive_tim, sizeof(kee_palive_tim));
     //setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_KEEPINTVL, (const char*)&kee_palive_tim, sizeof(kee_palive_tim));
+    //
+    //
     if (bind(this->sock_fd.to_int(), res->ai_addr, res->ai_addrlen) != 0) {
         this->close_fd();
         freeaddrinfo(res);
@@ -89,10 +97,6 @@ void Socket::init()
     }
     freeaddrinfo(res);
     listen(this->sock_fd.to_int(), _SOCKET_NUM);
-
-    int yes = 1;
-    setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_REUSEADDR, (const char*)&yes, sizeof(yes));
-    setsockopt(this->sock_fd.to_int(), SOL_SOCKET, SO_KEEPALIVE, (const char*)&yes, sizeof(yes));
 
     /*
 

@@ -36,11 +36,6 @@ void WebservReceiver::receiver(WebservEvent *event)
         if(tmp < 0){
             break;
             ERROR("Receiver Error:" + Utility::to_string(tmp));
-            //cout << "Recv read errno=" << errno << endl;
-            //cout << "gai_strerror:" << strerror(errno) << endl;
-            //cout << "gai_strerror:" << gai_strerror(errno) << endl;
-            //break;
-            //throw ConnectionException("Read Error");
         }else if(tmp == 0){
             throw ConnectionException("Read Error");
             break;

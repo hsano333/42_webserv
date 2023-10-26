@@ -111,7 +111,7 @@ int DirectoryFile::read(char **buf, size_t size)
 
 int DirectoryFile::close()
 {
-    if (this->state != FILE_OPEN){
+    if (!(this->state == FILE_OPEN || this->state == FILE_READING)){
         ERROR("DirectoryFile::close() state is  not FILE_OPEN");
         throw std::runtime_error("DirectoryFile::close() state is  not FILE_OPEN");
     }
