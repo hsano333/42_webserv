@@ -72,6 +72,7 @@ WebservEvent* WebservWaiter::serve_event()
     }
     if(event_manager->event_size() > 0){
         WebservEvent *returned_event = event_manager->pop_first();
+        printf("returned_event=%p\n", returned_event);
         return (returned_event);
     }
 

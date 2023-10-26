@@ -15,6 +15,8 @@ class WebservCleanEvent : public WebservEvent
                 );
         ~WebservCleanEvent();
         EWebservEvent which();
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
+        E_EpollEvent get_next_epoll_event();
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
         FileDiscriptor fd();

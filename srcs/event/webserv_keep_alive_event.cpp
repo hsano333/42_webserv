@@ -29,6 +29,19 @@ EWebservEvent WebservKeepAliveEvent::which()
     return (KEEPA_ALIVE_EVENT);
 }
 
+WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+{
+    (void)event_factory;
+    (void)event;
+    WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
+    return (event);
+}
+
+E_EpollEvent WebservKeepAliveEvent::get_next_epoll_event()
+{
+    return (EPOLL_CONTINUE);
+}
+
 FileDiscriptor WebservKeepAliveEvent::fd()
 {
     return (fd_);

@@ -29,6 +29,20 @@ EWebservEvent WebservNothingEvent::which()
     return (NOTHING_EVENT);
 }
 
+WebservEvent* WebservNothingEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+{
+    (void)event_factory;
+    (void)event;
+    WARNING("WebservNothingEvent::make_next_event() there is no next event");
+    return (NULL);
+}
+
+E_EpollEvent WebservNothingEvent::get_next_epoll_event()
+{
+    return (EPOLL_NONE);
+}
+
+
 FileDiscriptor WebservNothingEvent::fd()
 {
     return (fd_);

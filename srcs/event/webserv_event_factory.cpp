@@ -61,7 +61,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             if(cached_event == NULL){
                 MYINFO("cached_event is NULL");
                 WebservEvent *event = WebservReadEvent::from_fd(fd);
-                printf("event=%p\n", event);
+                //printf("event=%p\n", event);
                 this->event_manager->add_event_waiting_reading(fd, event);
                 return (event);
             }else{

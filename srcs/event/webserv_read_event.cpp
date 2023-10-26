@@ -97,6 +97,19 @@ int WebservReadEvent::timeout_count()
     return (this->timeout_count_);
 }
 
+
+WebservEvent* WebservReadEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+{
+    DEBUG("WebservReadEvent::make_next_event()");
+    return (event_factory->make_application_event(event));
+}
+
+E_EpollEvent WebservReadEvent::get_next_epoll_event()
+{
+    return (EPOLL_NONE);
+}
+
+
 /*
 #include <stdio.h>
 int WebservReadEvent::read(char *buf, size_t size)

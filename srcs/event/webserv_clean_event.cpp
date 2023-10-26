@@ -27,6 +27,21 @@ EWebservEvent WebservCleanEvent::which()
     return (CLEAN_EVENT);
 }
 
+WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+{
+    (void)event_factory;
+    (void)event;
+    WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
+    return (NULL);
+}
+
+E_EpollEvent WebservCleanEvent::get_next_epoll_event()
+{
+    return (EPOLL_NONE);
+}
+
+
+
 FileDiscriptor WebservCleanEvent::fd()
 {
     return (this->fd_);

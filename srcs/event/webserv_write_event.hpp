@@ -21,6 +21,8 @@ class WebservWriteEvent : public WebservEvent
         Response        *res();
         void increase_timeout_count(int count);
         int  timeout_count();
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
+        E_EpollEvent get_next_epoll_event();
         int write(char const *buf, size_t size);
         static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);

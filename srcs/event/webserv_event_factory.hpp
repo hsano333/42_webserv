@@ -7,7 +7,11 @@
 #include "io_multiplexing.hpp"
 #include "ireader.hpp"
 #include "iwriter.hpp"
+#include "fd_manager.hpp"
+#include "event_manager.hpp"
 
+class EventManager;
+class WebservEvent;
 class WebservEventFactory
 {
     public:

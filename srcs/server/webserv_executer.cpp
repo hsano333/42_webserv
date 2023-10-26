@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/26 22:55:45 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/27 02:12:09 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ void WebservExecuter::execute(WebservEvent *event)
     app_event->set_response(res);
     delete app;
 
-    io_multi_controller->modify(event->fd(), EPOLLOUT);
-    event_manager->erase_event_waiting_reading(event->fd());
-    WebservEvent *next_event = event_factory->make_write_event(event, res);
-    this->event_manager->add_event_waiting_writing(next_event->fd(), next_event);
+    //io_multi_controller->modify(event->fd(), EPOLLOUT);
+    //event_manager->erase_event_waiting_reading(event->fd());
+    //WebservEvent *next_event = event_factory->make_write_event(event, res);
+    //this->event_manager->add_event_waiting_writing(next_event->fd(), next_event);
     //event_manager->push(next_event);
-    delete (event);
+    //delete (event);
 }

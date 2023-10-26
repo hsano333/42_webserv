@@ -31,6 +31,12 @@ void WebservSender::send(WebservEvent *event)
     WebservWriteEvent *write_event = static_cast<WebservWriteEvent*>(event);
 
     Response *res = write_event->res();
+    if(res == NULL){
+        ERROR("WebservSender::send(): Response is NULL");
+        throw HttpException("500");
+    }
+
+    //printf("res=%p\n", res);
     char data[MAX_BUF];
     char* p_data = &(data[0]);
 
@@ -48,6 +54,8 @@ void WebservSender::send(WebservEvent *event)
     {
         int result = writer->write(fd, p_data, size);
         if (result < 0){
+            //todo
+            //event->set_next_flag(true);
             this->event_manager->add_event_waiting_writing(fd, event);
         }else if(result == 0){
             break;
@@ -59,9 +67,7 @@ void WebservSender::send(WebservEvent *event)
     }
 
     //todo
+    //event->set_next_flag(true);
     res->close_file();
-    WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
-    event_manager->push(next_event);
-    delete (event);
     DEBUG("WebservSender::send() end");
 }

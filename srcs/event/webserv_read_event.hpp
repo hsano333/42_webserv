@@ -16,10 +16,14 @@ class WebservReadEvent : public WebservEvent
         static WebservReadEvent *from_fd(FileDiscriptor fd);
         static WebservReadEvent *from_event(WebservEvent *event);
         FileDiscriptor fd();
+
+
         Request *req();
         Response *res();
         void increase_timeout_count(int count);
         int  timeout_count();
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
+        E_EpollEvent get_next_epoll_event();
         //int read(char *buf, size_t size);
 
 

@@ -57,9 +57,9 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
 
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
-    if(event->res() != NULL){
-        delete event->res();
-    }
+    //if(event->res() != NULL){
+        //delete event->res();
+    //}
     return (new WebservWriteEvent(
             event->fd(),
             event->req(),
@@ -101,6 +101,19 @@ int WebservWriteEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
+
+WebservEvent* WebservWriteEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+{
+    DEBUG("WebservWriteEvent::make_next_event()");
+    //return (event_factory->make_application_event(event));
+    return (event_factory->make_clean_event(event, false));
+}
+
+E_EpollEvent WebservWriteEvent::get_next_epoll_event()
+{
+    return (EPOLL_NONE);
+}
+
 
 int WebservWriteEvent::write(char const *buf, size_t size)
 {

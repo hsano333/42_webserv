@@ -10,6 +10,8 @@ class WebservTimeoutEvent : public WebservEvent
         WebservTimeoutEvent(FileDiscriptor fd);
         ~WebservTimeoutEvent();
         EWebservEvent which();
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
+        E_EpollEvent get_next_epoll_event();
 
         FileDiscriptor fd();
         Request *req();

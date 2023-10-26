@@ -6,6 +6,7 @@
 #include "fd_manager.hpp"
 
 class EventManager;
+class WebservEvent;
 class WebservCleaner
 {
     public:

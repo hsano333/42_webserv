@@ -4,6 +4,7 @@
 #include "file_discriptor.hpp"
 #include "request.hpp"
 #include "response.hpp"
+#include "webserv_event_factory.hpp"
 
 typedef enum E_WebservEvent
 {
@@ -16,6 +17,15 @@ typedef enum E_WebservEvent
     NOTHING_EVENT,
 } EWebservEvent;
 
+typedef enum E_EpollEvent
+{
+    EPOLL_READ,
+    EPOLL_WRITE,
+    EPOLL_CONTINUE,
+    EPOLL_NONE,
+} E_EpollEvent;
+
+
 class WebservEvent
 {
     public:
@@ -25,6 +35,8 @@ class WebservEvent
         //static WebservEvent *from_epoll_event(t_epoll_event const &event);
 
         virtual FileDiscriptor fd() = 0;
+        virtual WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory) = 0;
+        virtual E_EpollEvent get_next_epoll_event() = 0;
         virtual Request *req() = 0;
         virtual Response *res() = 0;
 

@@ -27,6 +27,19 @@ EWebservEvent WebservApplicationEvent::which()
     return (APPLICATION_EVENT);
 }
 
+WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+{
+    DEBUG("WebservApplicationEvent::make_next_event");
+    return (event_factory->make_write_event(event, event->res()));
+}
+
+E_EpollEvent WebservApplicationEvent::get_next_epoll_event()
+{
+    return (EPOLL_WRITE);
+}
+
+
+
 FileDiscriptor WebservApplicationEvent::fd()
 {
     return (this->fd_);
@@ -39,7 +52,7 @@ Request *WebservApplicationEvent::req()
 
 Response *WebservApplicationEvent::res()
 {
-    return (NULL);
+    return (this->res_);
 }
 
 void WebservApplicationEvent::increase_timeout_count(int count)

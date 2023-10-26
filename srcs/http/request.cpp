@@ -132,6 +132,7 @@ void Request::set_header(Split &sp, size_t offset)
 
 void Request::set_requested_filepath(const ConfigLocation *location)
 {
+    DEBUG("Request::set_requested_filepath()");
     URI const &requested_uri = this->req_line().uri();
     const Split &uri_sp = requested_uri.splited_path();
     std::string const &uri_path = requested_uri.path();

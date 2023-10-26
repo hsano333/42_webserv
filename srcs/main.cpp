@@ -211,10 +211,6 @@ int main(int argc, char const* argv[])
     //StreamReader *stream_reader = StreamReader::get_instance();
 
     EventManager *event_manager = new EventManager();
-    EventController *event_controller = new EventController(
-            event_manager,
-            epoll_controller
-            );
     WebservEventFactory *event_factory = new WebservEventFactory(
             cfg,
             socket_controller,
@@ -225,6 +221,11 @@ int main(int argc, char const* argv[])
             socket_writer,
             normal_reader,
             socket_reader
+            );
+    EventController *event_controller = new EventController(
+            event_manager,
+            epoll_controller,
+            event_factory
             );
 
     CGI *cgi = new CGI();

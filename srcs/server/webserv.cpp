@@ -130,19 +130,23 @@ void Webserv::communication()
                     DEBUG("Webserv::Read Event ");
                     receiver.receiver(event);
                     parser.parse_req(event);
+                    event_controller->next_event(event);
                     break;
                 case APPLICATION_EVENT:
                     DEBUG("Webserv::Application Event ");
                     executer.execute(event);
+                    event_controller->next_event(event);
                     //parser.parse_res(event);
                     break;
                 case WRITE_EVENT:
                     DEBUG("Webserv::Write Event ");
                     sender.send(event);
+                    event_controller->next_event(event);
                     break;
                 case CLEAN_EVENT:
                     DEBUG("Webserv::Clean Event ");
                     cleaner.clean(event, false);
+                    //event_controller->next_event(event);
 
                     if (cnt >= 10){
                         //delete event;
@@ -160,16 +164,19 @@ void Webserv::communication()
                 case TIMEOUT_EVENT:
                     DEBUG("Webserv::Timeout Event");
                     cleaner.clean_timeout_events(event);
-                    delete(event);
+                    event_controller->next_event(event);
+                    //delete(event);
                     break;
                 case KEEPA_ALIVE_EVENT:
                     DEBUG("Webserv::Keep Alive Event");
                     event_controller->restart_communication(event);
+                    event_controller->next_event(event);
                     // nothing to do
                     break;
                 case NOTHING_EVENT:
                     DEBUG("Webserv::Nothing Event");
-                    delete(event);
+                    event_controller->next_event(event);
+                    //delete(event);
                     break;
                 default:
                     break;
@@ -209,18 +216,6 @@ void Webserv::communication()
         }
     }
 
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
-    cout << "end No.0000" << endl;
 }
 
 void Webserv::reset()
