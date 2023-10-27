@@ -131,11 +131,31 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 }
 
 //boot_time = std::time(NULL);
-
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <iomanip>
+
+       #include <sys/types.h>
+       #include <sys/stat.h>
+       #include <fcntl.h>
 int main(int argc, char const* argv[])
 {
+    /*
+    std::string filepath = "/var/www/html/webserv/abc/cannot_delete_dir/d3";
+    Utility::is_regular_file("/var/www/html/webserv/abc/cannot_delete_dir/d3");
+    int rval = open(filepath.c_str(), O_RDONLY);
+    if (rval){
+        close(rval);
+    }
+    cout << "rval:" << rval << endl;
+    */
+
+    //exit(0);
+    //std::exit(0);
+
+    //int rval = remove(argv[1]);
+    //cout << "rval:"  << rval << endl;
+    //return 0;
     //boot_time = std::time(NULL);
     std::string abc = "abc";
     std::string def = "defghi";

@@ -48,11 +48,14 @@ class Request
         void    set_requested_filepath(const ConfigLocation *location);
         bool    is_file() const;
         bool    is_directory() const;
+        bool    is_not_executable_parent_dir() const;
+
         void    set_is_file(bool flag);
         void    set_is_directory(bool flag);
         std::string const &requested_filepath() const;
         std::string const &requested_path() const;
         std::string const &tmp_path_info() const;
+        std::string const &parent_dir_path() const;
         //File    get_target_file(const ConfigLocation *location);
 
         void    print_info() const;
@@ -68,8 +71,10 @@ class Request
         int     buf_body_size;
         bool    is_file_;
         bool    is_directory_;
+        bool    is_not_executable_parent_dir_;
         std::string requested_filepath_;
         std::string requested_path_;
+        std::string parent_dir_path_;
 
         RequestLine    req_line_;
         Header         header_;

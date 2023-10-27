@@ -26,9 +26,11 @@ class DirectoryFile : public File
         bool can_read();
         size_t size();
         bool is_chunk();
+        int remove();
+        std::string const &path();
     private:
         DIR *dir;
-        std::string path;
+        std::string path_;
         std::string root;
         std::string relative_path;
         std::string domain;

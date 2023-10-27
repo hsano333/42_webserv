@@ -19,6 +19,8 @@ class ErrorFile : public File
         bool can_read();
         size_t size();
         bool is_chunk();
+        int remove();
+        std::string const &path();
     private:
         FileState   state;
         std::string text;

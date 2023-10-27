@@ -1,24 +1,22 @@
-#include "get_application.hpp"
+#include "delete_application.hpp"
 #include "http_exception.hpp"
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 #include "directory_file.hpp"
 
-GetApplication::GetApplication()
+DeleteApplication::DeleteApplication()
 {
 ;
 }
 
-GetApplication::~GetApplication()
+DeleteApplication::~DeleteApplication()
 {
 ;
 }
 
-File *GetApplication::get_requested_file()
+
+File *DeleteApplication::get_requested_file()
 {
-    if (this->is_cgi_){
-        return (NULL);
-    }
     File *file = NULL;
     try{
         this->req->print_info();
@@ -38,18 +36,19 @@ File *GetApplication::get_requested_file()
         throw HttpException("404");
     }catch(std::invalid_argument &e){
         delete file;
-        ERROR("GetApplication::get_requested_file:" + string(e.what()));
+        ERROR("DeleteApplication::get_requested_file:" + string(e.what()));
         throw HttpException("404");
     }
 }
 
 
-bool GetApplication::is_cgi() const
+bool DeleteApplication::is_cgi() const
 {
-    return (this->is_cgi_);
+    return (false);
 }
 
-void GetApplication::execute_not_cgi()
+/*
+void DeleteApplication::execute_not_cgi()
 {
     //this->tmp_headers.insert(std::make_pair("Date", Utility::time_to_string()));
     //this->tmp_headers.insert(std::make_pair("Server", WEBSERV_VERSION));
@@ -68,34 +67,39 @@ void GetApplication::execute_not_cgi()
 }
 
 
-void GetApplication::execute_cgi()
+void DeleteApplication::execute_cgi()
 {
 
 }
+*/
 
-void GetApplication::execute()
+void DeleteApplication::execute()
 {
+    DEBUG("DeleteApplication::execute()");
     this->check_permission();
-    if (this->is_cgi_){
-        DEBUG("GetApplication::execute() CGI");
-        this->execute_cgi();
-    }else{
-        DEBUG("GetApplication::execute() Not CGI");
-        this->execute_not_cgi();
-    }
+    File *file = this->get_requested_file();
 
-    //cout << "Get Application execute requetesd filename:" << filename << endl;
-    //cout << "Get Application execute cgi application:" << this->cgi_application_path << endl;
-    //cout << filename << endl;
+    if(file->remove() < 0)
+    {
+        ERROR("failure to delete file:" + file->path());
+        throw HttpException("403");
+    }
 }
 
-void GetApplication::check_permission()
+void DeleteApplication::check_permission()
 {
     const ConfigLimit *limit = this->location->limit();
     if (limit == NULL){
-        WARNING("not permission: root:" + this->location->root());
+        WARNING("no permission: root:" + this->location->root());
         throw HttpException("403");
     }
+    /*
+    if (this->req->is_directory()){
+        WARNING("can't delete directory:" + this->location->root());
+        throw HttpException("403");
+    }
+    */
+
     std::vector<Method> methods = limit->allowed_method();
     Method requested_method = this->req->req_line().method();
     for(size_t j = 0;j<methods.size();j++){
@@ -103,50 +107,28 @@ void GetApplication::check_permission()
             return ;
         }
     }
-    WARNING("not permission: root:" + this->location->root());
+    WARNING("not permission Delete Method: refer to config file :" + this->location->root());
     throw HttpException("403");
 }
 
-GetApplication* GetApplication::from_location(const Config *cfg, const Request *req, CGI *cgi)
+DeleteApplication* DeleteApplication::from_location(const Config *cfg, const Request *req)
 {
-    GetApplication *app = new GetApplication();
+    DeleteApplication *app = new DeleteApplication();
     app->cfg = cfg;
     app->server = cfg->get_server(req);
     //const ConfigLocation *location= this->cfg->get_location(server, req);
     app->location = cfg->get_location(app->server, req);
     app->req = req;
-    app->cgi = cgi;
-    app->path_info_ = req->tmp_path_info();
-
-    try{
-        app->cgi_application_path = string(cgi->get_cgi_application_path(req, app->location));
-        app->is_cgi_ = true;
-    }catch(std::invalid_argument &e){
-        app->is_cgi_ = false;
-    }
+    //app->cgi = cgi;
+    //app->path_info_ = req->tmp_path_info();
 
     return (app);
 }
 
-Response* GetApplication::make_response()
+Response* DeleteApplication::make_response()
 {
-    DEBUG("GetApplication::make_response()");
-    File *file = this->get_requested_file();
-    Response *res = NULL;
-
-    if(this->location->is_redirect()){
-        res = Response::from_file(file);
-    }else if (this->req->is_file() || this->req->is_directory()){
-        res = Response::from_file(file);
-    }else if (this->req->is_directory()){
-        res = Response::from_file(file);
-    }else{
-        ERROR("GetApplication::make_response(): Neither file nor directory");
-        delete file;
-        delete res;
-        throw HttpException("403");
-    }
-    res->set_exist_body(true);
+    StatusCode code = StatusCode::from_int(200);
+    Response *res = Response::from_success_status_code(code);
 
     std::map<std::string, std::string>::iterator ite = this->tmp_headers.begin();
     std::map<std::string, std::string>::iterator end = this->tmp_headers.end();
@@ -158,17 +140,17 @@ Response* GetApplication::make_response()
 }
 
 /*
-void GetApplication::set_path_info(std::string const &path_info)
+void DeleteApplication::set_path_info(std::string const &path_info)
 {
     this->path_info_ = path_info;
 }
 
-std::string &GetApplication::get_path_info()
+std::string &DeleteApplication::get_path_info()
 {
     return (this->path_info_);
 }
 
-std::string const &GetApplication::path_info() const
+std::string const &DeleteApplication::path_info() const
 {
     return (this->path_info_);
 }

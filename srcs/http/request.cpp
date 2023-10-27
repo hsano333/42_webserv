@@ -13,6 +13,8 @@
 #include "no_request_line.hpp"
 #include "global.hpp"
 #include "get_method.hpp"
+#include "http_exception.hpp"
+#include "utility.hpp"
 
 using std::cin;
 using std::cout;
@@ -29,7 +31,9 @@ Request::Request() :
     // -1 is for '\0'
     raw_buf_rest_size_(MAX_BUF-1),
     is_file_(false),
-    is_directory_(false)
+    is_directory_(false),
+    is_not_executable_parent_dir_(false)
+    //is_redable_darectory(false)
 {
     DEBUG("Request::Request()");
 ;
@@ -100,6 +104,11 @@ std::string const &Request::tmp_path_info() const
     return (this->tmp_path_info_);
 }
 
+std::string const &Request::parent_dir_path() const
+{
+    return (this->parent_dir_path_);
+}
+
 
 /*
 File Request::get_target_file(const ConfigLocation *location)
@@ -143,7 +152,9 @@ void Request::set_requested_filepath(const ConfigLocation *location)
     cout << "uri_path:" << uri_path << endl;
     this->requested_path_ = path;
     this->tmp_path_info_ = "";
+    MYINFO("Request::set_requested_filepath() requested_path=" + this->requested_path_);
 
+    bool first = true;
     for(int i=uri_sp.size()-1; i >= 0;i--){
         if (Utility::is_regular_file(path)){
             size_t k = i+1;
@@ -159,17 +170,34 @@ void Request::set_requested_filepath(const ConfigLocation *location)
 
             this->requested_filepath_ = path;
             this->is_file_ = true;
-            this->is_directory_ = false;
+            //this->is_redable_darectory = true;
+            //this->is_redable_darectory = true;
             MYINFO("Request::set_requested_filepath filepath=" + path);
             return;
         }
         size_t pos = path.rfind(uri_sp[i]);
         path = path.substr(0, pos-1);
         //tmp_path_info += uri_sp[i];
+        // 対象ファイルのディレクトリが読み書き可能かどうか判定
+        if (first){
+            first = false;
+            this->parent_dir_path_ = path;
+            if (Utility::is_directory(path)){
+                if (Utility::is_executable_directory(path)){
+                    this->is_not_executable_parent_dir_ = false;
+                }else{
+                    this->is_not_executable_parent_dir_ = true;
+                }
+            }
+        }
+    }
+
+
+    this->is_file_ = false;
+    if(Utility::is_directory(this->requested_path_)){
+        this->is_directory_ = true;
     }
     this->requested_filepath_ = "";
-    this->is_directory_ = true;
-    this->is_file_ = false;
 }
 
 void Request::set_is_file(bool flag)
@@ -192,6 +220,10 @@ bool Request::is_directory() const
     return (this->is_directory_);
 }
 
+bool Request::is_not_executable_parent_dir() const
+{
+    return (this->is_not_executable_parent_dir_);
+}
 
 RequestLine const &Request::req_line() const
 {

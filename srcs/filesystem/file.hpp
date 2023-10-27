@@ -1,6 +1,7 @@
 #ifndef MYFILE_HPP
 #define MYFILE_HPP
 #include <unistd.h>
+#include <string>
 
 
 typedef enum E_FileState
@@ -24,6 +25,8 @@ class File
         virtual bool can_read() = 0;
         virtual bool is_chunk() = 0;
         virtual size_t size() = 0;
+        virtual int remove() = 0;
+        virtual std::string const &path() = 0;
 
         //virtual File close() = 0;
     private:

@@ -387,8 +387,10 @@ bool Utility::is_regular_file(std::string const &path)
 {
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0){
+        cout << "stat error" << endl;
         return false;
     }
+    cout << "stat OK" << endl;
     return (fileInfo.st_mode & S_IFREG);
 }
 
@@ -438,6 +440,23 @@ bool Utility::is_redable_directory(std::string const &path)
     return (fileInfo.st_mode & S_IFDIR) && (fileInfo.st_mode & S_IRUSR);
 }
 
+bool Utility::is_executable_directory(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFDIR) && (fileInfo.st_mode & S_IXUSR);
+}
+
+bool Utility::is_not_redable_directory(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFDIR) && (fileInfo.st_mode & S_IRUSR);
+}
 
 std::string Utility::time_to_string()
 {
@@ -495,6 +514,18 @@ std::string Utility::adjust_filesize(size_t filesize)
         size_str = Utility::to_string(filesize/1024/1024/1024/1024) + "T";
     }
     return (size_str);
+}
+
+
+bool Utility::is_redable_directory_not_stat(std::string const &filepath)
+{
+    if(opendir(filepath.c_str()))
+    {
+        return (true);
+    }
+
+
+    return (false);
 }
 
 

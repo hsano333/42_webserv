@@ -66,11 +66,15 @@ class Utility
 
     static bool is_directory(std::string const &path);
     static bool is_redable_directory(std::string const &path);
+    static bool is_executable_directory(std::string const &path);
+    static bool is_not_redable_directory(std::string const &path);
 
     static std::string time_to_string();
     static size_t get_file_size(std::string const &filepath);
     static std::string get_file_updated_date(std::string const &filepath);
     static std::string adjust_filesize(size_t filesize);
+
+    static bool is_redable_directory_not_stat(std::string const &filepath);
 };
 
 template <typename T>

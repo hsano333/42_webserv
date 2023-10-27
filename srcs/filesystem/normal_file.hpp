@@ -36,8 +36,10 @@ class NormalFile : public File
         void write(char *buf);
         bool can_read();
         bool can_write();
-        size_t size();
         bool is_chunk();
+        size_t size();
+        int remove();
+        std::string const &path();
 
     private:
         NormalFile();

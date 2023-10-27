@@ -44,6 +44,15 @@ Response& Response::operator=(Response const &res)
     return (*this);
 }
 
+Response* Response::from_success_status_code(StatusCode &code)
+{
+    Response *res = new Response();
+    res->status_code = code;
+    res->file = NULL;
+    res->exist_body_ = false;
+    return (res);
+}
+
 Response* Response::from_error_status_code(StatusCode &code)
 {
     Response *res = new Response();

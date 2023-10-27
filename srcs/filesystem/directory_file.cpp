@@ -22,7 +22,7 @@ DirectoryFile* DirectoryFile::from_path(std::string const &path, std::string con
         throw std::invalid_argument("DirectoryFile::from_path() not directory");
     }
     DirectoryFile *dir = new DirectoryFile();
-    dir->path = path;
+    dir->path_ = path;
     dir->state = FILE_NOT_OPEN;
 
     //size_t pos = path.find(root);
@@ -39,7 +39,7 @@ int DirectoryFile::open()
         ERROR("DirectoryFile::open() state is  not FILE_NOT_OPEN");
         throw std::runtime_error("DirectoryFile::open() state is  not FILE_NOT_OPEN");
     }
-    DIR *tmp_dir = opendir(this->path.c_str());
+    DIR *tmp_dir = opendir(this->path_.c_str());
     if (tmp_dir == NULL){
         ERROR("DirectoryFile::open() error");
         throw std::runtime_error("DirectoryFile::open() error");
@@ -55,10 +55,10 @@ int DirectoryFile::read(char **buf, size_t size)
     (void)size;
     if (this->state == FILE_OPEN){
 
-        size_t pos = this->path.find(this->relative_path);
+        size_t pos = this->path_.find(this->relative_path);
         //size_t pos = this->dir.rfind("/");
         //std::string up_dir = this->dir.rfind("/");
-        std::string relative = this->path.substr(pos);
+        std::string relative = this->path_.substr(pos);
         std::string up_dir = "http://" + this->domain + "/";
         pos = relative.rfind("/");
         if(pos != std::string::npos){
@@ -91,13 +91,13 @@ int DirectoryFile::read(char **buf, size_t size)
     }
 
     std::string uri = "http://" + this->domain + "/" + relative_path + "/" + dirr->d_name;
-    std::string filepath = this->path + "/" +  dirr->d_name;
+    std::string filepath = this->path_ + "/" +  dirr->d_name;
     size_t filesize = Utility::get_file_size(filepath);
     std::string filesize_str = Utility::adjust_filesize(filesize);
     if (Utility::is_directory(filepath)){
         filesize_str = "-";
     }
-    std::string date = Utility::get_file_updated_date(this->path);
+    std::string date = Utility::get_file_updated_date(this->path_);
     std::string tmp = WRITE_READING1 + uri + WRITE_READING2 + dirr->d_name + WRITE_READING3;
 
     stringstream ss;
@@ -124,7 +124,7 @@ int DirectoryFile::close()
 
 bool DirectoryFile::can_read()
 {
-    return (Utility::is_redable_directory(this->path));
+    return (Utility::is_redable_directory(this->path_));
 }
 
 size_t DirectoryFile::size()
@@ -139,4 +139,15 @@ size_t DirectoryFile::size()
 bool DirectoryFile::is_chunk()
 {
     return (true);
+}
+
+int DirectoryFile::remove()
+{
+    // This server can't delete directory because of security;
+    return (-1);
+}
+
+std::string const &DirectoryFile::path()
+{
+    return (this->path_);
 }

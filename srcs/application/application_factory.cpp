@@ -4,6 +4,7 @@
 #include "server_application.hpp"
 #include "cgi_application.hpp"
 #include "get_application.hpp"
+#include "delete_application.hpp"
 #include "method.hpp"
 #include "http_exception.hpp"
 //#include "post_application.hpp"
@@ -67,10 +68,9 @@ Application* ApplicationFactory::make_application(Request *req)
     RequestLine const &req_line = req->req_line();
     const ConfigServer *server = cfg->get_server(req);
     const ConfigLocation *location= this->cfg->get_location(server, req);
+    Method const &method = req_line.method();
     req->set_requested_filepath(location);
 
-
-    Method const &method = req_line.method();
     switch(method.to_enum())
     {
         case GET:
@@ -85,7 +85,7 @@ Application* ApplicationFactory::make_application(Request *req)
         case DELETE:
             //todo
             DEBUG("ApplicationFactory::make_application() make Delete");
-            app = GetApplication::from_location(cfg, req, cgi);
+            app = DeleteApplication::from_location(cfg, req);
             break;
         default:
             ERROR("ApplicationFactory::make_application(): Invalid method");;

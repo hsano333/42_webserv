@@ -116,6 +116,17 @@ bool NormalFile::is_chunk()
     return (false);
 }
 
+
+int NormalFile::remove()
+{
+    return (std::remove(this->filepath.c_str()));
+}
+
+std::string const &NormalFile::path()
+{
+    return (this->filepath);
+}
+
 /*
 std::string NormalFile::to_str()
 {

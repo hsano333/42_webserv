@@ -23,7 +23,7 @@ EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 
 APPLICATIONDIR		:= application/
-APPLICATIONSRC 		:= application_factory.cpp get_application.cpp cgi.cpp
+APPLICATIONSRC 		:= application_factory.cpp get_application.cpp delete_application.cpp  cgi.cpp
 APPLICATION 		:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
 
 

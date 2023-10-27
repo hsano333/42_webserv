@@ -80,3 +80,15 @@ bool ErrorFile::is_chunk()
 {
     return (false);
 }
+
+
+int ErrorFile::remove()
+{
+    // error file is not exist
+    return (-1);
+}
+
+std::string const &ErrorFile::path()
+{
+    return (this->text);
+}
