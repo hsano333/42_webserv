@@ -4,7 +4,8 @@ WebservTimeoutEvent::WebservTimeoutEvent()
                                         :
                                         fd_(FileDiscriptor::from_int(0)),
                                         event_type(TIMEOUT_EVENT),
-                                        timeout_count_(0)
+                                        timeout_count_(0),
+                                        is_end_(false)
 {
     ;
 }
@@ -46,6 +47,15 @@ Request *WebservTimeoutEvent::req()
 Response *WebservTimeoutEvent::res()
 {
     return (NULL);
+}
+
+bool WebservTimeoutEvent::is_end()
+{
+    return (this->is_end_);
+}
+void WebservTimeoutEvent::set_end(bool flag)
+{
+    this->is_end_ = flag;
 }
 
 

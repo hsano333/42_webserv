@@ -20,6 +20,8 @@ class WebservReadEvent : public WebservEvent
 
         Request *req();
         Response *res();
+        bool is_end();
+        void set_end(bool flag);
         void increase_timeout_count(int count);
         int  timeout_count();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
@@ -34,6 +36,7 @@ class WebservReadEvent : public WebservEvent
         FileDiscriptor fd_;
         //EWebservEvent event_type;
         int timeout_count_;
+        bool is_end_;
         //IReader *ireader;
 };
 #endif

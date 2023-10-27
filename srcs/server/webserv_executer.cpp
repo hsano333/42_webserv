@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/27 02:12:09 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/27 12:49:12 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void WebservExecuter::execute(WebservEvent *event)
     }
     //printf("res=%p\n", res);
     app_event->set_response(res);
+    app_event->set_end(true);
     delete app;
 
     //io_multi_controller->modify(event->fd(), EPOLLOUT);

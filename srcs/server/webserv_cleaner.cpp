@@ -58,6 +58,7 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     delete app_event->req();
     delete app_event->res();
     delete app_event;
+    //event->set_end(true);
 }
 
 void WebservCleaner::clean_timeout_events(WebservEvent *event)

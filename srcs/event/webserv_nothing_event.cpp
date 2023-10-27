@@ -2,7 +2,10 @@
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
 
-WebservNothingEvent::WebservNothingEvent() : timeout_count_(0)
+WebservNothingEvent::WebservNothingEvent() 
+    :
+        timeout_count_(0)
+        //is_end_(false)
 {
     this->fd_ = FileDiscriptor::from_int(0);
 }
@@ -56,6 +59,17 @@ Request *WebservNothingEvent::req()
 Response *WebservNothingEvent::res()
 {
     return (NULL);
+}
+
+bool WebservNothingEvent::is_end()
+{
+    return (true);
+    //return (this->is_end_);
+}
+void WebservNothingEvent::set_end(bool flag)
+{
+    (void)flag;
+    //this->is_end_ = flag;
 }
 
 void WebservNothingEvent::increase_timeout_count(int count)

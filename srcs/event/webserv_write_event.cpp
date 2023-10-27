@@ -10,7 +10,8 @@ WebservWriteEvent::WebservWriteEvent()
                                         req_(NULL),
                                         res_(NULL),
                                         timeout_count_(0),
-                                        writer(NULL)
+                                        writer(NULL),
+                                        is_end_(false)
 {
     ;
 }
@@ -88,6 +89,15 @@ Request *WebservWriteEvent::req()
 Response *WebservWriteEvent::res()
 {
     return (this->res_);
+}
+
+bool WebservWriteEvent::is_end()
+{
+    return (this->is_end_);
+}
+void WebservWriteEvent::set_end(bool flag)
+{
+    this->is_end_ = flag;
 }
 
 

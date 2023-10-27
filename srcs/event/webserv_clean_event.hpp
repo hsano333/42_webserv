@@ -25,6 +25,9 @@ class WebservCleanEvent : public WebservEvent
         static WebservCleanEvent *from_webserv_event(WebservEvent *event, bool force_close);
         Request *req();
         Response *res();
+
+        bool is_end();
+        void set_end(bool flag);
         bool    is_force_close();
     private:
         FileDiscriptor  fd_;
@@ -32,6 +35,7 @@ class WebservCleanEvent : public WebservEvent
         Response        *res_;
         int             timeout_count_;
         bool            force_close;
+        bool is_end_;
 };
 
 #endif

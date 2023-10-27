@@ -32,6 +32,7 @@ void WebservParser::parse_req(WebservEvent *event)
         DEBUG("WebservParser:: not still read Request header");
         return ;
     }
+
     body_p += 2;
     req->set_buf_body(body_p, req->buf_size() - (size_t)(body_p - req->buf()));
     body_p -= 2;
@@ -47,6 +48,7 @@ void WebservParser::parse_req(WebservEvent *event)
     req->set_header(sp, 1);
 
     req->print_info();
+    event->set_end(true);
 
     //delete (event);
     //req->print_info();

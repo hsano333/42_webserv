@@ -16,6 +16,10 @@ class WebservApplicationEvent : public WebservEvent
         FileDiscriptor  fd();
         Request         *req();
         Response        *res();
+
+        bool is_end();
+        void set_end(bool flag);
+
         void increase_timeout_count(int count);
         int  timeout_count();
         void            set_response(Response *res);
@@ -24,6 +28,7 @@ class WebservApplicationEvent : public WebservEvent
         Request         *req_;
         Response        *res_;
         int             timeout_count_;
+        bool is_end_;
 
 
 

@@ -8,7 +8,8 @@ WebservApplicationEvent::WebservApplicationEvent(
                             fd_(fd),
                             req_(req),
                             res_(NULL),
-                            timeout_count_(0)
+                            timeout_count_(0),
+                            is_end_(false)
 {
 
 };
@@ -54,6 +55,16 @@ Response *WebservApplicationEvent::res()
 {
     return (this->res_);
 }
+
+bool WebservApplicationEvent::is_end()
+{
+    return (this->is_end_);
+}
+void WebservApplicationEvent::set_end(bool flag)
+{
+    this->is_end_ = flag;
+}
+
 
 void WebservApplicationEvent::increase_timeout_count(int count)
 {

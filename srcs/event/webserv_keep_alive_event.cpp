@@ -2,7 +2,10 @@
 #include "webserv_keep_alive_event.hpp"
 #include "global.hpp"
 
-WebservKeepAliveEvent::WebservKeepAliveEvent() : timeout_count_(0)
+WebservKeepAliveEvent::WebservKeepAliveEvent() 
+    :
+        timeout_count_(0)
+        //is_end_(false)
 {
     this->fd_ = FileDiscriptor::from_int(0);
 }
@@ -55,6 +58,16 @@ Request *WebservKeepAliveEvent::req()
 Response *WebservKeepAliveEvent::res()
 {
     return (NULL);
+}
+
+bool WebservKeepAliveEvent::is_end()
+{
+    return (true);
+}
+void WebservKeepAliveEvent::set_end(bool flag)
+{
+    (void)flag;
+    //this->is_end_ = flag;
 }
 
 void WebservKeepAliveEvent::increase_timeout_count(int count)

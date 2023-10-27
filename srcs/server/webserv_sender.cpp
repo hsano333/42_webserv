@@ -54,10 +54,13 @@ void WebservSender::send(WebservEvent *event)
     {
         int result = writer->write(fd, p_data, size);
         if (result < 0){
+            ERROR("WebservSender::send() result:" + Utility::to_string(result));
+            throw ConnectionException("Write Connection Error");
             //todo
             //event->set_next_flag(true);
-            this->event_manager->add_event_waiting_writing(fd, event);
+            //this->event_manager->add_event_waiting_writing(fd, event);
         }else if(result == 0){
+            event->set_end(false);
             break;
         }
         p_data = &(data[0]);
@@ -69,5 +72,6 @@ void WebservSender::send(WebservEvent *event)
     //todo
     //event->set_next_flag(true);
     res->close_file();
+    event->set_end(true);
     DEBUG("WebservSender::send() end");
 }

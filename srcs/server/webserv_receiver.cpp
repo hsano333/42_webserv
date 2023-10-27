@@ -34,8 +34,9 @@ void WebservReceiver::receiver(WebservEvent *event)
     while(1){
         int tmp = reader->read(fd, &(buf[sum]), space, NULL);
         if(tmp < 0){
-            break;
             ERROR("Receiver Error:" + Utility::to_string(tmp));
+            event->set_end(false);
+            break;
         }else if(tmp == 0){
             throw ConnectionException("Read Error");
             break;

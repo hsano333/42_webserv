@@ -12,7 +12,8 @@ WebservCleanEvent::WebservCleanEvent(
                             req_(req),
                             res_(res),
                             timeout_count_(0),
-                            force_close(false)
+                            force_close(false),
+                            is_end_(false)
 {
     ;
 }
@@ -55,6 +56,15 @@ Request *WebservCleanEvent::req()
 Response *WebservCleanEvent::res()
 {
     return (this->res_);
+}
+
+bool WebservCleanEvent::is_end()
+{
+    return (this->is_end_);
+}
+void WebservCleanEvent::set_end(bool flag)
+{
+    this->is_end_ = flag;
 }
 
 void WebservCleanEvent::increase_timeout_count(int count)

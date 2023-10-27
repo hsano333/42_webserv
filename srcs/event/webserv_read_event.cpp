@@ -9,7 +9,8 @@ WebservReadEvent::WebservReadEvent()
                                         req_(NULL),
                                         fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
-                                        timeout_count_(0)
+                                        timeout_count_(0),
+                                        is_end_(false)
                                         //ireader(NULL)
 {
 }
@@ -83,6 +84,15 @@ Request *WebservReadEvent::req()
 Response *WebservReadEvent::res()
 {
     return (NULL);
+}
+
+bool WebservReadEvent::is_end()
+{
+    return (this->is_end_);
+}
+void WebservReadEvent::set_end(bool flag)
+{
+    this->is_end_ = flag;
 }
 
 
