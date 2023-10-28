@@ -81,8 +81,8 @@ void server(Webserv& webserv)
 
 void clean_all(WebservCleaner &cleaner, EventManager *event_manager)
 {
-    event_manager->close_all_events_waiting_reading(cleaner);
-    event_manager->close_all_events_waiting_writing(cleaner);
+    event_manager->close_all_events_waiting_epoll(cleaner);
+    //event_manager->close_all_events_waiting_writing(cleaner);
     event_manager->close_all_events();
     //cleaner.clean();
 }

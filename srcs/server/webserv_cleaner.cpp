@@ -39,8 +39,8 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
 
     //this->io_multi_controller->erase(app_event->fd());
     //
-    this->event_manager->erase_event_waiting_reading(app_event->fd());
-    this->event_manager->erase_event_waiting_writing(app_event->fd());
+    this->event_manager->erase_event_waiting_epoll(app_event->fd());
+    //this->event_manager->erase_event_waiting_epoll(app_event->fd());
     if (is_close)
     {
         MYINFO("close fd:" + event->fd().to_string());
@@ -52,7 +52,7 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
         // HTTP1.1はデフォルトでコネクションを切断しない
         this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
         WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
-        this->event_manager->add_event_waiting_reading(app_event->fd(), new_event);
+        this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
     }
 
     delete app_event->req();

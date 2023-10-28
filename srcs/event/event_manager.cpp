@@ -86,31 +86,32 @@ void EventManager::increase_timeout_count(int count)
 */
 
 
-void EventManager::add_event_waiting_reading(FileDiscriptor fd, WebservEvent* event)
+void EventManager::add_event_waiting_epoll(FileDiscriptor fd, WebservEvent* event)
 {
-    if (this->events_waiting_reading.find(fd) != this->events_waiting_reading.end())
+    if (this->events_waiting_epoll.find(fd) != this->events_waiting_epoll.end())
     {
         event->increase_timeout_count(1);
     }
-    DEBUG("add_event_waiting_reading() fd:" + fd.to_string());
-    this->events_waiting_reading.insert(std::make_pair(fd, event));
+    DEBUG("add_event_waiting_epoll() fd:" + fd.to_string());
+    this->events_waiting_epoll.insert(std::make_pair(fd, event));
 }
 
-void EventManager::erase_event_waiting_reading(FileDiscriptor fd)
+void EventManager::erase_event_waiting_epoll(FileDiscriptor fd)
 {
-    DEBUG("erase_event_waiting_reading() fd:" + fd.to_string());
-    this->events_waiting_reading.erase(fd);
+    DEBUG("erase_event_waiting_epoll() fd:" + fd.to_string());
+    this->events_waiting_epoll.erase(fd);
 }
 
-WebservEvent* EventManager::get_event_waiting_reading(FileDiscriptor fd)
+WebservEvent* EventManager::get_event_waiting_epoll(FileDiscriptor fd)
 {
-    if(this->events_waiting_reading.find(fd) == this->events_waiting_reading.end()){
+    if(this->events_waiting_epoll.find(fd) == this->events_waiting_epoll.end()){
         return (NULL);
     }
-    return (this->events_waiting_reading[fd]);
+    return (this->events_waiting_epoll[fd]);
 }
 
 
+/*
 void EventManager::add_event_waiting_writing(FileDiscriptor fd, WebservEvent* event)
 {
     if (this->events_waiting_writing.find(fd) != this->events_waiting_writing.end())
@@ -137,6 +138,7 @@ WebservEvent* EventManager::get_event_waiting_writing(FileDiscriptor fd)
     }
     return (this->events_waiting_writing[fd]);
 }
+*/
 
 
 
@@ -144,14 +146,15 @@ WebservEvent* EventManager::get_event_waiting_writing(FileDiscriptor fd)
 void EventManager::count_up_to_all_event(int time)
 {
     {
-        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
-        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
+        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
+        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
 
         while(ite != end){
             ite->second->increase_timeout_count(time);
             ite++;
         }
     }
+    /*
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_writing.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_writing.end();
@@ -160,6 +163,7 @@ void EventManager::count_up_to_all_event(int time)
             ite++;
         }
     }
+    */
 
     {
         MutantStack<WebservEvent *>::iterator ite;
@@ -174,8 +178,8 @@ void EventManager::count_up_to_all_event(int time)
 bool EventManager::check_timeout()
 {
     {
-        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
-        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
+        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
+        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
             if(ite->second->timeout_count() >= TIMEOUT){
                 return (true);
@@ -183,6 +187,7 @@ bool EventManager::check_timeout()
             ite++;
         }
     }
+    /*
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_writing.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_writing.end();
@@ -193,6 +198,7 @@ bool EventManager::check_timeout()
             ite++;
         }
     }
+    */
     {
         MutantStack<WebservEvent *>::iterator ite;
         MutantStack<WebservEvent *>::iterator end;
@@ -210,8 +216,8 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
 {
     DEBUG("retrieve_timeout_events()");
     {
-        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
-        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
+        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
+        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
             if(ite->second->timeout_count() >= TIMEOUT){
                 event_return.push_back(ite->second);
@@ -219,9 +225,10 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
             ite++;
         }
         for(size_t i=0;i<event_return.size();i++){
-            this->events_waiting_reading.erase(event_return[i]->fd());
+            this->events_waiting_epoll.erase(event_return[i]->fd());
         }
     }
+    /*
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_writing.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_writing.end();
@@ -235,6 +242,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
             this->events_waiting_writing.erase(event_return[i]->fd());
         }
     }
+    */
     {
 
         std::vector<WebservEvent *> event_saved;
@@ -253,11 +261,11 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
     }
 }
 
-void EventManager::close_all_events_waiting_reading(WebservCleaner &cleaner)
+void EventManager::close_all_events_waiting_epoll(WebservCleaner &cleaner)
 {
-    DEBUG("EventManager::close_all_events_waiting_reading");
-    std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_reading.begin();
-    std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_reading.end();
+    DEBUG("EventManager::close_all_events_waiting_epoll");
+    std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
+    std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
     std::vector<WebservEvent*> tmp;
     while(ite != end){
         tmp.push_back(ite->second);
@@ -268,6 +276,7 @@ void EventManager::close_all_events_waiting_reading(WebservCleaner &cleaner)
     }
 }
 
+/*
 void EventManager::close_all_events_waiting_writing(WebservCleaner &cleaner)
 {
     DEBUG("EventManager::close_all_events_waiting_writing");
@@ -284,6 +293,7 @@ void EventManager::close_all_events_waiting_writing(WebservCleaner &cleaner)
         cleaner.clean(tmp[i], true);
     }
 }
+*/
 
 void EventManager::close_all_events()
 {

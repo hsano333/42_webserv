@@ -25,7 +25,7 @@ void EventController::restart_communication(WebservEvent *event)
     if (event_manager->find(event->fd()) == false){
         DEBUG("EventController::restart_communication: add ");
         // 同じfdが登録されていないので、再度登録する。
-        event_manager->add_event_waiting_reading(event->fd(), event);
+        event_manager->add_event_waiting_epoll(event->fd(), event);
 
         //もし同じfdが登録されている場合、同じクライアントから、
         //再度HTTP通信が始まったことを意味するので、イベントを削除する。
@@ -58,8 +58,8 @@ void EventController::next_event(WebservEvent *event)
     }else if (next_epoll_event == EPOLL_WRITE){
         MYINFO("EventController::next is epoll write");
         this->io_multi_controller->modify(event->fd(), EPOLLOUT);
-        this->event_manager->erase_event_waiting_reading(event->fd());
-        this->event_manager->add_event_waiting_writing(next_event->fd(), next_event);
+        this->event_manager->erase_event_waiting_epoll(event->fd());
+        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
     }else{
         MYINFO("EventController::next is not epoll");
         if (next_event){
