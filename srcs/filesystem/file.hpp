@@ -21,6 +21,7 @@ class File
         virtual ~File(){};
         virtual int open() = 0;
         virtual int read(char **data, size_t size) = 0;
+        virtual int write(char **data, size_t size) = 0;
         virtual int close() = 0;
         virtual bool can_read() = 0;
         virtual bool is_chunk() = 0;

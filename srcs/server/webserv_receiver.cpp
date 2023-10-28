@@ -21,7 +21,7 @@ WebservReceiver::~WebservReceiver()
     ;
 }
 
-void WebservReceiver::receiver(WebservEvent *event)
+void WebservReceiver::recv(WebservEvent *event)
 {
     DEBUG("WebservReader::read()");
     WebservReadEvent *read_event = static_cast<WebservReadEvent*>(event);
@@ -60,3 +60,10 @@ void WebservReceiver::receiver(WebservEvent *event)
     //exit(0);
     //io_multi_controller->modify(event->fd(), EPOLLOUT);
 }
+
+/*
+size_t WebservReceiver::recv_continue(WebservEvent *event, Request *req, char *buf)
+{
+
+}
+*/

@@ -23,7 +23,7 @@ SocketReader *SocketReader::get_instance()
 }
 
 
-int SocketReader::read(FileDiscriptor fd, char *buf, size_t size, std::ifstream *ifs)
+int SocketReader::read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs)
 {
     (void)ifs;
     //DEBUG("SocketReader::read()");

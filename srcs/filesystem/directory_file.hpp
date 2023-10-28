@@ -23,6 +23,7 @@ class DirectoryFile : public File
         int open();
         int close();
         int read(char **buf, size_t size);
+        int write(char **buf, size_t size);
         bool can_read();
         size_t size();
         bool is_chunk();

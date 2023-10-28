@@ -33,7 +33,7 @@ class EventManager
         void retrieve_timeout_events(std::vector<WebservEvent *> &event_return);
         bool find(FileDiscriptor fd);
     private:
-        MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::queue<WebservEvent*> > events;
+        MutantStack<WebservEvent*> events;
         std::map<FileDiscriptor, WebservEvent*> events_waiting_reading;
         std::map<FileDiscriptor, WebservEvent*> events_waiting_writing;
 

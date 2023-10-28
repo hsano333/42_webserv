@@ -18,7 +18,8 @@ class WebservReceiver
                 );
         ~WebservReceiver();
         //void read(WebservReadEvent *event);
-        void receiver(WebservEvent *event);
+        void recv(WebservEvent *event);
+        //void recv_continue(WebservEvent *event);
         //bool have_executable_events();
     private:
         IOMultiplexing *io_multi_controller;

@@ -9,7 +9,7 @@ class  NormalWriter: public IWriter
     public:
         static NormalWriter *get_instance();
         ~NormalWriter();
-        int write(FileDiscriptor fd, char const *buf, size_t size);
+        int write(FileDiscriptor fd, char const *buf, size_t size, std::fstream *ifs);
     private:
         static NormalWriter *singleton;
         NormalWriter();

@@ -128,7 +128,7 @@ void Webserv::communication()
             {
                 case READ_EVENT:
                     DEBUG("Webserv::Read Event ");
-                    receiver.receiver(event);
+                    receiver.recv(event);
                     parser.parse_req(event);
                     event_controller->next_event(event);
                     break;
@@ -170,7 +170,9 @@ void Webserv::communication()
                 case KEEPA_ALIVE_EVENT:
                     DEBUG("Webserv::Keep Alive Event");
                     event_controller->restart_communication(event);
+                    DEBUG("Webserv::Keep Alive Event No.1");
                     event_controller->next_event(event);
+                    DEBUG("Webserv::Keep Alive Event No.2");
                     // nothing to do
                     break;
                 case NOTHING_EVENT:

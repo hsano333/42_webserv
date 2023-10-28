@@ -52,7 +52,7 @@ void WebservSender::send(WebservEvent *event)
     p_data[size] = '\0';
     while(size > 0)
     {
-        int result = writer->write(fd, p_data, size);
+        int result = writer->write(fd, p_data, size, NULL);
         if (result < 0){
             ERROR("WebservSender::send() result:" + Utility::to_string(result));
             throw ConnectionException("Write Connection Error");

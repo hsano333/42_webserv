@@ -87,7 +87,12 @@ int NormalFile::read(char **buf, size_t size)
 {
     //return (0);
     FileDiscriptor tmp_fd = FileDiscriptor::from_int(0);
-    return (this->ireader->read(fd, *buf, size, &(this->iofs)));
+    return (this->ireader->read(this->fd, *buf, size, &(this->iofs)));
+}
+
+int NormalFile::write(char **buf, size_t size)
+{
+    return (this->iwriter->write(this->fd, *buf, size, &(this->iofs)));
 }
 
 

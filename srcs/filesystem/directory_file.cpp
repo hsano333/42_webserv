@@ -109,6 +109,14 @@ int DirectoryFile::read(char **buf, size_t size)
     return (returned_str.size());
 }
 
+int DirectoryFile::write(char **buf, size_t size)
+{
+    (void)buf;
+    (void)size;
+    return (0);
+}
+
+
 int DirectoryFile::close()
 {
     if (!(this->state == FILE_OPEN || this->state == FILE_READING)){

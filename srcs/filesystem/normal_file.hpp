@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "ireader.hpp"
+#include "iwriter.hpp"
 #include "file_discriptor.hpp"
 #include "file.hpp"
 
@@ -33,7 +34,7 @@ class NormalFile : public File
         int open();
         int close();
         int read(char **buf, size_t size);
-        void write(char *buf);
+        int write(char **buf, size_t size);
         bool can_read();
         bool can_write();
         bool is_chunk();
@@ -46,12 +47,13 @@ class NormalFile : public File
         //NormalFile(IReader* iread, std::string const &filepath, RWOption option);
         NormalFile(IReader* iread, std::string const &filepath, std::ios_base::openmode option);
         IReader *ireader;
+        IWriter *iwriter;
         std::string filepath;
         //RWOption    option;
         std::ios_base::openmode option;
         FileDiscriptor fd;
         FileState   state;
-        std::ifstream iofs;
+        std::fstream iofs;
 
 };
 

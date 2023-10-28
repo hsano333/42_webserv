@@ -66,11 +66,11 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 return (event);
             }else{
                 MYINFO("cached_event exists");
-                //WebservEvent *new_event = this->make_read_event_from_event(cached_event);
                 WebservEvent *new_event = WebservReadEvent::from_fd(fd);
                 delete (cached_event);
                 this->event_manager->add_event_waiting_reading(fd, new_event);
                 return (new_event);
+                //return (cached_event);
 
             }
             return (cached_event);

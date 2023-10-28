@@ -129,5 +129,5 @@ int WebservWriteEvent::write(char const *buf, size_t size)
 {
 
     //char buf[] = "HTTP/1.1 200 OK";
-    return (this->writer->write(fd_, buf, size));
+    return (this->writer->write(fd_, buf, size, NULL));
 }

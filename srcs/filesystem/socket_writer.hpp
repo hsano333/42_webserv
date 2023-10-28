@@ -8,7 +8,7 @@ class SocketWriter : public IWriter
     public:
         static SocketWriter *get_instance();
         ~SocketWriter();
-        int write(FileDiscriptor fd, char const *buf, size_t size);
+        int write(FileDiscriptor fd, char const *buf, size_t size, std::fstream *ifs);
     private:
         static SocketWriter *singleton;
         SocketWriter();

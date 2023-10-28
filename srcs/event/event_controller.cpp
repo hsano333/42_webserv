@@ -23,6 +23,7 @@ void EventController::restart_communication(WebservEvent *event)
 {
     (void)event;
     if (event_manager->find(event->fd()) == false){
+        DEBUG("EventController::restart_communication: add ");
         // 同じfdが登録されていないので、再度登録する。
         event_manager->add_event_waiting_reading(event->fd(), event);
 
@@ -42,6 +43,8 @@ void EventController::change_write_event(WebservEvent *event)
 
 void EventController::next_event(WebservEvent *event)
 {
+    DEBUG("EventController::next_event() No.0");
+    printf("event=%p\n", event);
     if (event->is_end() == false){
         return ;
     }
@@ -67,6 +70,5 @@ void EventController::next_event(WebservEvent *event)
     if (next_epoll_event != EPOLL_CONTINUE){
         delete event;
     }
-
 }
 

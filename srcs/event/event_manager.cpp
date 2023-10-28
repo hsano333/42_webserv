@@ -27,11 +27,11 @@ void EventManager::pop()
 WebservEvent *EventManager::pop_first()
 {
     DEBUG("EventManager::pop_first()");
-    WebservEvent *first = this->events.front();
+    WebservEvent *top = this->events.top();
     if(this->events.size() > 0){
         this->events.pop();
     }
-    return (first);
+    return (top);
 }
 
 size_t EventManager::event_size()
@@ -42,8 +42,10 @@ size_t EventManager::event_size()
 size_t EventManager::keep_alive_event_size()
 {
     size_t cnt = 0;
-    MutantStack<WebservEvent *>::iterator ite;
-    MutantStack<WebservEvent *>::iterator end;
+    MutantStack<WebservEvent*>::iterator ite = this->events.begin();
+    MutantStack<WebservEvent*>::iterator end = this->events.end();
+    //MutantStack<WebservEvent *>::iterator ite;
+    //MutantStack<WebservEvent *>::iterator end;
     while(ite != end){
         WebservEvent *event = *ite;
         if(event->which() == KEEPA_ALIVE_EVENT){
@@ -86,7 +88,10 @@ void EventManager::increase_timeout_count(int count)
 
 void EventManager::add_event_waiting_reading(FileDiscriptor fd, WebservEvent* event)
 {
-    event->increase_timeout_count(1);
+    if (this->events_waiting_reading.find(fd) != this->events_waiting_reading.end())
+    {
+        event->increase_timeout_count(1);
+    }
     DEBUG("add_event_waiting_reading() fd:" + fd.to_string());
     this->events_waiting_reading.insert(std::make_pair(fd, event));
 }
@@ -108,6 +113,14 @@ WebservEvent* EventManager::get_event_waiting_reading(FileDiscriptor fd)
 
 void EventManager::add_event_waiting_writing(FileDiscriptor fd, WebservEvent* event)
 {
+    if (this->events_waiting_writing.find(fd) != this->events_waiting_writing.end())
+    {
+        if (event != this->events_waiting_writing[fd]){
+            delete this->events_waiting_writing[fd];
+        }
+    }else{
+        event->increase_timeout_count(1);
+    }
     this->events_waiting_writing.insert(std::make_pair(fd, event));
 }
 

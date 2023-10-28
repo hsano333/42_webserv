@@ -60,6 +60,13 @@ int ErrorFile::read(char **buf, size_t size)
     return this->text.size();
 }
 
+int ErrorFile::write(char **buf, size_t size)
+{
+    (void)buf;
+    (void)size;
+    return (0);
+}
+
 int ErrorFile::close()
 {
     this->state = FILE_CLOSE;

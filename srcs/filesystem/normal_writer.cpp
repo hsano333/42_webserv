@@ -21,7 +21,8 @@ NormalWriter *NormalWriter::get_instance()
     return (singleton);
 }
 
-int NormalWriter::write(FileDiscriptor fd, char const *buf, size_t size)
+int NormalWriter::write(FileDiscriptor fd, char const *buf, size_t size, std::fstream *ifs)
 {
+    (void)ifs;
     return ::write(fd.to_int(), buf, size);
 }
