@@ -22,6 +22,7 @@ typedef enum E_EpollEvent
     EPOLL_READ,
     EPOLL_WRITE,
     EPOLL_CONTINUE,
+    EPOLL_CLOSE,
     EPOLL_NONE,
 } E_EpollEvent;
 

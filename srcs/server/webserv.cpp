@@ -82,36 +82,6 @@ void Webserv::communication()
     bool exit_flag = false;
     DEBUG("Webserv::communication() start");
 
-    /*
-    struct sockaddr_in sin;
-    socklen_t len = sizeof(sin);
-
-    int sockfd = 3;
-
-    std::vector<int> vec;
-    vec.push_back(3);
-    vec.push_back(5);
-    vec.push_back(6);
-    vec.push_back(7);
-    std::vector<int>::iterator ite = vec.begin();
-    std::vector<int>::iterator end = vec.end();
-
-    while(ite != end){
-        sockfd = *ite;
-        int rval = getsockname(sockfd, (struct sockaddr*)&sin, &len);
-        cout << "rval:" << rval << endl;
-        cout << sin.sin_family << endl;
-        cout << "port:" << ntohs(sin.sin_port) << endl;
-        cout << "addr:" << ntohs(sin.sin_addr.s_addr) << endl;
-        //cout << sin.sa_data << endl;
-        printf("tmpsockaddr.sa_family=%d\n", sin.sin_family);
-        //printf("tmpsockaddr.sin_port=%s\n", ntohs(sin.sin_port));
-        printf("tmpsockaddr.sa_date=%d\n", sin.sin_addr.s_addr);
-        printf("tmpsockaddr.sin_zero=%s\n", sin.sin_zero);
-        printf("len=%d\n", len);
-        ite++;
-    }
-    */
 
     int cnt = 0;
     while(1)
@@ -146,7 +116,7 @@ void Webserv::communication()
                 case CLEAN_EVENT:
                     DEBUG("Webserv::Clean Event ");
                     cleaner.clean(event, false);
-                    //event_controller->next_event(event);
+                    event_controller->next_event(event);
 
                     if (cnt >= 10){
                         //delete event;
@@ -167,6 +137,7 @@ void Webserv::communication()
                     event_controller->next_event(event);
                     //delete(event);
                     break;
+                    /*
                 case KEEPA_ALIVE_EVENT:
                     DEBUG("Webserv::Keep Alive Event");
                     event_controller->restart_communication(event);
@@ -175,6 +146,7 @@ void Webserv::communication()
                     DEBUG("Webserv::Keep Alive Event No.2");
                     // nothing to do
                     break;
+                    */
                 case NOTHING_EVENT:
                     DEBUG("Webserv::Nothing Event");
                     event_controller->next_event(event);
@@ -217,7 +189,6 @@ void Webserv::communication()
             delete event;
         }
     }
-
 }
 
 void Webserv::reset()

@@ -19,6 +19,7 @@ EventController::~EventController()
 ;
 }
 
+/*
 void EventController::restart_communication(WebservEvent *event)
 {
     (void)event;
@@ -32,6 +33,7 @@ void EventController::restart_communication(WebservEvent *event)
         //つまり、再登録しない。
     }
 }
+*/
 
 void EventController::change_write_event(WebservEvent *event)
 {
@@ -50,25 +52,30 @@ void EventController::next_event(WebservEvent *event)
     }
     DEBUG("EventController::next_event()");
     WebservEvent *next_event = event->make_next_event(event, this->event_factory);
+    printf("next event=%p\n", next_event);
     E_EpollEvent next_epoll_event = event->get_next_epoll_event();
 
     if (next_epoll_event == EPOLL_READ){
+        this->io_multi_controller->modify(event->fd(), EPOLLIN);
+        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
         MYINFO("EventController::next is epoll read");
 
     }else if (next_epoll_event == EPOLL_WRITE){
         MYINFO("EventController::next is epoll write");
         this->io_multi_controller->modify(event->fd(), EPOLLOUT);
-        this->event_manager->erase_event_waiting_epoll(event->fd());
+        //this->event_manager->erase_event_waiting_epoll(event->fd());
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
-    }else{
+    //}else if (next_epoll_event == EPOLL_CLOSE){
+        //this->fd_manager->close_fd(app_event->fd());
+    }else if(next_event){
         MYINFO("EventController::next is not epoll");
-        if (next_event){
-            event_manager->push(next_event);
-        }
+        event_manager->push(next_event);
     }
 
-    if (next_epoll_event != EPOLL_CONTINUE){
+    //if (next_epoll_event != EPOLL_CONTINUE){
+    if(event){
         delete event;
     }
+    //}
 }
 

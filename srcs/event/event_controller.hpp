@@ -12,7 +12,7 @@ class EventController
                 WebservEventFactory *event_factory
                 );
         ~EventController();
-        void restart_communication(WebservEvent *event);
+        //void restart_communication(WebservEvent *event);
         void change_write_event(WebservEvent *event);
         void next_event(WebservEvent *event);
     private:

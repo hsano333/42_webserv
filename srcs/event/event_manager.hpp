@@ -21,7 +21,7 @@ class EventManager
         //void increase_timeout_count(int count);
         void add_event_waiting_epoll(FileDiscriptor fd, WebservEvent* event);
         void erase_event_waiting_epoll(FileDiscriptor fd);
-        WebservEvent* get_event_waiting_epoll(FileDiscriptor fd);
+        WebservEvent* pop_event_waiting_epoll(FileDiscriptor fd);
         //void add_event_waiting_writing(FileDiscriptor fd, WebservEvent* event);
         //void erase_event_waiting_writing(FileDiscriptor fd);
         //WebservEvent* get_event_waiting_writing(FileDiscriptor fd);

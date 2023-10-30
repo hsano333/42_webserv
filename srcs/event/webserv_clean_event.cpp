@@ -30,15 +30,27 @@ EWebservEvent WebservCleanEvent::which()
 
 WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
+    if (this->force_close){
+        MYINFO("WebservCleanEvent::make_next_event() NULL");
+        //delete this;
+        return (NULL);
+    }else{
+        MYINFO("WebservCleanEvent::make_next_event() Read Event");
+        printf("WebservCleanEvent::make_next_event event=%p\n", event);
+        return (event_factory->make_read_event_from_event(event));
+    }
     (void)event_factory;
     (void)event;
-    WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
     return (NULL);
 }
 
 E_EpollEvent WebservCleanEvent::get_next_epoll_event()
 {
-    return (EPOLL_NONE);
+    if (this->force_close){
+        return (EPOLL_CLOSE);
+    }else{
+        return (EPOLL_READ);
+    }
 }
 
 
@@ -62,6 +74,12 @@ bool WebservCleanEvent::is_end()
 {
     return (this->is_end_);
 }
+
+void WebservCleanEvent::set_force_close(bool flag)
+{
+    this->force_close = flag;
+}
+
 void WebservCleanEvent::set_end(bool flag)
 {
     this->is_end_ = flag;
@@ -91,3 +109,13 @@ WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bo
     return (new_event);
 }
 
+
+void WebservCleanEvent::clean_res_and_req()
+{
+    delete this->res_;
+    delete this->req_;
+
+    this->res_ = NULL;
+    this->req_ = NULL;
+
+}

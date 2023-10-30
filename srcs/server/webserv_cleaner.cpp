@@ -36,29 +36,27 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
             is_close = true;
         }
     }
+    app_event->set_force_close(is_close);
 
     //this->io_multi_controller->erase(app_event->fd());
     //
-    this->event_manager->erase_event_waiting_epoll(app_event->fd());
+    //this->event_manager->erase_event_waiting_epoll(app_event->fd());
     //this->event_manager->erase_event_waiting_epoll(app_event->fd());
     if (is_close)
     {
         MYINFO("close fd:" + event->fd().to_string());
         //ヘッダーでcloseするように指定されているので、closeする
-        this->io_multi_controller->erase(app_event->fd());
+        //this->io_multi_controller->erase(app_event->fd());
         this->fd_manager->close_fd(app_event->fd());
     }else{
         MYINFO("not close fd:" + event->fd().to_string());
         // HTTP1.1はデフォルトでコネクションを切断しない
-        this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
-        WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
-        this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
+        //this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
+        //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
+        //this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
     }
 
-    delete app_event->req();
-    delete app_event->res();
-    delete app_event;
-    //event->set_end(true);
+    event->set_end(true);
 }
 
 void WebservCleaner::clean_timeout_events(WebservEvent *event)

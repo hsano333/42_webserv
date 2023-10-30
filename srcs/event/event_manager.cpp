@@ -88,10 +88,12 @@ void EventManager::increase_timeout_count(int count)
 
 void EventManager::add_event_waiting_epoll(FileDiscriptor fd, WebservEvent* event)
 {
+    /*
     if (this->events_waiting_epoll.find(fd) != this->events_waiting_epoll.end())
     {
         event->increase_timeout_count(1);
     }
+    */
     DEBUG("add_event_waiting_epoll() fd:" + fd.to_string());
     this->events_waiting_epoll.insert(std::make_pair(fd, event));
 }
@@ -102,12 +104,15 @@ void EventManager::erase_event_waiting_epoll(FileDiscriptor fd)
     this->events_waiting_epoll.erase(fd);
 }
 
-WebservEvent* EventManager::get_event_waiting_epoll(FileDiscriptor fd)
+WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor fd)
 {
     if(this->events_waiting_epoll.find(fd) == this->events_waiting_epoll.end()){
         return (NULL);
     }
-    return (this->events_waiting_epoll[fd]);
+    WebservEvent *event = (this->events_waiting_epoll[fd]);
+    this->events_waiting_epoll.erase(fd);
+    return (event);
+
 }
 
 

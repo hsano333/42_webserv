@@ -57,31 +57,33 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             //io_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
-            WebservEvent *cached_event = this->event_manager->get_event_waiting_epoll(fd);
+            WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL){
                 MYINFO("cached_event is NULL");
                 WebservEvent *event = WebservReadEvent::from_fd(fd);
                 //printf("event=%p\n", event);
-                this->event_manager->add_event_waiting_epoll(fd, event);
+                //this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
             }else{
-                cached_event->increase_timeout_count(-cached_event->timeout_count());
-                MYINFO("cached_event exists");
-                //WebservEvent *new_event = WebservReadEvent::from_fd(fd);
-                MYINFO("delete cached_event");
-                //delete (cached_event);
-                MYINFO("deleted cached_event");
-                //this->event_manager->add_event_waiting_epoll(fd, new_event);
-                return (cached_event);
+
+            // reset timeout
+            cached_event->increase_timeout_count(-cached_event->timeout_count());
+            MYINFO("cached_event exists");
+            //WebservEvent *new_event = WebservReadEvent::from_fd(fd);
+            //MYINFO("delete cached_event");
+            //delete (cached_event);
+            //MYINFO("deleted cached_event");
+            //this->event_manager->add_event_waiting_epoll(fd, new_event);
+            return (cached_event);
                 //return (cached_event);
 
             }
-            return (cached_event);
+            //return (cached_event);
         }
     }else if(event_epoll.events & EPOLLOUT){
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         //FileDiscriptor io_fd = this->socket_controller->accept_request(fd);
-        WebservEvent *cached_event = this->event_manager->get_event_waiting_epoll(fd);
+        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         //WebservWriteEvent *event = WebservWriteEvent::from_event(saved_event, this->socket_writer);
         //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
         return (cached_event);

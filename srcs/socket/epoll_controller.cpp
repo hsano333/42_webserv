@@ -184,12 +184,8 @@ size_t EpollController::get_fd_num()
 void EpollController::wait()
 {
     MYINFO("EpollController::wait() epoll.fd():" + Utility::to_string(epoll.fd()));
-    int time_msec = -1;
-    //if (get_fd_num() > 0) {
-        time_msec = 5;
-    //}
+    int time_msec = 5;
 
-    //std::vector<t_epoll_event> events_vec;
     int nfds = epoll_wait(epoll.fd().to_int(), epoll.allocated_event_pointer(), epoll.allocated_event_size(), time_msec * 1000);
     if(nfds < 0){
         ERROR("EPOLL WAIT ERROR");

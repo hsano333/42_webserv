@@ -28,7 +28,9 @@ class WebservCleanEvent : public WebservEvent
 
         bool is_end();
         void set_end(bool flag);
-        bool    is_force_close();
+        bool is_force_close();
+        void set_force_close(bool flag);
+        void clean_res_and_req();
     private:
         FileDiscriptor  fd_;
         Request         *req_;

@@ -69,6 +69,6 @@ void WebservParser::parse_res(WebservEvent *event)
     //printf("res=%p\n", res);
     WebservEvent *next_event = event_factory->make_write_event(event, res);
     this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
-    this->event_manager->erase_event_waiting_epoll(event->fd());
+    //this->event_manager->erase_event_waiting_epoll(event->fd());
     delete (event);
 }

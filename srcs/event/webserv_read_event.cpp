@@ -47,20 +47,26 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
 
 WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event)
 {
+    DEBUG("WebservReadEvent::from_event()");
     WebservReadEvent *new_event = new WebservReadEvent(event->fd());
+    DEBUG("WebservReadEvent::from_event() No.1");
     //if (event->req()){
         //delete event->req();
     //}
     if (event->res()){
+        DEBUG("WebservReadEvent::from_event() No.11");
         delete event->res();
     }
+    DEBUG("WebservReadEvent::from_event() No.2");
     Request *req;
     if(event->req()){
         req = event->req();
     }else{
         req = new Request();
     }
+    DEBUG("WebservReadEvent::from_event() No.3");
     new_event->req_ = req;
+    DEBUG("WebservReadEvent::from_event() No.4");
     return (new_event);
 
 }
