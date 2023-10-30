@@ -44,11 +44,11 @@ Response& Response::operator=(Response const &res)
     return (*this);
 }
 
-Response* Response::from_success_status_code(StatusCode &code)
+Response* Response::from_success_status_code(StatusCode &code, File *file)
 {
     Response *res = new Response();
     res->status_code = code;
-    res->file = NULL;
+    res->file = file;
     res->exist_body_ = false;
     return (res);
 }
@@ -91,6 +91,12 @@ void Response::set_exist_body(bool flag)
 void Response::add_header(std::string const &key, std::string const &value)
 {
     this->headers.insert(std::make_pair(key, value));
+}
+
+
+File *Response::get_file()
+{
+    return (file);
 }
 
 int Response::open_file()

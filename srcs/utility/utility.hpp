@@ -63,10 +63,13 @@ class Utility
     static bool is_executable_file(std::string const &path);
     static bool is_redable_file(std::string const &path);
     static bool is_writable_file(std::string const &path);
+    static bool is_deletable_file(std::string const &path);
 
     static bool is_directory(std::string const &path);
     static bool is_redable_directory(std::string const &path);
     static bool is_executable_directory(std::string const &path);
+    static bool is_writable_directory(std::string const &path);
+    static bool is_deletable_directory(std::string const &path);
     static bool is_not_redable_directory(std::string const &path);
 
     static std::string time_to_string();

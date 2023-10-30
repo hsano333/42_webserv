@@ -53,14 +53,14 @@ void WebservWaiter::copy_event_to_manager()
 WebservEvent* WebservWaiter::serve_event()
 {
     //DEBUG("WebservWaiter::serve_event() event_size:" + Utility::to_string(event_manager->event_size()));
-    /*
+    
+
     if(event_manager->event_size() > 0){
         WebservEvent *tmp_event = (event_manager->pop_first());
         if (tmp_event->which() != KEEPA_ALIVE_EVENT){
             return (tmp_event);
         }
     }
-    */
     int executable_event_size = io_multi_controller->executable_event_number();
     MYINFO("WebservWaiter::serve_event() executable_event_size:" + Utility::to_string(executable_event_size));
     if(executable_event_size > 0){
@@ -70,15 +70,18 @@ WebservEvent* WebservWaiter::serve_event()
             event_manager->push(event);
         }
     }
+    MYINFO("WebservWaiter::serve_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
     if(event_manager->event_size() > 0){
         WebservEvent *returned_event = event_manager->pop_first();
-        printf("returned_event=%p\n", returned_event);
+        //printf("returned_event=%p\n", returned_event);
         return (returned_event);
     }
 
     if(event_manager->check_timeout()){
+        MYINFO("WebservWaiter::serve_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
         return (new WebservTimeoutEvent());
     }
+    MYINFO("WebservWaiter::serve_event() return new WebservNothingEvent():");
     return (new WebservNothingEvent);
     //return (NULL);
 }

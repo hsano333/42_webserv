@@ -65,7 +65,6 @@ void WebservApplicationEvent::set_end(bool flag)
     this->is_end_ = flag;
 }
 
-
 void WebservApplicationEvent::increase_timeout_count(int count)
 {
     this->timeout_count_ += count;

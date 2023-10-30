@@ -7,7 +7,7 @@ class Application
     public:
         //Application();
         virtual ~Application(){};
-        virtual void execute() = 0;
+        virtual bool execute() = 0;
         virtual void check_permission() = 0;
         virtual bool is_cgi() const = 0;
         virtual Response* make_response() = 0;

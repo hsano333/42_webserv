@@ -65,11 +65,14 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
             }else{
+                cached_event->increase_timeout_count(-cached_event->timeout_count());
                 MYINFO("cached_event exists");
-                WebservEvent *new_event = WebservReadEvent::from_fd(fd);
-                delete (cached_event);
-                this->event_manager->add_event_waiting_epoll(fd, new_event);
-                return (new_event);
+                //WebservEvent *new_event = WebservReadEvent::from_fd(fd);
+                MYINFO("delete cached_event");
+                //delete (cached_event);
+                MYINFO("deleted cached_event");
+                //this->event_manager->add_event_waiting_epoll(fd, new_event);
+                return (cached_event);
                 //return (cached_event);
 
             }

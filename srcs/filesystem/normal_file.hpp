@@ -46,6 +46,7 @@ class NormalFile : public File
         NormalFile();
         //NormalFile(IReader* iread, std::string const &filepath, RWOption option);
         NormalFile(IReader* iread, std::string const &filepath, std::ios_base::openmode option);
+        NormalFile(IWriter* iwriter, std::string const &filepath, std::ios_base::openmode option);
         IReader *ireader;
         IWriter *iwriter;
         std::string filepath;

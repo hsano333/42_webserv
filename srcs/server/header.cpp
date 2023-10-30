@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/23 23:45:53 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/30 14:33:52 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ std::string const &Header::find(const string &name) const
      return (ite->second);
 }
 
-size_t Header::get_content_length()
+size_t Header::get_content_length() const
 {
     std::string name = "content-length";
     string const &value = find(name);

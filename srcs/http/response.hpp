@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 08:44:30 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/28 00:24:13 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/29 16:16:29 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Response
         ~Response();
         Response(Response const &res);
         Response& operator=(Response const &res);
-        static Response* from_success_status_code(StatusCode &code);
+        static Response* from_success_status_code(StatusCode &code, File *file);
         static Response* from_error_status_code(StatusCode &code);
         static Response* from_error_file(File *file, StatusCode &code);
         static Response* from_error_page(ErrorPage &page);
@@ -45,6 +45,7 @@ class Response
         void add_header(std::string const &key, std::string const &value);
         //static Response* from_file(std::string const &filepath);
         //static Response* from_directory(std::string const &filepath);
+        File *get_file();
         int open_file();
         int close_file();
         ssize_t get_data(char** data);

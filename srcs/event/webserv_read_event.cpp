@@ -37,7 +37,7 @@ WebservReadEvent::~WebservReadEvent()
 
 WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
 {
-    DEBUG("WebservReadEvent::from_fd()");
+    DEBUG("WebservReadEvent::from_fd() fd:" + Utility::to_string(fd.to_int()));
     WebservReadEvent *event = new WebservReadEvent(fd);
     Request *req = new Request();
     event->req_ = req;

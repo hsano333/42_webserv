@@ -9,7 +9,7 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR		:= filesystem/
-FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp error_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp
+FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp error_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp
 FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
@@ -23,7 +23,7 @@ EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 
 APPLICATIONDIR		:= application/
-APPLICATIONSRC 		:= application_factory.cpp get_application.cpp delete_application.cpp  cgi.cpp
+APPLICATIONSRC 		:= application_factory.cpp get_application.cpp post_application.cpp delete_application.cpp  cgi.cpp
 APPLICATION 		:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
 
 

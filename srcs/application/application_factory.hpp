@@ -6,6 +6,7 @@
 #include "cgi_application.hpp"
 #include "server_application.hpp"
 #include "get_application.hpp"
+#include "webserv_application_event.hpp"
 #include "method.hpp"
 #include <string>
 
@@ -14,7 +15,7 @@ class ApplicationFactory
     public:
         ApplicationFactory(Config *cfg, CGI *cgi);
         ~ApplicationFactory();
-        Application* make_application(Request *req);
+        Application* make_application(WebservApplicationEvent *event, IReader *ireader);
         //bool is_cgi();
         std::string get_target_path();
         std::string get_server_name();

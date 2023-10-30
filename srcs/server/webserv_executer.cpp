@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/27 12:49:12 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/30 03:21:44 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,16 @@ WebservExecuter::WebservExecuter(
             WebservEventFactory *event_factory,
             EventManager *event_manager,
             FDManager *fd_manager,
-            Config *cfg
+            Config *cfg,
+            SocketReader *reader
         ):
         factory(factory),
         io_multi_controller(io_multi_controller),
         event_factory(event_factory),
         event_manager(event_manager),
         fd_manager(fd_manager),
-        cfg(cfg)
+        cfg(cfg),
+        reader(reader)
 {
     ;
 }
@@ -46,8 +48,8 @@ std::string identify_path(URI &uri)
 
 Application *WebservExecuter::get_application(WebservApplicationEvent *event)
 {
-    Request *req = event->req();
-    return (factory->make_application(req));
+    //Request *req = event->req();
+    return (factory->make_application(event, reader));
 }
 
 void WebservExecuter::execute(WebservEvent *event)
@@ -63,9 +65,7 @@ void WebservExecuter::execute(WebservEvent *event)
     }catch (HttpException &e){
         delete app;
         throw HttpException(e.what());
-
     }
-    //printf("res=%p\n", res);
     app_event->set_response(res);
     app_event->set_end(true);
     delete app;

@@ -33,9 +33,15 @@ void WebservParser::parse_req(WebservEvent *event)
         return ;
     }
 
-    body_p += 2;
+    body_p += 4;
+
+    MYINFO("WebservParser::parse_req:: req->buf_size()=" + Utility::to_string(req->buf_size()));
+    MYINFO("WebservParser::parse_req:: (size_t)(body_p - req->buf())=" + Utility::to_string((size_t)(body_p - req->buf())));
+    MYINFO("WebservParser::parse_req:: body_p=" + Utility::to_string(body_p));
+    MYINFO("WebservParser::parse_req:: req->buf()=" + Utility::to_string(req->buf()));
+
     req->set_buf_body(body_p, req->buf_size() - (size_t)(body_p - req->buf()));
-    body_p -= 2;
+    body_p -= 4;
     *body_p = '\0';
     Split sp(req->buf(), "\r\n");
     if(sp.size() == 0){

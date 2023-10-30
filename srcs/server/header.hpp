@@ -20,7 +20,7 @@ class Header{
         Header& operator=(Header const &header);
         void print_info() const;
         std::string const &find(const std::string &name) const;
-        size_t get_content_length();
+        size_t get_content_length() const;
         bool is_chunked();
         std::string const &get_host() const;
         static Header from_splited_data(Split &sp, size_t offset);

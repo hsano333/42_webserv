@@ -422,6 +422,15 @@ bool Utility::is_writable_file(std::string const &path)
     return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IWUSR);
 }
 
+bool Utility::is_deletable_file(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IWUSR) && (fileInfo.st_mode & S_IXUSR);
+}
+
 bool Utility::is_directory(std::string const &path)
 {
     struct stat fileInfo;
@@ -456,6 +465,15 @@ bool Utility::is_not_redable_directory(std::string const &path)
         return false;
     }
     return (fileInfo.st_mode & S_IFDIR) && (fileInfo.st_mode & S_IRUSR);
+}
+
+bool Utility::is_deletable_directory(std::string const &path)
+{
+    struct stat fileInfo;
+    if (stat(path.c_str(), &fileInfo) != 0){
+        return false;
+    }
+    return (fileInfo.st_mode & S_IFDIR) && (fileInfo.st_mode & S_IWUSR) && (fileInfo.st_mode & S_IXUSR);
 }
 
 std::string Utility::time_to_string()

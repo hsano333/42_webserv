@@ -1,6 +1,7 @@
 #ifndef IREADER_HPP
 #define IREADER_HPP
 #include "file_discriptor.hpp"
+#include "ireader.hpp"
 
 class IReader
 {

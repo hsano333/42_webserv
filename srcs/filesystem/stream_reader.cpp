@@ -23,10 +23,12 @@ StreamReader *StreamReader::get_instance()
 
 int StreamReader::read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs)
 {
+    DEBUG("StreamReader::read: size:" + Utility::to_string(size));
     (void)fd;
     ifs->read(buf, size);
-    if(*ifs){
-        return (size);
+    if (ifs->fail() && !ifs->eof()){
+        ifs->close();
+        return (-1);
     }
     return (ifs->gcount());
 }

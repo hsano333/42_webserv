@@ -4,6 +4,7 @@
 #include "server_application.hpp"
 #include "cgi_application.hpp"
 #include "get_application.hpp"
+#include "post_application.hpp"
 #include "delete_application.hpp"
 #include "method.hpp"
 #include "http_exception.hpp"
@@ -62,14 +63,17 @@ const ConfigServer *ApplicationFactory::get_server(Request *req)
 */
 
 
-Application* ApplicationFactory::make_application(Request *req)
+Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
 {
     Application* app;
+    Request *req = event->req();
     RequestLine const &req_line = req->req_line();
     const ConfigServer *server = cfg->get_server(req);
     const ConfigLocation *location= this->cfg->get_location(server, req);
     Method const &method = req_line.method();
     req->set_requested_filepath(location);
+    //bool is_continued = (event->req() != NULL);
+    //File *file = event->res()->get_file();
 
     switch(method.to_enum())
     {
@@ -78,12 +82,10 @@ Application* ApplicationFactory::make_application(Request *req)
             app = GetApplication::from_location(cfg, req, cgi);
             break;
         case POST:
-            //todo
             DEBUG("ApplicationFactory::make_application() make Post");
-            app = GetApplication::from_location(cfg, req, cgi);
+            app = PostApplication::from_location(cfg, cgi, event, ireader);
             break;
         case DELETE:
-            //todo
             DEBUG("ApplicationFactory::make_application() make Delete");
             app = DeleteApplication::from_location(cfg, req);
             break;

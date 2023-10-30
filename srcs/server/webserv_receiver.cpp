@@ -30,29 +30,37 @@ void WebservReceiver::recv(WebservEvent *event)
     int space = tmp_req->raw_buf_space();
     char* buf = tmp_req->get_raw_buf_pointer();
     FileDiscriptor fd = read_event->fd();
-    int sum = 0;
+    size_t sum = tmp_req->buf_size();
+    MYINFO("Receiver  fd:" + Utility::to_string(fd.to_int()));
+    MYINFO("Receiver  sum:" + Utility::to_string(sum));
+    MYINFO("Receiver space:" + Utility::to_string(space));
+    //space = 100;
     while(1){
         int tmp = reader->read(fd, &(buf[sum]), space, NULL);
+        MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
         if(tmp < 0){
-            ERROR("Receiver Error:" + Utility::to_string(tmp));
+            MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
             event->set_end(false);
+            tmp_req->set_read_completed(true);
             break;
         }else if(tmp == 0){
+            ERROR("Read Connection Error");
             throw ConnectionException("Read Error");
-            break;
         }
         sum += tmp;
         space -= tmp;
         if(space <= 0){
+            tmp_req->set_read_completed(false);
             break;
         }
     }
+    MYINFO("Receive data size::" + Utility::to_string(sum));
     cout << "read sum:" << sum << endl;
     cout << "read space:" << space << endl;
     buf[sum] = '\0';
     cout << "read buf:[" << buf << "]" << endl;
-    tmp_req->renew_raw_buf_space(space);
-    tmp_req->increment_raw_buf_size(sum);
+    tmp_req->set_buf_pos(sum);
+    //tmp_req->decrement_raw_buf_size(sum);
     if (sum == 0){
         ERROR("Request data is zero");
         throw HttpException("400");
@@ -61,9 +69,3 @@ void WebservReceiver::recv(WebservEvent *event)
     //io_multi_controller->modify(event->fd(), EPOLLOUT);
 }
 
-/*
-size_t WebservReceiver::recv_continue(WebservEvent *event, Request *req, char *buf)
-{
-
-}
-*/

@@ -10,7 +10,7 @@ DirectoryFile::DirectoryFile()
 
 DirectoryFile::~DirectoryFile()
 {
-    if (this->state == FILE_OPEN){
+    if (this->state == FILE_OPEN || this->state == FILE_READING){
         ::closedir(dir);
     }
 }

@@ -12,7 +12,7 @@ class DeleteApplication : public Application
         //bool is_cgi();
         DeleteApplication();
         ~DeleteApplication();
-        void execute();
+        bool execute();
         //bool is_cgi() const;
         void check_permission();
         //static DeleteApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);

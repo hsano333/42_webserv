@@ -37,21 +37,32 @@ class Request
         ~Request();
         //void    insert_buf(char *buf, int size);
         char*   buf();
-        void    increment_raw_buf_size(size_t size);
-        int     buf_size();
+        //void    decrement_raw_buf_size(size_t size);
+        void    clear_raw_buf();
+        size_t  buf_size();
         char*   get_raw_buf_pointer();
         int     raw_buf_space();
-        void    renew_raw_buf_space(int space);
+        //void    renew_raw_buf_space(int space);
+        char*   get_buf_body(int *size);
         void    set_buf_body(char *body_p, int size);
+        void    clear_buf_body();
         void    set_request_line(std::string const &str);
         void    set_header(Split &sp, size_t offset);
+        void    set_read_completed(bool flag);
         void    set_requested_filepath(const ConfigLocation *location);
+        bool    read_completed();
+
+        void    check_parent_permittion(std::string &path);
+
         bool    is_file() const;
         bool    is_directory() const;
         bool    is_not_executable_parent_dir() const;
+        bool    is_deletable_parent_dir() const;
 
         void    set_is_file(bool flag);
         void    set_is_directory(bool flag);
+        void    set_buf_pos(size_t pos);
+
         std::string const &requested_filepath() const;
         std::string const &requested_path() const;
         std::string const &tmp_path_info() const;
@@ -65,13 +76,14 @@ class Request
     private:
         char    raw_buf[MAX_BUF];
         //char    raw_buf[200];
-        int     raw_buf_point;
-        int     raw_buf_rest_size_;
+        //int     raw_buf_point;
+        size_t  raw_buf_pos_;
         char    *buf_body;
         int     buf_body_size;
         bool    is_file_;
         bool    is_directory_;
         bool    is_not_executable_parent_dir_;
+        bool    is_deletable_parent_dir_;
         std::string requested_filepath_;
         std::string requested_path_;
         std::string parent_dir_path_;
@@ -79,6 +91,7 @@ class Request
         RequestLine    req_line_;
         Header         header_;
         std::string    tmp_path_info_;
+        bool           read_completed_;
 
 };
 

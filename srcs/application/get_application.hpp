@@ -12,7 +12,7 @@ class GetApplication : public Application
         //bool is_cgi();
         GetApplication();
         ~GetApplication();
-        void execute();
+        bool execute();
         //bool is_cgi() const;
         void check_permission();
         //static GetApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
@@ -25,8 +25,8 @@ class GetApplication : public Application
     private:
 
         File *get_requested_file();
-        void execute_cgi();
-        void execute_not_cgi();
+        bool execute_cgi();
+        bool execute_not_cgi();
         const Config *cfg;
         const ConfigServer *server;
         const ConfigLocation *location;

@@ -6,6 +6,7 @@
 #include "epoll_controller.hpp"
 #include "application_factory.hpp"
 #include "webserv_event_factory.hpp"
+#include "socket_reader.hpp"
 
 class WebservExecuter
 {
@@ -16,7 +17,8 @@ class WebservExecuter
                       WebservEventFactory *event_factory,
                       EventManager *event_manager,
                       FDManager *fd_manager,
-                      Config *cfg
+                      Config *cfg,
+                      SocketReader *reader
                 );
         ~WebservExecuter();
         void execute(WebservEvent *event);
@@ -28,6 +30,7 @@ class WebservExecuter
         FDManager *fd_manager;
         Config *cfg;
         Application *get_application(WebservApplicationEvent *event);
+        SocketReader *reader;
 };
 
 #endif

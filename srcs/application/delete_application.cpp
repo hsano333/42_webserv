@@ -19,20 +19,19 @@ File *DeleteApplication::get_requested_file()
 {
     File *file = NULL;
     try{
-        this->req->print_info();
-        if (this->req->is_file()){
-            File *file = NormalFile::from_filepath(this->req->requested_filepath(), std::ios::in | std::ios::binary);
-            return (file);
+        if (this->req->is_not_executable_parent_dir()){
+            ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
+            throw HttpException("403");
         }else if(this->req->is_directory()){
             std::string const &host = this->req->header().get_host();
             std::string const &relative_path= this->req->req_line().uri().path();
             File *file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
             return (file);
-        }else if (this->req->is_not_executable_parent_dir()){
-            ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
-            throw HttpException("403");
+        }else if (Utility::is_regular_file(this->req->requested_path())){
+            File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::in | std::ios::binary);
+            return (file);
         }
-        ERROR("File does not exist:" + this->req->requested_filepath());
+        ERROR("File does not exist:" + this->req->requested_path());
         throw HttpException("404");
     }catch(std::invalid_argument &e){
         delete file;
@@ -73,7 +72,7 @@ void DeleteApplication::execute_cgi()
 }
 */
 
-void DeleteApplication::execute()
+bool DeleteApplication::execute()
 {
     DEBUG("DeleteApplication::execute()");
     this->check_permission();
@@ -84,6 +83,7 @@ void DeleteApplication::execute()
         ERROR("failure to delete file:" + file->path());
         throw HttpException("403");
     }
+    return (true);
 }
 
 void DeleteApplication::check_permission()
@@ -128,7 +128,7 @@ DeleteApplication* DeleteApplication::from_location(const Config *cfg, const Req
 Response* DeleteApplication::make_response()
 {
     StatusCode code = StatusCode::from_int(200);
-    Response *res = Response::from_success_status_code(code);
+    Response *res = Response::from_success_status_code(code, NULL);
 
     std::map<std::string, std::string>::iterator ite = this->tmp_headers.begin();
     std::map<std::string, std::string>::iterator end = this->tmp_headers.end();

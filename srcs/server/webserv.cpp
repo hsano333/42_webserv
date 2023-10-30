@@ -155,7 +155,7 @@ void Webserv::communication()
                         cout << "end break" << endl;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
-                        return ;
+                        //return ;
                         break;
                     }
                     cnt++;

@@ -34,10 +34,12 @@ EWebservEvent WebservKeepAliveEvent::which()
 
 WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    (void)event_factory;
+    //(void)event_factory;
     (void)event;
-    WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
-    return (event);
+    //WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
+    //return (WebservReadEvent::from_fd());
+    return (event_factory->make_read_event_from_event(event));
+    //return (event);
 }
 
 E_EpollEvent WebservKeepAliveEvent::get_next_epoll_event()
