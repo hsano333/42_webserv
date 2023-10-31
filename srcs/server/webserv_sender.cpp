@@ -43,8 +43,8 @@ void WebservSender::send(WebservEvent *event)
     try{
         res->open_file();
     }catch(std::runtime_error &e){
-        ERROR("WebservSender::send():" + string(e.what()));
-        throw HttpException("403");
+        //ERROR("WebservSender::send():" + string(e.what()));
+        //throw HttpException("403");
     }
 
     FileDiscriptor fd = write_event->fd();
