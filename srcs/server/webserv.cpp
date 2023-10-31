@@ -118,13 +118,14 @@ void Webserv::communication()
                     cleaner.clean(event, false);
                     event_controller->next_event(event);
 
-                    if (cnt >= 10){
+                    if (cnt >= 2){
                         //delete event;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
+                        //delete event;
                         return ;
                         break;
                     }
@@ -163,6 +164,7 @@ void Webserv::communication()
             WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
             this->event_manager->push(next_event);
             delete event;
+            DEBUG("ConnectionException delete event:" + Utility::to_string(event));
         }catch(HttpException &e){
             ERROR("HttpException");
             WebservEvent *next_event = this->event_factory->make_error_event(event, e.what());

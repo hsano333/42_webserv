@@ -30,6 +30,7 @@ void WebservParser::parse_req(WebservEvent *event)
     //printf("buf_p=%s\n", buf_p);
     if(body_p == NULL){
         DEBUG("WebservParser:: not still read Request header");
+        event->set_completed(false);
         return ;
     }
 

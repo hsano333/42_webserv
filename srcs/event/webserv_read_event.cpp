@@ -39,6 +39,7 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
 {
     DEBUG("WebservReadEvent::from_fd() fd:" + Utility::to_string(fd.to_int()));
     WebservReadEvent *event = new WebservReadEvent(fd);
+    DEBUG("WebservReadEvent::from_fd() event:" + Utility::to_string(event));
     Request *req = new Request();
     event->req_ = req;
     return (event);
@@ -66,7 +67,7 @@ WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event)
     }
     DEBUG("WebservReadEvent::from_event() No.3");
     new_event->req_ = req;
-    DEBUG("WebservReadEvent::from_event() No.4");
+    DEBUG("WebservReadEvent::from_event() No.4 make event:" + Utility::to_string(new_event));
     return (new_event);
 
 }
@@ -91,6 +92,8 @@ Response *WebservReadEvent::res()
 {
     return (NULL);
 }
+
+
 
 bool WebservReadEvent::is_completed()
 {

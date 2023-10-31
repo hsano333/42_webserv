@@ -74,6 +74,7 @@ void EventController::next_event(WebservEvent *event)
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
     }else if (next_epoll_event == EPOLL_CLOSE){
         this->fd_manager->close_fd(event->fd());
+        DEBUG("EventController::next_event No.1 delete event:" + Utility::to_string(event));
         delete event;
         event = NULL;
         //this->fd_manager->close_fd(app_event->fd());
@@ -84,6 +85,8 @@ void EventController::next_event(WebservEvent *event)
 
     //if (next_epoll_event != EPOLL_CONTINUE){
     if(event && next_event != event){
+        //MYINFO("EventController::next_event() delete current event");
+        DEBUG("EventController::next_event No.2 delete event:" + Utility::to_string(event));
         delete event;
     }
     //}

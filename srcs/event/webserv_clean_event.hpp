@@ -25,6 +25,7 @@ class WebservCleanEvent : public WebservEvent
         static WebservCleanEvent *from_webserv_event(WebservEvent *event, bool force_close);
         Request *req();
         Response *res();
+        void set_null_res_and_req();
 
         bool is_completed();
         void set_completed(bool flag);

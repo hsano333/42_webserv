@@ -20,6 +20,7 @@ class WebservReadEvent : public WebservEvent
 
         Request *req();
         Response *res();
+        void set_null_res_and_req();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);

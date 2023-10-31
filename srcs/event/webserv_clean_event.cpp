@@ -70,6 +70,12 @@ Response *WebservCleanEvent::res()
     return (this->res_);
 }
 
+void WebservCleanEvent::set_null_res_and_req()
+{
+    this->res_ = NULL;
+    this->req_ = NULL;
+}
+
 bool WebservCleanEvent::is_completed()
 {
     return (this->is_completed_);

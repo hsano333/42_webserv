@@ -37,6 +37,9 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
         }
     }
     app_event->set_force_close(is_close);
+    delete app_event->req();
+    delete app_event->res();
+    app_event->set_null_res_and_req();
 
     //this->io_multi_controller->erase(app_event->fd());
     //
