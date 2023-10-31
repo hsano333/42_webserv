@@ -5,7 +5,7 @@
 #include "directory_file.hpp"
 #include "connection_exception.hpp"
 
-PostApplication::PostApplication()
+PostApplication::PostApplication() : res(NULL)
 {
 ;
 }
@@ -105,8 +105,8 @@ bool PostApplication::execute_not_cgi()
     //(void)file;
     //int result = this->file->write(&body_buf, size);
     size_t sum = size;
-    req->set_read_completed(false);
-    while(req->read_completed() == false)
+    this->event->set_completed(false);
+    while(this->event->is_completed() == false)
     {
         MYINFO("PostApplication::No.4 complted:" + Utility::to_string(req->read_completed()));
         //MYINFO("PostApplication::No.4 space:" + Utility::to_string(space));
@@ -115,7 +115,7 @@ bool PostApplication::execute_not_cgi()
         if(tmp < 0){
             MYINFO("PostApplication::No.41");
             ERROR("Receiver Error:" + Utility::to_string(tmp));
-            req->set_read_completed(true);
+            this->event->set_completed(true);
             break;
         }else if(tmp == 0){
             WARNING("Connection Error: read return is 0");
@@ -128,7 +128,7 @@ bool PostApplication::execute_not_cgi()
             MYINFO("PostApplication::read sum:" + Utility::to_string(sum));
             MYINFO("PostApplication::max_len:" + Utility::to_string(max_len));
             tmp = tmp - (sum - max_len);
-            req->set_read_completed(true);
+            //req->set_read_completed(true);
         }
         MYINFO("PostApplication::No.7 sum:" + Utility::to_string(sum));
         int result = file->write(&buf, tmp);
@@ -137,6 +137,7 @@ bool PostApplication::execute_not_cgi()
             throw std::exception(HttpException("500"));
         }else if(result == 0){
             WARNING("Connection Error: write return is 0");
+            this->event->set_completed(true);
             break;
         }
     MYINFO("PostApplication::No.6:" + Utility::to_string(req->read_completed()));
@@ -146,7 +147,10 @@ bool PostApplication::execute_not_cgi()
     MYINFO("PostApplication::write sum:" + Utility::to_string(sum));
     MYINFO("PostApplication::max_len:" + Utility::to_string(max_len));
     req->set_buf_body(NULL, sum);
-    if (sum >= max_len){
+    if (sum == max_len)
+    {
+
+        req->set_read_completed(true);
         file->close();
         MYINFO("PostApplication::No.8");
         delete file;
@@ -155,6 +159,9 @@ bool PostApplication::execute_not_cgi()
         this->event->set_file(NULL);
         return (true);
 
+    }else if(sum > max_len){
+        ERROR("Too large body size:" + Utility::to_string(sum));
+        throw std::exception(HttpException("400"));
     }
     return (false);
 }
@@ -215,6 +222,7 @@ PostApplication* PostApplication::from_location(const Config *cfg, CGI *cgi, Web
     app->location = cfg->get_location(app->server, app->req);
     app->cgi = cgi;
     app->path_info_ = app->req->tmp_path_info();
+    //app->res = NULL;
     //app->is_continued = is_continued;
     //if(event->res()){
         //app->file = event->res()->get_file();

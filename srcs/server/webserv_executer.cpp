@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/31 20:33:18 by sano             ###   ########.fr       */
+/*   Updated: 2023/11/01 04:35:58 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ void WebservExecuter::execute(WebservEvent *event)
     app_event->set_completed(is_completed);
     if(is_completed)
     {
-        Response *res;
+        Response *res = NULL;
         try{
             res = app->make_response();
         }catch (HttpException &e){
+            ERROR("WebservExecuter::execute(): failure to making response");
             delete app;
             throw HttpException(e.what());
         }

@@ -42,7 +42,7 @@ void WebservReceiver::recv(WebservEvent *event)
         if(tmp < 0){
             MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
             event->set_completed(true);
-            tmp_req->set_read_completed(true);
+            //tmp_req->set_read_completed(true);
             break;
         }else if(tmp == 0){
             ERROR("Read Connection Error");

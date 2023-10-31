@@ -118,7 +118,7 @@ void Webserv::communication()
                     cleaner.clean(event, false);
                     event_controller->next_event(event);
 
-                    if (cnt >= 2){
+                    if (cnt >= 8){
                         //delete event;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
@@ -130,7 +130,6 @@ void Webserv::communication()
                         break;
                     }
                     cnt++;
-
                     break;
                 case TIMEOUT_EVENT:
                     DEBUG("Webserv::Timeout Event");

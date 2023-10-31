@@ -96,7 +96,7 @@ int NormalFile::open()
 
 int NormalFile::close()
 {
-    DEBUG("NormalFile::close() :" + Utility::to_string(fd.to_int()));
+    DEBUG("NormalFile::close() fd:" + Utility::to_string(fd.to_int()));
     if (this->state == FILE_OPEN){
         if(this->fd.to_int() > 0){
             return ::close(fd.to_int());

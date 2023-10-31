@@ -101,9 +101,12 @@ File *Response::get_file()
 
 int Response::open_file()
 {
+    DEBUG("Response::open_file()");
     if (this->file){
+        DEBUG("Response::open_file() No.2");
         return (this->file->open());
     }
+    DEBUG("Response::open_file() No.3");
     return 0;
 }
 
