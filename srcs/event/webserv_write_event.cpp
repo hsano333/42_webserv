@@ -11,7 +11,7 @@ WebservWriteEvent::WebservWriteEvent()
                                         res_(NULL),
                                         timeout_count_(0),
                                         writer(NULL),
-                                        is_end_(false)
+                                        is_completed_(false)
 {
     ;
 }
@@ -91,13 +91,13 @@ Response *WebservWriteEvent::res()
     return (this->res_);
 }
 
-bool WebservWriteEvent::is_end()
+bool WebservWriteEvent::is_completed()
 {
-    return (this->is_end_);
+    return (this->is_completed_);
 }
-void WebservWriteEvent::set_end(bool flag)
+void WebservWriteEvent::set_completed(bool flag)
 {
-    this->is_end_ = flag;
+    this->is_completed_ = flag;
 }
 
 

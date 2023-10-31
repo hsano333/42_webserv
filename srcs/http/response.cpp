@@ -96,7 +96,7 @@ void Response::add_header(std::string const &key, std::string const &value)
 
 File *Response::get_file()
 {
-    return (file);
+    return (this->file);
 }
 
 int Response::open_file()

@@ -5,7 +5,7 @@
 WebservNothingEvent::WebservNothingEvent() 
     :
         timeout_count_(0)
-        //is_end_(false)
+        //is_completed_(false)
 {
     this->fd_ = FileDiscriptor::from_int(0);
 }
@@ -61,15 +61,15 @@ Response *WebservNothingEvent::res()
     return (NULL);
 }
 
-bool WebservNothingEvent::is_end()
+bool WebservNothingEvent::is_completed()
 {
     return (true);
-    //return (this->is_end_);
+    //return (this->is_completed_);
 }
-void WebservNothingEvent::set_end(bool flag)
+void WebservNothingEvent::set_completed(bool flag)
 {
     (void)flag;
-    //this->is_end_ = flag;
+    //this->is_completed_ = flag;
 }
 
 void WebservNothingEvent::increase_timeout_count(int count)

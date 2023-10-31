@@ -41,6 +41,7 @@ class Request
         void    clear_raw_buf();
         size_t  buf_size();
         char*   get_raw_buf_pointer();
+        char*   get_raw_buf_begin();
         int     raw_buf_space();
         //void    renew_raw_buf_space(int space);
         char*   get_buf_body(int *size);

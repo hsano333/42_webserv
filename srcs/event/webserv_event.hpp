@@ -41,8 +41,8 @@ class WebservEvent
         virtual Request *req() = 0;
         virtual Response *res() = 0;
 
-        virtual bool is_end() = 0;
-        virtual void set_end(bool flag) = 0;
+        virtual bool is_completed() = 0;
+        virtual void set_completed(bool flag) = 0;
 
         virtual void increase_timeout_count(int count) = 0;
         virtual int  timeout_count() = 0;

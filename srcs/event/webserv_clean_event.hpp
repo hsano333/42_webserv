@@ -26,8 +26,8 @@ class WebservCleanEvent : public WebservEvent
         Request *req();
         Response *res();
 
-        bool is_end();
-        void set_end(bool flag);
+        bool is_completed();
+        void set_completed(bool flag);
         bool is_force_close();
         void set_force_close(bool flag);
         void clean_res_and_req();
@@ -37,7 +37,7 @@ class WebservCleanEvent : public WebservEvent
         Response        *res_;
         int             timeout_count_;
         bool            force_close;
-        bool is_end_;
+        bool is_completed_;
 };
 
 #endif

@@ -10,7 +10,7 @@ WebservReadEvent::WebservReadEvent()
                                         fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
                                         timeout_count_(0),
-                                        is_end_(false)
+                                        is_completed_(false)
                                         //ireader(NULL)
 {
 }
@@ -92,13 +92,13 @@ Response *WebservReadEvent::res()
     return (NULL);
 }
 
-bool WebservReadEvent::is_end()
+bool WebservReadEvent::is_completed()
 {
-    return (this->is_end_);
+    return (this->is_completed_);
 }
-void WebservReadEvent::set_end(bool flag)
+void WebservReadEvent::set_completed(bool flag)
 {
-    this->is_end_ = flag;
+    this->is_completed_ = flag;
 }
 
 

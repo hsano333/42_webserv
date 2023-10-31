@@ -16,8 +16,8 @@ class WebservTimeoutEvent : public WebservEvent
         FileDiscriptor fd();
         Request *req();
         Response *res();
-        bool is_end();
-        void set_end(bool flag);
+        bool is_completed();
+        void set_completed(bool flag);
         void increase_timeout_count(int count);
         int  timeout_count();
 
@@ -25,6 +25,6 @@ class WebservTimeoutEvent : public WebservEvent
         FileDiscriptor fd_;
         EWebservEvent event_type;
         int timeout_count_;
-        bool is_end_;
+        bool is_completed_;
 };
 #endif

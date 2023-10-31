@@ -60,7 +60,7 @@ void WebservSender::send(WebservEvent *event)
             //event->set_next_flag(true);
             //this->event_manager->add_event_waiting_writing(fd, event);
         }else if(result == 0){
-            event->set_end(false);
+            event->set_completed(false);
             break;
         }
         p_data = &(data[0]);
@@ -72,6 +72,6 @@ void WebservSender::send(WebservEvent *event)
     //todo
     //event->set_next_flag(true);
     res->close_file();
-    event->set_end(true);
+    event->set_completed(true);
     DEBUG("WebservSender::send() end");
 }

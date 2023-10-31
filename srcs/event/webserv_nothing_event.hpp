@@ -18,14 +18,14 @@ class WebservNothingEvent : public WebservEvent
         FileDiscriptor fd();
         Request *req();
         Response *res();
-        bool is_end();
-        void set_end(bool flag);
+        bool is_completed();
+        void set_completed(bool flag);
         void increase_timeout_count(int count);
         int  timeout_count();
     private:
         int             timeout_count_;
         FileDiscriptor fd_;
         WebservNothingEvent(FileDiscriptor fd);
-        //bool is_end_;
+        //bool is_completed_;
 };
 #endif

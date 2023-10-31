@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/30 03:21:44 by sano             ###   ########.fr       */
+/*   Updated: 2023/10/31 20:33:18 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,16 +58,20 @@ void WebservExecuter::execute(WebservEvent *event)
     WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
 
     Application *app = this->get_application(app_event);
-    app->execute();
-    Response *res;
-    try{
-        res = app->make_response();
-    }catch (HttpException &e){
-        delete app;
-        throw HttpException(e.what());
+    //todo
+    bool is_completed = app->execute();
+    app_event->set_completed(is_completed);
+    if(is_completed)
+    {
+        Response *res;
+        try{
+            res = app->make_response();
+        }catch (HttpException &e){
+            delete app;
+            throw HttpException(e.what());
+        }
+        app_event->set_response(res);
     }
-    app_event->set_response(res);
-    app_event->set_end(true);
     delete app;
 
     //io_multi_controller->modify(event->fd(), EPOLLOUT);

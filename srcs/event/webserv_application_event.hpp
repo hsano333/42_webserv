@@ -17,18 +17,21 @@ class WebservApplicationEvent : public WebservEvent
         Request         *req();
         Response        *res();
 
-        bool is_end();
-        void set_end(bool flag);
+        bool is_completed();
+        void set_completed(bool flag);
 
         void increase_timeout_count(int count);
         int  timeout_count();
         void            set_response(Response *res);
+        File *file();
+        void set_file(File *file);
     private:
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
+        File            *file_;
         int             timeout_count_;
-        bool is_end_;
+        bool            is_completed_;
 
 
 

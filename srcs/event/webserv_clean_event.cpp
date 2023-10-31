@@ -13,7 +13,7 @@ WebservCleanEvent::WebservCleanEvent(
                             res_(res),
                             timeout_count_(0),
                             force_close(false),
-                            is_end_(false)
+                            is_completed_(false)
 {
     ;
 }
@@ -70,9 +70,9 @@ Response *WebservCleanEvent::res()
     return (this->res_);
 }
 
-bool WebservCleanEvent::is_end()
+bool WebservCleanEvent::is_completed()
 {
-    return (this->is_end_);
+    return (this->is_completed_);
 }
 
 void WebservCleanEvent::set_force_close(bool flag)
@@ -80,9 +80,9 @@ void WebservCleanEvent::set_force_close(bool flag)
     this->force_close = flag;
 }
 
-void WebservCleanEvent::set_end(bool flag)
+void WebservCleanEvent::set_completed(bool flag)
 {
-    this->is_end_ = flag;
+    this->is_completed_ = flag;
 }
 
 void WebservCleanEvent::increase_timeout_count(int count)

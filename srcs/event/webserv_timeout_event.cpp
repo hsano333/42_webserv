@@ -5,7 +5,7 @@ WebservTimeoutEvent::WebservTimeoutEvent()
                                         fd_(FileDiscriptor::from_int(0)),
                                         event_type(TIMEOUT_EVENT),
                                         timeout_count_(0),
-                                        is_end_(false)
+                                        is_completed_(false)
 {
     ;
 }
@@ -49,13 +49,13 @@ Response *WebservTimeoutEvent::res()
     return (NULL);
 }
 
-bool WebservTimeoutEvent::is_end()
+bool WebservTimeoutEvent::is_completed()
 {
-    return (this->is_end_);
+    return (this->is_completed_);
 }
-void WebservTimeoutEvent::set_end(bool flag)
+void WebservTimeoutEvent::set_completed(bool flag)
 {
-    this->is_end_ = flag;
+    this->is_completed_ = flag;
 }
 
 

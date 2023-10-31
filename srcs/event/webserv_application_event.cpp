@@ -8,8 +8,9 @@ WebservApplicationEvent::WebservApplicationEvent(
                             fd_(fd),
                             req_(req),
                             res_(NULL),
+                            file_(NULL),
                             timeout_count_(0),
-                            is_end_(false)
+                            is_completed_(false)
 {
 
 };
@@ -36,7 +37,11 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
 
 E_EpollEvent WebservApplicationEvent::get_next_epoll_event()
 {
-    return (EPOLL_WRITE);
+    if (this->is_completed_){
+        return (EPOLL_WRITE);
+    }else{
+        return (EPOLL_READ);
+    }
 }
 
 
@@ -56,13 +61,13 @@ Response *WebservApplicationEvent::res()
     return (this->res_);
 }
 
-bool WebservApplicationEvent::is_end()
+bool WebservApplicationEvent::is_completed()
 {
-    return (this->is_end_);
+    return (this->is_completed_);
 }
-void WebservApplicationEvent::set_end(bool flag)
+void WebservApplicationEvent::set_completed(bool flag)
 {
-    this->is_end_ = flag;
+    this->is_completed_ = flag;
 }
 
 void WebservApplicationEvent::increase_timeout_count(int count)
@@ -80,3 +85,15 @@ void WebservApplicationEvent::set_response(Response *res)
 {
     this->res_ = res;
 }
+
+
+void WebservApplicationEvent::set_file(File *file)
+{
+    this->file_ = file;
+}
+
+File *WebservApplicationEvent::file()
+{
+    return (this->file_);
+}
+

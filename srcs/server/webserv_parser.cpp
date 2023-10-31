@@ -54,7 +54,7 @@ void WebservParser::parse_req(WebservEvent *event)
     req->set_header(sp, 1);
 
     req->print_info();
-    event->set_end(true);
+    event->set_completed(true);
 
     //delete (event);
     //req->print_info();

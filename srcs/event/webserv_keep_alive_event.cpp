@@ -5,7 +5,7 @@
 WebservKeepAliveEvent::WebservKeepAliveEvent() 
     :
         timeout_count_(0)
-        //is_end_(false)
+        //is_completed_(false)
 {
     this->fd_ = FileDiscriptor::from_int(0);
 }
@@ -63,14 +63,14 @@ Response *WebservKeepAliveEvent::res()
     return (NULL);
 }
 
-bool WebservKeepAliveEvent::is_end()
+bool WebservKeepAliveEvent::is_completed()
 {
     return (true);
 }
-void WebservKeepAliveEvent::set_end(bool flag)
+void WebservKeepAliveEvent::set_completed(bool flag)
 {
     (void)flag;
-    //this->is_end_ = flag;
+    //this->is_completed_ = flag;
 }
 
 void WebservKeepAliveEvent::increase_timeout_count(int count)

@@ -105,6 +105,12 @@ void Request::clear_buf_body()
     this->buf_body = NULL;
 }
 
+char *Request::get_raw_buf_begin()
+{
+    DEBUG("Request::get_raw_buf_pointer()  raw_buf_point:" + Utility::to_string(this->raw_buf_pos_));
+    return &(this->raw_buf[0]);
+}
+
 
 char *Request::get_raw_buf_pointer()
 {

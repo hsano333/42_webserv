@@ -47,11 +47,16 @@ void EventController::next_event(WebservEvent *event)
 {
     DEBUG("EventController::next_event() No.0");
     printf("event=%p\n", event);
-    if (event->is_end() == false){
-        return ;
-    }
+    //if (event->is_completed() == false){
+        //return ;
+    //}
     DEBUG("EventController::next_event()");
-    WebservEvent *next_event = event->make_next_event(event, this->event_factory);
+    WebservEvent *next_event;
+    if(event->is_completed()){
+        next_event = event->make_next_event(event, this->event_factory);
+    }else{
+        next_event = event;
+    }
     printf("next event=%p\n", next_event);
     E_EpollEvent next_epoll_event = event->get_next_epoll_event();
 
@@ -73,7 +78,7 @@ void EventController::next_event(WebservEvent *event)
     }
 
     //if (next_epoll_event != EPOLL_CONTINUE){
-    if(event){
+    if(event && next_event != event){
         delete event;
     }
     //}
