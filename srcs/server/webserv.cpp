@@ -34,7 +34,7 @@ using std::string;
 
 Webserv::Webserv(
         Config *cfg,
-        SocketManager *socket_manager,
+        //SocketManager *socket_manager,
         WebservEventFactory *event_factory,
         EventManager        *event_manager,
         EventController     *event_controller,
@@ -48,7 +48,7 @@ Webserv::Webserv(
         ) :
                      //_epfd(0),
                      cfg(cfg),
-                     socket_manager(socket_manager),
+                     //socket_manager(socket_manager),
                      event_factory(event_factory),
                      event_manager(event_manager),
                      event_controller(event_controller),
@@ -125,7 +125,7 @@ void Webserv::communication()
                         cout << "end break" << endl;
                         cout << "end break" << endl;
                         cout << "end break" << endl;
-                        //return ;
+                        return ;
                         break;
                     }
                     cnt++;

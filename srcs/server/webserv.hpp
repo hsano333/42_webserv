@@ -6,7 +6,7 @@
 #include "config.hpp"
 #include "tcp_socket.hpp"
 #include "port.hpp"
-#include "socket_manager.hpp"
+//#include "socket_manager.hpp"
 #include "epoll_controller.hpp"
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
@@ -27,7 +27,7 @@ class Webserv
 {
   public:
     Webserv(Config *cfg,
-            SocketManager *socket_manager,
+            //SocketManager *socket_manager,
             WebservEventFactory *event_factory,
             EventManager        *event_manager,
             EventController     *event_controller,
@@ -50,7 +50,7 @@ class Webserv
 
   private:
     Config              *cfg;
-    SocketManager       *socket_manager;
+    //SocketManager       *socket_manager;
     WebservEventFactory *event_factory;
     EventManager        *event_manager;
     EventController     *event_controller;

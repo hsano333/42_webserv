@@ -278,6 +278,7 @@ void EventManager::close_all_events_waiting_epoll(WebservCleaner &cleaner)
     }
     for(size_t i=0;i<tmp.size();i++){
         cleaner.clean(tmp[i], true);
+        delete tmp[i];
     }
 }
 
@@ -307,6 +308,7 @@ void EventManager::close_all_events()
         WebservEvent *event = this->pop_first();
         close(event->fd().to_int());
         delete event->req();
+        delete event->res();
         delete event;
     }
 }

@@ -18,6 +18,7 @@
 #include "normal_file.hpp"
 #include "normal_reader.hpp"
 #include "stream_reader.hpp"
+#include "stream_writer.hpp"
 #include <fstream>
 #include "body_size.hpp"
 #include "ip_address.hpp"
@@ -245,7 +246,8 @@ int main(int argc, char const* argv[])
     EventController *event_controller = new EventController(
             event_manager,
             epoll_controller,
-            event_factory
+            event_factory,
+            fd_manager
             );
 
     CGI *cgi = new CGI();
@@ -260,9 +262,9 @@ int main(int argc, char const* argv[])
     WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager, socket_writer);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
-    SocketManager* socket_manager = new SocketManager();
+    //SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg,socket_manager,event_factory, event_manager, event_controller,waiter,reader,parser,app,sender, cleaner);
+    Webserv webserv(cfg,event_factory, event_manager, event_controller,waiter,reader,parser,app,sender, cleaner);
     while (1) {
         try{
             server(webserv);
@@ -292,7 +294,7 @@ int main(int argc, char const* argv[])
     cout << "end No.3" << endl;
     delete event_manager;
     delete event_controller;
-    delete socket_manager;
+    //delete socket_manager;
     cout << "end No.4" << endl;
     delete cfg;
     cout << "end No.5" << endl;
@@ -318,6 +320,7 @@ int main(int argc, char const* argv[])
     Log::delete_instance();
     cout << "end No.7" << endl;
     delete StreamReader::get_instance();
+    delete StreamWriter::get_instance();
     cout << "end No.8" << endl;
     return 0;
 }

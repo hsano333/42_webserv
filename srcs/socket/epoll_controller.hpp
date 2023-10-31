@@ -7,7 +7,7 @@
 #include "epoll.hpp"
 #include "event_manager.hpp"
 #include "io_multiplexing.hpp"
-#include "socket_manager.hpp"
+//#include "socket_manager.hpp"
 #include "socket_controller.hpp"
 
 class EpollController : public IOMultiplexing

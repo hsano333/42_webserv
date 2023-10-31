@@ -55,7 +55,6 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
         //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
         //this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
     }
-
     event->set_completed(true);
 }
 

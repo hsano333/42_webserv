@@ -35,12 +35,13 @@ void WebservReceiver::recv(WebservEvent *event)
     MYINFO("Receiver  sum:" + Utility::to_string(sum));
     MYINFO("Receiver space:" + Utility::to_string(space));
     //space = 100;
+    event->set_completed(false);
     while(1){
         int tmp = reader->read(fd, &(buf[sum]), space, NULL);
         MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
         if(tmp < 0){
             MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
-            event->set_completed(false);
+            event->set_completed(true);
             tmp_req->set_read_completed(true);
             break;
         }else if(tmp == 0){

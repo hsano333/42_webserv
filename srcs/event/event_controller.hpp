@@ -9,7 +9,8 @@ class EventController
         EventController(
                 EventManager *event_manager,
                 IOMultiplexing *io_multi_controller,
-                WebservEventFactory *event_factory
+                WebservEventFactory *event_factory,
+                FDManager *fd_manager
                 );
         ~EventController();
         //void restart_communication(WebservEvent *event);
@@ -19,5 +20,6 @@ class EventController
         EventManager        *event_manager;
         IOMultiplexing *io_multi_controller;
         WebservEventFactory *event_factory;
+        FDManager *fd_manager;
 };
 #endif

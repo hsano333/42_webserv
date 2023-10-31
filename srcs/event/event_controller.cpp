@@ -4,12 +4,14 @@
 EventController::EventController(
             EventManager *event_manager,
             IOMultiplexing *io_multi_controller,
-            WebservEventFactory *event_factory
+            WebservEventFactory *event_factory,
+            FDManager *fd_manager
         )
     :
         event_manager(event_manager),
         io_multi_controller(io_multi_controller),
-        event_factory(event_factory)
+        event_factory(event_factory),
+        fd_manager(fd_manager)
 {
 ;
 }
@@ -70,7 +72,10 @@ void EventController::next_event(WebservEvent *event)
         this->io_multi_controller->modify(event->fd(), EPOLLOUT);
         //this->event_manager->erase_event_waiting_epoll(event->fd());
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
-    //}else if (next_epoll_event == EPOLL_CLOSE){
+    }else if (next_epoll_event == EPOLL_CLOSE){
+        this->fd_manager->close_fd(event->fd());
+        delete event;
+        event = NULL;
         //this->fd_manager->close_fd(app_event->fd());
     }else if(next_event){
         MYINFO("EventController::next is not epoll");

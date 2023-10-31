@@ -122,7 +122,11 @@ WebservEvent* WebservReadEvent::make_next_event(WebservEvent* event, WebservEven
 
 E_EpollEvent WebservReadEvent::get_next_epoll_event()
 {
-    return (EPOLL_NONE);
+    if (this->is_completed_){
+        return (EPOLL_NONE);
+    }else{
+        return (EPOLL_READ);
+    }
 }
 
 

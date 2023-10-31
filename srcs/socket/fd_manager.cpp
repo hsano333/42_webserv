@@ -14,11 +14,23 @@ FDManager::~FDManager()
 
 void FDManager::close_all()
 {
-    std::vector<FileDiscriptor>::iterator ite = fd_of_sockets.begin();
-    std::vector<FileDiscriptor>::iterator end = fd_of_sockets.end();
-    while(ite != end){
-        close((*ite).to_int());
-        ite++;
+
+    {
+        std::map<FileDiscriptor, FileDiscriptor>::iterator ite = epoll_fd_and_socket.begin();
+        std::map<FileDiscriptor, FileDiscriptor>::iterator end = epoll_fd_and_socket.end();
+        while(ite != end){
+            //close((ite->first).to_int());
+            close((ite->second).to_int());
+            ite++;
+        }
+    }
+    {
+        std::vector<FileDiscriptor>::iterator ite = fd_of_sockets.begin();
+        std::vector<FileDiscriptor>::iterator end = fd_of_sockets.end();
+        while(ite != end){
+            close((*ite).to_int());
+            ite++;
+        }
     }
 }
 
