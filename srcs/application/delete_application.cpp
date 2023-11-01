@@ -83,6 +83,9 @@ bool DeleteApplication::execute()
         ERROR("failure to delete file:" + file->path());
         throw HttpException("403");
     }
+    if(file){
+        delete file;
+    }
     return (true);
 }
 

@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/11/01 04:35:58 by sano             ###   ########.fr       */
+/*   Updated: 2023/11/01 11:47:05 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,20 @@ void WebservExecuter::execute(WebservEvent *event)
 
     Application *app = this->get_application(app_event);
     //todo
-    bool is_completed = app->execute();
-    app_event->set_completed(is_completed);
-    if(is_completed)
-    {
-        Response *res = NULL;
-        try{
+    try{
+        bool is_completed = app->execute();
+        app_event->set_completed(is_completed);
+        if(is_completed)
+        {
+            Response *res = NULL;
             res = app->make_response();
-        }catch (HttpException &e){
-            ERROR("WebservExecuter::execute(): failure to making response");
-            delete app;
-            throw HttpException(e.what());
+            app_event->set_response(res);
+            //delete app;
         }
-        app_event->set_response(res);
+    }catch (HttpException &e){
+        ERROR("WebservExecuter::execute(): failure to making response");
+        delete app;
+        throw HttpException(e.what());
     }
     delete app;
 
