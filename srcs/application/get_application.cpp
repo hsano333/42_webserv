@@ -31,7 +31,12 @@ File *GetApplication::get_requested_file()
             std::string const &host = this->req->header().get_host();
             std::string const &relative_path= this->req->req_line().uri().path();
             File *file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
-            return (file);
+            if(this->location->autoindex()){
+                return (file);
+            }else{
+                ERROR("autoindex is OFF");
+                throw HttpException("403");
+            }
         }else if (Utility::is_regular_file(this->req->requested_path())){
             File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::in | std::ios::binary);
             return (file);

@@ -158,7 +158,7 @@ void ConfigLocation::set_autoindex(std::vector<std::string> &vec)
     }
     if(vec[1] == "on"){
         this->autoindex_ = true;
-    }else if(vec[1] == "on"){
+    }else if(vec[1] == "off"){
         this->autoindex_ = false;
     }else{
         ERROR("Invalid Config Error: autoindex directive is invalid");
