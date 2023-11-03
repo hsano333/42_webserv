@@ -28,7 +28,7 @@ APPLICATION 		:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
 
 
 HTTPDIR				:= http/
-HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp http_version.cpp request_line.cpp uri.cpp error_page.cpp header.cpp
+HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp http_version.cpp request_line.cpp uri.cpp header.cpp
 HTTP 				:= $(addprefix $(HTTPDIR)/, $(HTTPSRC))
 
 NETWORKDIR			:= network/

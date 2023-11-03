@@ -6,14 +6,14 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 08:44:30 by hsano             #+#    #+#             */
-/*   Updated: 2023/10/29 16:16:29 by sano             ###   ########.fr       */
+/*   Updated: 2023/11/04 02:19:34 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 #include "status_code.hpp"
-#include "error_page.hpp"
+//#include "error_page.hpp"
 #include "file.hpp"
 #include <unistd.h>
 #include <map>
@@ -38,7 +38,7 @@ class Response
         static Response* from_success_status_code(StatusCode &code, File *file);
         static Response* from_error_status_code(StatusCode &code);
         static Response* from_error_file(File *file, StatusCode &code);
-        static Response* from_error_page(ErrorPage &page);
+        //static Response* from_error_page(ErrorPage &page);
 
         static Response* from_redirect(StatusCode &code, std::string const &filepath);
         static Response* from_file(File *file);
