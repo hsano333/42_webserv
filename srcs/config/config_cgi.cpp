@@ -51,8 +51,8 @@ void ConfigCgi::assign_properties(std::vector<std::vector<std::string> > &proper
         Split sp(line, ":", false, true);
         if (sp.size() == 2){
             this->extensions.insert(std::make_pair(
-                        Utility::trim_white_space(sp[0]),
-                        Utility::trim_white_space(sp[1])
+                        Utility::remove_obstruction_in_uri(sp[0]),
+                        Utility::remove_obstruction_in_uri(sp[1])
                     ));
         }
         ite++;

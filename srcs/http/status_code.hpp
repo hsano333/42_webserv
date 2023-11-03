@@ -18,6 +18,14 @@ class StatusCode
         bool operator==(StatusCode const &code) const;
         bool operator<(StatusCode const &code) const;
 
+
+        bool operator==(int code) const;
+        bool operator<(int code) const;
+        bool operator<=(int code) const;
+        bool operator>(int code) const;
+        bool operator>=(int code) const;
+
+
     private:
         int code;
 

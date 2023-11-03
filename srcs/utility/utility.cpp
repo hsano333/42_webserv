@@ -111,6 +111,11 @@ string Utility::to_lower(string str)
     return (result);
 }
 
+string Utility::remove_obstruction_in_uri(string const &str)
+{
+    return Utility::delete_duplicated_slash(Utility::trim_white_space(str));
+}
+
 string Utility::trim_white_space(string const &str)
 {
     std::string::size_type left = str.find_first_not_of("\t\n\v\f\r ");

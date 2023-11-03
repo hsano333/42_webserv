@@ -9,9 +9,11 @@ class WebservParser
 {
     public:
         //WebservParser();
-        WebservParser(IOMultiplexing *io_multi_controller,
+        WebservParser(
+                      IOMultiplexing *io_multi_controller,
                       EventManager *event_manager,
-                      WebservEventFactory *event_factory
+                      WebservEventFactory *event_factory,
+                      Config *cfg
                 );
         ~WebservParser();
         void parse_req(WebservEvent *event);
@@ -20,6 +22,8 @@ class WebservParser
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
         WebservEventFactory *event_factory;
+        Config *cfg;
+        bool check_body_size(Request *req, const ConfigServer *server);
 };
 
 #endif

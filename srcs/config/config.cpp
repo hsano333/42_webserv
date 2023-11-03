@@ -197,6 +197,7 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
 {
     string const &path = req->req_line().uri().path();
     const Split &path_sp = req->req_line().uri().splited_path();
+    DEBUG("Config::get_location path_sp size:" + Utility::to_string(path_sp.size()));
 
     map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * >::iterator cash_ite = Config::locations_cache.find(make_pair(server, path));
     if (cash_ite != Config::locations_cache.end()){
@@ -208,19 +209,28 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
     for (size_t i = 0; i < server->get_location_size(); i++) {
         for (size_t j = 0; j < server->location(i)->pathes().size(); j++) {
             std::string const &location_path = server->location(i)->pathes()[j];
+            DEBUG("Config::get_location location_path:" + location_path);
             Split lp(location_path, "/");
 
             size_t min_num = std::min(lp.size(), path_sp.size());
-            int tmp_point = 0;
-            for(size_t k=0;k<min_num;k++){
-                if (lp[k] == path_sp[k]){
-                    tmp_point++;
-                }else{
+            if (path_sp.size() > 0){
+                int tmp_point = 0;
+                for(size_t k=0;k<min_num;k++){
+                    if (lp[k] == path_sp[k]){
+                        tmp_point++;
+                    }else{
+                        break;
+                    }
+                }
+                if (tmp_point > max_point){
+                    tmp_location = server->location(i);
+                }
+            }else{
+                if (location_path == "/"){
+                    tmp_location = server->location(i);
                     break;
                 }
-            }
-            if (tmp_point > max_point){
-                tmp_location = server->location(i);
+
             }
         }
     }

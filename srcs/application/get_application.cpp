@@ -33,10 +33,19 @@ File *GetApplication::get_requested_file()
             File *file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
             if(this->location->autoindex()){
                 return (file);
-            }else{
-                ERROR("autoindex is OFF");
+            }
+            delete file;
+            std::vector<std::string> const &index_pathes = this->location->indexes();
+
+            if (index_pathes.size() == 0){
+                ERROR("autoindex is OFF and index file is not set");
                 throw HttpException("403");
             }
+            std::string index_path = this->location->root() + "/" + index_pathes[0];
+            MYINFO("index_path:" + index_path);
+            file = NormalFile::from_filepath(index_path, std::ios::in | std::ios::binary);
+            return (file);
+
         }else if (Utility::is_regular_file(this->req->requested_path())){
             File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::in | std::ios::binary);
             return (file);

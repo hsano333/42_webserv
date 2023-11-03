@@ -257,7 +257,7 @@ int main(int argc, char const* argv[])
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservReceiver reader(epoll_controller, event_manager, socket_reader);
-    WebservParser parser(epoll_controller, event_manager, event_factory);
+    WebservParser parser(epoll_controller, event_manager, event_factory, cfg);
     WebservExecuter app(application_factory, epoll_controller, event_factory, event_manager, fd_manager, cfg, socket_reader);
     WebservSender sender(epoll_controller, fd_manager, event_factory, event_manager, socket_writer);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);

@@ -55,7 +55,7 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
 void ConfigLocation::assign_out_properties(std::vector<std::string> &properties)
 {
     for(size_t i=0;i<properties.size();i++){
-        pathes_.push_back(properties[i]);
+        pathes_.push_back(Utility::remove_obstruction_in_uri(properties[i]));
     }
 }
 
@@ -73,7 +73,7 @@ void ConfigLocation::push_all(std::vector<ConfigLimit*> const &vec)
 
 std::vector<std::string> const & ConfigLocation::pathes() const
 {
-    return (this->pathes_);
+    return ((this->pathes_));
 }
 
 std::string const & ConfigLocation::root() const
@@ -129,7 +129,7 @@ void ConfigLocation::set_root(std::vector<std::string> &vec)
         ERROR("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
         throw std::runtime_error("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
     }
-    this->root_ = vec[1];
+    this->root_ = Utility::remove_obstruction_in_uri(vec[1]);
 }
 
 void ConfigLocation::set_cgi_pass(std::vector<std::string> &vec)
@@ -145,7 +145,7 @@ void ConfigLocation::set_cgi_pass(std::vector<std::string> &vec)
         ERROR("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
         throw std::runtime_error("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
     }
-    this->cgi_pass_ = vec[1];
+    this->cgi_pass_ = Utility::remove_obstruction_in_uri(vec[1]);
 }
 
 void ConfigLocation::set_autoindex(std::vector<std::string> &vec)
@@ -175,7 +175,7 @@ void ConfigLocation::set_index(std::vector<std::string> &vec)
         throw std::runtime_error("config parser error:location [index]");
     }
     for(size_t i=1;i<vec.size();i++){
-        this->indexes_.push_back(vec[i]);
+        this->indexes_.push_back(Utility::remove_obstruction_in_uri(vec[i]));
     }
 }
 
@@ -190,7 +190,13 @@ void ConfigLocation::set_return(std::vector<std::string> &vec)
     if(word_cnt == 3)
     {
         StatusCode status_code = StatusCode::from_string(vec[1]);
-        this->redirect_ = std::make_pair(status_code, vec[2]);
+
+        if(status_code < 300 || status_code >= 400){
+            ERROR("Redirect directive is invalid code:" + status_code.to_string());
+            throw std::runtime_error("Redirect code is invalid");
+        }
+
+        this->redirect_ = std::make_pair(status_code, Utility::remove_obstruction_in_uri(vec[2]));
         this->is_redirect_ = true;
     }else{
         this->is_redirect_ = false;
@@ -220,7 +226,7 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
         ERROR("Invalid Config Error: error_page directive is invalid");
         throw std::runtime_error("config parser error:server [error_page]");
     }
-    std::string path = vec[vec.size()-1];
+    std::string path = Utility::remove_obstruction_in_uri(vec[vec.size()-1]);
     for(size_t i=1;i<vec.size()-1;i++){
         StatusCode status_code = StatusCode::from_string(vec[i]);
         this->error_pages_.insert(std::make_pair(status_code, path));
@@ -257,5 +263,10 @@ void ConfigLocation::check()
     {
         ERROR("ConfigLocation::check(), Neither root_ nor cgi_pass is set");
         throw std::runtime_error("ConfigLocation::check(), Neither root_ nor cgi_pass is set");
+    }
+
+    if (this->indexes_.size() > 1){
+        ERROR("ConfigLocation::check(), index file is duplicated");
+        throw std::runtime_error("ConfigLocation::check(), index file is duplicated");
     }
 }

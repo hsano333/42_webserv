@@ -13,7 +13,7 @@ FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp error_file.cpp normal_read
 FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_parser.cpp webserv_executer.cpp webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp header.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_parser.cpp webserv_executer.cpp webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/
@@ -28,7 +28,7 @@ APPLICATION 		:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
 
 
 HTTPDIR				:= http/
-HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp http_version.cpp request_line.cpp uri.cpp error_page.cpp
+HTTPSRC 			:= method.cpp status_code.cpp request.cpp response.cpp http_version.cpp request_line.cpp uri.cpp error_page.cpp header.cpp
 HTTP 				:= $(addprefix $(HTTPDIR)/, $(HTTPSRC))
 
 NETWORKDIR			:= network/

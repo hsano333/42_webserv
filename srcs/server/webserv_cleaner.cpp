@@ -70,5 +70,6 @@ void WebservCleaner::clean_timeout_events(WebservEvent *event)
     for(size_t i=0;i<timeout_events.size();i++){
         this->clean(timeout_events[i], true);
     }
+    event->set_completed(true);
 }
 

@@ -21,6 +21,7 @@ class WebservExecuter
                       SocketReader *reader
                 );
         ~WebservExecuter();
+        bool check_redirect(WebservApplicationEvent *event);
         void execute(WebservEvent *event);
     private:
         ApplicationFactory *factory;

@@ -106,6 +106,7 @@ void EventManager::erase_event_waiting_epoll(FileDiscriptor fd)
 
 WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor fd)
 {
+    DEBUG("EventManager::pop_event_waiting_epoll fd:" + Utility::to_string(fd.to_int()));
     if(this->events_waiting_epoll.find(fd) == this->events_waiting_epoll.end()){
         return (NULL);
     }
@@ -221,17 +222,26 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
 {
     DEBUG("retrieve_timeout_events()");
     {
+        std::vector<FileDiscriptor> tmp_fds;
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
+        cout << "test No.1" << endl;
         while(ite != end){
             if(ite->second->timeout_count() >= TIMEOUT){
-                event_return.push_back(ite->second);
+                tmp_fds.push_back(ite->first);
             }
             ite++;
         }
-        for(size_t i=0;i<event_return.size();i++){
-            this->events_waiting_epoll.erase(event_return[i]->fd());
+        for(size_t i=0;i<tmp_fds.size();i++){
+            WebservEvent *event = this->pop_event_waiting_epoll(tmp_fds[i]);
+            event_return.push_back(event);
         }
+
+
+
+        //for(size_t i=0;i<event_return.size();i++){
+            //this->events_waiting_epoll.erase(event_return[i]->fd());
+        //}
     }
     /*
     {
@@ -250,20 +260,26 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
     */
     {
 
+        cout << "test No.3" << endl;
         std::vector<WebservEvent *> event_saved;
         while(events.size() > 0)
         {
+        cout << "test No.4" << endl;
             WebservEvent *event = this->pop_first();
+        cout << "test No.5" << endl;
             if(event->timeout_count() >= TIMEOUT){
                 event_return.push_back(event);
             }else{
                 event_saved.push_back(event);
             }
+        cout << "test No.6" << endl;
         }
         for(int i=event_saved.size()-1;i>=0;i--){
             this->events.push(event_saved[i]);
         }
+        cout << "test No.7" << endl;
     }
+        cout << "test No.8" << endl;
 }
 
 void EventManager::close_all_events_waiting_epoll(WebservCleaner &cleaner)

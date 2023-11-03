@@ -100,7 +100,7 @@ int DirectoryFile::read(char **buf, size_t size)
     std::string date = Utility::get_file_updated_date(this->path_);
     std::string tmp = WRITE_READING1 + uri + WRITE_READING2 + dirr->d_name + WRITE_READING3;
 
-    stringstream ss;
+    std::stringstream ss;
     ss  << std::setfill(' ') << std::left << std::setw(128) << tmp << date << " " << std::setfill(' ') << std::right << std::setw(8) << filesize_str << "<br>";
     //ss  << std::setfill('\r') << std::left << std::setw(64) << tmp << "<br>";
     std::string returned_str = ss.str();

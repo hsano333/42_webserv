@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-BodySize::BodySize()
+BodySize::BodySize() : size(0)
 {
     ;
 }

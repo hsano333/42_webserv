@@ -126,8 +126,6 @@ TEST_CASE("CIDR")
     REQUIRE(ip3.in(addr8) == true);
     REQUIRE(ip3.in(addr9) == true);
 
-    //IP_Address ip2 = IP_Address::from_string("0.1.2.3");
-    //REQUIRE(ip2.to_string() == "0.1.2.3");
 }
 
 #endif

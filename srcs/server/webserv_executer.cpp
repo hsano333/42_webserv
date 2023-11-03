@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/11/01 11:47:05 by sano             ###   ########.fr       */
+/*   Updated: 2023/11/03 12:03:58 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,41 @@ Application *WebservExecuter::get_application(WebservApplicationEvent *event)
     return (factory->make_application(event, reader));
 }
 
+bool WebservExecuter::check_redirect(WebservApplicationEvent *event)
+{
+    DEBUG("WebservExecuter::check_redirect");
+
+    Request *req = event->req();
+    const ConfigServer *server = cfg->get_server(req);
+    const ConfigLocation *location= this->cfg->get_location(server, req);
+
+    if(!location->is_redirect()){
+        return (false);
+    }
+
+    const std::pair<StatusCode, std::string> &redirect = location->redirect();
+
+    StatusCode code = redirect.first;
+    Response *res = NULL;
+    res = Response::from_error_status_code(code);
+    //cout << "redirect:" << redirect.second << endl;
+    res->add_header(LocationHeader, redirect.second);
+    res->add_header(CORS_ORIGIN, CORS_ORIGIN_VALUE);
+    event->set_response(res);
+    event->set_completed(true);
+
+    MYINFO("WebservExecuter::redirect is valid to:" + redirect.second);
+    return (true);
+}
+
 void WebservExecuter::execute(WebservEvent *event)
 {
     DEBUG("WebservExecuter::execute");
     WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
+    if(check_redirect(app_event)){
+        //delete app_event;
+        return ;
+    }
 
     Application *app = this->get_application(app_event);
     //todo

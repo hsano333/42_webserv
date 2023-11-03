@@ -34,7 +34,6 @@ class EventManager
         bool find(FileDiscriptor fd);
     private:
         MutantStack<WebservEvent*> events;
-
         std::map<FileDiscriptor, WebservEvent*> events_waiting_epoll;
         //std::map<FileDiscriptor, WebservEvent*> events_waiting_writing;
 

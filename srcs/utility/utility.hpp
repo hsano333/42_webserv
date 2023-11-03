@@ -11,11 +11,14 @@
 #include <iostream>
 #include <ctime>
 
-using std::map;
-using std::pair;
+
 using std::string;
-using std::stringstream;
+using std::cout;
+using std::endl;
 using std::vector;
+using std::map;
+using std::stringstream;
+
 
 class Utility
 {
@@ -23,40 +26,41 @@ class Utility
     static char* memcpy(char* dst, const char* src, size_t n);
     static void   *memset(void *b, int c, size_t len);
     static size_t strlen(const char* str);
-    static string delete_space(string& str);
+    static std::string delete_space(std::string& str);
     static char* strnstr(const char* haystack, const char* needle, size_t len);
-    static string to_lower(string str);
-    static string trim_white_space(string const &str);
+    static std::string to_lower(std::string str);
+    static std::string trim_white_space(std::string const &str);
 
+    static std::string remove_obstruction_in_uri(std::string const &str);
     static std::string delete_duplicated_slash(std::string str);
     static void sort_orderby_len(std::vector<std::string>& str);
-    static unsigned char hex_string_to_uchar(const string& hex_string);
-    static char** cp_env(char** environ, std::vector<string> vec);
+    static unsigned char hex_string_to_uchar(const std::string& hex_string);
+    static char** cp_env(char** environ, std::vector<std::string> vec);
     static char* strdup(const char* str);
 
     template <typename T>
-    static string to_string(T value);
-    static string to_string2(int value);
-    static int to_int(string &str);
-    static unsigned int to_uint(string const &str);
-    static ssize_t to_ssize_t(string &str);
-    static size_t to_size_t(string &str);
-    static int to_int(string const &str);
+    static std::string to_string(T value);
+    static std::string to_string2(int value);
+    static int to_int(std::string &str);
+    static unsigned int to_uint(std::string const &str);
+    static ssize_t to_ssize_t(std::string &str);
+    static size_t to_size_t(std::string &str);
+    static int to_int(std::string const &str);
     static int to_int(char const *str);
-    static ssize_t to_ssize_t(string const &str);
-    static size_t to_size_t(string const &str);
+    static ssize_t to_ssize_t(std::string const &str);
+    static size_t to_size_t(std::string const &str);
     static std::string to_hexstr(size_t i);
     static IP_Address name_to_address(std::string name);
 
-    static char hex_string_to_int(const string& hex_string);
-    static string get_http_status_message(string status_code);
+    static char hex_string_to_int(const std::string& hex_string);
+    static std::string get_http_status_message(std::string status_code);
     template <typename T>
-    static void print_vector(vector<T> v);
+    static void print_vector(std::vector<T> v);
     //static int read_body_and_copy(int fd, char** dst, size_t size);
     //static int read_body_and_copy(int fd, char** buf, int size, std::string str);
     //static int read_body_and_copy(ByteVector str, char** buf, int size);
     //static int read_body_and_copy(char *src, char** dst, size_t size);
-    static size_t get_map_str_size(map<std::string, std::string> &data);
+    static size_t get_map_str_size(std::map<std::string, std::string> &data);
 
     static std::string extract_json_object(const std::string &target, std::string &str);
     static bool is_regular_file(std::string const &path);
@@ -81,10 +85,10 @@ class Utility
 };
 
 template <typename T>
-string Utility::to_string(T value)
+std::string Utility::to_string(T value)
 {
-    stringstream sss;
-    string str;
+    std::stringstream sss;
+    std::string str;
 
     sss << value;
     str = sss.str();
@@ -93,7 +97,7 @@ string Utility::to_string(T value)
 }
 
 template <typename T>
-void Utility::print_vector(vector<T> v)
+void Utility::print_vector(std::vector<T> v)
 {
     for (size_t i = 0; i < v.size(); i++)
         if (v.size() - 1 != i)

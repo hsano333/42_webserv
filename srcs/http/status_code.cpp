@@ -96,3 +96,31 @@ bool StatusCode::operator<(StatusCode const &code) const
 {
     return (this->code < code.code);
 }
+
+
+
+
+bool StatusCode::operator==(int code) const
+{
+    return (this->code == code);
+}
+
+bool StatusCode::operator<(int code) const
+{
+    return (this->code < code);
+}
+
+bool StatusCode::operator<=(int code) const
+{
+    return (this->code <= code);
+}
+
+bool StatusCode::operator>(int code) const
+{
+    return (this->code > code);
+}
+
+bool StatusCode::operator>=(int code) const
+{
+    return (this->code >= code);
+}

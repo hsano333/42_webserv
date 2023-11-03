@@ -65,15 +65,11 @@ const ConfigServer *ApplicationFactory::get_server(Request *req)
 
 Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
 {
+    DEBUG("ApplicationFactory::make_application()");
     Application* app;
     Request *req = event->req();
     RequestLine const &req_line = req->req_line();
-    const ConfigServer *server = cfg->get_server(req);
-    const ConfigLocation *location= this->cfg->get_location(server, req);
     Method const &method = req_line.method();
-    req->set_requested_filepath(location);
-    //bool is_continued = (event->req() != NULL);
-    //File *file = event->res()->get_file();
 
     switch(method.to_enum())
     {
@@ -93,8 +89,6 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
             ERROR("ApplicationFactory::make_application(): Invalid method");;
             std::runtime_error("invalid Method");
     }
-
-
     return (app);
 }
 
