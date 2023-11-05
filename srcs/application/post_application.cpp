@@ -221,7 +221,7 @@ PostApplication* PostApplication::from_location(const Config *cfg, CGI *cgi, Web
     app->server = cfg->get_server(app->req);
     app->location = cfg->get_location(app->server, app->req);
     app->cgi = cgi;
-    app->path_info_ = app->req->tmp_path_info();
+    app->path_info_ = app->location->root() + "/" + app->req->tmp_path_info();
     //app->res = NULL;
     //app->is_continued = is_continued;
     //if(event->res()){
@@ -231,7 +231,8 @@ PostApplication* PostApplication::from_location(const Config *cfg, CGI *cgi, Web
     app->reader = reader;
 
     try{
-        app->cgi_application_path = string(cgi->get_cgi_application_path(app->req, app->location));
+        //app->cgi_application_path = string(cgi->get_cgi_application_path(app->req, app->location));
+        cgi->check_cgi_application_path(app->req, app->location);
         app->is_cgi_ = true;
     }catch(std::invalid_argument &e){
         app->is_cgi_ = false;

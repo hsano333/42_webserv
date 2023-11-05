@@ -40,6 +40,11 @@ std::string const & ConfigServer::server_name() const
     return (this->server_name_);
 }
 
+IP_Address const & ConfigServer::server_addr() const
+{
+    return (this->server_addr_);
+}
+
 Port const & ConfigServer::listen() const
 {
     return (this->listen_);
@@ -82,6 +87,7 @@ void ConfigServer::set_server_name(std::vector<std::string> &vec)
     if(word_cnt == 2)
     {
         this->server_name_ = vec[1];
+        this->server_addr_ = IP_Address::from_string_or_name(vec[1]);
     }else{
         ERROR("Invalid Config Error:invalid word is in server_name directive");
         throw std::runtime_error("config parser error:server");

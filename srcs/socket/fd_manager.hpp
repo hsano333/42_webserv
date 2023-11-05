@@ -16,6 +16,8 @@ class FDManager
     void close_fd(FileDiscriptor fd);
     FileDiscriptor socket_fd_from_epoll_fd(FileDiscriptor epoll_fd);
     bool is_registered(FileDiscriptor epoll_fd);
+    FileDiscriptor get_sockfd(FileDiscriptor fd);
+
 
   private:
     std::vector< FileDiscriptor> fd_of_sockets;

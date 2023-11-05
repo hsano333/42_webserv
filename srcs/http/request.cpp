@@ -45,6 +45,26 @@ Request::~Request()
     //cout << "~Request()" << endl;
 }
 
+
+Request *Request::from_fd(FileDiscriptor fd, FileDiscriptor sockfd)
+{
+    Request *req = new Request();
+    req->fd_ = fd;
+    req->sockfd_ = sockfd;
+    return (req);
+}
+
+FileDiscriptor Request::fd() const
+{
+    return (this->fd_);
+}
+
+FileDiscriptor Request::sockfd() const
+{
+    return (this->sockfd_);
+}
+
+
 /*
 int Request::load_buf(FileDiscriptor fd, IReader *ireader)
 {

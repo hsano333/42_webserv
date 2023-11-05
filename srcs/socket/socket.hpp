@@ -38,11 +38,12 @@ class Socket
     //Socket& operator=(const Socket& socket);
         FileDiscriptor get_socket_fd() const;
         void close_fd();
+        //bool check(Port const &port, IP_Address const &host) const;
     private:
         void init();
         FileDiscriptor sock_fd;
         Port port;
-        void set_address_info(struct addrinfo& info);
+        void set_address_info(struct addrinfo& info) const;
         FileDiscriptor make_socket();
         const static int _SOCKET_NUM = 10;
     //Request* recv(FileDiscriptor fd);

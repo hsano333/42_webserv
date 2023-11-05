@@ -92,7 +92,7 @@ void Webserv::communication()
 
             waiter.wait();
         }
-        WebservEvent *event = waiter.serve_event();
+        WebservEvent *event = waiter.fetch_event();
         try{
             switch(event->which())
             {
@@ -106,7 +106,6 @@ void Webserv::communication()
                     DEBUG("Webserv::Application Event ");
                     executer.execute(event);
                     event_controller->next_event(event);
-                    //parser.parse_res(event);
                     break;
                 case WRITE_EVENT:
                     DEBUG("Webserv::Write Event ");

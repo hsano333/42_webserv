@@ -32,7 +32,7 @@ class GetApplication : public Application
         const ConfigLocation *location;
         const Request *req;
         CGI *cgi;
-        std::string cgi_application_path;
+        //std::string cgi_application_path;
         bool is_cgi_;
         std::map<std::string, std::string> tmp_headers;
         std::string path_info_;

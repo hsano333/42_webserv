@@ -21,6 +21,7 @@ class ConfigServer : public ConfigObject<ConfigLocation*>
         void push_all(std::vector<ConfigLocation*> const &vec);
         void check();
         std::string const &server_name() const;
+        IP_Address  const &server_addr() const;
         Port const & listen() const;
         bool is_default_server() const;
         //std::map<StatusCode, std::string> const &error_pages() const;
@@ -35,6 +36,7 @@ class ConfigServer : public ConfigObject<ConfigLocation*>
         void set_max_body_size(std::vector<std::string> &vec);
         Port listen_;
         std::string server_name_;
+        IP_Address server_addr_;
         //IP_Address server_address_;
         bool is_default_server_;
         //std::map<StatusCode, std::string> error_pages_;

@@ -35,18 +35,19 @@ WebservReadEvent::~WebservReadEvent()
     //delete ireader;
 }
 
-WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd)
+WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor sockfd)
 {
     DEBUG("WebservReadEvent::from_fd() fd:" + Utility::to_string(fd.to_int()));
     WebservReadEvent *event = new WebservReadEvent(fd);
     DEBUG("WebservReadEvent::from_fd() event:" + Utility::to_string(event));
-    Request *req = new Request();
+    //FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
+    Request *req = Request::from_fd(fd, sockfd);
     event->req_ = req;
     return (event);
 
 }
 
-WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event)
+WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscriptor sockfd)
 {
     DEBUG("WebservReadEvent::from_event()");
     WebservReadEvent *new_event = new WebservReadEvent(event->fd());
@@ -63,7 +64,8 @@ WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event)
     if(event->req()){
         req = event->req();
     }else{
-        req = new Request();
+        //FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
+        req = Request::from_fd(event->fd(), sockfd);
     }
     DEBUG("WebservReadEvent::from_event() No.3");
     new_event->req_ = req;

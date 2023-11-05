@@ -48,7 +48,7 @@ FileDiscriptor Socket::make_socket()
     return (FileDiscriptor::from_int(tmp_fd));
 }
 
-void Socket::set_address_info(struct addrinfo& info)
+void Socket::set_address_info(struct addrinfo& info) const
 {
     info.ai_family = AF_INET;
     info.ai_flags = AI_PASSIVE;
@@ -122,9 +122,49 @@ void Socket::init()
     std::cout << "rval:" << rval << std::endl;
     */
 
-
-
 }
+
+/*
+bool Socket::check(Port const &port, IP_Address const &cfg_ip) const
+{
+    DEBUG("Socket::check ip:" + cfg_ip.to_string());
+    struct addrinfo hint;
+    Utility::memset(&hint, 0, sizeof(struct addrinfo));
+    this->set_address_info(hint);
+    struct addrinfo* res = NULL;
+    //hint.ai_family = AF_UNSPEC;
+    //hint.ai_socktype = SOCK_STREAM;
+    int err = getaddrinfo(NULL, port.to_string().c_str(), &hint, &res);
+    if (err != 0) {
+        ERROR("Error getaddrinfo port:" + port.to_string());
+        return false;
+    }
+    int i=0;
+    for(; res; res = res->ai_next){
+        int i1 = res->ai_addr->sa_data[2];
+        int i2 = res->ai_addr->sa_data[3];
+        int i3 = res->ai_addr->sa_data[4];
+        int i4 = res->ai_addr->sa_data[5];
+
+        printf("i=%d\n", ++i);
+        struct sockaddr_in *tmpaddr = (struct sockaddr_in *)res->ai_addr;
+        printf("port=%d\n", ntohs(tmpaddr->sin_port));
+        IP_Address tmp_ip = IP_Address::from_int(i1, i2, i3, i4);
+        DEBUG("Socket::tmp_ip:" + tmp_ip.to_string());
+        if(tmp_ip == cfg_ip){
+            freeaddrinfo(res);
+            return (true);
+        }
+        printf("%d.%d.%d.%d\n", i1, i2, i3, i4);
+        printf("%d.%d.%d.%d\n", i1, i2, i3, i4);
+        printf("%d.%d.%d.%d\n", i1, i2, i3, i4);
+        printf("%d.%d.%d.%d\n", i1, i2, i3, i4);
+        printf("%d.%d.%d.%d\n", i1, i2, i3, i4);
+    }
+    freeaddrinfo(res);
+    return (false);
+}
+*/
 
 Socket& Socket::operator=(const Socket& sock_fdet)
 {

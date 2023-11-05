@@ -3,6 +3,7 @@
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 #include "directory_file.hpp"
+#include <unistd.h>
 
 GetApplication::GetApplication()
 {
@@ -83,9 +84,66 @@ bool GetApplication::execute_not_cgi()
     //cout << "filename:" << filename << endl;
 }
 
+//extern char** environ;
 
 bool GetApplication::execute_cgi()
 {
+    DEBUG("GetApplication::execute_cgi()");
+    //string &execve_path = this->cgi_application_path;
+    string const &exe_root = this->location->root();
+    string const &file_path = this->req->requested_filepath();
+    string const &query = this->req->req_line().uri().query();
+    string env_query = "QUERY_STRING:" + query;
+    string env_path_info = "PATH_INFO:" + this->path_info_;
+
+
+    char* argv[2] = {NULL};
+    //argv[0] = const_cast<char*>(execve_path.c_str());
+    argv[0] = const_cast<char*>(file_path.c_str());
+
+
+    char* env[3] = {NULL};
+    env[0] = const_cast<char*>(env_query.c_str());
+    env[1] = const_cast<char*>(env_path_info.c_str());
+
+
+    //char *env[];
+    printf("argv[0]=%s\n", argv[0]);
+    printf("argv[1]=%s\n", argv[1]);
+    printf("env[0]=%s\n", env[0]);
+    printf("env[1]=%s\n", env[1]);
+    printf("exe_root=%s\n", exe_root.c_str());
+    //printf("env=%s\n", env.c_str());
+
+
+    int fd_in;
+    int fd_out;
+    int pid = this->cgi->make_thread(&fd_in, &fd_out);
+    if(pid < 0){
+        ERROR("failre to create thread:");
+        throw HttpException("500");
+    }
+
+    if (pid == 0) {
+        //chdir(uri.get_root().c_str());
+        //int rval = execve(execve_path.c_str(), argv, env);
+        std::exit(0);
+    //} else if (pid > 0) {
+        //this->_result_fd = fd_out;
+        //this->_result_fd_in = fd_in;
+        //this->_pid = pid;
+    }
+
+
+    //int rval = this->cgi->execute(fd_in, fd_out, pid);
+
+
+    //cout << "execve_path:" << execve_path << endl;
+    cout << "file_path:" << file_path << endl;
+    cout << "query:" << query << endl;
+    //exit(0);
+
+    //cgi->();
     return (true);
 }
 
@@ -133,10 +191,11 @@ GetApplication* GetApplication::from_location(const Config *cfg, const Request *
     app->location = cfg->get_location(app->server, req);
     app->req = req;
     app->cgi = cgi;
-    app->path_info_ = req->tmp_path_info();
+    app->path_info_ = app->location->root() + "/" + app->req->tmp_path_info();
 
     try{
-        app->cgi_application_path = string(cgi->get_cgi_application_path(req, app->location));
+        //app->cgi_application_path = string(cgi->get_cgi_application_path(req, app->location));
+        cgi->check_cgi_application_path(req, app->location);
         app->is_cgi_ = true;
     }catch(std::invalid_argument &e){
         app->is_cgi_ = false;

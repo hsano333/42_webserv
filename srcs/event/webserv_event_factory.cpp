@@ -60,7 +60,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL){
                 MYINFO("cached_event is NULL");
-                WebservEvent *event = WebservReadEvent::from_fd(fd);
+                FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
+                WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd);
                 //printf("event=%p\n", event);
                 //this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
@@ -98,7 +99,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
 WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *event)
 {
-    return (WebservReadEvent::from_event(event));
+    FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
+    return (WebservReadEvent::from_event(event, sockfd));
 }
 
 WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)

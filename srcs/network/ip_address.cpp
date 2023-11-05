@@ -157,7 +157,7 @@ IP_Address IP_Address::from_string_or_name(std::string const &str)
 
 
 
-std::string IP_Address::to_string()
+std::string IP_Address::to_string() const
 {
     unsigned int add0 = 0xff000000;
     unsigned int add1 = 0x00ff0000;

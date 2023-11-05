@@ -22,12 +22,14 @@ class URI
     void set_path_info(std::string &path);
     std::string const &get_path_info() const;
     void print_info() const;
+    std::string const &query() const;
 
   private:
     std::string raw_;
     std::string path_;
     std::string path_info_;
-    Split query;
+    std::string query_;
+    //Split query;
     Split path_sp;
     Split encoded_path_sp;
     void uri_encode(std::string const &raw_uri);

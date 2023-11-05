@@ -27,7 +27,7 @@ URI& URI::operator=(URI const &uri)
     if (this == &uri)
         return (*this);
     this->raw_ = uri.raw_;
-    this->query = uri.query;
+    this->query_ = uri.query_;
     this->path_sp = uri.path_sp;
     this->path_ = uri.path_;
     return (*this);
@@ -43,8 +43,24 @@ URI URI::from_string(std::string const &uri_raw)
 
     URI uri;
     uri.raw_ = Utility::delete_duplicated_slash(Utility::trim_white_space(uri_raw));
+    size_t pos = uri.raw_.find("#");
+    string tmp_uri;
+    if(pos != std::string::npos){
+        tmp_uri = uri.raw_.substr(0, pos);
+    }else{
+        tmp_uri = uri.raw_;
+    }
+
+    pos = tmp_uri.find('?');
+    if(pos != std::string::npos){
+        uri.query_ = tmp_uri.substr(pos+1);
+        tmp_uri = tmp_uri.substr(0, pos);
+    }else{
+        uri.query_ = "";
+    }
 
     //std::string &uri_last = *(uri.path_sp.end() -1);
+    /*
     size_t pos = uri.raw_.find("?");
     std::string tmp_uri;
     if (pos != std::string::npos){
@@ -66,6 +82,7 @@ URI URI::from_string(std::string const &uri_raw)
             tmp_uri = uri.raw_;
         }
     }
+    */
 
 
     uri.path_sp = Split(tmp_uri , "/");
@@ -83,6 +100,11 @@ URI URI::from_string(std::string const &uri_raw)
     */
 
     return (uri);
+}
+
+std::string const &URI::query() const
+{
+    return (this->query_);
 }
 
 std::string const &URI::raw() const
@@ -161,9 +183,12 @@ void URI::print_info() const
         cout << "path_sp[" << i << "]=" << path_sp[i] << endl;
     }
     cout << "path=" << this->path() << endl;
+    cout << "query=" << this->query() << endl;
+    /*
     for(size_t i=0;i<query.size();i++){
         cout << "query[" << i << "]=" << query[i] << endl;
     }
+    */
 
 
     cout << "|--------------------------|" << endl;

@@ -13,6 +13,7 @@
 #include "file.hpp"
 
 #include "socket_repository.hpp"
+#include "file_discriptor.hpp"
 
 //#include "config_repository.hpp"
 //#include "config_factory.hpp"

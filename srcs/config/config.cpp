@@ -9,6 +9,7 @@
 #include "global.hpp"
 #include "http_exception.hpp"
 #include "normal_file.hpp"
+#include <sys/socket.h>
 
 using std::cout;
 using std::endl;
@@ -134,6 +135,8 @@ map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * > Confi
 map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_content_cache;
 map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_properties_cache;
 
+
+/*
 const ConfigServer* Config::get_server(Request const *req) const
 {
     if(req == NULL){
@@ -150,6 +153,50 @@ const ConfigServer* Config::get_server(Request const *req) const
     std::string name = sp[0];
     std::string port_str = sp[1];
     Port port = Port::from_string(port_str);
+
+    const ConfigServer *server = this->get_server(port, name);
+    return (server);
+
+}
+*/
+
+
+
+const ConfigServer* Config::get_server(Request const *req) const
+{
+    //(void)sockfd;
+    if(req == NULL){
+        return NULL;
+    }
+    Header const &header = req->header();
+
+    std::string const &header_hostname = header.get_host();
+    Split sp(header_hostname, ":");
+    if(sp.size() != 2){
+    //if(true){
+        WARNING("There is no Host in Headers");
+        struct sockaddr_in addr;
+        socklen_t len = sizeof(addr);
+
+        try{
+            FileDiscriptor sockfd = req->sockfd();
+            if(getsockname(sockfd.to_int(), (struct sockaddr*)&addr, &len) < 0){
+                WARNING("failure to get port number");
+                throw HttpException("500");
+            }
+            Port port = Port::from_int(ntohs(addr.sin_port));
+
+            const ConfigServer *server = this->get_server(port, "");
+            return (server);
+
+
+        }catch(std::invalid_argument &e){
+            throw HttpException("500");
+        }
+    }
+    std::string name = sp[0];
+    //std::string port_str = sp[1];
+    Port port = Port::from_string(sp[1]);
 
     const ConfigServer *server = this->get_server(port, name);
     return (server);
@@ -179,18 +226,32 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
 
     IP_Address host_address = IP_Address::from_string_or_name(host);
 
+
+    //std::vector<Port>
+    ConfigServer const *default_server = NULL;
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port){
+            if(default_server == NULL){
+                default_server = http->server(i);
+            }
 
             IP_Address config_address = IP_Address::from_string_or_name(http->server(i)->server_name());
+            MYINFO("config_address:" + config_address.to_string());
+            MYINFO("host_address:" + host_address.to_string());
             if (config_address == host_address){
+                MYINFO("Get Server OK");
                 servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
                 return (http->server(i));
             }
         }
     }
+    if (default_server){
+        return (default_server);
+    }
 
-    return (NULL);
+    return (http->server(0));
+    //return (http->server(i));
+    //return (NULL);
 }
 
 ConfigLocation const *Config::get_location(ConfigServer const *server, const Request *req) const

@@ -13,7 +13,7 @@ class IP_Address
         static IP_Address from_name(std::string const &name);
         static IP_Address from_string_or_name(std::string const &name);
         //bool in(IP_Address const & cidr);
-        std::string to_string();
+        std::string to_string() const;
         unsigned int to_uint() const;
     private:
         unsigned  int address;

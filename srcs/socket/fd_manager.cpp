@@ -85,6 +85,14 @@ FileDiscriptor FDManager::socket_fd_from_epoll_fd(FileDiscriptor epoll_fd)
     throw std::runtime_error("can't find epoll_fd");
 }
 
+FileDiscriptor FDManager::get_sockfd(FileDiscriptor fd)
+{
+    if(epoll_fd_and_socket.find(fd) == epoll_fd_and_socket.end()){
+        WARNING("fd don't find:" + Utility::to_string(fd.to_int()));
+        throw std::invalid_argument("fd don't find:");
+    }
+    return (epoll_fd_and_socket[fd]);
+}
 
 /*
 void FDManager::insert(Request* req)

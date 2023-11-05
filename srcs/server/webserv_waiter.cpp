@@ -50,15 +50,15 @@ void WebservWaiter::copy_event_to_manager()
 }
 
 
-WebservEvent* WebservWaiter::serve_event()
+WebservEvent* WebservWaiter::fetch_event()
 {
-    DEBUG("WebservWaiter::serve_event() event_size:" + Utility::to_string(event_manager->event_size()));
+    DEBUG("WebservWaiter::fetch_event() event_size:" + Utility::to_string(event_manager->event_size()));
 
     if(event_manager->event_size() > 0){
         return (event_manager->pop_first());
     }
     int executable_event_size = io_multi_controller->executable_event_number();
-    MYINFO("WebservWaiter::serve_event() executable_event_size:" + Utility::to_string(executable_event_size));
+    MYINFO("WebservWaiter::fetch_event() executable_event_size:" + Utility::to_string(executable_event_size));
     if(executable_event_size > 0){
         std::vector<t_epoll_event> &io_event = io_multi_controller->take_out_event();
         for(int i=0;i<executable_event_size;i++){
@@ -66,19 +66,19 @@ WebservEvent* WebservWaiter::serve_event()
             event_manager->push(event);
         }
     }
-    MYINFO("No.1 WebservWaiter::serve_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
+    MYINFO("No.1 WebservWaiter::fetch_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
     if(event_manager->event_size() > 0){
         WebservEvent *returned_event = event_manager->pop_first();
-        MYINFO("No.2 WebservWaiter::serve_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
+        MYINFO("No.2 WebservWaiter::fetch_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
         printf("returned_event=%p\n", returned_event);
         return (returned_event);
     }
 
     if(event_manager->check_timeout()){
-        MYINFO("WebservWaiter::serve_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
+        MYINFO("WebservWaiter::fetch_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
         return (new WebservTimeoutEvent());
     }
-    MYINFO("WebservWaiter::serve_event() return new WebservNothingEvent():");
+    MYINFO("WebservWaiter::fetch_event() return new WebservNothingEvent():");
     return (new WebservNothingEvent);
     //return (NULL);
 }

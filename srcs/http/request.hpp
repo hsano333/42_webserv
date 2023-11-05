@@ -35,6 +35,8 @@ class Request
     public:
         Request();
         ~Request();
+
+        static Request *from_fd(FileDiscriptor fd, FileDiscriptor sockfd);
         //void    insert_buf(char *buf, int size);
         char*   buf();
         //void    decrement_raw_buf_size(size_t size);
@@ -73,8 +75,14 @@ class Request
         void    print_info() const;
         RequestLine const &req_line() const;
         Header const &header() const;
+
+        FileDiscriptor fd() const;
+        FileDiscriptor sockfd() const;
+
         //
     private:
+        FileDiscriptor fd_;
+        FileDiscriptor sockfd_;
         char    raw_buf[MAX_BUF];
         //char    raw_buf[200];
         //int     raw_buf_point;
