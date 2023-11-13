@@ -3,6 +3,7 @@
 #include "webserv_event.hpp"
 #include "file_discriptor.hpp"
 #include "ireader.hpp"
+#include "webserv_cgi_event.hpp"
 
 class WebservReadEvent : public WebservEvent
 {
@@ -28,6 +29,8 @@ class WebservReadEvent : public WebservEvent
         E_EpollEvent get_next_epoll_event();
         //int read(char *buf, size_t size);
 
+        void set_cgi_event(WebservCgiEvent &cgi_event);
+        WebservCgiEvent &cgi_event();
 
     private:
         WebservReadEvent(FileDiscriptor fd);
@@ -38,5 +41,6 @@ class WebservReadEvent : public WebservEvent
         int timeout_count_;
         bool is_completed_;
         //IReader *ireader;
+        WebservCgiEvent cgi_event_;
 };
 #endif

@@ -6,6 +6,7 @@
 #include "iwriter.hpp"
 #include "response.hpp"
 #include "file.hpp"
+#include "webserv_cgi_event.hpp"
 
 class WebservWriteEvent : public WebservEvent
 {
@@ -29,6 +30,10 @@ class WebservWriteEvent : public WebservEvent
         static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
 
+        void set_cgi_event(WebservCgiEvent &cgi_event);
+        WebservCgiEvent &cgi_event();
+
+
     private:
         FileDiscriptor  fd_;
         Request         *req_;
@@ -36,5 +41,6 @@ class WebservWriteEvent : public WebservEvent
         int             timeout_count_;
         IWriter *writer;
         bool is_completed_;
+        WebservCgiEvent cgi_event_;
 };
 #endif

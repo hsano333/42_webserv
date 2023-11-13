@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/11/03 12:03:58 by sano             ###   ########.fr       */
+/*   Updated: 2023/11/14 01:45:55 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,19 @@ void WebservExecuter::execute(WebservEvent *event)
     try{
         bool is_completed = app->execute();
         app_event->set_completed(is_completed);
+        if(app->is_cgi()){
+            //app_event->set_cgi_event(app->cgi_event());
+            //FileDiscriptor fd = app->cgi_event()->cgi_fd();
+            //this->io_multi_controller->add(fd, EPOLLRDHUP);
+            //this->event_manager->add_event_waiting_epoll(fd, app_event);
+        }
         if(is_completed)
         {
             Response *res = NULL;
             res = app->make_response();
             app_event->set_response(res);
+            MYINFO("this->is_completed_:" + Utility::to_string(app_event->is_completed()));
+            MYINFO("this->cgi is_cgi:" + Utility::to_string(app_event->cgi_event().is_cgi()));
             //delete app;
         }
     }catch (HttpException &e){

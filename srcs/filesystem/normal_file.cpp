@@ -108,7 +108,7 @@ int NormalFile::close()
 int NormalFile::read(char **buf, size_t size)
 {
     //return (0);
-    FileDiscriptor tmp_fd = FileDiscriptor::from_int(0);
+    //FileDiscriptor tmp_fd = FileDiscriptor::from_int(0);
     return (this->ireader->read(this->fd, *buf, size, &(this->iofs)));
 }
 

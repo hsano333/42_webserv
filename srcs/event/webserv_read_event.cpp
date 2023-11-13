@@ -148,3 +148,17 @@ int WebservReadEvent::read(char *buf, size_t size)
     return this->ireader->read(fd, buf, size);
 }
 */
+
+void WebservReadEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+{
+    this->cgi_event_ = cgi_event;
+}
+
+WebservCgiEvent &WebservReadEvent::cgi_event()
+{
+    return (this->cgi_event_);
+}
+
+
+
+

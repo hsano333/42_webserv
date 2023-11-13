@@ -142,6 +142,12 @@ Response* DeleteApplication::make_response()
     return (res);
 }
 
+WebservCgiEvent *DeleteApplication::cgi_event()
+{
+    return (NULL);
+
+}
+
 /*
 void DeleteApplication::set_path_info(std::string const &path_info)
 {

@@ -4,6 +4,7 @@
 #include "webserv_event.hpp"
 #include "file_discriptor.hpp"
 #include "ireader.hpp"
+#include "webserv_cgi_event.hpp"
 
 class WebservKeepAliveEvent : public WebservEvent
 {
@@ -22,10 +23,14 @@ class WebservKeepAliveEvent : public WebservEvent
         void set_completed(bool flag);
         void increase_timeout_count(int count);
         int  timeout_count();
+
+        void set_cgi_event(WebservCgiEvent &cgi_event);
+        WebservCgiEvent &cgi_event();
     private:
         int             timeout_count_;
         FileDiscriptor fd_;
         WebservKeepAliveEvent(FileDiscriptor fd);
         //bool is_end_;
+        WebservCgiEvent cgi_event_;
 };
 #endif

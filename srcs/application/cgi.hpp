@@ -8,7 +8,7 @@ class CGI
         CGI();
         ~CGI();
         //bool is_cgi(const Request *req, const ConfigLocation *location) const;
-        void check_cgi_application_path(const Request *req, const ConfigLocation *location) const;
+        bool check_cgi_application_path(const Request *req, const ConfigLocation *location) const;
         int make_thread(int* fd_in, int* fd_out);
     private:
 

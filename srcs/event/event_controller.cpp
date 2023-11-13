@@ -61,6 +61,7 @@ void EventController::next_event(WebservEvent *event)
     }
     printf("next event=%p\n", next_event);
     E_EpollEvent next_epoll_event = event->get_next_epoll_event();
+    MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
     if (next_epoll_event == EPOLL_READ){
         this->io_multi_controller->modify(event->fd(), EPOLLIN);
@@ -72,12 +73,23 @@ void EventController::next_event(WebservEvent *event)
         this->io_multi_controller->modify(event->fd(), EPOLLOUT);
         //this->event_manager->erase_event_waiting_epoll(event->fd());
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+    }else if (next_epoll_event == EPOLL_CGI_IN){
+        MYINFO("EPOLL_CGI_IN:" + Utility::to_string(event->cgi_event().cgi_fd()));
+        this->io_multi_controller->modify(event->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->io_multi_controller->modify(event->cgi_event().cgi_fd(), EPOLLOUT | EPOLLONESHOT);
+        //this->fd_manager->close_fd(app_event->fd());
+    }else if (next_epoll_event == EPOLL_CGI_OUT){
+        MYINFO("EPOLL_CGI_OUT:" + Utility::to_string(event->cgi_event().cgi_fd()));
+        this->io_multi_controller->modify(event->fd(), EPOLLOUT | EPOLLONESHOT);
+        MYINFO("EPOLL_CGI_OUT No.1:" + Utility::to_string(event->cgi_event().cgi_fd()));
+        this->io_multi_controller->modify(event->cgi_event().cgi_fd(), EPOLLIN | EPOLLONESHOT);
+        MYINFO("EPOLL_CGI_OUT No.2:" + Utility::to_string(event->cgi_event().cgi_fd()));
+        //this->fd_manager->close_fd(app_event->fd());
     }else if (next_epoll_event == EPOLL_CLOSE){
         this->fd_manager->close_fd(event->fd());
         DEBUG("EventController::next_event No.1 delete event:" + Utility::to_string(event));
         delete event;
         event = NULL;
-        //this->fd_manager->close_fd(app_event->fd());
     }else if(next_event){
         MYINFO("EventController::next is not epoll");
         event_manager->push(next_event);

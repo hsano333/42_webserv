@@ -45,7 +45,7 @@ int CGI::make_thread(int* fd_in, int* fd_out)
 }
 
 
-void CGI::check_cgi_application_path(const Request *req, const ConfigLocation *location) const
+bool CGI::check_cgi_application_path(const Request *req, const ConfigLocation *location) const
 {
     (void)req;
     (void)location;
@@ -53,17 +53,20 @@ void CGI::check_cgi_application_path(const Request *req, const ConfigLocation *l
 
     if (req->is_file() == false){
         WARNING("not CGI");
-        throw std::invalid_argument("not CGI");
+        return (false);
+        //throw std::invalid_argument("not CGI");
     }
 
     if (limit == NULL){
         WARNING("not CGI");
-        throw std::invalid_argument("not CGI");
+        return (false);
+        //throw std::invalid_argument("not CGI");
     }
 
     const ConfigCgi *config_cgi = limit->cgi();
     if (config_cgi == NULL){
         WARNING("not CGI");
+        return (false);
         throw std::invalid_argument("not CGI");
     }
 
@@ -81,13 +84,15 @@ void CGI::check_cgi_application_path(const Request *req, const ConfigLocation *l
         if (pos != std::string::npos && (pos + file_ext.size() == filename.size())){
             MYINFO("CGI::is_cgi execve:" + ite->second);
             MYINFO("CGI::is_cgi filepath:" + filepath);
+            return (true);
             //return ite->second;
-            return ;
+            //return ;
         }
         ite++;
     }
     WARNING("not CGI");
-    throw std::invalid_argument("not CGI");
+    //throw std::invalid_argument("not CGI");
+    return (false);
 }
 
 

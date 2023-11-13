@@ -131,3 +131,13 @@ int WebservWriteEvent::write(char const *buf, size_t size)
     //char buf[] = "HTTP/1.1 200 OK";
     return (this->writer->write(fd_, buf, size, NULL));
 }
+
+void WebservWriteEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+{
+    this->cgi_event_ = cgi_event;
+}
+
+WebservCgiEvent &WebservWriteEvent::cgi_event()
+{
+    return (this->cgi_event_);
+}

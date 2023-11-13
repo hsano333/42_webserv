@@ -83,3 +83,18 @@ int WebservKeepAliveEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
+
+
+
+void WebservKeepAliveEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+{
+    this->cgi_event_ = cgi_event;
+}
+
+WebservCgiEvent &WebservKeepAliveEvent::cgi_event()
+{
+    return (this->cgi_event_);
+}
+
+
+

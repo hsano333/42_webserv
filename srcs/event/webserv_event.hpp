@@ -5,6 +5,7 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "webserv_event_factory.hpp"
+#include "webserv_cgi_event.hpp"
 
 typedef enum E_WebservEvent
 {
@@ -23,6 +24,8 @@ typedef enum E_EpollEvent
     EPOLL_WRITE,
     EPOLL_CONTINUE,
     EPOLL_CLOSE,
+    EPOLL_CGI_IN,
+    EPOLL_CGI_OUT,
     EPOLL_NONE,
 } E_EpollEvent;
 
@@ -46,6 +49,16 @@ class WebservEvent
 
         virtual void increase_timeout_count(int count) = 0;
         virtual int  timeout_count() = 0;
+
+        virtual void set_cgi_event(WebservCgiEvent &cgi_event) = 0;
+        virtual WebservCgiEvent &cgi_event() = 0;
+        /*
+        virtual void set_cgi_fd(FileDiscriptor fd) = 0;
+        virtual FileDiscriptor cgi_fd() = 0;
+        virtual void add_cgi_triger(int val) = 0;
+        virtual void clear_cgi_triger(int val) = 0;
+        virtual bool cgi_triger() = 0;
+        */
 
     private:
         Request *req_;

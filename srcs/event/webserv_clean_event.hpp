@@ -4,6 +4,7 @@
 #include "file_discriptor.hpp"
 #include "request.hpp"
 #include "response.hpp"
+#include "webserv_cgi_event.hpp"
 
 class WebservCleanEvent : public WebservEvent
 {
@@ -32,6 +33,10 @@ class WebservCleanEvent : public WebservEvent
         bool is_force_close();
         void set_force_close(bool flag);
         void clean_res_and_req();
+
+        void set_cgi_event(WebservCgiEvent &cgi_event);
+        WebservCgiEvent &cgi_event();
+
     private:
         FileDiscriptor  fd_;
         Request         *req_;
@@ -39,6 +44,8 @@ class WebservCleanEvent : public WebservEvent
         int             timeout_count_;
         bool            force_close;
         bool is_completed_;
+
+        WebservCgiEvent cgi_event_;
 };
 
 #endif

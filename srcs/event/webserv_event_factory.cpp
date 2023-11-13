@@ -44,7 +44,12 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
     FileDiscriptor fd = FileDiscriptor::from_int(event_epoll.data.fd);
     FileDiscriptor io_fd;
 
-    if(event_epoll.events & EPOLLIN){
+    if(event_epoll.events & EPOLLRDHUP){
+        DEBUG("EPOLLRDHUP: ");
+
+        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+        this->make_clean_event(cached_event, true);
+    }else if(event_epoll.events & EPOLLIN){
 
         if(this->fd_manager->is_registered(fd) == false)
         {
@@ -67,24 +72,63 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 return (event);
             }else{
 
-            // reset timeout
-            cached_event->increase_timeout_count(-cached_event->timeout_count());
-            MYINFO("cached_event exists");
-            //WebservEvent *new_event = WebservReadEvent::from_fd(fd);
-            //MYINFO("delete cached_event");
-            //delete (cached_event);
-            //MYINFO("deleted cached_event");
-            //this->event_manager->add_event_waiting_epoll(fd, new_event);
-            return (cached_event);
+                if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && (fd == cached_event->cgi_event().cgi_fd())){
+                    MYINFO("test CGI No.1");
+                    cached_event->cgi_event().add_cgi_triger(CGI_READ);
+                    if ( cached_event->cgi_event().cgi_triger() > CGI_READ){
+                    MYINFO("test CGI No.2");
+                        return cached_event;
+                    }else{
+                    MYINFO("test CGI No.3");
+                        return (new WebservNothingEvent);
+                    }
+                    //登録したfdがcgi用のイベントであるとき、
+                }else if(cached_event->cgi_event().is_cgi()){
+                    MYINFO("test CGI No.4");
+
+                }
+                // reset timeout
+                cached_event->increase_timeout_count(-cached_event->timeout_count());
+                MYINFO("cached_event exists");
+                //WebservEvent *new_event = WebservReadEvent::from_fd(fd);
+                //MYINFO("delete cached_event");
+                //delete (cached_event);
+                //MYINFO("deleted cached_event");
+                //this->event_manager->add_event_waiting_epoll(fd, new_event);
+                return (cached_event);
                 //return (cached_event);
 
             }
             //return (cached_event);
         }
     }else if(event_epoll.events & EPOLLOUT){
+
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
-        //FileDiscriptor io_fd = this->socket_controller->accept_request(fd);
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+
+        if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd()){
+                    MYINFO("test CGI No.6");
+            //cached_event->cgi_event().add_cgi_triger(CGI_Triger.CGI_READ);
+            //登録したfdがcgi用のイベントであるとき、
+        }else if(cached_event->cgi_event().is_cgi()){
+                    MYINFO("test CGI No.7");
+            cached_event->cgi_event().add_cgi_triger(CGI_WAIT);
+            if ( cached_event->cgi_event().cgi_triger() > CGI_READ){
+                    MYINFO("test CGI No.8");
+                return cached_event;
+            }else{
+                    MYINFO("test CGI No.9");
+                return (new WebservNothingEvent);
+            }
+
+                    MYINFO("test CGI No.10");
+
+
+            //登録したfdがcgi用のイベントではないが、CGIは実行されていたとき
+        }
+
+
+        //FileDiscriptor io_fd = this->socket_controller->accept_request(fd);
         //WebservWriteEvent *event = WebservWriteEvent::from_event(saved_event, this->socket_writer);
         //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
         return (cached_event);

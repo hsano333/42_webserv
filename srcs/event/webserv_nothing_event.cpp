@@ -82,3 +82,15 @@ int WebservNothingEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
+
+void WebservNothingEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+{
+    this->cgi_event_ = cgi_event;
+}
+
+WebservCgiEvent &WebservNothingEvent::cgi_event()
+{
+    return (this->cgi_event_);
+}
+
+

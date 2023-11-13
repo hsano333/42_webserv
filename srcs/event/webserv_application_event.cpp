@@ -37,8 +37,13 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
 
 E_EpollEvent WebservApplicationEvent::get_next_epoll_event()
 {
+
     if (this->is_completed_){
-        return (EPOLL_WRITE);
+        if(this->cgi_event().is_cgi()){
+            return (EPOLL_CGI_OUT);
+        }else{
+            return (EPOLL_WRITE);
+        }
     }else{
         return (EPOLL_READ);
     }
@@ -97,3 +102,12 @@ File *WebservApplicationEvent::file()
     return (this->file_);
 }
 
+void WebservApplicationEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+{
+    this->cgi_event_ = cgi_event;
+}
+
+WebservCgiEvent &WebservApplicationEvent::cgi_event()
+{
+    return (this->cgi_event_);
+}

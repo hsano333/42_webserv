@@ -4,7 +4,9 @@
 #include "server_application.hpp"
 #include "cgi_application.hpp"
 #include "get_application.hpp"
+#include "get_cgi_application.hpp"
 #include "post_application.hpp"
+#include "post_cgi_application.hpp"
 #include "delete_application.hpp"
 #include "method.hpp"
 #include "http_exception.hpp"
@@ -71,15 +73,29 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
     RequestLine const &req_line = req->req_line();
     Method const &method = req_line.method();
 
+
+    const ConfigLocation *location = cfg->get_location(cfg->get_server(req), req);
+    bool is_cgi = cgi->check_cgi_application_path(req, location);
+
     switch(method.to_enum())
     {
         case GET:
             DEBUG("ApplicationFactory::make_application() make Get");
-            app = GetApplication::from_location(cfg, req, cgi);
+            if (is_cgi){
+                app = GetCGIApplication::from_location(cfg, req, cgi);
+            }else{
+                app = GetApplication::from_location(cfg, req);
+            }
             break;
         case POST:
             DEBUG("ApplicationFactory::make_application() make Post");
-            app = PostApplication::from_location(cfg, cgi, event, ireader);
+            if (is_cgi){
+                //app = PostCGIApplication::from_location(cfg, req, cgi);
+                app = PostCGIApplication::from_location(cfg, event, ireader, cgi);
+            }else{
+                //app = GetApplication::from_location(cfg, req, cgi);
+                app = PostApplication::from_location(cfg, event, ireader);
+            }
             break;
         case DELETE:
             DEBUG("ApplicationFactory::make_application() make Delete");

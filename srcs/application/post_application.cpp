@@ -17,9 +17,6 @@ PostApplication::~PostApplication()
 
 File *PostApplication::get_requested_file()
 {
-    if (this->is_cgi_){
-        return (NULL);
-    }
     if (this->event->file()){
         return (this->event->file());
     }
@@ -47,7 +44,7 @@ File *PostApplication::get_requested_file()
 
 bool PostApplication::is_cgi() const
 {
-    return (this->is_cgi_);
+    return (false);
 }
 
 bool PostApplication::check_not_cgi_end(size_t received_size)
@@ -57,7 +54,7 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
     return (true);
 }
 
-bool PostApplication::execute_not_cgi()
+bool PostApplication::execute()
 {
     DEBUG("PostApplication::execute_not_cgi");
 
@@ -167,23 +164,7 @@ bool PostApplication::execute_not_cgi()
 }
 
 
-bool PostApplication::execute_cgi()
-{
-    return (true);
 
-}
-
-bool PostApplication::execute()
-{
-    if (this->is_cgi_){
-        DEBUG("PostApplication::execute() CGI");
-        return (this->execute_cgi());
-    }else{
-        DEBUG("PostApplication::execute() Not CGI");
-        return (this->execute_not_cgi());
-    }
-    return (true);
-}
 
 void PostApplication::check_permission()
 {
@@ -211,7 +192,7 @@ void PostApplication::check_permission()
     throw HttpException("403");
 }
 
-PostApplication* PostApplication::from_location(const Config *cfg, CGI *cgi, WebservApplicationEvent *event, IReader *reader)
+PostApplication* PostApplication::from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader)
 {
     DEBUG("PostApplication::from_location");
 
@@ -220,8 +201,8 @@ PostApplication* PostApplication::from_location(const Config *cfg, CGI *cgi, Web
     app->req = event->req();
     app->server = cfg->get_server(app->req);
     app->location = cfg->get_location(app->server, app->req);
-    app->cgi = cgi;
-    app->path_info_ = app->location->root() + "/" + app->req->tmp_path_info();
+    //app->cgi = cgi;
+    //app->path_info_ = app->location->root() + "/" + app->req->tmp_path_info();
     //app->res = NULL;
     //app->is_continued = is_continued;
     //if(event->res()){
@@ -229,15 +210,6 @@ PostApplication* PostApplication::from_location(const Config *cfg, CGI *cgi, Web
     //}
     app->event = event;
     app->reader = reader;
-
-    try{
-        //app->cgi_application_path = string(cgi->get_cgi_application_path(app->req, app->location));
-        cgi->check_cgi_application_path(app->req, app->location);
-        app->is_cgi_ = true;
-    }catch(std::invalid_argument &e){
-        app->is_cgi_ = false;
-    }
-
     return (app);
 }
 
@@ -277,6 +249,12 @@ Response* PostApplication::make_response()
     }
     return (res);
     */
+}
+
+WebservCgiEvent *PostApplication::cgi_event()
+{
+    return (NULL);
+
 }
 
 /*

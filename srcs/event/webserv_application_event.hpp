@@ -3,6 +3,7 @@
 #include "webserv_event.hpp"
 #include "request.hpp"
 #include "file_discriptor.hpp"
+#include "webserv_cgi_event.hpp"
 
 class WebservApplicationEvent : public WebservEvent
 {
@@ -25,16 +26,20 @@ class WebservApplicationEvent : public WebservEvent
         void            set_response(Response *res);
         File *file();
         void set_file(File *file);
+
+        void set_cgi_event(WebservCgiEvent &cgi_event);
+        WebservCgiEvent &cgi_event();
+
     private:
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
         File            *file_;
+
         int             timeout_count_;
         bool            is_completed_;
 
-
-
+        WebservCgiEvent cgi_event_;
 };
 
 #endif

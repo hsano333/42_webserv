@@ -29,10 +29,7 @@ void WebservSender::send(WebservEvent *event)
 {
     DEBUG("WebservSender::send()");
     WebservWriteEvent *write_event = static_cast<WebservWriteEvent*>(event);
-    DEBUG("No.1 WebservSender::send()");
-
     Response *res = write_event->res();
-    DEBUG("No.2 WebservSender::send()");
     if(res == NULL){
         ERROR("WebservSender::send(): Response is NULL");
         throw HttpException("500");
@@ -45,9 +42,7 @@ void WebservSender::send(WebservEvent *event)
     DEBUG("No.4 WebservSender::send()");
 
     try{
-    DEBUG("No.41 WebservSender::send()");
         res->open_file();
-    DEBUG("No.42 WebservSender::send()");
     }catch(std::runtime_error &e){
         //ERROR("WebservSender::send():" + string(e.what()));
         //throw HttpException("403");
@@ -57,6 +52,7 @@ void WebservSender::send(WebservEvent *event)
     FileDiscriptor fd = write_event->fd();
     ssize_t size = res->get_data(&p_data);
     p_data[size] = '\0';
+    cout << "read data=" << p_data << endl;
     DEBUG("No.6 WebservSender::send()");
     while(size > 0)
     {

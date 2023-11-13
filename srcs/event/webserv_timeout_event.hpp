@@ -2,6 +2,7 @@
 #define WEBSERV_TIMEOUT_EVENT_HPP
 #include "webserv_event.hpp"
 #include "file_discriptor.hpp"
+#include "webserv_cgi_event.hpp"
 
 class WebservTimeoutEvent : public WebservEvent
 {
@@ -21,10 +22,14 @@ class WebservTimeoutEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
 
+        void set_cgi_event(WebservCgiEvent &cgi_event);
+        WebservCgiEvent &cgi_event();
+
     private:
         FileDiscriptor fd_;
         EWebservEvent event_type;
         int timeout_count_;
         bool is_completed_;
+        WebservCgiEvent cgi_event_;
 };
 #endif
