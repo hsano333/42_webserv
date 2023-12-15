@@ -126,12 +126,12 @@ void WebservCleanEvent::clean_res_and_req()
 
 }
 
-void WebservCleanEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+void WebservCleanEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
 }
 
-WebservCgiEvent &WebservCleanEvent::cgi_event()
+WebservCgiEvent *WebservCleanEvent::cgi_event()
 {
     return (this->cgi_event_);
 }

@@ -58,6 +58,7 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
 
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
+    DEBUG("WebservWriteEvent::from_event()");
     //if(event->res() != NULL){
         //delete event->res();
     //}
@@ -132,12 +133,12 @@ int WebservWriteEvent::write(char const *buf, size_t size)
     return (this->writer->write(fd_, buf, size, NULL));
 }
 
-void WebservWriteEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+void WebservWriteEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
 }
 
-WebservCgiEvent &WebservWriteEvent::cgi_event()
+WebservCgiEvent *WebservWriteEvent::cgi_event()
 {
     return (this->cgi_event_);
 }

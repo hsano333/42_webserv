@@ -28,6 +28,7 @@ class WebservEventFactory
                 );
         ~WebservEventFactory();
         WebservEvent *from_epoll_event(t_epoll_event const &event);
+        WebservEvent *make_parser_event(WebservEvent *event);
         WebservEvent *make_application_event(WebservEvent *event);
         WebservEvent *make_write_event(WebservEvent *event, Response *res);
         WebservEvent *make_error_event(WebservEvent *event, char const *code);

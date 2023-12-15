@@ -122,7 +122,8 @@ int WebservReadEvent::timeout_count()
 WebservEvent* WebservReadEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservReadEvent::make_next_event()");
-    return (event_factory->make_application_event(event));
+    return (event_factory->make_parser_event(event));
+    //return (event_factory->make_application_event(event));
 }
 
 E_EpollEvent WebservReadEvent::get_next_epoll_event()
@@ -149,12 +150,12 @@ int WebservReadEvent::read(char *buf, size_t size)
 }
 */
 
-void WebservReadEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+void WebservReadEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
 }
 
-WebservCgiEvent &WebservReadEvent::cgi_event()
+WebservCgiEvent *WebservReadEvent::cgi_event()
 {
     return (this->cgi_event_);
 }

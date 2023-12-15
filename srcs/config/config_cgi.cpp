@@ -76,8 +76,6 @@ void ConfigCgi::push_all(std::vector<ConfigLastObject*> const &vec)
     WARNING("ConfigCgi::push_all() does not used");
 }
 
-
-
 void ConfigCgi::check()
 {
     std::map<std::string, std::string>::iterator ite = this->extensions.begin();

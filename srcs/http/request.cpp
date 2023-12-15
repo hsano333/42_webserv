@@ -37,7 +37,6 @@ Request::Request() :
     //is_redable_darectory(false)
 {
     DEBUG("Request::Request()");
-;
 }
 
 Request::~Request()

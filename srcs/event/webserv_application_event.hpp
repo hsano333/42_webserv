@@ -27,8 +27,8 @@ class WebservApplicationEvent : public WebservEvent
         File *file();
         void set_file(File *file);
 
-        void set_cgi_event(WebservCgiEvent &cgi_event);
-        WebservCgiEvent &cgi_event();
+        void set_cgi_event(WebservCgiEvent *cgi_event);
+        WebservCgiEvent *cgi_event();
 
     private:
         FileDiscriptor  fd_;
@@ -39,7 +39,7 @@ class WebservApplicationEvent : public WebservEvent
         int             timeout_count_;
         bool            is_completed_;
 
-        WebservCgiEvent cgi_event_;
+        WebservCgiEvent *cgi_event_;
 };
 
 #endif

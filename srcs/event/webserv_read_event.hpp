@@ -14,8 +14,8 @@ class WebservReadEvent : public WebservEvent
         EWebservEvent which();
 
         //static WebservReadEvent *from_fd(FileDiscriptor fd, IReader *reader);
-        static WebservReadEvent *from_fd(FileDiscriptor fd,FileDiscriptor sockfd);
-        static WebservReadEvent *from_event(WebservEvent *event,FileDiscriptor sockfd);
+        static WebservReadEvent *from_fd(FileDiscriptor fd, FileDiscriptor sockfd);
+        static WebservReadEvent *from_event(WebservEvent *event, FileDiscriptor sockfd);
         FileDiscriptor fd();
 
 
@@ -29,8 +29,8 @@ class WebservReadEvent : public WebservEvent
         E_EpollEvent get_next_epoll_event();
         //int read(char *buf, size_t size);
 
-        void set_cgi_event(WebservCgiEvent &cgi_event);
-        WebservCgiEvent &cgi_event();
+        void set_cgi_event(WebservCgiEvent *cgi_event);
+        WebservCgiEvent *cgi_event();
 
     private:
         WebservReadEvent(FileDiscriptor fd);
@@ -41,6 +41,6 @@ class WebservReadEvent : public WebservEvent
         int timeout_count_;
         bool is_completed_;
         //IReader *ireader;
-        WebservCgiEvent cgi_event_;
+        WebservCgiEvent *cgi_event_;
 };
 #endif

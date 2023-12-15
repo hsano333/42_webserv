@@ -30,8 +30,8 @@ class WebservWriteEvent : public WebservEvent
         static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
 
-        void set_cgi_event(WebservCgiEvent &cgi_event);
-        WebservCgiEvent &cgi_event();
+        void set_cgi_event(WebservCgiEvent *cgi_event);
+        WebservCgiEvent *cgi_event();
 
 
     private:
@@ -41,6 +41,6 @@ class WebservWriteEvent : public WebservEvent
         int             timeout_count_;
         IWriter *writer;
         bool is_completed_;
-        WebservCgiEvent cgi_event_;
+        WebservCgiEvent *cgi_event_;
 };
 #endif

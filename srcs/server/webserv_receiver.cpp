@@ -66,6 +66,40 @@ void WebservReceiver::recv(WebservEvent *event)
         ERROR("Request data is zero");
         throw HttpException("400");
     }
+
+
+    char *body_p = Utility::strnstr(tmp_req->buf(), "\r\n\r\n", (size_t)tmp_req->buf_size());
+
+    if(body_p == NULL && tmp_req->buf_size() >= MAX_READ_SIZE){
+        body_p = Utility::strnstr(tmp_req->buf(), "\r\n",(size_t)tmp_req->buf_size());
+        if(body_p){
+            ERROR("Invalid Request. Heade is too long ");
+            throw HttpException("431");
+        }
+        ERROR("Invalid Request.  request line is too long ");
+        throw HttpException("414");
+    }
+    //cout << "req->buf_size():" << req->buf_size() << endl;
+    //char *buf_p = req->buf();
+    //buf_p[req->buf_size()] = '\0';
+    //printf("buf_p=%s\n", buf_p);
+    if(body_p == NULL){
+        DEBUG("WebservParser:: not still read Request header");
+        event->set_completed(false);
+        return ;
+    }
+
+    // bodyの開始位置の記録
+    body_p += 4;
+    tmp_req->set_buf_body(body_p, tmp_req->buf_size() - (size_t)(body_p - tmp_req->buf()));
+
+    // parser処理でbodyを読み込まないため
+    body_p -= 4;
+    *body_p = '\0';
+
+
+    event->set_completed(true);
+
     //exit(0);
     //io_multi_controller->modify(event->fd(), EPOLLOUT);
 }

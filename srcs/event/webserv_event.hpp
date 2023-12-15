@@ -10,6 +10,7 @@
 typedef enum E_WebservEvent
 {
     READ_EVENT,
+    PARSER_EVENT,
     APPLICATION_EVENT,
     WRITE_EVENT,
     CLEAN_EVENT,
@@ -41,6 +42,7 @@ class WebservEvent
         virtual FileDiscriptor fd() = 0;
         virtual WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory) = 0;
         virtual E_EpollEvent get_next_epoll_event() = 0;
+
         virtual Request *req() = 0;
         virtual Response *res() = 0;
 
@@ -50,8 +52,9 @@ class WebservEvent
         virtual void increase_timeout_count(int count) = 0;
         virtual int  timeout_count() = 0;
 
-        virtual void set_cgi_event(WebservCgiEvent &cgi_event) = 0;
-        virtual WebservCgiEvent &cgi_event() = 0;
+        virtual void set_cgi_event(WebservCgiEvent *cgi_event) = 0;
+        virtual WebservCgiEvent *cgi_event() = 0;
+
         /*
         virtual void set_cgi_fd(FileDiscriptor fd) = 0;
         virtual FileDiscriptor cgi_fd() = 0;
@@ -63,9 +66,9 @@ class WebservEvent
     private:
         Request *req_;
         Response *res_;
-        FileDiscriptor fd_;
+        //FileDiscriptor fd_;
         //EWebservEvent event_type;
-        std::string filepath;
+        //std::string filepath;
         int timeout_count_;
 };
 

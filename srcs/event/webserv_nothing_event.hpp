@@ -24,8 +24,8 @@ class WebservNothingEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
 
-        void set_cgi_event(WebservCgiEvent &cgi_event);
-        WebservCgiEvent &cgi_event();
+        void set_cgi_event(WebservCgiEvent *cgi_event);
+        WebservCgiEvent *cgi_event();
         
 
     private:
@@ -33,6 +33,6 @@ class WebservNothingEvent : public WebservEvent
         FileDiscriptor fd_;
         WebservNothingEvent(FileDiscriptor fd);
         //bool is_completed_;
-        WebservCgiEvent cgi_event_;
+        WebservCgiEvent *cgi_event_;
 };
 #endif

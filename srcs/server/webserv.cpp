@@ -99,23 +99,22 @@ void Webserv::communication()
                 case READ_EVENT:
                     DEBUG("Webserv::Read Event ");
                     receiver.recv(event);
+                    //parser.parse_req(event);
+                    break;
+                case PARSER_EVENT:
                     parser.parse_req(event);
-                    event_controller->next_event(event);
                     break;
                 case APPLICATION_EVENT:
                     DEBUG("Webserv::Application Event ");
                     executer.execute(event);
-                    event_controller->next_event(event);
                     break;
                 case WRITE_EVENT:
                     DEBUG("Webserv::Write Event ");
                     sender.send(event);
-                    event_controller->next_event(event);
                     break;
                 case CLEAN_EVENT:
                     DEBUG("Webserv::Clean Event ");
                     cleaner.clean(event, false);
-                    event_controller->next_event(event);
 
                     if (cnt >= 10){
                         //delete event;
@@ -125,7 +124,7 @@ void Webserv::communication()
                         cout << "end break" << endl;
                         cout << "end break" << endl;
                         //delete event;
-                        return ;
+                        //return ;
                         break;
                     }
                     cnt++;
@@ -133,7 +132,6 @@ void Webserv::communication()
                 case TIMEOUT_EVENT:
                     DEBUG("Webserv::Timeout Event");
                     cleaner.clean_timeout_events(event);
-                    event_controller->next_event(event);
                     //delete(event);
                     break;
                     /*
@@ -148,12 +146,13 @@ void Webserv::communication()
                     */
                 case NOTHING_EVENT:
                     DEBUG("Webserv::Nothing Event");
-                    event_controller->next_event(event);
+                    //event_controller->next_event(event);
                     //delete(event);
                     break;
                 default:
                     break;
             }
+            event_controller->next_event(event);
             if(exit_flag){
                 break;
             }

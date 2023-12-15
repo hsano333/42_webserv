@@ -55,7 +55,8 @@ void WebservParser::parse_req(WebservEvent *event)
 {
     DEBUG("WebservParser::parse_req()");
     Request *req = event->req();
-    char *body_p = Utility::strnstr(req->buf(), "\r\n\r\n",(size_t)req->buf_size());
+    /*
+    char *body_p = Utility::strnstr(req->buf(), "\r\n\r\n", (size_t)req->buf_size());
 
     if(body_p == NULL && req->buf_size() >= MAX_READ_SIZE){
         body_p = Utility::strnstr(req->buf(), "\r\n",(size_t)req->buf_size());
@@ -65,12 +66,13 @@ void WebservParser::parse_req(WebservEvent *event)
         }
         ERROR("Invalid Request.  request line is too long ");
         throw HttpException("414");
-
     }
+    */
     //cout << "req->buf_size():" << req->buf_size() << endl;
     //char *buf_p = req->buf();
     //buf_p[req->buf_size()] = '\0';
     //printf("buf_p=%s\n", buf_p);
+    /*
     if(body_p == NULL){
         DEBUG("WebservParser:: not still read Request header");
         event->set_completed(false);
@@ -87,6 +89,8 @@ void WebservParser::parse_req(WebservEvent *event)
     req->set_buf_body(body_p, req->buf_size() - (size_t)(body_p - req->buf()));
     body_p -= 4;
     *body_p = '\0';
+    */
+
     Split sp(req->buf(), "\r\n");
     if(sp.size() == 0){
         delete (event);

@@ -34,8 +34,8 @@ class WebservCleanEvent : public WebservEvent
         void set_force_close(bool flag);
         void clean_res_and_req();
 
-        void set_cgi_event(WebservCgiEvent &cgi_event);
-        WebservCgiEvent &cgi_event();
+        void set_cgi_event(WebservCgiEvent *cgi_event);
+        WebservCgiEvent *cgi_event();
 
     private:
         FileDiscriptor  fd_;
@@ -45,7 +45,7 @@ class WebservCleanEvent : public WebservEvent
         bool            force_close;
         bool is_completed_;
 
-        WebservCgiEvent cgi_event_;
+        WebservCgiEvent *cgi_event_;
 };
 
 #endif

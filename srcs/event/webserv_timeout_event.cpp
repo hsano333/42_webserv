@@ -71,12 +71,12 @@ int WebservTimeoutEvent::timeout_count()
 }
 
 
-void WebservTimeoutEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+void WebservTimeoutEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
 }
 
-WebservCgiEvent &WebservTimeoutEvent::cgi_event()
+WebservCgiEvent *WebservTimeoutEvent::cgi_event()
 {
     return (this->cgi_event_);
 }

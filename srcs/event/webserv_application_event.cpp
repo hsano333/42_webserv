@@ -32,24 +32,28 @@ EWebservEvent WebservApplicationEvent::which()
 WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservApplicationEvent::make_next_event");
-    return (event_factory->make_write_event(event, event->res()));
+    //todo
+    if(event->cgi_event()){
+        return (event_factory->make_read_event_from_event(event));
+    }else{
+        return (event_factory->make_write_event(event, event->res()));
+    }
 }
 
 E_EpollEvent WebservApplicationEvent::get_next_epoll_event()
 {
 
     if (this->is_completed_){
-        if(this->cgi_event().is_cgi()){
-            return (EPOLL_CGI_OUT);
-        }else{
+        if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);
+
+        }else{
+            return (EPOLL_CGI_OUT);
         }
     }else{
         return (EPOLL_READ);
     }
 }
-
-
 
 FileDiscriptor WebservApplicationEvent::fd()
 {
@@ -102,12 +106,12 @@ File *WebservApplicationEvent::file()
     return (this->file_);
 }
 
-void WebservApplicationEvent::set_cgi_event(WebservCgiEvent &cgi_event)
+void WebservApplicationEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
 }
 
-WebservCgiEvent &WebservApplicationEvent::cgi_event()
+WebservCgiEvent *WebservApplicationEvent::cgi_event()
 {
     return (this->cgi_event_);
 }

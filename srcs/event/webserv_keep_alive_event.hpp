@@ -24,13 +24,13 @@ class WebservKeepAliveEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
 
-        void set_cgi_event(WebservCgiEvent &cgi_event);
-        WebservCgiEvent &cgi_event();
+        void set_cgi_event(WebservCgiEvent *cgi_event);
+        WebservCgiEvent *cgi_event();
     private:
         int             timeout_count_;
         FileDiscriptor fd_;
         WebservKeepAliveEvent(FileDiscriptor fd);
         //bool is_end_;
-        WebservCgiEvent cgi_event_;
+        WebservCgiEvent *cgi_event_;
 };
 #endif

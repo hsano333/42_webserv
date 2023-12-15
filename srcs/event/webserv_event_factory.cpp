@@ -1,5 +1,6 @@
 #include "webserv_event.hpp"
 #include "webserv_read_event.hpp"
+#include "webserv_parser_event.hpp"
 #include "webserv_write_event.hpp"
 #include "webserv_application_event.hpp"
 #include "webserv_nothing_event.hpp"
@@ -72,7 +73,9 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 return (event);
             }else{
 
-                if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && (fd == cached_event->cgi_event().cgi_fd())){
+                /*
+                if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && (fd == cached_event->cgi_event().cgi_fd()))
+                {
                     MYINFO("test CGI No.1");
                     cached_event->cgi_event().add_cgi_triger(CGI_READ);
                     if ( cached_event->cgi_event().cgi_triger() > CGI_READ){
@@ -87,6 +90,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                     MYINFO("test CGI No.4");
 
                 }
+                */
                 // reset timeout
                 cached_event->increase_timeout_count(-cached_event->timeout_count());
                 MYINFO("cached_event exists");
@@ -106,7 +110,9 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
 
-        if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd()){
+        /*
+        if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd())
+        {
                     MYINFO("test CGI No.6");
             //cached_event->cgi_event().add_cgi_triger(CGI_Triger.CGI_READ);
             //登録したfdがcgi用のイベントであるとき、
@@ -126,6 +132,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
             //登録したfdがcgi用のイベントではないが、CGIは実行されていたとき
         }
+        */
 
 
         //FileDiscriptor io_fd = this->socket_controller->accept_request(fd);
@@ -145,6 +152,11 @@ WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *even
 {
     FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
     return (WebservReadEvent::from_event(event, sockfd));
+}
+
+WebservEvent *WebservEventFactory::make_parser_event(WebservEvent *event)
+{
+    return (WebservParserEvent::from_event(event));
 }
 
 WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
