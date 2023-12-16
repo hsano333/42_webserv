@@ -10,7 +10,8 @@ WebservApplicationEvent::WebservApplicationEvent(
                             res_(NULL),
                             file_(NULL),
                             timeout_count_(0),
-                            is_completed_(false)
+                            is_completed_(false),
+                            cgi_event_(NULL)
 {
 
 };

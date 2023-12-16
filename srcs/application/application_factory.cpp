@@ -80,19 +80,22 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
     switch(method.to_enum())
     {
         case GET:
-            DEBUG("ApplicationFactory::make_application() make Get");
             if (is_cgi){
+                DEBUG("ApplicationFactory::make_application() Get Method with CGI");
                 app = GetCGIApplication::from_location(cfg, req, cgi);
             }else{
+                DEBUG("ApplicationFactory::make_application() Get Method with not CGI");
                 app = GetApplication::from_location(cfg, req);
             }
             break;
         case POST:
-            DEBUG("ApplicationFactory::make_application() make Post");
             if (is_cgi){
+                DEBUG("ApplicationFactory::make_application() Post Method with CGI");
                 //app = PostCGIApplication::from_location(cfg, req, cgi);
                 app = PostCGIApplication::from_location(cfg, event, ireader, cgi);
             }else{
+                DEBUG("ApplicationFactory::make_application() Post Method with not CGI");
+                //app = PostCGIApplication::from_location(cfg, req, cgi);
                 //app = GetApplication::from_location(cfg, req, cgi);
                 app = PostApplication::from_location(cfg, event, ireader);
             }

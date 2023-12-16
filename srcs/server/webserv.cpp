@@ -99,7 +99,6 @@ void Webserv::communication()
                 case READ_EVENT:
                     DEBUG("Webserv::Read Event ");
                     receiver.recv(event);
-                    //parser.parse_req(event);
                     break;
                 case PARSER_EVENT:
                     parser.parse_req(event);
