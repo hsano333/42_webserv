@@ -65,6 +65,24 @@ Method Method::from_string(string const &name)
     }else if (name == "DELETE"){
         object.method_ = DELETE;
         return (object);
+    }else if (name == "HEAD"){
+        object.method_ = HEAD;
+        return (object);
+    }else if (name == "PUT"){
+        object.method_ = PUT;
+        return (object);
+    }else if (name == "CONNECT"){
+        object.method_ = CONNECT;
+        return (object);
+    }else if (name == "OPTIONS"){
+        object.method_ = OPTIONS;
+        return (object);
+    }else if (name == "TRACE"){
+        object.method_ = TRACE;
+        return (object);
+    }else if (name == "PATCH"){
+        object.method_ = PATCH;
+        return (object);
     }
     ERROR("Method::from_string invalid argument:" + name);
     throw std::invalid_argument("Method::from_string invalid argument");

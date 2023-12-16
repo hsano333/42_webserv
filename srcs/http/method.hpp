@@ -8,6 +8,12 @@ typedef enum E_METHOD
     POST,
     DELETE,
 
+    HEAD,
+    PUT,
+    CONNECT,
+    OPTIONS,
+    TRACE,
+    PATCH,
 } e_method;
 
 //class Method;

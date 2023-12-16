@@ -73,7 +73,6 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
     RequestLine const &req_line = req->req_line();
     Method const &method = req_line.method();
 
-
     const ConfigLocation *location = cfg->get_location(cfg->get_server(req), req);
     bool is_cgi = cgi->check_cgi_application_path(req, location);
 
@@ -95,8 +94,6 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
                 app = PostCGIApplication::from_location(cfg, event, ireader, cgi);
             }else{
                 DEBUG("ApplicationFactory::make_application() Post Method with not CGI");
-                //app = PostCGIApplication::from_location(cfg, req, cgi);
-                //app = GetApplication::from_location(cfg, req, cgi);
                 app = PostApplication::from_location(cfg, event, ireader);
             }
             break;
@@ -104,9 +101,15 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
             DEBUG("ApplicationFactory::make_application() make Delete");
             app = DeleteApplication::from_location(cfg, req);
             break;
+        case PUT:
+        case CONNECT:
+        case OPTIONS:
+        case TRACE:
+        case PATCH:
+        case HEAD:
         default:
             ERROR("ApplicationFactory::make_application(): Invalid method");;
-            std::runtime_error("invalid Method");
+            throw HttpException("501");
     }
     return (app);
 }
