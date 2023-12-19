@@ -42,7 +42,7 @@ void WebservSender::send(WebservEvent *event)
     DEBUG("No.4 WebservSender::send()");
 
     try{
-        res->open_file();
+        res->open_source_file();
     }catch(std::runtime_error &e){
         //ERROR("WebservSender::send():" + string(e.what()));
         //throw HttpException("403");
@@ -79,7 +79,7 @@ void WebservSender::send(WebservEvent *event)
 
     //todo
     //event->set_next_flag(true);
-    res->close_file();
+    res->close_source_file();
     event->set_completed(true);
     DEBUG("WebservSender::send() end");
 }

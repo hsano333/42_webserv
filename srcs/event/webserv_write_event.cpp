@@ -4,11 +4,12 @@
 #include "error_file.hpp"
 
 
-WebservWriteEvent::WebservWriteEvent() 
+WebservWriteEvent::WebservWriteEvent()
                                         :
                                         fd_(FileDiscriptor::from_int(0)),
                                         req_(NULL),
                                         res_(NULL),
+                                        source_(NULL),
                                         timeout_count_(0),
                                         writer(NULL),
                                         is_completed_(false)
@@ -20,12 +21,14 @@ WebservWriteEvent::WebservWriteEvent(
         FileDiscriptor fd,
         Request *req,
         Response *res,
+        HttpData *source,
         IWriter *writer
         )
     :
         fd_(fd),
         req_(req),
         res_(res),
+        source_(source),
         timeout_count_(0),
         writer(writer)
 {
@@ -52,6 +55,7 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
             event->fd(),
             event->req(),
             res,
+            res,
             writer
     ));
 }
@@ -62,6 +66,7 @@ WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *re
             fd,
             req,
             NULL,
+            req,
             writer
     ));
 }
@@ -70,14 +75,10 @@ WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *re
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
     DEBUG("WebservWriteEvent::from_event()");
-    //if(event->res() != NULL){
-        //delete event->res();
-    //}
-    //
-    //
     WebservWriteEvent *write_event =  (new WebservWriteEvent(
             event->fd(),
             event->req(),
+            res,
             res,
             writer
     ));

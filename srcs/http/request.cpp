@@ -33,7 +33,8 @@ Request::Request() :
     //raw_buf_rest_size_(MAX_BUF-1),
     is_file_(false),
     is_directory_(false),
-    is_not_executable_parent_dir_(false)
+    is_not_executable_parent_dir_(false),
+    file(NULL)
     //is_redable_darectory(false)
 {
     DEBUG("Request::Request()");
@@ -318,6 +319,37 @@ Header const &Request::header() const
 {
     return (this->header_);
 }
+
+
+File *Request::get_source_file()
+{
+    return (this->file);
+}
+
+int Request::open_source_file()
+{
+    //DEBUG("Response::open_file()");
+    //if (this->file){
+        //DEBUG("Response::open_file() No.2");
+        //return (this->file->open());
+    //}
+    //DEBUG("Response::open_file() No.3");
+    return 0;
+}
+
+int Request::close_source_file()
+{
+    //if (this->file){
+        //return (this->file->close());
+    //}
+    return 0;
+}
+
+ssize_t Request::get_data(char** data)
+{
+    return (this->file->read(data, MAX_READ_SIZE));
+}
+
 
 void Request::print_info() const
 {

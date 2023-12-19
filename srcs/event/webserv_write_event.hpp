@@ -7,19 +7,21 @@
 #include "response.hpp"
 #include "file.hpp"
 #include "webserv_cgi_event.hpp"
+#include "http_data.hpp"
 
 class WebservWriteEvent : public WebservEvent
 {
     public:
         WebservWriteEvent();
         WebservWriteEvent(FileDiscriptor fd);
-        WebservWriteEvent(FileDiscriptor fd, Request *req, Response *res, IWriter* writer);
+        WebservWriteEvent(FileDiscriptor fd, Request *req, Response *res, HttpData *source, IWriter* writer);
         ~WebservWriteEvent();
         EWebservEvent which();
 
         FileDiscriptor  fd();
         Request         *req();
         Response        *res();
+        HttpData *source();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);
@@ -30,19 +32,17 @@ class WebservWriteEvent : public WebservEvent
         static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
         static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IWriter *writer);
-
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
-
 
     private:
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
+        HttpData        *source_;
         int             timeout_count_;
         IWriter *writer;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
-        File            *source_file;
 };
 #endif

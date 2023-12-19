@@ -4,6 +4,7 @@
 #include "status_code.hpp"
 //#include "error_page.hpp"
 #include "file.hpp"
+#include "http_data.hpp"
 #include <unistd.h>
 #include <map>
 
@@ -17,7 +18,7 @@ enum SEND_STATE{
     CLOSE,
 };
 
-class Response
+class Response : public HttpData
 {
     public:
         Response();
@@ -34,9 +35,9 @@ class Response
         void add_header(std::string const &key, std::string const &value);
         //static Response* from_file(std::string const &filepath);
         //static Response* from_directory(std::string const &filepath);
-        File *get_file();
-        int open_file();
-        int close_file();
+        File *get_source_file();
+        int open_source_file();
+        int close_source_file();
         ssize_t get_data(char** data);
         void print_info();
         void set_exist_body(bool flag);

@@ -1,6 +1,7 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
+#include "http_data.hpp"
 #include "config.hpp"
 #include "global.hpp"
 #include "ireader.hpp"
@@ -30,7 +31,7 @@ typedef enum E_STATE
 
 } REQUEST_STATE;
 
-class Request
+class Request : public HttpData
 {
     public:
         Request();
@@ -79,6 +80,10 @@ class Request
         FileDiscriptor fd() const;
         FileDiscriptor sockfd() const;
 
+        File *get_source_file();
+        int open_source_file();
+        int close_source_file();
+        ssize_t get_data(char** data);
         //
     private:
         FileDiscriptor fd_;
@@ -101,6 +106,7 @@ class Request
         Header         header_;
         std::string    tmp_path_info_;
         bool           read_completed_;
+        File *file;
 
 };
 

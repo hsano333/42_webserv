@@ -94,12 +94,12 @@ void Response::add_header(std::string const &key, std::string const &value)
 }
 
 
-File *Response::get_file()
+File *Response::get_source_file()
 {
     return (this->file);
 }
 
-int Response::open_file()
+int Response::open_source_file()
 {
     DEBUG("Response::open_file()");
     if (this->file){
@@ -110,7 +110,7 @@ int Response::open_file()
     return 0;
 }
 
-int Response::close_file()
+int Response::close_source_file()
 {
     if (this->file){
         return (this->file->close());
