@@ -56,18 +56,33 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
     ));
 }
 
+WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *req, IWriter *writer)
+{
+    return (new WebservWriteEvent(
+            fd,
+            req,
+            NULL,
+            writer
+    ));
+}
+
+
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
     DEBUG("WebservWriteEvent::from_event()");
     //if(event->res() != NULL){
         //delete event->res();
     //}
-    return (new WebservWriteEvent(
+    //
+    //
+    WebservWriteEvent *write_event =  (new WebservWriteEvent(
             event->fd(),
             event->req(),
             res,
             writer
     ));
+    write_event->set_cgi_event(event->cgi_event());
+    return (write_event);
 }
 
 

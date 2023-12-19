@@ -1,5 +1,6 @@
 #include "method.hpp"
 #include "get_method.hpp"
+#include "http_exception.hpp"
 #include "global.hpp"
 #include <string>
 
@@ -84,6 +85,7 @@ Method Method::from_string(string const &name)
         object.method_ = PATCH;
         return (object);
     }
+    throw HttpException("501");
     ERROR("Method::from_string invalid argument:" + name);
     throw std::invalid_argument("Method::from_string invalid argument");
 }

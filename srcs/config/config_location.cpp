@@ -270,3 +270,18 @@ void ConfigLocation::check()
         throw std::runtime_error("ConfigLocation::check(), index file is duplicated");
     }
 }
+
+bool ConfigLocation::is_allowed_method(Method method) const
+{
+    const ConfigLimit *limit = this->limit();
+    std::vector<Method>::const_iterator begin = limit->allowed_method().begin();
+    std::vector<Method>::const_iterator end = limit->allowed_method().end();
+
+    while(begin != end){
+        if(method == *begin){
+            return (true);
+        }
+        begin++;
+    }
+    return (false);
+}

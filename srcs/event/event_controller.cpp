@@ -45,21 +45,8 @@ void EventController::change_write_event(WebservEvent *event)
 
 }
 
-void EventController::next_event(WebservEvent *event)
+void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *next_event)
 {
-    DEBUG("EventController::next_event() No.0");
-    printf("event=%p\n", event);
-    //if (event->is_completed() == false){
-        //return ;
-    //}
-    DEBUG("EventController::next_event()");
-    WebservEvent *next_event;
-    if(event->is_completed()){
-        next_event = event->make_next_event(event, this->event_factory);
-    }else{
-        next_event = event;
-    }
-    printf("next event=%p\n", next_event);
     E_EpollEvent next_epoll_event = event->get_next_epoll_event();
     MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
@@ -86,6 +73,8 @@ void EventController::next_event(WebservEvent *event)
         MYINFO("EPOLL_CGI_OUT No.2:" + Utility::to_string(event->cgi_event().cgi_fd()));
         //this->fd_manager->close_fd(app_event->fd());
         */
+    //}else if (next_epoll_event == EPOLL_CGI_STOP){
+        //this->io_multi_controller->modify(event->fd(), EPOLLIN | EPOLLONESHOT);
     }else if (next_epoll_event == EPOLL_CLOSE){
         this->fd_manager->close_fd(event->fd());
         DEBUG("EventController::next_event No.1 delete event:" + Utility::to_string(event));
@@ -93,15 +82,33 @@ void EventController::next_event(WebservEvent *event)
         event = NULL;
     }else if(next_event){
         MYINFO("EventController::next is not epoll");
-        event_manager->push(next_event);
+        this->event_manager->push(next_event);
     }
 
+}
+
+void EventController::next_event(WebservEvent *event)
+{
+    DEBUG("EventController::next_event() No.0");
+    printf("event=%p\n", event);
+    //if (event->is_completed() == false){
+        //return ;
+    //}
+    DEBUG("EventController::next_event()");
+    WebservEvent *next_event;
+    if(event->is_completed()){
+        next_event = event->make_next_event(event, this->event_factory);
+    }else{
+        next_event = event;
+    }
+    printf("next event=%p\n", next_event);
+
+    set_next_epoll_event(event, next_event);
     //if (next_epoll_event != EPOLL_CONTINUE){
     if(event && next_event != event){
         //MYINFO("EventController::next_event() delete current event");
         DEBUG("EventController::next_event No.2 delete event:" + Utility::to_string(event));
         delete event;
     }
-    //}
 }
 

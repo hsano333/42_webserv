@@ -116,6 +116,7 @@ void Webserv::communication()
                     cleaner.clean(event, false);
 
                     if (cnt >= 10){
+                        cnt = 0;
                         //delete event;
                         cout << "end break" << endl;
                         cout << "end break" << endl;

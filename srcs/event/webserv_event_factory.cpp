@@ -38,6 +38,20 @@ WebservEventFactory::~WebservEventFactory()
     DEBUG("WebservEventFactory::~WebservEventFactory Destructor");
 }
 
+void WebservEventFactory::make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req)
+{
+    this->fd_manager->add_socket_and_epoll_fd(pid, fd_in);
+    this->fd_manager->add_socket_and_epoll_fd(pid, fd_out);
+    this->io_multi_controller->add(fd_in, EPOLLIN);
+    this->io_multi_controller->add(fd_out, EPOLLOUT);
+
+    WebservEvent *write_event = WebservWriteEvent::from_cgi_fd(fd_out, req, normal_writer);
+    WebservEvent *read_event = WebservReadEvent::from_cgi_fd(fd_in, normal_reader); 
+
+    this->event_manager->push(write_event);
+    this->event_manager->push(read_event);
+
+}
 
 WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_epoll)
 {
@@ -67,7 +81,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             if(cached_event == NULL){
                 MYINFO("cached_event is NULL");
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
-                WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd);
+                WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd, socket_reader);
                 //printf("event=%p\n", event);
                 //this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
@@ -151,7 +165,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *event)
 {
     FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
-    return (WebservReadEvent::from_event(event, sockfd));
+    return (WebservReadEvent::from_event(event, sockfd, socket_reader));
 }
 
 WebservEvent *WebservEventFactory::make_parser_event(WebservEvent *event)

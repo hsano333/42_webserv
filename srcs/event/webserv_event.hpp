@@ -27,6 +27,7 @@ typedef enum E_EpollEvent
     EPOLL_CLOSE,
     EPOLL_CGI_IN,
     EPOLL_CGI_OUT,
+    EPOLL_CGI_STOP,
     EPOLL_NONE,
 } E_EpollEvent;
 

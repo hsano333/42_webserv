@@ -21,5 +21,7 @@ class EventController
         IOMultiplexing *io_multi_controller;
         WebservEventFactory *event_factory;
         FDManager *fd_manager;
+
+        void set_next_epoll_event(WebservEvent *event, WebservEvent *next_event);
 };
 #endif

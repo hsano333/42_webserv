@@ -35,21 +35,19 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
     DEBUG("WebservApplicationEvent::make_next_event");
     //todo
     if(event->cgi_event()){
-        return (event_factory->make_read_event_from_event(event));
-    }else{
-        return (event_factory->make_write_event(event, event->res()));
+        WebservCgiEvent *cgi = event->cgi_event();
+        event_factory->make_cgi_event(cgi->pid(), cgi->fd_in(), cgi->fd_out(), event->req());
     }
+    return (event_factory->make_write_event(event, event->res()));
 }
 
 E_EpollEvent WebservApplicationEvent::get_next_epoll_event()
 {
-
     if (this->is_completed_){
         if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);
-
         }else{
-            return (EPOLL_CGI_OUT);
+            return (EPOLL_CGI_STOP);
         }
     }else{
         return (EPOLL_READ);

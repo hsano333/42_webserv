@@ -32,6 +32,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigLimit*> const &vec);
+        bool is_allowed_method(Method method) const;
         void check();
 
         //std::vector<std::string> out_properties;

@@ -37,7 +37,9 @@ void WebservReceiver::recv(WebservEvent *event)
     //space = 100;
     event->set_completed(false);
     while(1){
-        int tmp = reader->read(fd, &(buf[sum]), space, NULL);
+        //int tmp = reader->read(fd, &(buf[sum]), space, NULL);
+        int tmp = read_event->read(&(buf[sum]), space);
+
         MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
         if(tmp < 0){
             MYINFO("Receiver read < 0:" + Utility::to_string(tmp));

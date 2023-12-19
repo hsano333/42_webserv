@@ -75,6 +75,9 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
 
     const ConfigLocation *location = cfg->get_location(cfg->get_server(req), req);
     bool is_cgi = cgi->check_cgi_application_path(req, location);
+    if(location->is_allowed_method(method) == false){
+        throw HttpException("405");
+    }
 
     switch(method.to_enum())
     {

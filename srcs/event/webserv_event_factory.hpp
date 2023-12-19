@@ -28,6 +28,7 @@ class WebservEventFactory
                 );
         ~WebservEventFactory();
         WebservEvent *from_epoll_event(t_epoll_event const &event);
+        void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
         WebservEvent *make_parser_event(WebservEvent *event);
         WebservEvent *make_application_event(WebservEvent *event);
         WebservEvent *make_write_event(WebservEvent *event, Response *res);

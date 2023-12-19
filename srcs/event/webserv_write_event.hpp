@@ -29,6 +29,7 @@ class WebservWriteEvent : public WebservEvent
         int write(char const *buf, size_t size);
         static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
+        static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IWriter *writer);
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
@@ -42,5 +43,6 @@ class WebservWriteEvent : public WebservEvent
         IWriter *writer;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
+        File            *source_file;
 };
 #endif

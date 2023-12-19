@@ -10,18 +10,33 @@ WebservReadEvent::WebservReadEvent()
                                         fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
                                         timeout_count_(0),
-                                        is_completed_(false)
-                                        //ireader(NULL)
+                                        is_completed_(false),
+                                        reader(NULL)
 {
 }
 
+/*
 WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
     :
         //req_(new Request()),
         req_(NULL),
         fd_(fd),
         timeout_count_(0)
-        //ireader(NULL)
+        ireader(NULL)
+{
+    std::cout << "WebservReadEvent Constructor" << std::endl;
+
+    ;
+}
+*/
+
+WebservReadEvent::WebservReadEvent(FileDiscriptor fd, IReader *reader)
+    :
+        //req_(new Request()),
+        req_(NULL),
+        fd_(fd),
+        timeout_count_(0),
+        reader(reader)
 {
     std::cout << "WebservReadEvent Constructor" << std::endl;
 
@@ -35,22 +50,28 @@ WebservReadEvent::~WebservReadEvent()
     //delete ireader;
 }
 
-WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor sockfd)
+WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader)
 {
     DEBUG("WebservReadEvent::from_fd() fd:" + Utility::to_string(fd.to_int()));
-    WebservReadEvent *event = new WebservReadEvent(fd);
+    WebservReadEvent *event = new WebservReadEvent(fd, reader);
     DEBUG("WebservReadEvent::from_fd() event:" + Utility::to_string(event));
     //FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
     Request *req = Request::from_fd(fd, sockfd);
     event->req_ = req;
     return (event);
-
 }
 
-WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscriptor sockfd)
+WebservReadEvent *WebservReadEvent::from_cgi_fd(FileDiscriptor fd, IReader *reader)
+{
+    WebservReadEvent *event = new WebservReadEvent(fd, reader);
+
+    return (event);
+}
+
+WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscriptor sockfd, IReader *reader)
 {
     DEBUG("WebservReadEvent::from_event()");
-    WebservReadEvent *new_event = new WebservReadEvent(event->fd());
+    WebservReadEvent *new_event = new WebservReadEvent(event->fd(), reader);
     DEBUG("WebservReadEvent::from_event() No.1");
     //if (event->req()){
         //delete event->req();
@@ -136,19 +157,17 @@ E_EpollEvent WebservReadEvent::get_next_epoll_event()
 }
 
 
-/*
 #include <stdio.h>
 int WebservReadEvent::read(char *buf, size_t size)
 {
 
-    MYINFO("WebservReadEvent::read() fd:" + Utility::to_string(fd));
-    if( this->ireader == NULL){
+    MYINFO("WebservReadEvent::read() fd:" + Utility::to_string(this->fd_));
+    if( this->reader == NULL){
         std::cout << "buf is NU>>"  << std::endl;
     }
     printf("buf=%p", buf);
-    return this->ireader->read(fd, buf, size);
+    return this->reader->read(this->fd_, buf, size, NULL);
 }
-*/
 
 void WebservReadEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
