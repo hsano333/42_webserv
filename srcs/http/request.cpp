@@ -27,6 +27,7 @@ using std::vector;
 #define BODY_TMP_DIRECTORY_PATH "/tmp/webserv_body_tmp/"
 
 Request::Request() :
+    file(NULL),
     raw_buf_pos_(0),
     buf_body_size(0),
     // -1 is for '\0'
@@ -34,7 +35,7 @@ Request::Request() :
     is_file_(false),
     is_directory_(false),
     is_not_executable_parent_dir_(false),
-    file(NULL)
+    source(NULL)
     //is_redable_darectory(false)
 {
     DEBUG("Request::Request()");
@@ -321,33 +322,29 @@ Header const &Request::header() const
 }
 
 
+void Request::set_source_file(File *file)
+{
+    this->source = file;
+}
+
 File *Request::get_source_file()
 {
-    return (this->file);
+    return (this->source);
 }
 
 int Request::open_source_file()
 {
-    //DEBUG("Response::open_file()");
-    //if (this->file){
-        //DEBUG("Response::open_file() No.2");
-        //return (this->file->open());
-    //}
-    //DEBUG("Response::open_file() No.3");
-    return 0;
+    return (this->source->open());
 }
 
 int Request::close_source_file()
 {
-    //if (this->file){
-        //return (this->file->close());
-    //}
-    return 0;
+    return (this->source->close());
 }
 
 ssize_t Request::get_data(char** data)
 {
-    return (this->file->read(data, MAX_READ_SIZE));
+    return (this->source->read(data, MAX_READ_SIZE));
 }
 
 

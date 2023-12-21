@@ -36,7 +36,7 @@ bool GetCGIApplication::execute()
 {
 
     //this->cgi_event_.set_is_cgi(true);
-    DEBUG("GetApplication::execute_cgi()");
+    DEBUG("GetCGIApplication::execute()");
     //string &execve_path = this->cgi_application_path;
     string const &exe_root = this->location->root();
     string const &file_path = this->req->requested_filepath();
@@ -91,10 +91,8 @@ bool GetCGIApplication::execute()
     */
     //int fd_in;
     //int fd_out;
-
-
-
     this->cgi_event_ = new WebservCgiEvent();
+    cout << "this->cgi_event_ No.1 = " << this->cgi_event_ << endl;
     //FileDiscriptor pid_fd = FileDiscriptor::from_int(pid);
     FileDiscriptor cgi_pid = FileDiscriptor::from_int(pid);
     FileDiscriptor cgi_fd_in = FileDiscriptor::from_int(fd_in);
@@ -103,6 +101,7 @@ bool GetCGIApplication::execute()
     this->cgi_event_->set_fd_in(cgi_fd_in);
     this->cgi_event_->set_fd_out(cgi_fd_out);
 
+    cout << "this->cgi_event_ No.2 = " << this->cgi_event_ << endl;
     //this->fd_manager->add_socket_and_epoll_fd(pid_fd, fdout_fd);
     //
     
@@ -134,6 +133,7 @@ bool GetCGIApplication::execute()
     //cout << "execve_path:" << execve_path << endl;
     cout << "file_path:" << file_path << endl;
     cout << "query:" << query << endl;
+    cout << "this->cgi_event_ No.3 = " << this->cgi_event_ << endl;
 
     return (true);
 }
@@ -255,11 +255,7 @@ Response* GetCGIApplication::make_response()
     if(file == NULL){
         cout << "file is NULL" << endl;
     }
-    //this->cgi_event_ = new WebservCgiEvent();
-    //if(this->is_cgi_){
-        //this->
-    //this->cgi_event_->set_cgi_fd();
-    //}
+
     Response *res = NULL;
     if(this->location->is_redirect()){
         res = Response::from_file(file);
@@ -288,6 +284,7 @@ Response* GetCGIApplication::make_response()
 //Response* GetCGIApplication::make_response()
 WebservCgiEvent *GetCGIApplication::cgi_event()
 {
+    cout << " get this->cgi_event_ No.0 = " << this->cgi_event_ << endl;
     return (this->cgi_event_);
 
 }

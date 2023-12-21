@@ -21,7 +21,7 @@ class WebservWriteEvent : public WebservEvent
         FileDiscriptor  fd();
         Request         *req();
         Response        *res();
-        HttpData *source();
+        HttpData        *source();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);
@@ -30,8 +30,9 @@ class WebservWriteEvent : public WebservEvent
         E_EpollEvent get_next_epoll_event();
         int write(char const *buf, size_t size);
         static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
+        static WebservWriteEvent *from_event_for_cgi(WebservEvent *event, Response *res, IWriter *writer);
         static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
-        static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IWriter *writer);
+        static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader, IWriter *writer);
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
 

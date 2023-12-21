@@ -29,9 +29,10 @@ void WebservSender::send(WebservEvent *event)
 {
     DEBUG("WebservSender::send()");
     WebservWriteEvent *write_event = static_cast<WebservWriteEvent*>(event);
-    Response *res = write_event->res();
-    if(res == NULL){
-        ERROR("WebservSender::send(): Response is NULL");
+    //Response *res = write_event->res();
+    HttpData *source = write_event->source();
+    if(source == NULL){
+        ERROR("WebservSender::send():  source is NULL");
         throw HttpException("500");
     }
     DEBUG("No.3 WebservSender::send()");
@@ -42,23 +43,23 @@ void WebservSender::send(WebservEvent *event)
     DEBUG("No.4 WebservSender::send()");
 
     try{
-        res->open_source_file();
+        source->open_source_file();
     }catch(std::runtime_error &e){
         //ERROR("WebservSender::send():" + string(e.what()));
         //throw HttpException("403");
     }
-    DEBUG("No.5 WebservSender::send()");
 
     FileDiscriptor fd = write_event->fd();
-    ssize_t size = res->get_data(&p_data);
+    DEBUG("No.5 WebservSender::send() + fd=" + fd.to_string());
+    ssize_t size = source->get_data(&p_data);
     p_data[size] = '\0';
     cout << "read data=" << p_data << endl;
     DEBUG("No.6 WebservSender::send()");
     while(size > 0)
     {
-    DEBUG("No.7 WebservSender::send()");
+    DEBUG("No.7 WebservSender::send() + size=" + Utility::to_string(size));
         int result = writer->write(fd, p_data, size, NULL);
-    DEBUG("No.8 WebservSender::send()");
+    //DEBUG("No.8 WebservSender::send() + p_data=" + p_data);
         if (result < 0){
             ERROR("WebservSender::send() result:" + Utility::to_string(result));
             throw ConnectionException("Write Connection Error");
@@ -71,7 +72,7 @@ void WebservSender::send(WebservEvent *event)
         }
     DEBUG("No.9 WebservSender::send()");
         p_data = &(data[0]);
-        size = res->get_data(&p_data);
+        size = source->get_data(&p_data);
         p_data[size] = '\0';
         cout << "data=[" << p_data << "]" << endl;
     }
@@ -79,7 +80,7 @@ void WebservSender::send(WebservEvent *event)
 
     //todo
     //event->set_next_flag(true);
-    res->close_source_file();
+    source->close_source_file();
     event->set_completed(true);
     DEBUG("WebservSender::send() end");
 }

@@ -26,9 +26,20 @@ void WebservReceiver::recv(WebservEvent *event)
     DEBUG("WebservReader::read()");
     WebservReadEvent *read_event = static_cast<WebservReadEvent*>(event);
     Request *tmp_req = read_event->req();
+    cout << "test No.1" << endl;
+    HttpData *source = read_event->source();
+    cout << "test No.2" << endl;
+    if(source == NULL){
+        ERROR("WebservReceiver::recv():  source is NULL");
+        throw HttpException("500");
+    }
+    cout << "test No.3" << endl;
+    source->open_source_file();
+    cout << "test No.4" << endl;
 
     int space = tmp_req->raw_buf_space();
     char* buf = tmp_req->get_raw_buf_pointer();
+    cout << "test No.6" << endl;
     FileDiscriptor fd = read_event->fd();
     size_t sum = tmp_req->buf_size();
     MYINFO("Receiver  fd:" + Utility::to_string(fd.to_int()));
@@ -37,14 +48,13 @@ void WebservReceiver::recv(WebservEvent *event)
     //space = 100;
     event->set_completed(false);
     while(1){
-        //int tmp = reader->read(fd, &(buf[sum]), space, NULL);
-        int tmp = read_event->read(&(buf[sum]), space);
+        char* p_data = &(buf[sum]);
+        ssize_t tmp = source->get_data(&p_data);
 
         MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
         if(tmp < 0){
             MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
             event->set_completed(true);
-            //tmp_req->set_read_completed(true);
             break;
         }else if(tmp == 0){
             ERROR("Read Connection Error");

@@ -259,6 +259,7 @@ Response* GetApplication::make_response()
 //Response* GetApplication::make_response()
 WebservCgiEvent *GetApplication::cgi_event()
 {
+    cout << "GetApplication::cgi_event()" << endl;
     return (NULL);
     //return (this->cgi_event_);
 

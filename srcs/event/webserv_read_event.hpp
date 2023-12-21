@@ -4,6 +4,7 @@
 #include "file_discriptor.hpp"
 #include "ireader.hpp"
 #include "webserv_cgi_event.hpp"
+#include "http_data.hpp"
 
 class WebservReadEvent : public WebservEvent
 {
@@ -22,6 +23,7 @@ class WebservReadEvent : public WebservEvent
 
         Request *req();
         Response *res();
+        HttpData *source();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);
@@ -32,16 +34,18 @@ class WebservReadEvent : public WebservEvent
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
+        //IReader *reader();
 
     private:
         WebservReadEvent(FileDiscriptor fd, IReader *reader);
-        Request *req_;
-        Response *res_;
+        Request         *req_;
+        Response        *res_;
+        HttpData        *source_;
         FileDiscriptor fd_;
         //EWebservEvent event_type;
         int timeout_count_;
         bool is_completed_;
-        IReader *reader;
+        IReader *reader_;
         WebservCgiEvent *cgi_event_;
 };
 #endif

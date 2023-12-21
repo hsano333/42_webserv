@@ -35,8 +35,16 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
     DEBUG("WebservApplicationEvent::make_next_event");
     //todo
     if(event->cgi_event()){
+        cout << "test No.1 " << endl;
         WebservCgiEvent *cgi = event->cgi_event();
+        cout << "test No.2 cgi=" << cgi << endl;
+        cout << "test No.2 event->req()=" << event->req() << endl;
         event_factory->make_cgi_event(cgi->pid(), cgi->fd_in(), cgi->fd_out(), event->req());
+        MYINFO("cgi pid=" + Utility::to_string(cgi->pid()));
+        MYINFO("cgi fd_in=" + cgi->fd_in().to_string());
+        MYINFO("cgi fd_out=" + cgi->fd_out().to_string());
+        cout << "test No.20" << endl;
+        return (event_factory->make_write_event_for_cgi(event, event->res()));
     }
     return (event_factory->make_write_event(event, event->res()));
 }
@@ -75,6 +83,7 @@ bool WebservApplicationEvent::is_completed()
 }
 void WebservApplicationEvent::set_completed(bool flag)
 {
+    DEBUG("WebservApplicationEvent::set_completed");
     this->is_completed_ = flag;
 }
 
@@ -107,10 +116,13 @@ File *WebservApplicationEvent::file()
 
 void WebservApplicationEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
+    DEBUG("WebservApplicationEvent::set_cgi_event()");
+    cout << "copy cgi_event=" << cgi_event << endl;
     this->cgi_event_ = cgi_event;
 }
 
 WebservCgiEvent *WebservApplicationEvent::cgi_event()
 {
+    DEBUG("WebservApplicationEvent::cgi_event()");
     return (this->cgi_event_);
 }

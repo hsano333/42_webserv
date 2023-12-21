@@ -9,7 +9,7 @@
 
 typedef enum E_WebservEvent
 {
-    READ_EVENT,
+    READ_EVENT = 0,
     PARSER_EVENT,
     APPLICATION_EVENT,
     WRITE_EVENT,

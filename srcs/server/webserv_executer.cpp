@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/12/18 18:45:14 by sano             ###   ########.fr       */
+/*   Updated: 2023/12/20 00:32:46 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,10 @@ void WebservExecuter::execute(WebservEvent *event)
     Application *app = this->get_application(app_event);
     //todo
     try{
+        bool is_completed = app->execute();
         if(app->is_cgi()){
             app_event->set_cgi_event(app->cgi_event());
         }
-        bool is_completed = app->execute();
         app_event->set_completed(is_completed);
         if(is_completed)
         {

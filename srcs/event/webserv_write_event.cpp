@@ -1,5 +1,6 @@
 #include "webserv_write_event.hpp"
 #include "socket_writer.hpp"
+#include "opened_socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
 
@@ -60,8 +61,11 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
     ));
 }
 
-WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *req, IWriter *writer)
+WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader, IWriter *writer)
 {
+    DEBUG("WebservWriteEvent::from_cgi_fd()");
+    File *file = OpenedSocketFile::from_fd(reader, req->fd());
+    req->set_source_file(file);
     return (new WebservWriteEvent(
             fd,
             req,
@@ -71,6 +75,19 @@ WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *re
     ));
 }
 
+WebservWriteEvent *WebservWriteEvent::from_event_for_cgi(WebservEvent *event, Response *res, IWriter *writer)
+{
+    DEBUG("WebservWriteEvent::from_event()");
+    WebservWriteEvent *write_event =  (new WebservWriteEvent(
+            event->fd(),
+            event->req(),
+            res,
+            event->req(),
+            writer
+    ));
+    write_event->set_cgi_event(event->cgi_event());
+    return (write_event);
+}
 
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
@@ -106,6 +123,11 @@ Request *WebservWriteEvent::req()
 Response *WebservWriteEvent::res()
 {
     return (this->res_);
+}
+
+HttpData *WebservWriteEvent::source()
+{
+    return (this->source_);
 }
 
 bool WebservWriteEvent::is_completed()
@@ -144,8 +166,6 @@ E_EpollEvent WebservWriteEvent::get_next_epoll_event()
 
 int WebservWriteEvent::write(char const *buf, size_t size)
 {
-
-    //char buf[] = "HTTP/1.1 200 OK";
     return (this->writer->write(fd_, buf, size, NULL));
 }
 

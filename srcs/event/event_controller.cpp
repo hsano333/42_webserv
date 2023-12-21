@@ -98,6 +98,9 @@ void EventController::next_event(WebservEvent *event)
     WebservEvent *next_event;
     if(event->is_completed()){
         next_event = event->make_next_event(event, this->event_factory);
+        if(next_event){
+            MYINFO("next_event=" + Utility::to_string(next_event->which()));
+        }
     }else{
         next_event = event;
     }

@@ -1,5 +1,6 @@
 #include "webserv_read_event.hpp"
 #include "socket_reader.hpp"
+#include "opened_socket_file.hpp"
 #include "normal_reader.hpp"
 #include "global.hpp"
 
@@ -7,11 +8,13 @@ WebservReadEvent::WebservReadEvent()
                                         :
                                         //req_(new Request()),
                                         req_(NULL),
+                                        res_(NULL),
+                                        source_(NULL),
                                         fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
                                         timeout_count_(0),
                                         is_completed_(false),
-                                        reader(NULL)
+                                        reader_(NULL)
 {
 }
 
@@ -34,13 +37,16 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd, IReader *reader)
     :
         //req_(new Request()),
         req_(NULL),
+        res_(NULL),
+        source_(NULL),
         fd_(fd),
         timeout_count_(0),
-        reader(reader)
+        reader_(reader)
 {
-    std::cout << "WebservReadEvent Constructor" << std::endl;
 
-    ;
+    std::cout << "WebservReadEvent Constructor" << std::endl;
+    //File *file = OpenedSocketFile::from_fd(reader, fd);
+    //this->file = file;
 }
 
 
@@ -57,14 +63,19 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor so
     DEBUG("WebservReadEvent::from_fd() event:" + Utility::to_string(event));
     //FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
     Request *req = Request::from_fd(fd, sockfd);
+    File *file = OpenedSocketFile::from_fd(reader, fd);
+    req->set_source_file(file);
+    //this->file = file;
+
+
     event->req_ = req;
+    event->source_ = req;
     return (event);
 }
 
 WebservReadEvent *WebservReadEvent::from_cgi_fd(FileDiscriptor fd, IReader *reader)
 {
     WebservReadEvent *event = new WebservReadEvent(fd, reader);
-
     return (event);
 }
 
@@ -87,9 +98,15 @@ WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscript
     }else{
         //FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
         req = Request::from_fd(event->fd(), sockfd);
+        File *file = OpenedSocketFile::from_fd(reader, event->fd());
+        req->set_source_file(file);
+
+
     }
     DEBUG("WebservReadEvent::from_event() No.3");
     new_event->req_ = req;
+    new_event->res_ = NULL;
+    new_event->source_ = req;
     DEBUG("WebservReadEvent::from_event() No.4 make event:" + Utility::to_string(new_event));
     return (new_event);
 
@@ -114,6 +131,11 @@ Request *WebservReadEvent::req()
 Response *WebservReadEvent::res()
 {
     return (NULL);
+}
+
+HttpData *WebservReadEvent::source()
+{
+    return (source_);
 }
 
 
@@ -162,11 +184,11 @@ int WebservReadEvent::read(char *buf, size_t size)
 {
 
     MYINFO("WebservReadEvent::read() fd:" + Utility::to_string(this->fd_));
-    if( this->reader == NULL){
+    if( this->reader_ == NULL){
         std::cout << "buf is NU>>"  << std::endl;
     }
     printf("buf=%p", buf);
-    return this->reader->read(this->fd_, buf, size, NULL);
+    return this->reader_->read(this->fd_, buf, size, NULL);
 }
 
 void WebservReadEvent::set_cgi_event(WebservCgiEvent *cgi_event)
@@ -179,6 +201,12 @@ WebservCgiEvent *WebservReadEvent::cgi_event()
     return (this->cgi_event_);
 }
 
+/*
+IReader *WebservReadEvent::reader()
+{
+    return (this->reader_);
+}
+*/
 
 
 

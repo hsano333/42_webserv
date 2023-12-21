@@ -38,15 +38,12 @@ class Request : public HttpData
         ~Request();
 
         static Request *from_fd(FileDiscriptor fd, FileDiscriptor sockfd);
-        //void    insert_buf(char *buf, int size);
         char*   buf();
-        //void    decrement_raw_buf_size(size_t size);
         void    clear_raw_buf();
         size_t  buf_size();
         char*   get_raw_buf_pointer();
         char*   get_raw_buf_begin();
         int     raw_buf_space();
-        //void    renew_raw_buf_space(int space);
         char*   get_buf_body(int *size);
         void    set_buf_body(char *body_p, int size);
         void    clear_buf_body();
@@ -80,12 +77,15 @@ class Request : public HttpData
         FileDiscriptor fd() const;
         FileDiscriptor sockfd() const;
 
+
+        void set_source_file(File *source);
         File *get_source_file();
         int open_source_file();
         int close_source_file();
         ssize_t get_data(char** data);
         //
     private:
+        File *file;
         FileDiscriptor fd_;
         FileDiscriptor sockfd_;
         char    raw_buf[MAX_BUF];
@@ -106,7 +106,7 @@ class Request : public HttpData
         Header         header_;
         std::string    tmp_path_info_;
         bool           read_completed_;
-        File *file;
+        File *source;
 
 };
 

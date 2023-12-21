@@ -31,6 +31,8 @@ class WebservEventFactory
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
         WebservEvent *make_parser_event(WebservEvent *event);
         WebservEvent *make_application_event(WebservEvent *event);
+        WebservEvent *make_write_cgi_event(WebservEvent *event, Response *res);
+        WebservEvent *make_write_event_for_cgi(WebservEvent *event, Response *res);
         WebservEvent *make_write_event(WebservEvent *event, Response *res);
         WebservEvent *make_error_event(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
