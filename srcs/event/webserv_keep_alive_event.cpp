@@ -63,6 +63,16 @@ Response *WebservKeepAliveEvent::res()
     return (NULL);
 }
 
+File *WebservKeepAliveEvent::src()
+{
+    return (NULL);
+}
+
+File *WebservKeepAliveEvent::dst()
+{
+    return (NULL);
+}
+
 bool WebservKeepAliveEvent::is_completed()
 {
     return (true);

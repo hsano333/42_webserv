@@ -49,6 +49,16 @@ Response *WebservTimeoutEvent::res()
     return (NULL);
 }
 
+File *WebservTimeoutEvent::src()
+{
+    return (NULL);
+}
+
+File *WebservTimeoutEvent::dst()
+{
+    return (NULL);
+}
+
 bool WebservTimeoutEvent::is_completed()
 {
     return (this->is_completed_);

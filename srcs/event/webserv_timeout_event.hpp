@@ -14,9 +14,11 @@ class WebservTimeoutEvent : public WebservEvent
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
 
-        FileDiscriptor fd();
-        Request *req();
-        Response *res();
+        FileDiscriptor  fd();
+        Request         *req();
+        Response        *res();
+        File            *src();
+        File            *dst();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);

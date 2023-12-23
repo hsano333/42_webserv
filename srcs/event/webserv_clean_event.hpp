@@ -20,12 +20,14 @@ class WebservCleanEvent : public WebservEvent
         E_EpollEvent get_next_epoll_event();
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
-        FileDiscriptor fd();
         void increase_timeout_count(int count);
         int  timeout_count();
         static WebservCleanEvent *from_webserv_event(WebservEvent *event, bool force_close);
-        Request *req();
-        Response *res();
+        FileDiscriptor  fd();
+        Request         *req();
+        Response        *res();
+        File            *src();
+        File            *dst();
         void set_null_res_and_req();
 
         bool is_completed();
@@ -41,6 +43,8 @@ class WebservCleanEvent : public WebservEvent
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
+        File            *source_file;
+        File            *destination_file;
         int             timeout_count_;
         bool            force_close;
         bool is_completed_;

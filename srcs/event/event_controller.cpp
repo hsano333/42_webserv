@@ -77,9 +77,9 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         //this->io_multi_controller->modify(event->fd(), EPOLLIN | EPOLLONESHOT);
     }else if (next_epoll_event == EPOLL_CLOSE){
         this->fd_manager->close_fd(event->fd());
-        DEBUG("EventController::next_event No.1 delete event:" + Utility::to_string(event));
-        delete event;
-        event = NULL;
+        //DEBUG("EventController::next_event No.1 delete event:" + Utility::to_string(event));
+        //delete event;
+        //event = NULL;
     }else if(next_event){
         MYINFO("EventController::next is not epoll");
         this->event_manager->push(next_event);

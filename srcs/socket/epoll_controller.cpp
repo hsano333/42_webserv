@@ -187,6 +187,7 @@ void EpollController::wait()
     int time_msec = 5;
 
     int nfds = epoll_wait(epoll.fd().to_int(), epoll.allocated_event_pointer(), epoll.allocated_event_size(), time_msec * 1000);
+    MYINFO("epoll nfds=" + Utility::to_string(nfds));
     if(nfds < 0){
         ERROR("EPOLL WAIT ERROR");
         throw std::runtime_error("EPOLL WAIT ERROR");

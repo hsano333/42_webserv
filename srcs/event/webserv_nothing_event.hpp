@@ -16,9 +16,11 @@ class WebservNothingEvent : public WebservEvent
         E_EpollEvent get_next_epoll_event();
 
         static WebservNothingEvent *from_fd(FileDiscriptor fd);
-        FileDiscriptor fd();
-        Request *req();
-        Response *res();
+        FileDiscriptor  fd();
+        Request         *req();
+        Response        *res();
+        File            *src();
+        File            *dst();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);

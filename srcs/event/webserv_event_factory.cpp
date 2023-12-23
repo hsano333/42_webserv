@@ -46,7 +46,7 @@ void WebservEventFactory::make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_i
     this->io_multi_controller->add(fd_out, EPOLLOUT);
 
     WebservEvent *write_event = WebservWriteEvent::from_cgi_fd(fd_out, req, socket_reader,normal_writer);
-    WebservEvent *read_event = WebservReadEvent::from_cgi_fd(fd_in, normal_reader); 
+    WebservEvent *read_event = WebservReadEvent::from_cgi_fd(fd_in, normal_reader);
 
     this->event_manager->push(write_event);
     this->event_manager->push(read_event);

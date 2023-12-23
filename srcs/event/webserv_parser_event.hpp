@@ -17,6 +17,8 @@ class WebservParserEvent : public WebservEvent
         FileDiscriptor  fd();
         Request         *req();
         Response        *res();
+        File            *src();
+        File            *dst();
 
         bool is_completed();
         void set_completed(bool flag);
@@ -35,6 +37,8 @@ class WebservParserEvent : public WebservEvent
         Request         *req_;
         Response        *res_;
         File            *file_;
+        File            *source_file;
+        File            *destination_file;
 
         int             timeout_count_;
         bool            is_completed_;

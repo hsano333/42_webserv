@@ -31,7 +31,7 @@ typedef enum E_STATE
 
 } REQUEST_STATE;
 
-class Request : public HttpData
+class Request : public File
 {
     public:
         Request();
@@ -77,12 +77,22 @@ class Request : public HttpData
         FileDiscriptor fd() const;
         FileDiscriptor sockfd() const;
 
+        // File Interface
+        int open();
+        int close();
+        int read(char **buf, size_t size);
+        int write(char **buf, size_t size);
+        bool can_read();
+        size_t size();
+        bool is_chunk();
+        int remove();
+        std::string const &path();
 
-        void set_source_file(File *source);
-        File *get_source_file();
-        int open_source_file();
-        int close_source_file();
-        ssize_t get_data(char** data);
+        //void set_source_file(File *source);
+        //File *get_source_file();
+        //int open_source_file();
+        //int close_source_file();
+        //ssize_t get_data(char** data);
         //
     private:
         File *file;
@@ -106,7 +116,7 @@ class Request : public HttpData
         Header         header_;
         std::string    tmp_path_info_;
         bool           read_completed_;
-        File *source;
+        //File *source;
 
 };
 

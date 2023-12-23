@@ -30,7 +30,7 @@ void WebservSender::send(WebservEvent *event)
     DEBUG("WebservSender::send()");
     WebservWriteEvent *write_event = static_cast<WebservWriteEvent*>(event);
     //Response *res = write_event->res();
-    HttpData *source = write_event->source();
+    File *source = write_event->src();
     if(source == NULL){
         ERROR("WebservSender::send():  source is NULL");
         throw HttpException("500");
@@ -43,7 +43,7 @@ void WebservSender::send(WebservEvent *event)
     DEBUG("No.4 WebservSender::send()");
 
     try{
-        source->open_source_file();
+        source->open();
     }catch(std::runtime_error &e){
         //ERROR("WebservSender::send():" + string(e.what()));
         //throw HttpException("403");
@@ -51,7 +51,7 @@ void WebservSender::send(WebservEvent *event)
 
     FileDiscriptor fd = write_event->fd();
     DEBUG("No.5 WebservSender::send() + fd=" + fd.to_string());
-    ssize_t size = source->get_data(&p_data);
+    ssize_t size = source->read(&p_data, MAX_READ_SIZE);
     p_data[size] = '\0';
     cout << "read data=" << p_data << endl;
     DEBUG("No.6 WebservSender::send()");
@@ -72,7 +72,7 @@ void WebservSender::send(WebservEvent *event)
         }
     DEBUG("No.9 WebservSender::send()");
         p_data = &(data[0]);
-        size = source->get_data(&p_data);
+        size = source->read(&p_data, MAX_READ_SIZE);
         p_data[size] = '\0';
         cout << "data=[" << p_data << "]" << endl;
     }
@@ -80,7 +80,7 @@ void WebservSender::send(WebservEvent *event)
 
     //todo
     //event->set_next_flag(true);
-    source->close_source_file();
+    source->close();
     event->set_completed(true);
     DEBUG("WebservSender::send() end");
 }

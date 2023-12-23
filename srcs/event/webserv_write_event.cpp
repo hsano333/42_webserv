@@ -10,7 +10,7 @@ WebservWriteEvent::WebservWriteEvent()
                                         fd_(FileDiscriptor::from_int(0)),
                                         req_(NULL),
                                         res_(NULL),
-                                        source_(NULL),
+                                        source_file(NULL),
                                         timeout_count_(0),
                                         writer(NULL),
                                         is_completed_(false)
@@ -22,14 +22,14 @@ WebservWriteEvent::WebservWriteEvent(
         FileDiscriptor fd,
         Request *req,
         Response *res,
-        HttpData *source,
+        File *source,
         IWriter *writer
         )
     :
         fd_(fd),
         req_(req),
         res_(res),
-        source_(source),
+        source_file(source),
         timeout_count_(0),
         writer(writer)
 {
@@ -41,7 +41,7 @@ WebservWriteEvent::~WebservWriteEvent()
     ;
 }
 
-WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer) 
+WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer)
 {
     DEBUG("WebservWriteEvent::from_error_status_code()");
     delete event->res();
@@ -56,7 +56,7 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
             event->fd(),
             event->req(),
             res,
-            res,
+            file,
             writer
     ));
 }
@@ -65,24 +65,24 @@ WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *re
 {
     DEBUG("WebservWriteEvent::from_cgi_fd()");
     File *file = OpenedSocketFile::from_fd(reader, req->fd());
-    req->set_source_file(file);
+    //req->set_source_file(file);
     return (new WebservWriteEvent(
             fd,
             req,
             NULL,
-            req,
+            file,
             writer
     ));
 }
 
 WebservWriteEvent *WebservWriteEvent::from_event_for_cgi(WebservEvent *event, Response *res, IWriter *writer)
 {
-    DEBUG("WebservWriteEvent::from_event()");
+    DEBUG("WebservWriteEvent::from_event_for_cgi()");
     WebservWriteEvent *write_event =  (new WebservWriteEvent(
             event->fd(),
             event->req(),
             res,
-            event->req(),
+            NULL,
             writer
     ));
     write_event->set_cgi_event(event->cgi_event());
@@ -92,11 +92,12 @@ WebservWriteEvent *WebservWriteEvent::from_event_for_cgi(WebservEvent *event, Re
 WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
 {
     DEBUG("WebservWriteEvent::from_event()");
+    //File *file = OpenedSocketFile::from_fd(writer, res->fd());
     WebservWriteEvent *write_event =  (new WebservWriteEvent(
             event->fd(),
             event->req(),
             res,
-            res,
+            res->get_file(),
             writer
     ));
     write_event->set_cgi_event(event->cgi_event());
@@ -125,10 +126,22 @@ Response *WebservWriteEvent::res()
     return (this->res_);
 }
 
+File *WebservWriteEvent::src()
+{
+    return (this->source_file);
+}
+
+File *WebservWriteEvent::dst()
+{
+    return (this->destination_file);
+}
+
+/*
 HttpData *WebservWriteEvent::source()
 {
     return (this->source_);
 }
+*/
 
 bool WebservWriteEvent::is_completed()
 {
@@ -178,3 +191,4 @@ WebservCgiEvent *WebservWriteEvent::cgi_event()
 {
     return (this->cgi_event_);
 }
+

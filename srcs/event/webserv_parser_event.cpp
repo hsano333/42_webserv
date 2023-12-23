@@ -55,6 +55,16 @@ Response *WebservParserEvent::res()
     return (this->res_);
 }
 
+File *WebservParserEvent::src()
+{
+    return (this->source_file);
+}
+
+File *WebservParserEvent::dst()
+{
+    return (this->destination_file);
+}
+
 bool WebservParserEvent::is_completed()
 {
     return (this->is_completed_);

@@ -61,6 +61,16 @@ Response *WebservNothingEvent::res()
     return (NULL);
 }
 
+File *WebservNothingEvent::src()
+{
+    return (NULL);
+}
+
+File *WebservNothingEvent::dst()
+{
+    return (NULL);
+}
+
 bool WebservNothingEvent::is_completed()
 {
     return (true);

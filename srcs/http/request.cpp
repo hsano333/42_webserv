@@ -34,8 +34,8 @@ Request::Request() :
     //raw_buf_rest_size_(MAX_BUF-1),
     is_file_(false),
     is_directory_(false),
-    is_not_executable_parent_dir_(false),
-    source(NULL)
+    is_not_executable_parent_dir_(false)
+    //source_file(NULL)
     //is_redable_darectory(false)
 {
     DEBUG("Request::Request()");
@@ -322,11 +322,14 @@ Header const &Request::header() const
 }
 
 
+/*
 void Request::set_source_file(File *file)
 {
     this->source = file;
 }
+*/
 
+/*
 File *Request::get_source_file()
 {
     return (this->source);
@@ -346,7 +349,65 @@ ssize_t Request::get_data(char** data)
 {
     return (this->source->read(data, MAX_READ_SIZE));
 }
+*/
 
+int Request::open()
+{
+    DEBUG("Request::open_file()");
+    if (this->file){
+        DEBUG("Request::open_file() No.2");
+        return (this->file->open());
+    }
+    DEBUG("Request::open_file() No.3");
+    return 0;
+}
+
+int Request::close()
+{
+    if (this->file){
+        return (this->file->close());
+    }
+    return 0;
+}
+
+int Request::write(char **data, size_t size)
+{
+    (void)data;
+    (void)size;
+    return (0);
+}
+
+bool Request::can_read()
+{
+    return (true);
+}
+
+bool Request::is_chunk()
+{
+    return (true);
+}
+
+size_t Request::size()
+{
+    return (0);
+}
+
+int Request::remove()
+{
+    return (0);
+}
+
+std::string const &Request::path()
+{
+    std::runtime_error("Don't use");
+    //std::string tmp = "";
+    return (requested_filepath_);
+}
+
+int Request::read(char** data, size_t max_read_size)
+{
+    return (this->file->read(data, max_read_size));
+}
 
 void Request::print_info() const
 {

@@ -78,11 +78,8 @@ Webserv& Webserv::operator=(const Webserv& socket)
 
 void Webserv::communication()
 {
-    //for test
     bool exit_flag = false;
     DEBUG("Webserv::communication() start");
-
-
     int cnt = 0;
     while(1)
     {
@@ -92,100 +89,94 @@ void Webserv::communication()
 
             waiter.wait();
         }
-        WebservEvent *event = waiter.fetch_event();
-        try{
-            switch(event->which())
-            {
-                case READ_EVENT:
-                    DEBUG("Webserv::Read Event ");
-                    receiver.recv(event);
-                    break;
-                case PARSER_EVENT:
-                    parser.parse_req(event);
-                    break;
-                case APPLICATION_EVENT:
-                    DEBUG("Webserv::Application Event ");
-                    executer.execute(event);
-                    break;
-                case WRITE_EVENT:
-                    DEBUG("Webserv::Write Event ");
-                    sender.send(event);
-                    break;
-                case CLEAN_EVENT:
-                    DEBUG("Webserv::Clean Event ");
-                    cleaner.clean(event, false);
+        waiter.fetch_events();
 
-                    if (cnt >= 10){
-                        cnt = 0;
-                        //delete event;
-                        cout << "end break" << endl;
-                        cout << "end break" << endl;
-                        cout << "end break" << endl;
-                        cout << "end break" << endl;
-                        cout << "end break" << endl;
-                        //delete event;
-                        //return ;
+        for(size_t i=0;i < this->event_manager->event_size();i++)
+        {
+            WebservEvent *event = this->event_manager->pop_first();
+            try
+            {
+                switch(event->which())
+                {
+                    case READ_EVENT:
+                        DEBUG("Webserv::Read Event");
+                        receiver.recv(event);
                         break;
-                    }
-                    cnt++;
+                    case PARSER_EVENT:
+                        DEBUG("Webserv::Parse Event");
+                        parser.parse_req(event);
+                        break;
+                    case APPLICATION_EVENT:
+                        DEBUG("Webserv::Application Event");
+                        executer.execute(event);
+                        break;
+                    case WRITE_EVENT:
+                        DEBUG("Webserv::Write Event");
+                        sender.send(event);
+                        break;
+                    case CLEAN_EVENT:
+                        DEBUG("Webserv::Clean Event");
+                        cleaner.clean(event, false);
+
+                        if (cnt >= 10){
+                            cnt = 0;
+                            //delete event;
+                            cout << "end break" << endl;
+                            cout << "end break" << endl;
+                            cout << "end break" << endl;
+                            cout << "end break" << endl;
+                            cout << "end break" << endl;
+                            //delete event;
+                            //return ;
+                            break;
+                        }
+                        cnt++;
+                        break;
+                    case TIMEOUT_EVENT:
+                        DEBUG("Webserv::Timeout Event");
+                        cleaner.clean_timeout_events(event);
+                        break;
+                    case NOTHING_EVENT:
+                        DEBUG("Webserv::Nothing Event");
+                        break;
+                    default:
+                        break;
+                }
+                event_controller->next_event(event);
+                if(exit_flag){
                     break;
-                case TIMEOUT_EVENT:
-                    DEBUG("Webserv::Timeout Event");
-                    cleaner.clean_timeout_events(event);
-                    //delete(event);
-                    break;
-                    /*
-                case KEEPA_ALIVE_EVENT:
-                    DEBUG("Webserv::Keep Alive Event");
-                    event_controller->restart_communication(event);
-                    DEBUG("Webserv::Keep Alive Event No.1");
-                    event_controller->next_event(event);
-                    DEBUG("Webserv::Keep Alive Event No.2");
-                    // nothing to do
-                    break;
-                    */
-                case NOTHING_EVENT:
-                    DEBUG("Webserv::Nothing Event");
-                    //event_controller->next_event(event);
-                    //delete(event);
-                    break;
-                default:
-                    break;
+                }
+            }catch(ConnectionException &e){
+                ERROR(e.what());
+                WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
+                this->event_manager->push(next_event);
+                delete event;
+                DEBUG("ConnectionException delete event:" + Utility::to_string(event));
+            }catch(HttpException &e){
+                ERROR("HttpException");
+                WebservEvent *next_event = this->event_factory->make_error_event(event, e.what());
+                this->event_manager->push(next_event);
+                this->event_controller->change_write_event(next_event);
+                delete event;
+            }catch(std::runtime_error &e){
+                WARNING("Wevserv RuntimeError:");
+                WARNING(e.what());
+                WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
+                this->event_manager->push(next_event);
+                delete event;
+            }catch(std::invalid_argument &e){
+                WARNING("Wevserv InvalidArgument:");
+                WARNING(e.what());
+                WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
+                event_manager->push(next_event);
+                delete event;
+            }catch(std::exception &e){
+                WARNING("Wevserv Exception:");
+                WARNING(e.what());
+                WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
+                event_manager->push(next_event);
+                delete event;
             }
-            event_controller->next_event(event);
-            if(exit_flag){
-                break;
-            }
-        }catch(ConnectionException &e){
-            ERROR(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
-            this->event_manager->push(next_event);
-            delete event;
-            DEBUG("ConnectionException delete event:" + Utility::to_string(event));
-        }catch(HttpException &e){
-            ERROR("HttpException");
-            WebservEvent *next_event = this->event_factory->make_error_event(event, e.what());
-            this->event_manager->push(next_event);
-            this->event_controller->change_write_event(next_event);
-            delete event;
-        }catch(std::runtime_error &e){
-            WARNING("Wevserv RuntimeError:");
-            WARNING(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
-            this->event_manager->push(next_event);
-            delete event;
-        }catch(std::invalid_argument &e){
-            WARNING("Wevserv InvalidArgument:");
-            WARNING(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
-            event_manager->push(next_event);
-            delete event;
-        }catch(std::exception &e){
-            WARNING("Wevserv Exception:");
-            WARNING(e.what());
-            WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
-            event_manager->push(next_event);
-            delete event;
         }
     }
 }

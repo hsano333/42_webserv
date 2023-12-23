@@ -25,7 +25,8 @@ class WebservWaiter
         ~WebservWaiter();
         void wait();
         bool is_not_busy();
-        WebservEvent* fetch_event();
+        void fetch_events();
+        //WebservEvent* fetch_event();
         void copy_event_to_manager();
     private:
         IOMultiplexing *io_multi_controller;

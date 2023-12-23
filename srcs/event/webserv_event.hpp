@@ -46,6 +46,8 @@ class WebservEvent
 
         virtual Request *req() = 0;
         virtual Response *res() = 0;
+        virtual File *src() = 0;
+        virtual File *dst() = 0;
 
         virtual bool is_completed() = 0;
         virtual void set_completed(bool flag) = 0;

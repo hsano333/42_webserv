@@ -70,6 +70,16 @@ Response *WebservCleanEvent::res()
     return (this->res_);
 }
 
+File *WebservCleanEvent::src()
+{
+    return (this->source_file);
+}
+
+File *WebservCleanEvent::dst()
+{
+    return (this->destination_file);
+}
+
 void WebservCleanEvent::set_null_res_and_req()
 {
     this->res_ = NULL;

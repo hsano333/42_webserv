@@ -77,6 +77,17 @@ Response *WebservApplicationEvent::res()
     return (this->res_);
 }
 
+File *WebservApplicationEvent::src()
+{
+    return (this->source_file);
+}
+
+File *WebservApplicationEvent::dst()
+{
+    return (this->destination_file);
+}
+
+
 bool WebservApplicationEvent::is_completed()
 {
     return (this->is_completed_);

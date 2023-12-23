@@ -94,29 +94,13 @@ void Response::add_header(std::string const &key, std::string const &value)
 }
 
 
+/*
 File *Response::get_source_file()
 {
     return (this->file);
 }
+*/
 
-int Response::open_source_file()
-{
-    DEBUG("Response::open_file()");
-    if (this->file){
-        DEBUG("Response::open_file() No.2");
-        return (this->file->open());
-    }
-    DEBUG("Response::open_file() No.3");
-    return 0;
-}
-
-int Response::close_source_file()
-{
-    if (this->file){
-        return (this->file->close());
-    }
-    return 0;
-}
 
 void Response::make_status_line()
 {
@@ -174,7 +158,62 @@ int Response::read_body_and_copy_chunk(char** dst, size_t size)
     return (read_size+len);
 }
 
-ssize_t Response::get_data(char** data)
+int Response::open()
+{
+    DEBUG("Response::open_file()");
+    if (this->file){
+        DEBUG("Response::open_file() No.2");
+        return (this->file->open());
+    }
+    DEBUG("Response::open_file() No.3");
+    return 0;
+}
+
+int Response::close()
+{
+    if (this->file){
+        return (this->file->close());
+    }
+    return 0;
+}
+
+int Response::write(char **data, size_t size)
+{
+    (void)data;
+    (void)size;
+    return (0);
+}
+
+bool Response::can_read()
+{
+    return (true);
+}
+
+bool Response::is_chunk()
+{
+    return (true);
+}
+
+size_t Response::size()
+{
+    return (0);
+}
+
+int Response::remove()
+{
+    return (0);
+}
+
+std::string const &Response::path()
+{
+    std::runtime_error("Don't use");
+    //std::string tmp = "";
+    return (status_line);
+}
+
+
+
+int Response::read(char** data, size_t max_read_size)
 {
     if (this->send_state == STILL_NOT_SEND) {
         this->make_status_line();
@@ -196,7 +235,7 @@ ssize_t Response::get_data(char** data)
                 this->send_state = SENT_BODY;
             }
         }else{
-            size = this->read_body_and_copy(data, MAX_READ_SIZE);
+            size = this->read_body_and_copy(data, max_read_size);
             if (size <= 0){
                 this->send_state = SENT_BODY;
             }
@@ -207,6 +246,11 @@ ssize_t Response::get_data(char** data)
 }
 
 
+File *Response::get_file()
+{
+    return (this->file);
+
+}
 
 /*
 Response* Response::from_file(std::string const &filepath)

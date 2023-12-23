@@ -18,7 +18,7 @@ enum SEND_STATE{
     CLOSE,
 };
 
-class Response : public HttpData
+class Response : public File
 {
     public:
         Response();
@@ -35,12 +35,28 @@ class Response : public HttpData
         void add_header(std::string const &key, std::string const &value);
         //static Response* from_file(std::string const &filepath);
         //static Response* from_directory(std::string const &filepath);
+        /*
         File *get_source_file();
         int open_source_file();
         int close_source_file();
-        ssize_t get_data(char** data);
+        */
+        File *get_file();
+        //ssize_t get_data(char** data);
         void print_info();
         void set_exist_body(bool flag);
+
+
+
+        // File Interface
+        int open();
+        int close();
+        int read(char **buf, size_t size);
+        int write(char **buf, size_t size);
+        bool can_read();
+        size_t size();
+        bool is_chunk();
+        int remove();
+        std::string const &path();
 
     private:
         StatusCode status_code;

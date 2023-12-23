@@ -26,20 +26,15 @@ void WebservReceiver::recv(WebservEvent *event)
     DEBUG("WebservReader::read()");
     WebservReadEvent *read_event = static_cast<WebservReadEvent*>(event);
     Request *tmp_req = read_event->req();
-    cout << "test No.1" << endl;
-    HttpData *source = read_event->source();
-    cout << "test No.2" << endl;
+    File *source = read_event->src();
     if(source == NULL){
         ERROR("WebservReceiver::recv():  source is NULL");
         throw HttpException("500");
     }
-    cout << "test No.3" << endl;
-    source->open_source_file();
-    cout << "test No.4" << endl;
+    source->open();
 
     int space = tmp_req->raw_buf_space();
     char* buf = tmp_req->get_raw_buf_pointer();
-    cout << "test No.6" << endl;
     FileDiscriptor fd = read_event->fd();
     size_t sum = tmp_req->buf_size();
     MYINFO("Receiver  fd:" + Utility::to_string(fd.to_int()));
@@ -49,7 +44,7 @@ void WebservReceiver::recv(WebservEvent *event)
     event->set_completed(false);
     while(1){
         char* p_data = &(buf[sum]);
-        ssize_t tmp = source->get_data(&p_data);
+        ssize_t tmp = source->read(&p_data, MAX_READ_SIZE);
 
         MYINFO("Receiver read < 0:" + Utility::to_string(tmp));
         if(tmp < 0){
@@ -58,6 +53,7 @@ void WebservReceiver::recv(WebservEvent *event)
             break;
         }else if(tmp == 0){
             ERROR("Read Connection Error");
+            //source->close();
             throw ConnectionException("Read Error");
         }
         sum += tmp;
@@ -67,6 +63,7 @@ void WebservReceiver::recv(WebservEvent *event)
             break;
         }
     }
+    //source->close();
     MYINFO("Receive data size::" + Utility::to_string(sum));
     cout << "read sum:" << sum << endl;
     cout << "read space:" << space << endl;
