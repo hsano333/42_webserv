@@ -42,8 +42,8 @@ void WebservEventFactory::make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_i
 {
     this->fd_manager->add_socket_and_epoll_fd(pid, fd_in);
     this->fd_manager->add_socket_and_epoll_fd(pid, fd_out);
-    this->io_multi_controller->add(fd_in, EPOLLIN);
-    this->io_multi_controller->add(fd_out, EPOLLOUT);
+    this->io_multi_controller->add(fd_in, EPOLLIN | EPOLLONESHOT);
+    this->io_multi_controller->add(fd_out, EPOLLOUT | EPOLLONESHOT);
 
     WebservEvent *write_event = WebservWriteEvent::from_cgi_fd(fd_out, req, socket_reader,normal_writer);
     WebservEvent *read_event = WebservReadEvent::from_cgi_fd(fd_in, normal_reader);
@@ -51,6 +51,23 @@ void WebservEventFactory::make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_i
     this->event_manager->push(write_event);
     this->event_manager->push(read_event);
 
+}
+
+
+WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd)
+{
+    this->fd_manager->add_socket_and_epoll_fd(fd, sock_fd);
+    this->io_multi_controller->add(fd, EPOLLIN | EPOLLONESHOT);
+    return (new WebservNothingEvent(fd));
+}
+
+WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd)
+{
+    //FileDiscriptor sock_fd = this->fd_manager->get_sockfd(fd);
+    //this->fd_manager->add_socket_and_epoll_fd(fd, sock_fd);
+    this->io_multi_controller->modify(fd, EPOLLIN | EPOLLONESHOT);
+    return (new WebservNothingEvent(fd));
+    //return (this->make_nothing_event(fd, sock_fd));
 }
 
 WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_epoll)
@@ -68,14 +85,22 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
         if(this->fd_manager->is_registered(fd) == false)
         {
-            io_fd = this->socket_controller->accept_request(fd);
             MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
+            io_fd = this->socket_controller->accept_request(fd);
+            //FileDiscriptor sock_fd = this->fd_manager->get_sockfd(fd);
             this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
             this->io_multi_controller->add(io_fd, EPOLLIN);
+            //return (this->make_nothing_event(fd, sock_fd));
+            return (new WebservNothingEvent(io_fd));
 
-            return (new WebservNothingEvent);
+
+            //return (this->make_nothing_event(io_fd,fd));
+            //this->fd_manager->add_socket_and_epoll_fd(sock_fd, fd);
+            //this->io_multi_controller->add(sock_fd, EPOLLIN);
+
+            //return (new WebservNothingEvent);
         }else{
-            //io_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
+            //sock_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL){
@@ -149,9 +174,9 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         */
 
 
-        //FileDiscriptor io_fd = this->socket_controller->accept_request(fd);
+        //FileDiscriptor sock_fd = this->socket_controller->accept_request(fd);
         //WebservWriteEvent *event = WebservWriteEvent::from_event(saved_event, this->socket_writer);
-        //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
+        //this->fd_manager->add_socket_and_epoll_fd(sock_fd, fd);
         return (cached_event);
     }else{
         WARNING("Epoll event type is undefined");

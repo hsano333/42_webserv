@@ -42,7 +42,6 @@ void EpollController::init_epoll()
     std::map<FileDiscriptor, Socket>::const_iterator ite = socket_repository->begin();
     std::map<FileDiscriptor, Socket>::const_iterator end = socket_repository->end();
     while(ite != end){
-    MYINFO("EpollController::init_epoll()2");
         FileDiscriptor fd = ite->second.get_socket_fd();
         std::cout << "init_epoll() fd:" << fd << std::endl;
         this->add(fd, EPOLLIN);
@@ -105,7 +104,7 @@ void EpollController::erase_event(t_epoll_event* ev)
 
 void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
 {
-    MYINFO("EpollController::add() fd:" + Utility::to_string(fd_obj.to_int()) + ", epfd:" + Utility::to_string(this->epoll.fd().to_int()));
+    MYINFO("EpollController::add() epfd:" + Utility::to_string(fd_obj.to_int())) ;
     //if (check_error() == false){
         //return (false);
     //}
@@ -181,10 +180,10 @@ size_t EpollController::get_fd_num()
 }
 */
 
-void EpollController::wait()
+void EpollController::wait(int time_msec)
 {
     MYINFO("EpollController::wait() epoll.fd():" + Utility::to_string(epoll.fd()));
-    int time_msec = 5;
+    //int time_msec = 5;
 
     int nfds = epoll_wait(epoll.fd().to_int(), epoll.allocated_event_pointer(), epoll.allocated_event_size(), time_msec * 1000);
     MYINFO("epoll nfds=" + Utility::to_string(nfds));

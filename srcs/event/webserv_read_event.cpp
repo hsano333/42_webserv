@@ -9,6 +9,7 @@ WebservReadEvent::WebservReadEvent()
                                         req_(NULL),
                                         res_(NULL),
                                         source_file(NULL),
+                                        destination_file(NULL),
                                         fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
                                         timeout_count_(0),
@@ -38,6 +39,7 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd, IReader *reader)
         req_(NULL),
         res_(NULL),
         source_file(NULL),
+        destination_file(NULL),
         fd_(fd),
         timeout_count_(0),
         reader(reader)
@@ -107,7 +109,7 @@ WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscript
     DEBUG("WebservReadEvent::from_event() No.3");
     new_event->req_ = req;
     new_event->res_ = NULL;
-    new_event->source_file = NULL;
+    new_event->source_file = req;
     DEBUG("WebservReadEvent::from_event() No.4 make event:" + Utility::to_string(new_event));
     return (new_event);
 

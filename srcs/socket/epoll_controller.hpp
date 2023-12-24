@@ -15,7 +15,7 @@ class EpollController : public IOMultiplexing
     public:
         EpollController(Epoll epoll, SocketRepository *socket_repository, SocketController *socket_controller, FDManager *fd_manager);
         ~EpollController();
-        void wait();
+        void wait(int msec);
         void add(FileDiscriptor fd, uint32_t event);
         void erase(FileDiscriptor fd);
         void modify(FileDiscriptor fd, uint32_t event);

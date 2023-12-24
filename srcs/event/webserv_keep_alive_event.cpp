@@ -36,7 +36,7 @@ WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, Webser
 {
     (void)event_factory;
     (void)event;
-    WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
+    WARNING("WebservKeepAliveEvent::make_next_event() there is no next event");
     //
     return (event_factory->make_read_event_from_event(event));
     //return (NULL);

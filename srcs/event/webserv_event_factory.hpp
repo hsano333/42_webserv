@@ -37,6 +37,8 @@ class WebservEventFactory
         WebservEvent *make_error_event(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
         WebservEvent *make_read_event_from_event(WebservEvent *event);
+        WebservEvent *make_nothing_event(FileDiscriptor fd);
+        WebservEvent *make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd);
     private:
         Config *cfg;
         SocketController *socket_controller;

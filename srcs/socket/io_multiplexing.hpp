@@ -10,7 +10,7 @@ class IOMultiplexing
 {
     public:
         virtual ~IOMultiplexing(){};
-        virtual void wait() = 0;
+        virtual void wait(int msec) = 0;
         virtual void erase(FileDiscriptor fd) = 0;
         virtual void add(FileDiscriptor fd, uint32_t event) = 0;
         virtual void modify(FileDiscriptor fd, uint32_t event) = 0;

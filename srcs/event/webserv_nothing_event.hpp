@@ -10,6 +10,7 @@ class WebservNothingEvent : public WebservEvent
 {
     public:
         WebservNothingEvent();
+        WebservNothingEvent(FileDiscriptor fd);
         ~WebservNothingEvent();
         EWebservEvent which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
@@ -33,7 +34,6 @@ class WebservNothingEvent : public WebservEvent
     private:
         int             timeout_count_;
         FileDiscriptor fd_;
-        WebservNothingEvent(FileDiscriptor fd);
         //bool is_completed_;
         WebservCgiEvent *cgi_event_;
 };

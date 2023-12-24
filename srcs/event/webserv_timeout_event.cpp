@@ -3,6 +3,10 @@
 WebservTimeoutEvent::WebservTimeoutEvent() 
                                         :
                                         fd_(FileDiscriptor::from_int(0)),
+                                        //req_(NULL),
+                                        //res_(NULL),
+                                        //source_file(NULL),
+                                        //destination_file(NULL),
                                         event_type(TIMEOUT_EVENT),
                                         timeout_count_(0),
                                         is_completed_(false)

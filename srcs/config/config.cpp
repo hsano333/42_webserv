@@ -556,6 +556,5 @@ File *Config::get_error_file(Request const *req, StatusCode &code) const
         }
     }
     return (file);
-
 }
 

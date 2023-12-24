@@ -11,6 +11,7 @@ WebservWriteEvent::WebservWriteEvent()
                                         req_(NULL),
                                         res_(NULL),
                                         source_file(NULL),
+                                        destination_file(NULL),
                                         timeout_count_(0),
                                         writer(NULL),
                                         is_completed_(false)
@@ -30,6 +31,7 @@ WebservWriteEvent::WebservWriteEvent(
         req_(req),
         res_(res),
         source_file(source),
+        destination_file(NULL),
         timeout_count_(0),
         writer(writer)
 {
@@ -97,7 +99,7 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *
             event->fd(),
             event->req(),
             res,
-            res->get_file(),
+            res,
             writer
     ));
     write_event->set_cgi_event(event->cgi_event());
@@ -173,7 +175,7 @@ WebservEvent* WebservWriteEvent::make_next_event(WebservEvent* event, WebservEve
 
 E_EpollEvent WebservWriteEvent::get_next_epoll_event()
 {
-    return (EPOLL_NONE);
+    return (EPOLL_READ);
 }
 
 

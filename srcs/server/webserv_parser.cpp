@@ -122,7 +122,7 @@ void WebservParser::parse_res(WebservEvent *event)
 {
     DEBUG("WebservParser::parse_res()");
 
-    io_multi_controller->modify(event->fd(), EPOLLOUT);
+    io_multi_controller->modify(event->fd(), EPOLLOUT | EPOLLONESHOT);
     Response *res = event->res();
     //printf("res=%p\n", res);
     WebservEvent *next_event = event_factory->make_write_event(event, res);

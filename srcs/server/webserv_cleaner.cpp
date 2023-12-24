@@ -30,15 +30,33 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     DEBUG("WebservCleaner::clean:" + event->fd().to_string());
 
     bool is_close = force_close || app_event->is_force_close();
+    cout << "force_close=" << force_close << endl;
+    cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
     if (app_event->req()){
         std::string const &conect = app_event->req()->header().find("Connection");
         if (conect == "close"){
+            cout << "connect close=" << endl;
             is_close = true;
         }
     }
     app_event->set_force_close(is_close);
+
+    //src,dstはrequest,responseであることがある
+    if(app_event->src() != app_event->req() && app_event->src() != app_event->res()){
+        cout << "delete src" << endl;
+        delete app_event->src();
+    }
+    if(app_event->dst() != app_event->req() && app_event->dst() != app_event->res()){
+        cout << "delete dst" << endl;
+        delete app_event->dst();
+    }
+
+        cout << "delete req" << endl;
     delete app_event->req();
+        cout << "delete res" << endl;
     delete app_event->res();
+        cout << "delete end" << endl;
+
     app_event->set_null_res_and_req();
 
     //this->io_multi_controller->erase(app_event->fd());
@@ -54,9 +72,11 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     }else{
         MYINFO("not close fd:" + event->fd().to_string());
         // HTTP1.1はデフォルトでコネクションを切断しない
+        //
         //this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
         //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
         //this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
+        //
     }
     event->set_completed(true);
 }

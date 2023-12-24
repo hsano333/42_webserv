@@ -84,16 +84,20 @@ void Webserv::communication()
     while(1)
     {
         if(waiter.is_not_busy()){
-            DEBUG("Webserv::wait()");
-            cout << "gai_strerror:" << gai_strerror(errno) << endl;
-
-            waiter.wait();
+            waiter.wait(5);
+        }else{
+            waiter.wait(0);
         }
         waiter.fetch_events();
 
-        for(size_t i=0;i < this->event_manager->event_size();i++)
+        size_t cur_size = this->event_manager->event_size();
+        for(size_t i=0; i < cur_size; i++)
         {
             WebservEvent *event = this->event_manager->pop_first();
+            if(event == NULL){
+                cout << "NULL" << endl;
+                break;
+            }
             try
             {
                 switch(event->which())
@@ -136,6 +140,10 @@ void Webserv::communication()
                         DEBUG("Webserv::Timeout Event");
                         cleaner.clean_timeout_events(event);
                         break;
+                    case KEEPA_ALIVE_EVENT:
+                        DEBUG("Webserv::KEEPA_ALIVE_EVENT Event");
+                        //cleaner.clean_timeout_events(event);
+                        break;
                     case NOTHING_EVENT:
                         DEBUG("Webserv::Nothing Event");
                         break;
@@ -156,7 +164,13 @@ void Webserv::communication()
                 ERROR("HttpException");
                 WebservEvent *next_event = this->event_factory->make_error_event(event, e.what());
                 this->event_manager->push(next_event);
-                this->event_controller->change_write_event(next_event);
+                try{
+                    this->event_controller->change_write_event(next_event);
+                }catch(std::runtime_error &e){
+                    ERROR("IO Error in HttpException: end event");
+                    WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
+                    this->event_manager->push(next_event);
+                }
                 delete event;
             }catch(std::runtime_error &e){
                 WARNING("Wevserv RuntimeError:");

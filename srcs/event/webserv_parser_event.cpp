@@ -9,6 +9,8 @@ WebservParserEvent::WebservParserEvent(
                             req_(req),
                             res_(NULL),
                             file_(NULL),
+                            source_file(NULL),
+                            destination_file(NULL),
                             timeout_count_(0),
                             is_completed_(false)
 {

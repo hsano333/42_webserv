@@ -11,6 +11,8 @@ WebservCleanEvent::WebservCleanEvent(
                             fd_(fd),
                             req_(req),
                             res_(res),
+                            source_file(NULL),
+                            destination_file(NULL),
                             timeout_count_(0),
                             force_close(false),
                             is_completed_(false)
@@ -37,7 +39,11 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
     }else{
         MYINFO("WebservCleanEvent::make_next_event() Read Event");
         printf("WebservCleanEvent::make_next_event event=%p\n", event);
-        return (event_factory->make_read_event_from_event(event));
+        //sock_fd = this->socket_controller->accept_request(fd);
+        return (event_factory->make_nothing_event(this->fd_));
+        //return (event_factory->make_read_event_from_event(event));
+        //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
+        //this->io_multi_controller->add(io_fd, EPOLLIN);
     }
     (void)event_factory;
     (void)event;

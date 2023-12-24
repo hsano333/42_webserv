@@ -55,6 +55,7 @@ Response* Response::from_success_status_code(StatusCode &code, File *file)
 
 Response* Response::from_error_status_code(StatusCode &code)
 {
+    DEBUG("Response::from_error_status_code");
     Response *res = new Response();
     res->status_code = code;
     res->file = ErrorFile::from_status_code(code);
@@ -215,7 +216,9 @@ std::string const &Response::path()
 
 int Response::read(char** data, size_t max_read_size)
 {
-    if (this->send_state == STILL_NOT_SEND) {
+    if(this->send_state == SENT_BODY){
+        return -1;
+    }else if (this->send_state == STILL_NOT_SEND) {
         this->make_status_line();
         *data= const_cast<char*>(&(this->status_line[0]));
         this->send_state = SENT_STATUS_LINE;

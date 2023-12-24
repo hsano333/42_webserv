@@ -23,7 +23,7 @@ class WebservWaiter
                       WebservEventFactory *event_factory
                 );
         ~WebservWaiter();
-        void wait();
+        void wait(int sec);
         bool is_not_busy();
         void fetch_events();
         //WebservEvent* fetch_event();

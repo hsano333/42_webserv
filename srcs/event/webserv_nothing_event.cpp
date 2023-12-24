@@ -2,9 +2,13 @@
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
 
-WebservNothingEvent::WebservNothingEvent() 
+WebservNothingEvent::WebservNothingEvent()
     :
         timeout_count_(0)
+        //req_(NULL),
+        //res_(NULL),
+        //source_file(NULL),
+        //destination_file(NULL),
         //is_completed_(false)
 {
     this->fd_ = FileDiscriptor::from_int(0);
