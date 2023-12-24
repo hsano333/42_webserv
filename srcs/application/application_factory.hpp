@@ -21,6 +21,7 @@ class ApplicationFactory
         std::string get_server_name();
     private:
         const ConfigServer *get_server(Request *req);
+        void check_permission(Method &method);
         Config *cfg;
         CGI *cgi;
 

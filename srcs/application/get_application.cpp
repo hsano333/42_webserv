@@ -5,7 +5,7 @@
 #include "directory_file.hpp"
 #include <unistd.h>
 
-GetApplication::GetApplication()
+GetApplication::GetApplication() : method(Method::from_string("GET"))
 {
     ;
 }
@@ -150,7 +150,7 @@ bool GetApplication::is_cgi() const
 
 bool GetApplication::execute()
 {
-    this->check_permission();
+    //this->check_permission();
     /*
     if (this->is_cgi_){
         DEBUG("GetApplication::execute() CGI");
@@ -175,6 +175,7 @@ bool GetApplication::execute()
     //cout << filename << endl;
 }
 
+/*
 void GetApplication::check_permission()
 {
     const ConfigLimit *limit = this->location->limit();
@@ -192,6 +193,7 @@ void GetApplication::check_permission()
     WARNING("not permission: root:" + this->location->root());
     throw HttpException("403");
 }
+*/
 
 
 GetApplication* GetApplication::from_location(const Config *cfg, const Request *req)
@@ -253,6 +255,12 @@ Response* GetApplication::make_response()
         ite++;
     }
     return (res);
+}
+
+
+const Method &GetApplication::which() const
+{
+    return (this->method);
 }
 
 //Response* GetApplication::make_response()

@@ -7,7 +7,7 @@
 #include "webserv_event.hpp"
 #include <unistd.h>
 
-GetCGIApplication::GetCGIApplication()
+GetCGIApplication::GetCGIApplication() : method(Method::from_string("GET"))
 {
     ;
 }
@@ -218,23 +218,6 @@ bool GetCGIApplication::execute()
 }
 */
 
-void GetCGIApplication::check_permission()
-{
-    const ConfigLimit *limit = this->location->limit();
-    if (limit == NULL){
-        WARNING("not permission: root:" + this->location->root());
-        throw HttpException("403");
-    }
-    std::vector<Method> methods = limit->allowed_method();
-    Method requested_method = this->req->req_line().method();
-    for(size_t j = 0;j<methods.size();j++){
-        if (requested_method == methods[j]){
-            return ;
-        }
-    }
-    WARNING("not permission: root:" + this->location->root());
-    throw HttpException("403");
-}
 
 GetCGIApplication* GetCGIApplication::from_location(const Config *cfg, const Request *req, CGI *cgi)
 {
@@ -278,6 +261,11 @@ Response* GetCGIApplication::make_response()
         ite++;
     }
     return (res);
+}
+
+const Method &GetCGIApplication::which() const
+{
+    return (this->method);
 }
 
 //Response* GetCGIApplication::make_response()

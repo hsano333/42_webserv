@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/14 14:33:57 by hsano             #+#    #+#             */
-/*   Updated: 2023/12/20 00:32:46 by sano             ###   ########.fr       */
+/*   Updated: 2023/12/24 19:51:19 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void WebservExecuter::execute(WebservEvent *event)
     DEBUG("WebservExecuter::execute");
     WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
     if(check_redirect(app_event)){
-        //delete app_event;
         return ;
     }
 

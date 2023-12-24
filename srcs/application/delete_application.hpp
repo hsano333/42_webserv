@@ -14,7 +14,6 @@ class DeleteApplication : public Application
         ~DeleteApplication();
         bool execute();
         //bool is_cgi() const;
-        void check_permission();
         //static DeleteApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         static DeleteApplication* from_location(const Config *cfg, const Request *req);
         Response* make_response();
@@ -23,6 +22,7 @@ class DeleteApplication : public Application
         //std::string const &path_info() const;
         bool is_cgi() const;
 
+        const Method &which() const;
         WebservCgiEvent *cgi_event();
     private:
         File *get_requested_file();
@@ -39,6 +39,7 @@ class DeleteApplication : public Application
         std::map<std::string, std::string> tmp_headers;
         //std::string path_info_;
         //WebservCgiEvent cgi_event_;
+        Method method;
 
         //StatusCode res_status_code;
         //std::string 

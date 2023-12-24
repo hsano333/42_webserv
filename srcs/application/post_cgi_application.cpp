@@ -5,7 +5,7 @@
 #include "directory_file.hpp"
 #include "connection_exception.hpp"
 
-PostCGIApplication::PostCGIApplication() : res(NULL)
+PostCGIApplication::PostCGIApplication() : res(NULL), method(Method::from_string("GET"))
 {
 ;
 }
@@ -21,8 +21,6 @@ File *PostCGIApplication::get_requested_file()
     if (this->event->file()){
         return (this->event->file());
     }
-
-    this->check_permission();
 
     //File *file = NULL;
         //this->req->print_info();
@@ -59,33 +57,6 @@ bool PostCGIApplication::execute()
 {
     return (true);
 
-}
-
-
-void PostCGIApplication::check_permission()
-{
-    const ConfigLimit *limit = this->location->limit();
-    if (limit == NULL){
-        WARNING("not permission: root:" + this->location->root());
-        throw HttpException("403");
-    }
-    std::vector<Method> methods = limit->allowed_method();
-    Method requested_method = this->req->req_line().method();
-    for(size_t j = 0;j<methods.size();j++){
-        if (requested_method == methods[j]){
-            return ;
-        }
-    }
-
-    // as like nginx, allowing Get method make HEAD method allowed.
-    Method get_method = Method::from_string("GET");
-    for(size_t j = 0;j<methods.size();j++){
-        if (get_method == methods[j]){
-            return ;
-        }
-    }
-    WARNING("not permission: root:" + this->location->root());
-    throw HttpException("403");
 }
 
 PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader, CGI *cgi)
@@ -147,6 +118,11 @@ Response* PostCGIApplication::make_response()
     }
     return (res);
     */
+}
+
+const Method &PostCGIApplication::which() const
+{
+    return (this->method);
 }
 
 WebservCgiEvent *PostCGIApplication::cgi_event()

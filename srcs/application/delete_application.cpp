@@ -4,7 +4,7 @@
 #include "normal_file.hpp"
 #include "directory_file.hpp"
 
-DeleteApplication::DeleteApplication()
+DeleteApplication::DeleteApplication() : method(Method::from_string("DELETE"))
 {
 ;
 }
@@ -75,7 +75,6 @@ void DeleteApplication::execute_cgi()
 bool DeleteApplication::execute()
 {
     DEBUG("DeleteApplication::execute()");
-    this->check_permission();
     File *file = this->get_requested_file();
 
     if(file->remove() < 0)
@@ -89,30 +88,6 @@ bool DeleteApplication::execute()
     return (true);
 }
 
-void DeleteApplication::check_permission()
-{
-    const ConfigLimit *limit = this->location->limit();
-    if (limit == NULL){
-        WARNING("no permission: root:" + this->location->root());
-        throw HttpException("403");
-    }
-    /*
-    if (this->req->is_directory()){
-        WARNING("can't delete directory:" + this->location->root());
-        throw HttpException("403");
-    }
-    */
-
-    std::vector<Method> methods = limit->allowed_method();
-    Method requested_method = this->req->req_line().method();
-    for(size_t j = 0;j<methods.size();j++){
-        if (requested_method == methods[j]){
-            return ;
-        }
-    }
-    WARNING("not permission Delete Method: refer to config file :" + this->location->root());
-    throw HttpException("403");
-}
 
 DeleteApplication* DeleteApplication::from_location(const Config *cfg, const Request *req)
 {
@@ -140,6 +115,11 @@ Response* DeleteApplication::make_response()
         ite++;
     }
     return (res);
+}
+
+const Method &DeleteApplication::which() const
+{
+    return (this->method);
 }
 
 WebservCgiEvent *DeleteApplication::cgi_event()

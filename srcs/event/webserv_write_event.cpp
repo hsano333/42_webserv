@@ -58,7 +58,7 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
             event->fd(),
             event->req(),
             res,
-            file,
+            res,
             writer
     ));
 }

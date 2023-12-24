@@ -273,15 +273,18 @@ void ConfigLocation::check()
 
 bool ConfigLocation::is_allowed_method(Method method) const
 {
+    DEBUG("ConfigLocation::is_allowed_method:method=" + method.to_string());
     const ConfigLimit *limit = this->limit();
     std::vector<Method>::const_iterator begin = limit->allowed_method().begin();
     std::vector<Method>::const_iterator end = limit->allowed_method().end();
 
     while(begin != end){
         if(method == *begin){
+        DEBUG("ConfigLocation::is_allowed_method: No.1 method=" + method.to_string());
             return (true);
         }
         begin++;
     }
+        DEBUG("ConfigLocation::is_allowed_method: No.2 method=" + method.to_string());
     return (false);
 }

@@ -15,7 +15,6 @@ class GetCGIApplication : public Application
         ~GetCGIApplication();
         bool execute();
         //bool is_cgi() const;
-        void check_permission();
         //static GetCGIApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
         static GetCGIApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         Response* make_response();
@@ -24,6 +23,7 @@ class GetCGIApplication : public Application
         //std::string const &path_info() const;
         bool is_cgi() const;
 
+        const Method &which() const;
         WebservCgiEvent *cgi_event();
     private:
 
@@ -43,6 +43,7 @@ class GetCGIApplication : public Application
         std::string path_info_;
 
         WebservCgiEvent *cgi_event_;
+        Method method;
 
 
         //StatusCode res_status_code;

@@ -15,7 +15,6 @@ class PostApplication : public Application
         ~PostApplication();
         bool execute();
         //bool is_cgi() const;
-        void check_permission();
         //static PostApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
         static PostApplication* from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader);
         Response* make_response();
@@ -23,6 +22,7 @@ class PostApplication : public Application
         //std::string &get_path_info();
         //std::string const &path_info() const;
         bool is_cgi() const;
+        const Method &which() const;
 
         WebservCgiEvent *cgi_event();
     private:
@@ -44,6 +44,7 @@ class PostApplication : public Application
         std::map<std::string, std::string> tmp_headers;
         //std::string path_info_;
         IReader *reader;
+        Method method;
         //WebservCgiEvent cgi_event_;
 };
 #endif

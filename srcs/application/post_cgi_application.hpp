@@ -24,6 +24,7 @@ class PostCGIApplication : public Application
         //std::string const &path_info() const;
         bool is_cgi() const;
 
+        const Method &which() const;
         WebservCgiEvent *cgi_event();
     private:
 
@@ -47,5 +48,6 @@ class PostCGIApplication : public Application
         std::string path_info_;
         IReader *reader;
         WebservCgiEvent *cgi_event_;
+        Method method;
 };
 #endif

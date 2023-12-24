@@ -15,7 +15,7 @@ class GetApplication : public Application
         ~GetApplication();
         bool execute();
         //bool is_cgi() const;
-        void check_permission();
+        //void check_permission();
         //static GetApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
         static GetApplication* from_location(const Config *cfg, const Request *req);
         Response* make_response();
@@ -23,6 +23,7 @@ class GetApplication : public Application
         //std::string &get_path_info();
         //std::string const &path_info() const;
         bool is_cgi() const;
+        const Method &which() const;
 
         WebservCgiEvent *cgi_event();
     private:
@@ -41,6 +42,7 @@ class GetApplication : public Application
         //bool is_cgi_;
         std::map<std::string, std::string> tmp_headers;
         std::string path_info_;
+        Method method;
 
         //WebservCgiEvent cgi_event_;
 
