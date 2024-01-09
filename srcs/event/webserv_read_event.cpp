@@ -3,7 +3,7 @@
 #include "opened_socket_file.hpp"
 #include "normal_reader.hpp"
 #include "global.hpp"
-#include "object_file.hpp"
+#include "request_file.hpp"
 
 WebservReadEvent::WebservReadEvent()
                                         :
@@ -65,7 +65,7 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor so
     DEBUG("WebservReadEvent::from_fd() fd:" + fd.to_string());
     WebservReadEvent *event = new WebservReadEvent(fd, sockfd, reader);
     event->source_file = OpenedSocketFile::from_fd(reader, fd);
-    event->destination_file = ObjectFile::from_buf_size(MAX_BUF);
+    event->destination_file = RequestFile::from_buf_size(MAX_BUF);
 
     return (event);
 }
@@ -161,7 +161,6 @@ int WebservReadEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
-
 
 WebservEvent* WebservReadEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {

@@ -38,21 +38,24 @@ void WebservReceiver::recv(WebservEvent *event)
     event->set_completed(false);
     char buf[MAX_READ_SIZE+1];
     char *buf_p = &(buf[0]);
-    //bool completed_flag = false;
+    //bool completed;
+    ssize_t read_size_total = 0;
     while(1)
     {
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE);
         if(read_size <= 0){
+            event->set_completed(true);
             break;
         }
-        if(read_size > 0){
-            ssize_t write_size = destination->write(&buf_p, read_size);
-            if(write_size <= 0){
-                break;
-            }
+        read_size_total += read_size;
+        ssize_t write_size = destination->write(&buf_p, read_size);
+        if(write_size <= 0){
+            event->set_completed(false);
+            break;
         }
     }
     source->close();
     destination->close();
-    event->set_completed(true);
+    //event->set_completed(completed);
+    //event->set_read_size(read_size_total);
 }

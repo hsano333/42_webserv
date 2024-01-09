@@ -35,6 +35,7 @@
 #include "event_manager.hpp"
 #include "event_controller.hpp"
 #include "fd_manager.hpp"
+#include "file_manager.hpp"
 #include "ireader.hpp"
 #include "normal_reader.hpp"
 #include "socket_reader.hpp"
@@ -180,6 +181,7 @@ int main(int argc, char const* argv[])
 
     Config *cfg;
     FDManager *fd_manager = new FDManager();
+    FileManager *file_manager = new FileManager();
     try{
         cfg = create_config(cfg_file, fd_manager);
     }catch(std::runtime_error &e){
@@ -238,6 +240,7 @@ int main(int argc, char const* argv[])
             cfg,
             socket_controller,
             fd_manager,
+            file_manager,
             epoll_controller,
             event_manager,
             normal_writer,
@@ -292,6 +295,7 @@ int main(int argc, char const* argv[])
     clean_all(cleaner, event_manager);
     cout << "end No.2" << endl;
     delete fd_manager;
+    delete file_manager;
     delete socket_controller;
     delete epoll_controller;
     cout << "end No.3" << endl;

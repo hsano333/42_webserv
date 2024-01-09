@@ -16,7 +16,6 @@
 //#include "file_utility.hpp"
 #include "request.hpp"
 #include "response.hpp"
-//#include "response_cgi.hpp"
 #include "tcp_socket.hpp"
 #include "utility.hpp"
 #include "log.hpp"
@@ -105,10 +104,10 @@ void Webserv::communication()
             {
                 switch(event->which())
                 {
-                    case INIT_EVENT:
-                        DEBUG("Webserv::Init Event");
+                    //case INIT_EVENT:
+                        //DEBUG("Webserv::Init Event");
                         //starter.init(event);
-                        break;
+                        //break;
                     case READ_EVENT:
                         DEBUG("Webserv::Read Event");
                         receiver.recv(event);

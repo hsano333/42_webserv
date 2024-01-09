@@ -6,7 +6,6 @@
 #include "webserv_cgi_event.hpp"
 #include "http_data.hpp"
 #include "file.hpp"
-#include "object_file.hpp"
 
 // source_fileからデータを最大8k-10バイト程度読み出し、これを保持する。
 class WebservReadEvent : public WebservEvent

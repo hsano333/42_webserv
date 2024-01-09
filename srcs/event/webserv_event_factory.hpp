@@ -8,6 +8,7 @@
 #include "ireader.hpp"
 #include "iwriter.hpp"
 #include "fd_manager.hpp"
+#include "file_manager.hpp"
 #include "event_manager.hpp"
 #include "config.hpp"
 
@@ -20,6 +21,7 @@ class WebservEventFactory
                 Config *cfg,
                 SocketController *socket_controller,
                 FDManager *fd_manager,
+                FileManager *file_manager,
                 IOMultiplexing *io_multi_controller,
                 EventManager *event_manager,
                 IWriter *normal_writer,
@@ -30,6 +32,7 @@ class WebservEventFactory
         ~WebservEventFactory();
         WebservEvent *from_epoll_event(t_epoll_event const &event);
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
+        void          register_file_manager(WebservEvent *event);
         WebservEvent *make_making_request_event(WebservEvent *event);
         WebservEvent *make_application_event(WebservEvent *event);
         void          make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req);
@@ -45,6 +48,7 @@ class WebservEventFactory
         Config *cfg;
         SocketController *socket_controller;
         FDManager *fd_manager;
+        FileManager *file_manager;
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
         IWriter *normal_writer;

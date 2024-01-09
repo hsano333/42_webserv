@@ -30,7 +30,10 @@ WebservMakeRequestEvent::~WebservMakeRequestEvent()
 
 WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, Config *cfg)
 {
-    return (new WebservMakeRequestEvent(event->fd(), event->req(), reader, cfg));
+    WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent(event->fd(), event->req(), reader, cfg);
+    new_event->source_file = event->src();
+    new_event->destination_file = NULL;
+    return (new_event);
 };
 
 EWebservEvent WebservMakeRequestEvent::which()
