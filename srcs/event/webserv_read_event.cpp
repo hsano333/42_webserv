@@ -65,7 +65,7 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor so
     DEBUG("WebservReadEvent::from_fd() fd:" + fd.to_string());
     WebservReadEvent *event = new WebservReadEvent(fd, sockfd, reader);
     event->source_file = OpenedSocketFile::from_fd(reader, fd);
-    event->destination_file = RequestFile::from_buf_size(MAX_BUF);
+    event->destination_file = RequestFile::from_buf_size(MAX_STATUS_LINE);
 
     return (event);
 }

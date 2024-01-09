@@ -31,7 +31,7 @@ WebservMakeRequestEvent::~WebservMakeRequestEvent()
 WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, Config *cfg)
 {
     WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent(event->fd(), event->req(), reader, cfg);
-    new_event->source_file = event->src();
+    new_event->source_file = event->dst();
     new_event->destination_file = NULL;
     return (new_event);
 };
@@ -86,29 +86,42 @@ File *WebservMakeRequestEvent::make_request()
 {
     DEBUG("WebservMakeRequestEvent::parse_req()");
     Request *req = Request::from_fd(this->fd());
-    this->source_file = OpenedSocketFile::from_fd(this->reader, this->fd());
-    char request_buf[MAX_BUF];
-    char *buf_p = &(request_buf[0]);
+    cout << "test No.1" << endl;
+    //this->source_file = OpenedSocketFile::from_fd(this->reader, this->fd());
 
+    //char request_buf[MAX_BUF];
+    char *buf_p;
+
+    printf("buf_=%p\n", buf_p);
     File *src = this->src();
-    size_t buf_size = src->read(&buf_p, MAX_BUF);
+    size_t buf_size = src->read(&buf_p, MAX_STATUS_LINE);
     (void)buf_size;
+    printf("buf_size=%zu\n",buf_size);
+    printf("buf_=%p\n", buf_p);
+    cout << "test No.2" << endl;
 
-    Split sp(request_buf, "\r\n");
+    Split sp(buf_p, "\r\n");
+    cout << "test No.3" << endl;
     if(sp.size() == 0){
         //delete (event);
         ERROR("Invalid Request. Reques doesn't have \"\r\n\"");
         throw HttpException("400");
     }
+    cout << "test No.4" << endl;
     try{
+    cout << "test No.5" << endl;
         req->set_request_line(sp[0]);
+    cout << "test No.6" << endl;
         req->set_header(sp, 1);
+    cout << "test No.7" << endl;
     }catch (std::invalid_argument &e){
         ERROR("Invalid Request:" + string(e.what()));
         throw HttpException("400");
     }
 
+    cout << "test No.8" << endl;
     req->print_info();
+    cout << "test No.9" << endl;
     this->set_completed(true);
 
     const ConfigServer *server = this->cfg->get_server(req);
