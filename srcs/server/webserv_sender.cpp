@@ -6,14 +6,14 @@
 
 WebservSender::WebservSender(
             IOMultiplexing *io_multi_controller,
-            FDManager *fd_manager,
-            WebservEventFactory *event_factory,
+            //FDManager *fd_manager,
+            //WebservEventFactory *event_factory,
             EventManager *event_manager,
             SocketWriter *writer
         ):
         io_multi_controller(io_multi_controller),
-        fd_manager(fd_manager),
-        event_factory(event_factory),
+        //fd_manager(fd_manager),
+        //event_factory(event_factory),
         event_manager(event_manager),
         writer(writer)
 {

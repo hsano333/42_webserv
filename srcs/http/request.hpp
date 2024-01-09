@@ -2,7 +2,8 @@
 #define REQUEST_H
 
 #include "http_data.hpp"
-#include "config.hpp"
+//#include "config.hpp"
+#include "config_location.hpp"
 #include "global.hpp"
 #include "ireader.hpp"
 #include "socket_data.hpp"
@@ -37,13 +38,13 @@ class Request : public File
         Request();
         ~Request();
 
-        static Request *from_fd(FileDiscriptor fd, FileDiscriptor sockfd);
-        char*   buf();
+        static Request *from_fd(FileDiscriptor fd);
+        //char*   buf();
         void    clear_raw_buf();
-        size_t  buf_size();
-        char*   get_raw_buf_pointer();
-        char*   get_raw_buf_begin();
-        int     raw_buf_space();
+        //size_t  buf_size();
+        //char*   get_raw_buf_pointer();
+        //char*   get_raw_buf_begin();
+        //int     raw_buf_space();
         char*   get_buf_body(int *size);
         void    set_buf_body(char *body_p, int size);
         void    clear_buf_body();
@@ -62,7 +63,7 @@ class Request : public File
 
         void    set_is_file(bool flag);
         void    set_is_directory(bool flag);
-        void    set_buf_pos(size_t pos);
+        //void    set_buf_pos(size_t pos);
 
         std::string const &requested_filepath() const;
         std::string const &requested_path() const;
@@ -75,7 +76,7 @@ class Request : public File
         Header const &header() const;
 
         FileDiscriptor fd() const;
-        FileDiscriptor sockfd() const;
+        //FileDiscriptor sockfd() const;
 
         // File Interface
         int open();
@@ -97,11 +98,11 @@ class Request : public File
     private:
         File *file;
         FileDiscriptor fd_;
-        FileDiscriptor sockfd_;
-        char    raw_buf[MAX_BUF];
+        //FileDiscriptor sockfd_;
+        //char    raw_buf[MAX_BUF];
         //char    raw_buf[200];
         //int     raw_buf_point;
-        size_t  raw_buf_pos_;
+        //size_t  raw_buf_pos_;
         char    *buf_body;
         int     buf_body_size;
         bool    is_file_;

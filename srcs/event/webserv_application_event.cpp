@@ -41,12 +41,15 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
         WebservCgiEvent *cgi = event->cgi_event();
         cout << "test No.2 cgi=" << cgi << endl;
         cout << "test No.2 event->req()=" << event->req() << endl;
-        event_factory->make_cgi_event(cgi->pid(), cgi->fd_in(), cgi->fd_out(), event->req());
+        //event_factory->make_and_push_write_cgi_event(cgi->pid(), cgi->fd_out(), event->req());
+        event_factory->make_and_push_read_cgi_event(cgi->pid(), cgi->fd_in());
         MYINFO("cgi pid=" + Utility::to_string(cgi->pid()));
         MYINFO("cgi fd_in=" + cgi->fd_in().to_string());
         MYINFO("cgi fd_out=" + cgi->fd_out().to_string());
         cout << "test No.20" << endl;
-        return (event_factory->make_write_event_for_cgi(event, event->res()));
+
+        return (event_factory->make_nothing_event(cgi->pid(), cgi->pid()));
+        //return (event_factory->make_write_event(event, event->res()));
     }
     return (event_factory->make_write_event(event, event->res()));
 }

@@ -1,6 +1,7 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
+#include "fd_manager.hpp"
 #include <string>
 #include <fstream>
 #include <vector>
@@ -26,10 +27,11 @@ class Config : public ConfigObject<ConfigHttp*>
         //ConfigRepository& repository;
         //ConfigRepositoryFactory& factory;
 
-        void load();
+        Config(FDManager *fd_manager);
         Config();
         ~Config();
 
+        void load();
         static Config *get_instance();
         static void set_filepath(const char *filepath);
         ConfigHttp *http;
@@ -56,6 +58,7 @@ class Config : public ConfigObject<ConfigHttp*>
         void print_cfg();
     private:
 
+        FDManager *fd_manager_;
         static Config *_singleton;
         static std::string _filepath;
         std::ifstream _fin;

@@ -16,7 +16,6 @@ RequestCGI::RequestCGI(int fd) : Request(fd, new ReadNormal()), _status_code(0),
     cur_flags |= O_NONBLOCK;
     fcntl(fd, F_SETFL, cur_flags);
     this->parse();
-    //_file_fd = fd;
 }
 
 RequestCGI::~RequestCGI() {

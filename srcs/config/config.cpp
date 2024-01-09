@@ -42,7 +42,11 @@ void make_http(char *str)
     cout << str << endl;
 }
 
-Config::Config()
+Config::Config(
+        FDManager *fd_manager
+        )
+    : fd_manager_(fd_manager)
+//Config::Config() : fd_manager(fd_manager)
 {
     //std::string tmp = "tmp";
     //this->http = new ConfigHttp(tmp);
@@ -179,7 +183,8 @@ const ConfigServer* Config::get_server(Request const *req) const
         socklen_t len = sizeof(addr);
 
         try{
-            FileDiscriptor sockfd = req->sockfd();
+            //FileDiscriptor sockfd = req->sockfd();
+            FileDiscriptor sockfd = this->fd_manager_->socket_fd_from_epoll_fd(req->fd());
             if(getsockname(sockfd.to_int(), (struct sockaddr*)&addr, &len) < 0){
                 WARNING("failure to get port number");
                 throw HttpException("500");

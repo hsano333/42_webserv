@@ -13,6 +13,7 @@ class WebservReceiver
         //WebservReader();
         WebservReceiver(
                     IOMultiplexing *io_multi_controller,
+                    FDManager *fd_manager,
                     EventManager *event_manager,
                     SocketReader *reader
                 );
@@ -22,10 +23,10 @@ class WebservReceiver
         //void recv_continue(WebservEvent *event);
         //bool have_executable_events();
     private:
-        IOMultiplexing *io_multi_controller;
-        EventManager *event_manager;
-        SocketReader *reader;
-
+        IOMultiplexing  *io_multi_controller;
+        FDManager       *fd_manager;
+        EventManager    *event_manager;
+        SocketReader    *reader;
 };
 
 #endif

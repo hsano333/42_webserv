@@ -1,9 +1,10 @@
 #include "webserv_event.hpp"
 #include "webserv_read_event.hpp"
-#include "webserv_parser_event.hpp"
+#include "webserv_make_request_event.hpp"
 #include "webserv_write_event.hpp"
 #include "webserv_application_event.hpp"
 #include "webserv_nothing_event.hpp"
+#include "webserv_make_request_event.hpp"
 #include "global.hpp"
 #include "socket_reader.hpp"
 #include "webserv_event_factory.hpp"
@@ -38,24 +39,29 @@ WebservEventFactory::~WebservEventFactory()
     DEBUG("WebservEventFactory::~WebservEventFactory Destructor");
 }
 
-void WebservEventFactory::make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req)
+void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req)
 {
-    this->fd_manager->add_socket_and_epoll_fd(pid, fd_in);
+    MYINFO("make_and_push_write_cgi_event() pid=" + pid.to_string() + ", fd_out=" +  fd_out.to_string());
     this->fd_manager->add_socket_and_epoll_fd(pid, fd_out);
-    this->io_multi_controller->add(fd_in, EPOLLIN | EPOLLONESHOT);
     this->io_multi_controller->add(fd_out, EPOLLOUT | EPOLLONESHOT);
-
     WebservEvent *write_event = WebservWriteEvent::from_cgi_fd(fd_out, req, socket_reader,normal_writer);
-    WebservEvent *read_event = WebservReadEvent::from_cgi_fd(fd_in, normal_reader);
-
     this->event_manager->push(write_event);
-    this->event_manager->push(read_event);
 
+}
+
+void WebservEventFactory::make_and_push_read_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in)
+{
+    MYINFO("make_and_push_read_cgi_event() pid=" + pid.to_string() + ", fd_in=" + fd_in.to_string());
+    //this->fd_manager->add_socket_and_epoll_fd(pid, fd_in);
+    //this->io_multi_controller->add(fd_in, EPOLLIN | EPOLLONESHOT);
+    WebservEvent *read_event = WebservReadEvent::from_cgi_fd(fd_in, pid, normal_reader);
+    this->event_manager->push(read_event);
 }
 
 
 WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd)
 {
+    MYINFO("make_nothing_event() pid=" + fd.to_string() + ", fd_out=" + sock_fd.to_string());
     this->fd_manager->add_socket_and_epoll_fd(fd, sock_fd);
     this->io_multi_controller->add(fd, EPOLLIN | EPOLLONESHOT);
     return (new WebservNothingEvent(fd));
@@ -63,6 +69,7 @@ WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd, FileDis
 
 WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd)
 {
+    MYINFO("make_nothing_event() fd=" + fd.to_string());
     //FileDiscriptor sock_fd = this->fd_manager->get_sockfd(fd);
     //this->fd_manager->add_socket_and_epoll_fd(fd, sock_fd);
     this->io_multi_controller->modify(fd, EPOLLIN | EPOLLONESHOT);
@@ -87,18 +94,10 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         {
             MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
             io_fd = this->socket_controller->accept_request(fd);
-            //FileDiscriptor sock_fd = this->fd_manager->get_sockfd(fd);
             this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
             this->io_multi_controller->add(io_fd, EPOLLIN);
-            //return (this->make_nothing_event(fd, sock_fd));
+
             return (new WebservNothingEvent(io_fd));
-
-
-            //return (this->make_nothing_event(io_fd,fd));
-            //this->fd_manager->add_socket_and_epoll_fd(sock_fd, fd);
-            //this->io_multi_controller->add(sock_fd, EPOLLIN);
-
-            //return (new WebservNothingEvent);
         }else{
             //sock_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
@@ -193,9 +192,9 @@ WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *even
     return (WebservReadEvent::from_event(event, sockfd, socket_reader));
 }
 
-WebservEvent *WebservEventFactory::make_parser_event(WebservEvent *event)
+WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event)
 {
-    return (WebservParserEvent::from_event(event));
+    return (WebservMakeRequestEvent::from_event(event, this->socket_reader, this->cfg));
 }
 
 WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)

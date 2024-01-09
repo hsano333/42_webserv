@@ -1,16 +1,18 @@
-#ifndef WEBSERV_EVENT_PARSER_HPP
-#define WEBSERV_EVENT_PARSER_HPP
+#ifndef WEBSERV_MAKE_REQUEST_EVENT_HPP
+#define WEBSERV_MAKE_REQUEST_EVENT_HPP
 #include "webserv_event.hpp"
 #include "request.hpp"
 #include "file_discriptor.hpp"
 #include "webserv_cgi_event.hpp"
+#include "webserv_make_event.hpp"
+#include "config.hpp"
 
-class WebservParserEvent : public WebservEvent
+class WebservMakeRequestEvent : public  IWebservMakeEvent
 {
     public:
-        WebservParserEvent(FileDiscriptor fd, Request *req);
-        ~WebservParserEvent();
-        static WebservParserEvent *from_event(WebservEvent *event);
+        //WebservMakeRequestEvent(FileDiscriptor fd, Request *req);
+        ~WebservMakeRequestEvent();
+        static WebservMakeRequestEvent *from_event(WebservEvent *event, IReader *reader, Config *cfg);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
@@ -27,12 +29,16 @@ class WebservParserEvent : public WebservEvent
         int  timeout_count();
         //void            set_response(Response *res);
         //File *file();
-        //void set_file(File *file);
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
 
+        File    *make_request();
+        File    *make();
+        void    set_file(File *file);
+
     private:
+        WebservMakeRequestEvent(FileDiscriptor fd, Request *req, IReader *reader, Config *cfg);
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
@@ -44,6 +50,12 @@ class WebservParserEvent : public WebservEvent
         bool            is_completed_;
 
         WebservCgiEvent *cgi_event_;
+
+        bool check_body_size(Request *req, const ConfigServer *server);
+        void parse_req(WebservEvent *event);
+        IReader *reader;
+        Config *cfg;
+
 };
 
 #endif

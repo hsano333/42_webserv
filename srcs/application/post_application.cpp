@@ -55,6 +55,7 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
 
 bool PostApplication::execute()
 {
+    /*
     DEBUG("PostApplication::execute_not_cgi");
 
     File *file = this->get_requested_file();
@@ -91,21 +92,13 @@ bool PostApplication::execute()
     }
 
     char* buf = req->get_raw_buf_begin();
-    //req->clear_raw_buf();
     FileDiscriptor fd = event->fd();
 
-    //int space = req->raw_buf_space();
-    //size_t sum = req->buf_size();
-    //MYINFO("PostApplication::read sum:" + Utility::to_string(sum));
-    //size_t pos = 0;
-    //(void)file;
-    //int result = this->file->write(&body_buf, size);
     size_t sum = size;
     this->event->set_completed(false);
     while(this->event->is_completed() == false)
     {
         MYINFO("PostApplication::No.4 complted:" + Utility::to_string(req->read_completed()));
-        //MYINFO("PostApplication::No.4 space:" + Utility::to_string(space));
         int tmp = this->reader->read(fd, &(buf[0]), MAX_READ_SIZE, NULL);
         MYINFO("PostApplication::No.5 read:" + Utility::to_string(tmp));
         if(tmp < 0){
@@ -124,7 +117,6 @@ bool PostApplication::execute()
             MYINFO("PostApplication::read sum:" + Utility::to_string(sum));
             MYINFO("PostApplication::max_len:" + Utility::to_string(max_len));
             tmp = tmp - (sum - max_len);
-            //req->set_read_completed(true);
         }
         MYINFO("PostApplication::No.7 sum:" + Utility::to_string(sum));
         int result = file->write(&buf, tmp);
@@ -136,7 +128,7 @@ bool PostApplication::execute()
             this->event->set_completed(true);
             break;
         }
-    MYINFO("PostApplication::No.6:" + Utility::to_string(req->read_completed()));
+    //MYINFO("PostApplication::No.6:" + Utility::to_string(req->read_completed()));
     }
     MYINFO("PostApplication::No.7");
 
@@ -145,13 +137,11 @@ bool PostApplication::execute()
     req->set_buf_body(NULL, sum);
     if (sum == max_len)
     {
-
         req->set_read_completed(true);
         file->close();
         MYINFO("PostApplication::No.8");
         delete file;
         MYINFO("PostApplication::No.9");
-        //file = NULL;
         this->event->set_file(NULL);
         return (true);
 
@@ -159,6 +149,7 @@ bool PostApplication::execute()
         ERROR("Too large body size:" + Utility::to_string(sum));
         throw std::exception(HttpException("400"));
     }
+    */
     return (false);
 }
 

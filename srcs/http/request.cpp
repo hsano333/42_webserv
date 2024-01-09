@@ -28,7 +28,7 @@ using std::vector;
 
 Request::Request() :
     file(NULL),
-    raw_buf_pos_(0),
+    //raw_buf_pos_(0),
     buf_body_size(0),
     // -1 is for '\0'
     //raw_buf_rest_size_(MAX_BUF-1),
@@ -47,11 +47,11 @@ Request::~Request()
 }
 
 
-Request *Request::from_fd(FileDiscriptor fd, FileDiscriptor sockfd)
+Request *Request::from_fd(FileDiscriptor fd)
 {
     Request *req = new Request();
     req->fd_ = fd;
-    req->sockfd_ = sockfd;
+    //req->sockfd_ = sockfd;
     return (req);
 }
 
@@ -60,10 +60,12 @@ FileDiscriptor Request::fd() const
     return (this->fd_);
 }
 
+/*
 FileDiscriptor Request::sockfd() const
 {
     return (this->sockfd_);
 }
+*/
 
 
 /*
@@ -83,28 +85,24 @@ void Request::insert_buf(char *buf, int size)
     Utility::memcpy(this->raw_buf, buf, size);
     raw_buf
 }
-*/
 char *Request::buf()
 {
     return (this->raw_buf);
 }
+*/
 
 /*
 void Request::decrement_raw_buf_size(size_t size)
 {
     this->raw_buf_point -= size;
 }
-*/
 
 void Request::clear_raw_buf()
 {
     this->raw_buf_pos_ = 0;
 }
+*/
 
-size_t Request::buf_size()
-{
-    return (this->raw_buf_pos_);
-}
 
 char *Request::get_buf_body(int *size)
 {
@@ -126,18 +124,17 @@ void Request::clear_buf_body()
     this->buf_body = NULL;
 }
 
+/*
 char *Request::get_raw_buf_begin()
 {
-    DEBUG("Request::get_raw_buf_pointer()  raw_buf_point:" + Utility::to_string(this->raw_buf_pos_));
+    //DEBUG("Request::get_raw_buf_pointer()  raw_buf_point:" + Utility::to_string(this->raw_buf_pos_));
     return &(this->raw_buf[0]);
 }
+*/
 
 
-char *Request::get_raw_buf_pointer()
-{
-    DEBUG("Request::get_raw_buf_pointer()  raw_buf_point:" + Utility::to_string(this->raw_buf_pos_));
-    return &(this->raw_buf[this->raw_buf_pos_]);
-}
+/*
+*/
 
 std::string const &Request::requested_filepath() const
 {
@@ -166,7 +163,6 @@ File Request::get_target_file(const ConfigLocation *location)
 
     //return &(this->raw_buf[this->raw_buf_point]);
 }
-*/
 
 int Request::raw_buf_space()
 {
@@ -182,6 +178,7 @@ void Request::set_buf_pos(size_t pos)
     //return (raw_buf_pos_);
 }
 
+*/
 /*
 void Request::renew_raw_buf_space(int space)
 {

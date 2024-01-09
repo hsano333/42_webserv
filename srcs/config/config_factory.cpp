@@ -121,9 +121,11 @@ std::vector<ConfigHttp*> ConfigFactory::create_http(ConfigParseredData &parsered
 }
 
 
-Config* ConfigFactory::create()
+Config* ConfigFactory::create(FDManager *fd_manager)
 {
-    Config *config = new Config();
+    (void)fd_manager;
+    Config *config = new Config(fd_manager);
+    //Config *config = new Config();
     std::string raw_data = raw_getter.get_raw_data();
     ConfigParseredData servers_http = parser_config.parser(raw_data, config);
 

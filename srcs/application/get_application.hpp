@@ -3,6 +3,7 @@
 #include "application.hpp"
 //#include "cgi.hpp"
 #include "config_location.hpp"
+#include "config.hpp"
 //#include "webserv_cgi_event.hpp"
 #include "request.hpp"
 #include "file.hpp"

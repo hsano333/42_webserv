@@ -10,6 +10,7 @@
 #include "config_cgi.hpp"
 #include "config_parser.hpp"
 #include "iconfig_raw_getter.hpp"
+#include "fd_manager.hpp"
 
 
 class ConfigFactory
@@ -25,7 +26,7 @@ class ConfigFactory
                 ConfigParser<ConfigCgi, ConfigLastObject> &parser_cgi
                 );
         ~ConfigFactory();
-        Config* create();
+        Config* create(FDManager *fd_manager);
     private:
         //Reader &reader;
         IConfigRawGetter<std::string> &raw_getter;

@@ -10,8 +10,8 @@ class WebservSender
     public:
         WebservSender(
                     IOMultiplexing *io_multi_controller,
-                    FDManager *fd_manager,
-                    WebservEventFactory *event_factory,
+                    //FDManager *fd_manager,
+                    //WebservEventFactory *event_factory,
                     EventManager *event_manager,
                     SocketWriter *writer
                 );
@@ -19,8 +19,8 @@ class WebservSender
         void send(WebservEvent *event);
     private:
         IOMultiplexing  *io_multi_controller;
-        FDManager *fd_manager;
-        WebservEventFactory *event_factory;
+        //FDManager *fd_manager;
+        //WebservEventFactory *event_factory;
         EventManager    *event_manager;
         SocketWriter *writer;
 

@@ -34,17 +34,17 @@ using std::string;
 
 Webserv::Webserv(
         Config *cfg,
-        //SocketManager *socket_manager,
         WebservEventFactory *event_factory,
         EventManager        *event_manager,
         EventController     *event_controller,
-        //EpollController epoll_controller,
-        WebservWaiter &waiter,
-        WebservReceiver &receiver,
-        WebservParser &parser,
-        WebservExecuter &executer,
-        WebservSender &sender,
-        WebservCleaner &cleaner
+        //WebservStarter      &starter,
+        WebservWaiter       &waiter,
+        WebservReceiver     &receiver,
+        WebservMaker        &maker,
+        WebservExecuter     &executer,
+        WebservCGIWorker    &cgi_worker,
+        WebservSender       &sender,
+        WebservCleaner      &cleaner
         ) :
                      //_epfd(0),
                      cfg(cfg),
@@ -53,10 +53,13 @@ Webserv::Webserv(
                      event_manager(event_manager),
                      event_controller(event_controller),
                      //epoll_controller(epoll_controller),
+                     //starter(starter),
                      waiter(waiter),
                      receiver(receiver),
-                     parser(parser),
+                     maker(maker),
+                     //parser(parser),
                      executer(executer),
+                     cgi_worker(cgi_worker),
                      sender(sender),
                      cleaner(cleaner)
 {
@@ -102,13 +105,17 @@ void Webserv::communication()
             {
                 switch(event->which())
                 {
+                    case INIT_EVENT:
+                        DEBUG("Webserv::Init Event");
+                        //starter.init(event);
+                        break;
                     case READ_EVENT:
                         DEBUG("Webserv::Read Event");
                         receiver.recv(event);
                         break;
-                    case PARSER_EVENT:
-                        DEBUG("Webserv::Parse Event");
-                        parser.parse_req(event);
+                    case MAKE_EVENT:
+                        DEBUG("Webserv::MAKE_EVENT Event");
+                        maker.make(event);
                         break;
                     case APPLICATION_EVENT:
                         DEBUG("Webserv::Application Event");
@@ -135,6 +142,10 @@ void Webserv::communication()
                             break;
                         }
                         cnt++;
+                        break;
+                    case CGI_EVENT:
+                        DEBUG("Webserv::CGI_EVENT Event");
+                        cgi_worker.work(event);
                         break;
                     case TIMEOUT_EVENT:
                         DEBUG("Webserv::Timeout Event");

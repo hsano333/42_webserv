@@ -9,14 +9,17 @@
 
 typedef enum E_WebservEvent
 {
-    READ_EVENT = 0,
-    PARSER_EVENT,
+    INIT_EVENT = 0,
+    READ_EVENT,
+    //PARSER_EVENT,
     APPLICATION_EVENT,
     WRITE_EVENT,
     CLEAN_EVENT,
     TIMEOUT_EVENT,
     KEEPA_ALIVE_EVENT,
     NOTHING_EVENT,
+    CGI_EVENT,
+    MAKE_EVENT,
 } EWebservEvent;
 
 typedef enum E_EpollEvent

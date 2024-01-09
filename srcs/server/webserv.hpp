@@ -10,9 +10,13 @@
 #include "epoll_controller.hpp"
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
+#include "webserv_starter.hpp"
 #include "webserv_receiver.hpp"
-#include "webserv_parser.hpp"
+//#include "webserv_parser.hpp"
+#include "webserv_maker.hpp"
 #include "webserv_executer.hpp"
+#include "webserv_cgi_worker.hpp"
+//#include "webserv_maker.hpp"
 #include "webserv_sender.hpp"
 #include "webserv_cleaner.hpp"
 #include "event_manager.hpp"
@@ -32,12 +36,16 @@ class Webserv
             EventManager        *event_manager,
             EventController     *event_controller,
             //EpollController epoll_controller,
-            WebservWaiter &waiter,
-            WebservReceiver &receiver,
-            WebservParser &parser,
-            WebservExecuter &executer,
-            WebservSender &sender,
-            WebservCleaner &cleaner
+            //WebservStarter      &starter,
+            WebservWaiter       &waiter,
+            WebservReceiver     &receiver,
+            //WebservParser &parser,
+            WebservMaker        &maker,
+            WebservExecuter     &executer,
+            WebservCGIWorker    &cgi_worker,
+            //WebservMaker &maker,
+            WebservSender       &sender,
+            WebservCleaner      &cleaner
             );
     Webserv(const std::vector<std::string> ports);
     //Webserv( c);
@@ -55,10 +63,13 @@ class Webserv
     EventManager        *event_manager;
     EventController     *event_controller;
     //EpollController     &epoll_controller;
+    //WebservStarter      &starter;
     WebservWaiter       &waiter;
     WebservReceiver     &receiver;
-    WebservParser       &parser;
+    WebservMaker        &maker;
+    //WebservParser       &parser;
     WebservExecuter     &executer;
+    WebservCGIWorker    &cgi_worker;
     WebservSender       &sender;
     WebservCleaner      &cleaner;
     IOMultiplexing      *io_multi_controller;
