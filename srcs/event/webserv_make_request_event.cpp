@@ -223,7 +223,7 @@ WebservCgiEvent *WebservMakeRequestEvent::cgi_event()
 
 void WebservMakeRequestEvent::set_file(File *file)
 {
-    this->file_ = file;
+    this->req_ = static_cast<Request*>(file);
 }
 
 

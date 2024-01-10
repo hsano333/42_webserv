@@ -9,6 +9,8 @@ class IWebservMakeEvent : public WebservEvent
         virtual ~IWebservMakeEvent(){};
         virtual File *make() = 0;
         virtual void set_file(File *file) = 0;
+        virtual void set_src(File *file) = 0;
+        virtual void set_dst(File *file) = 0;
     private:
 };
 

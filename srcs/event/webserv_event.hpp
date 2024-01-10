@@ -51,8 +51,6 @@ class WebservEvent
         virtual Response *res() = 0;
         virtual File *src() = 0;
         virtual File *dst() = 0;
-        virtual void set_src(File *file) = 0;
-        virtual void set_dst(File *file) = 0;
 
         virtual bool is_completed() = 0;
         virtual void set_completed(bool flag) = 0;
