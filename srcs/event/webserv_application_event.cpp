@@ -92,6 +92,16 @@ File *WebservApplicationEvent::dst()
     return (this->destination_file);
 }
 
+void WebservApplicationEvent::set_src(File *file)
+{
+    this->source_file = file;
+}
+
+void WebservApplicationEvent::set_dst(File *file)
+{
+    this->destination_file = file;
+}
+
 
 bool WebservApplicationEvent::is_completed()
 {

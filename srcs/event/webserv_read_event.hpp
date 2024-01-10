@@ -26,6 +26,8 @@ class WebservReadEvent : public WebservEvent
         Response        *res();
         File            *src();
         File            *dst();
+        void            set_src(File *file);
+        void            set_dst(File *file);
         //File            *source();
         //HttpData *source();
         bool is_completed();

@@ -75,6 +75,18 @@ File *WebservNothingEvent::dst()
     return (NULL);
 }
 
+void WebservNothingEvent::set_src(File *file)
+{
+    (void)file;
+    //this->source_file = file;
+}
+
+void WebservNothingEvent::set_dst(File *file)
+{
+    (void)file;
+    //this->destination_file = file;
+}
+
 bool WebservNothingEvent::is_completed()
 {
     return (true);

@@ -63,6 +63,18 @@ File *WebservTimeoutEvent::dst()
     return (NULL);
 }
 
+void WebservTimeoutEvent::set_src(File *file)
+{
+    (void)file;
+    //this->source_file = file;
+}
+
+void WebservTimeoutEvent::set_dst(File *file)
+{
+    (void)file;
+    //this->destination_file = file;
+}
+
 bool WebservTimeoutEvent::is_completed()
 {
     return (this->is_completed_);

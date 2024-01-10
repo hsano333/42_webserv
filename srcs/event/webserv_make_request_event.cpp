@@ -163,6 +163,16 @@ File *WebservMakeRequestEvent::dst()
     return (this->destination_file);
 }
 
+void WebservMakeRequestEvent::set_src(File *file)
+{
+    this->source_file = file;
+}
+
+void WebservMakeRequestEvent::set_dst(File *file)
+{
+    this->destination_file = file;
+}
+
 bool WebservMakeRequestEvent::is_completed()
 {
     return (this->is_completed_);

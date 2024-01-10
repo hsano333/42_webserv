@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2023/12/25 01:24:58 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/10 13:49:25 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ class WebservWriteEvent : public WebservEvent
         Response        *res();
         File            *src();
         File            *dst();
+        void            set_src(File *file);
+        void            set_dst(File *file);
         //HttpData        *source();
         //File            *source();
         bool is_completed();

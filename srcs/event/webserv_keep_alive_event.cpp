@@ -73,6 +73,18 @@ File *WebservKeepAliveEvent::dst()
     return (NULL);
 }
 
+void WebservKeepAliveEvent::set_src(File *file)
+{
+    (void)file;
+    //this->source_file = file;
+}
+
+void WebservKeepAliveEvent::set_dst(File *file)
+{
+    (void)file;
+    //this->destination_file = file;
+}
+
 bool WebservKeepAliveEvent::is_completed()
 {
     return (true);

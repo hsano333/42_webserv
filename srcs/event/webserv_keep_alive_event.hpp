@@ -21,6 +21,8 @@ class WebservKeepAliveEvent : public WebservEvent
         Response        *res();
         File            *src();
         File            *dst();
+        void            set_src(File *file);
+        void            set_dst(File *file);
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);

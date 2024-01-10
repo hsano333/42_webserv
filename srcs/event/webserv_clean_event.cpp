@@ -86,6 +86,16 @@ File *WebservCleanEvent::dst()
     return (this->destination_file);
 }
 
+void WebservCleanEvent::set_src(File *file)
+{
+    this->source_file = file;
+}
+
+void WebservCleanEvent::set_dst(File *file)
+{
+    this->destination_file = file;
+}
+
 void WebservCleanEvent::set_null_res_and_req()
 {
     this->res_ = NULL;

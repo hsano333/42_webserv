@@ -138,6 +138,16 @@ File *WebservWriteEvent::dst()
     return (this->destination_file);
 }
 
+void WebservWriteEvent::set_src(File *file)
+{
+    this->source_file = file;
+}
+
+void WebservWriteEvent::set_dst(File *file)
+{
+    this->destination_file = file;
+}
+
 /*
 HttpData *WebservWriteEvent::source()
 {

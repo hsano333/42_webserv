@@ -141,6 +141,16 @@ File *WebservReadEvent::dst()
     return (this->destination_file);
 }
 
+void WebservReadEvent::set_src(File *file)
+{
+    this->source_file = file;
+}
+
+void WebservReadEvent::set_dst(File *file)
+{
+    this->destination_file = file;
+}
+
 bool WebservReadEvent::is_completed()
 {
     return (this->is_completed_);
