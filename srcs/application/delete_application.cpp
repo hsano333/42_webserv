@@ -76,16 +76,28 @@ bool DeleteApplication::execute()
 {
     DEBUG("DeleteApplication::execute()");
     File *file = this->get_requested_file();
+    
+    //ApplicationResult *result = ApplicationResult();
+    ApplicationResult *result = ApplicationResult::from_result();
+    //result->set_file(file);
+
+    result->set_completed(true);
 
     if(file->remove() < 0)
     {
-        ERROR("failure to delete file:" + file->path());
+        //ERROR("failure to delete file:" + file->path());
         throw HttpException("403");
     }
-    if(file){
-        delete file;
-    }
-    return (true);
+    //if(file){
+        //delete file;
+    //}
+    return (result);
+}
+
+ApplicationResult *DeleteApplication::get_result()
+{
+    ApplicationResult *file = ApplicationResult::from_result();
+    return (file);
 }
 
 

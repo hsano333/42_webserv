@@ -34,11 +34,13 @@ class WebservEventFactory
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
         void          register_file_manager(WebservEvent *event);
         WebservEvent *make_making_request_event(WebservEvent *event);
-        WebservEvent *make_application_event(WebservEvent *event);
+        WebservEvent *make_making_response_event(WebservEvent *event, File *src);
+        WebservEvent *make_application_with_cgi_event(WebservEvent *event);
+        WebservEvent *make_application_without_cgi_event(WebservEvent *event);
         void          make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req);
         void          make_and_push_read_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in);
         WebservEvent *make_write_event_for_cgi(WebservEvent *event, Response *res);
-        WebservEvent *make_write_event(WebservEvent *event, Response *res);
+        WebservEvent *make_write_event(WebservEvent *event, File *src, File *dst);
         WebservEvent *make_error_event(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
         WebservEvent *make_read_event_from_event(WebservEvent *event);

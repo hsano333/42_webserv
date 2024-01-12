@@ -7,12 +7,12 @@
 #include "webserv_make_event.hpp"
 #include "config.hpp"
 
-class WebservMakeRequestEvent : public  IWebservMakeEvent
+class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
 {
     public:
         //WebservMakeRequestEvent(FileDiscriptor fd, Request *req);
         ~WebservMakeRequestEvent();
-        static WebservMakeRequestEvent *from_event(WebservEvent *event, IReader *reader, Config *cfg);
+        static WebservMakeRequestEvent *from_event(WebservEvent *event, IReader *reader, Config *cfg, File *src, File *dst);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
@@ -41,6 +41,12 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent
 
     private:
         WebservMakeRequestEvent(FileDiscriptor fd, Request *req, IReader *reader, Config *cfg);
+
+        void parse_request(Request *req);
+        bool check_cgi(const Request *req, const ConfigLocation *location) const;
+
+
+
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
@@ -57,6 +63,7 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent
         void parse_req(WebservEvent *event);
         IReader *reader;
         Config *cfg;
+        bool is_cgi;
 
 };
 

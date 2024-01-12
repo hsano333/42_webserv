@@ -3,7 +3,7 @@
 #include "opened_socket_file.hpp"
 #include "normal_reader.hpp"
 #include "global.hpp"
-#include "request_file.hpp"
+#include "vector_file.hpp"
 
 WebservReadEvent::WebservReadEvent()
                                         :
@@ -59,13 +59,15 @@ WebservReadEvent::~WebservReadEvent()
     //delete ireader;
 }
 
-WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader)
+WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader, File *src, File *dst)
 {
     (void)sockfd;
     DEBUG("WebservReadEvent::from_fd() fd:" + fd.to_string());
     WebservReadEvent *event = new WebservReadEvent(fd, sockfd, reader);
-    event->source_file = OpenedSocketFile::from_fd(reader, fd);
-    event->destination_file = RequestFile::from_buf_size(MAX_STATUS_LINE);
+    //event->source_file = OpenedSocketFile::from_fd(reader, fd);
+    //event->destination_file = VectorFile::from_buf_size(MAX_STATUS_LINE);
+    event->source_file = src;
+    event->destination_file = dst;
 
     return (event);
 }
@@ -112,7 +114,7 @@ WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscript
 
 EWebservEvent WebservReadEvent::which()
 {
-    return (READ_EVENT);
+    return (IO_EVENT);
 }
 
 

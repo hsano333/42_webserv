@@ -112,11 +112,13 @@ void Response::make_header_line()
 {
     //this->header_line = ("HTTP/1.1 " +  status_code.to_string() + " " + status_code.message());
     if (this->exist_body_ ){
+        /*
         if (this->file->is_chunk()){
             this->header_line = "Transfer-Encoding: chunked\r\n";
         }else{
             this->header_line = "Content-Length: " + Utility::to_string(this->file->size()) + "\r\n";
         }
+        */
     }else{
         this->header_line = "Content-Length: 0\r\n";
     }
@@ -185,6 +187,14 @@ int Response::write(char **data, size_t size)
     return (0);
 }
 
+int Response::save(char *buf, size_t size)
+{
+    for(size_t i=0;i<size;i++){
+        this->tmp_buf.push_back(buf[i]);
+    }
+    return (this->tmp_buf.size());
+}
+
 bool Response::can_read()
 {
     return (true);
@@ -216,6 +226,7 @@ std::string const &Response::path()
 
 int Response::read(char** data, size_t max_read_size)
 {
+    (void)max_read_size;
     if(this->send_state == SENT_BODY){
         return -1;
     }else if (this->send_state == STILL_NOT_SEND) {
@@ -231,7 +242,8 @@ int Response::read(char** data, size_t max_read_size)
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER && this->exist_body_){
-        int size;
+        int size=0;
+        /*
         if (this->file->is_chunk()){
             size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
             if (size <= 5){
@@ -243,6 +255,7 @@ int Response::read(char** data, size_t max_read_size)
                 this->send_state = SENT_BODY;
             }
         }
+        */
         return (size);
     }
     return (0);

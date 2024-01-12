@@ -5,7 +5,8 @@
 #include "config_location.hpp"
 #include "request.hpp"
 #include "file.hpp"
-#include "webserv_application_event.hpp"
+#include "webserv_application_with_cgi_event.hpp"
+#include "webserv_application_without_cgi_event.hpp"
 
 class PostApplication : public Application
 {
@@ -14,6 +15,7 @@ class PostApplication : public Application
         PostApplication();
         ~PostApplication();
         bool execute();
+        ApplicationResult *get_result();
         //bool is_cgi() const;
         //static PostApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
         static PostApplication* from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader);

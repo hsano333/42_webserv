@@ -7,6 +7,7 @@
 #include "http_data.hpp"
 #include <unistd.h>
 #include <map>
+#include <vector>
 
 enum SEND_STATE{
     ERROR,
@@ -52,6 +53,7 @@ class Response : public File
         int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
+        int save(char *data, size_t size);
         bool can_read();
         size_t size();
         bool is_chunk();
@@ -73,6 +75,7 @@ class Response : public File
         int read_body_and_copy_chunk(char** dst, size_t size);
         int read_body_and_copy(char** dst, size_t size);
         bool exist_body_;
+        std::vector<char> tmp_buf;
 };
 
 

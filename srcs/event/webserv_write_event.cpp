@@ -13,7 +13,7 @@ WebservWriteEvent::WebservWriteEvent()
                                         source_file(NULL),
                                         destination_file(NULL),
                                         timeout_count_(0),
-                                        writer(NULL),
+                                        //writer(NULL),
                                         is_completed_(false)
 {
     ;
@@ -21,19 +21,19 @@ WebservWriteEvent::WebservWriteEvent()
 
 WebservWriteEvent::WebservWriteEvent(
         FileDiscriptor fd,
-        Request *req,
-        Response *res,
-        File *source,
-        IWriter *writer
+        File *src,
+        File *dst
+        //File *source
+        //IWriter *writer
         )
     :
         fd_(fd),
-        req_(req),
-        res_(res),
-        source_file(source),
-        destination_file(NULL),
-        timeout_count_(0),
-        writer(writer)
+        source_file(src),
+        destination_file(dst),
+        //source_file(source),
+        //destination_file(NULL),
+        timeout_count_(0)
+        //writer(writer)
 {
     ;
 }
@@ -43,7 +43,8 @@ WebservWriteEvent::~WebservWriteEvent()
     ;
 }
 
-WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer)
+/*
+WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file)
 {
     DEBUG("WebservWriteEvent::from_error_status_code()");
     delete event->res();
@@ -58,12 +59,12 @@ WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event
             event->fd(),
             event->req(),
             res,
-            res,
-            writer
+            res
+            //writer
     ));
 }
 
-WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader, IWriter *writer)
+WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader)
 {
     DEBUG("WebservWriteEvent::from_cgi_fd()");
     File *file = OpenedSocketFile::from_fd(reader, req->fd());
@@ -72,44 +73,49 @@ WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *re
             fd,
             req,
             NULL,
-            file,
-            writer
+            file
+            //writer
     ));
 }
 
-WebservWriteEvent *WebservWriteEvent::from_event_for_cgi(WebservEvent *event, Response *res, IWriter *writer)
+WebservWriteEvent *WebservWriteEvent::from_event_for_cgi(WebservEvent *event, Response *res)
 {
     DEBUG("WebservWriteEvent::from_event_for_cgi()");
     WebservWriteEvent *write_event =  (new WebservWriteEvent(
             event->fd(),
             event->req(),
             res,
-            NULL,
-            writer
+            NULL
+            //writer
     ));
     write_event->set_cgi_event(event->cgi_event());
     return (write_event);
 }
+*/
 
-WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, Response *res, IWriter *writer)
+WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src, File *dst)
 {
     DEBUG("WebservWriteEvent::from_event()");
     //File *file = OpenedSocketFile::from_fd(writer, res->fd());
     WebservWriteEvent *write_event =  (new WebservWriteEvent(
             event->fd(),
-            event->req(),
-            res,
-            res,
-            writer
+            src,
+            dst
+            //writer
     ));
     write_event->set_cgi_event(event->cgi_event());
+
+    write_event->source_file = src;
+    write_event->destination_file = dst;
+    //write_event->destination_file = OpenedSocketFile::from_fd(writer, event->fd());
+
     return (write_event);
 }
 
 
 EWebservEvent WebservWriteEvent::which()
 {
-    return (WRITE_EVENT);
+    return (IO_EVENT);
 }
 
 
@@ -189,9 +195,9 @@ E_EpollEvent WebservWriteEvent::get_next_epoll_event()
 }
 
 
-int WebservWriteEvent::write(char const *buf, size_t size)
+int WebservWriteEvent::write(char *buf, size_t size)
 {
-    return (this->writer->write(fd_, buf, size, NULL));
+    return (this->dst()->write(&buf, size));
 }
 
 void WebservWriteEvent::set_cgi_event(WebservCgiEvent *cgi_event)

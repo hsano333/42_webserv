@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/10 13:49:25 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/12 10:51:13 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class WebservWriteEvent : public WebservEvent
     public:
         WebservWriteEvent();
         WebservWriteEvent(FileDiscriptor fd);
-        WebservWriteEvent(FileDiscriptor fd, Request *req, Response *res, File *source, IWriter* writer);
+        WebservWriteEvent(FileDiscriptor fd,  File *src,  File *dst);
         ~WebservWriteEvent();
         EWebservEvent which();
 
@@ -46,11 +46,11 @@ class WebservWriteEvent : public WebservEvent
         int  timeout_count();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
-        int write(char const *buf, size_t size);
-        static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
-        static WebservWriteEvent *from_event_for_cgi(WebservEvent *event, Response *res, IWriter *writer);
-        static WebservWriteEvent *from_event(WebservEvent *event, Response *res, IWriter *writer);
-        static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader, IWriter *writer);
+        int write(char *buf, size_t size);
+        //static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file);
+        //static WebservWriteEvent *from_event_for_cgi(WebservEvent *event, Response *res);
+        static WebservWriteEvent *from_event(WebservEvent *event, File *src, File *dst);
+        //static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader);
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
 
@@ -62,7 +62,7 @@ class WebservWriteEvent : public WebservEvent
         File            *source_file;
         File            *destination_file;
         int             timeout_count_;
-        IWriter *writer;
+        //IWriter *writer;
         //IReader *reader;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;

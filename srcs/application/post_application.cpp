@@ -17,9 +17,11 @@ PostApplication::~PostApplication()
 
 File *PostApplication::get_requested_file()
 {
+    /*
     if (this->event->file()){
         return (this->event->file());
     }
+    */
 
 
     //File *file = NULL;
@@ -36,7 +38,7 @@ File *PostApplication::get_requested_file()
             throw HttpException("403");
         }
         File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
-        this->event->set_file(file);
+        //this->event->set_file(file);
         return (file);
 }
 
@@ -44,6 +46,12 @@ File *PostApplication::get_requested_file()
 bool PostApplication::is_cgi() const
 {
     return (false);
+}
+
+ApplicationResult *PostApplication::get_result()
+{
+    ApplicationResult *file = ApplicationResult::from_result();
+    return (file);
 }
 
 bool PostApplication::check_not_cgi_end(size_t received_size)

@@ -15,7 +15,7 @@
 //#include "webserv_parser.hpp"
 #include "webserv_maker.hpp"
 #include "webserv_executer.hpp"
-#include "webserv_cgi_worker.hpp"
+#include "webserv_io_worker.hpp"
 //#include "webserv_maker.hpp"
 #include "webserv_sender.hpp"
 #include "webserv_cleaner.hpp"
@@ -42,7 +42,7 @@ class Webserv
             //WebservParser &parser,
             WebservMaker        &maker,
             WebservExecuter     &executer,
-            WebservCGIWorker    &cgi_worker,
+            WebservIOWorker    &io_worker,
             //WebservMaker &maker,
             WebservSender       &sender,
             WebservCleaner      &cleaner
@@ -58,7 +58,6 @@ class Webserv
 
   private:
     Config              *cfg;
-    //SocketManager       *socket_manager;
     WebservEventFactory *event_factory;
     EventManager        *event_manager;
     EventController     *event_controller;
@@ -69,7 +68,7 @@ class Webserv
     WebservMaker        &maker;
     //WebservParser       &parser;
     WebservExecuter     &executer;
-    WebservCGIWorker    &cgi_worker;
+    WebservIOWorker    &io_worker;
     WebservSender       &sender;
     WebservCleaner      &cleaner;
     IOMultiplexing      *io_multi_controller;

@@ -1,6 +1,7 @@
 #ifndef DELETE_APPLICATION_HPP
 #define DELETE_APPLICATION_HPP
 #include "application.hpp"
+#include "application_result.hpp"
 #include "cgi.hpp"
 #include "config_location.hpp"
 #include "config.hpp"
@@ -14,6 +15,7 @@ class DeleteApplication : public Application
         DeleteApplication();
         ~DeleteApplication();
         bool execute();
+        ApplicationResult *get_result();
         //bool is_cgi() const;
         //static DeleteApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         static DeleteApplication* from_location(const Config *cfg, const Request *req);

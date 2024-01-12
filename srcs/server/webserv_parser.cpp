@@ -1,6 +1,7 @@
 #include "webserv_parser.hpp"
 #include "http_exception.hpp"
-#include "webserv_application_event.hpp"
+#include "webserv_application_with_cgi_event.hpp"
+#include "webserv_application_without_cgi_event.hpp"
 
 WebservParser::WebservParser(
             IOMultiplexing *io_multi_controller,

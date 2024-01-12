@@ -4,12 +4,15 @@
 #include "request.hpp"
 #include "file_discriptor.hpp"
 #include "webserv_cgi_event.hpp"
+#include "application.hpp"
 
-class WebservApplicationEvent : public WebservEvent
+class WebservApplicationEvent
 {
     public:
-        WebservApplicationEvent(FileDiscriptor fd, Request *req);
-        ~WebservApplicationEvent();
+        //WebservApplicationEvent(FileDiscriptor fd, Request *req);
+        ~WebservApplicationEvent(){};
+        virtual Request         *req() = 0;
+        /*
         static WebservApplicationEvent *from_event(WebservEvent *event);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
@@ -33,8 +36,10 @@ class WebservApplicationEvent : public WebservEvent
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
+        */
 
     private:
+        /*
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
@@ -46,6 +51,8 @@ class WebservApplicationEvent : public WebservEvent
         bool            is_completed_;
 
         WebservCgiEvent *cgi_event_;
+        Application app;
+        */
 };
 
 #endif

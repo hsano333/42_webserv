@@ -3,7 +3,7 @@
 #include "file.hpp"
 #include "webserv_event.hpp"
 
-class IWebservMakeEvent : public WebservEvent
+class IWebservMakeEvent
 {
     public:
         virtual ~IWebservMakeEvent(){};

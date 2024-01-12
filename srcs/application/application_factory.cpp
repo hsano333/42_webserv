@@ -31,7 +31,6 @@ std::string ApplicationFactory::get_server_name()
 }
 
 /*
-bool ApplicationFactory::is_cgi()
 {
     return (true);
 }

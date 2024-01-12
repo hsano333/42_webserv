@@ -3,6 +3,8 @@
 #include "webserv_event.hpp"
 #include "event_manager.hpp"
 #include "webserv_application_event.hpp"
+#include "webserv_application_with_cgi_event.hpp"
+#include "webserv_application_without_cgi_event.hpp"
 #include "epoll_controller.hpp"
 #include "application_factory.hpp"
 #include "webserv_event_factory.hpp"
@@ -21,7 +23,7 @@ class WebservExecuter
                       SocketReader *reader
                 );
         ~WebservExecuter();
-        bool check_redirect(WebservApplicationEvent *event);
+        //bool check_redirect(WebservApplicationEvent *event);
         void execute(WebservEvent *event);
     private:
         ApplicationFactory *factory;

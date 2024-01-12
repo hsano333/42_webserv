@@ -41,6 +41,7 @@ Application *WebservExecuter::get_application(WebservApplicationEvent *event)
     return (factory->make_application(event, reader));
 }
 
+/*
 bool WebservExecuter::check_redirect(WebservApplicationEvent *event)
 {
     DEBUG("WebservExecuter::check_redirect");
@@ -67,17 +68,32 @@ bool WebservExecuter::check_redirect(WebservApplicationEvent *event)
     MYINFO("WebservExecuter::redirect is valid to:" + redirect.second);
     return (true);
 }
+*/
 
 void WebservExecuter::execute(WebservEvent *event)
 {
     DEBUG("WebservExecuter::execute");
-    WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
-    if(check_redirect(app_event)){
-        return ;
-    }
 
+    WebservApplicationEvent *app_event = dynamic_cast<WebservApplicationEvent*>(event);
     Application *app = this->get_application(app_event);
+    bool is_completed = app->execute();
+    event->set_completed(is_completed);
+    File *result = app->get_result();
+    event->set_dst(result);
+
+    //event->set_completed(result->is_completed());
+
+
+    //WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
+    //bool is_completed = this->get_application(event);
+    //File *result = app->get_result();
+
+
+    //File *result_file = dynamic_cast<File *>(result);
+
+
     //todo
+    /*
     try{
         bool is_completed = app->execute();
         if(app->is_cgi()){
@@ -86,9 +102,9 @@ void WebservExecuter::execute(WebservEvent *event)
         app_event->set_completed(is_completed);
         if(is_completed)
         {
-            Response *res = NULL;
-            res = app->make_response();
-            app_event->set_response(res);
+            //Response *res = NULL;
+            //res = app->make_response();
+            //app_event->set_response(res);
             //MYINFO("this->is_completed_:" + Utility::to_string(app_event->is_completed()));
             //MYINFO("this->cgi is_cgi:" + Utility::to_string(app_event->cgi_event()->is_cgi()));
             //delete app;
@@ -99,11 +115,5 @@ void WebservExecuter::execute(WebservEvent *event)
         throw HttpException(e.what());
     }
     delete app;
-
-    //io_multi_controller->modify(event->fd(), EPOLLOUT);
-    //event_manager->erase_event_waiting_reading(event->fd());
-    //WebservEvent *next_event = event_factory->make_write_event(event, res);
-    //this->event_manager->add_event_waiting_writing(next_event->fd(), next_event);
-    //event_manager->push(next_event);
-    //delete (event);
+    */
 }

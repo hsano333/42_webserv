@@ -8,22 +8,22 @@ CONFIGDIR			:= config/
 CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loader.cpp  config_http.cpp config_server.cpp config_location.cpp config_limit.cpp config_cgi.cpp config_parsered_data.cpp  body_size.cpp
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
-FILESYSTEMDIR		:= filesystem/
-FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp error_file.cpp opened_socket_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp cgi_file.cpp request_file.cpp file_manager.cpp
+FILESYSTEMDIR		:= file/
+FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp error_file.cpp opened_socket_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp cgi_file.cpp vector_file.cpp file_manager.cpp buffer_controller.cpp
 FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_maker.cpp webserv_executer.cpp webserv_cgi_worker.cpp  webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_maker.cpp webserv_executer.cpp webserv_io_worker.cpp  webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/
-EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_make_request_event.cpp webserv_application_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_cgi_event.cpp 
+EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_read_event.cpp webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_application_without_cgi_event.cpp  webserv_application_with_cgi_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_cgi_event.cpp 
 
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
 
 APPLICATIONDIR		:= application/
-APPLICATIONSRC 		:= application_factory.cpp get_application.cpp post_application.cpp delete_application.cpp  cgi.cpp  get_cgi_application.cpp  post_cgi_application.cpp
+APPLICATIONSRC 		:= application_factory.cpp get_application.cpp post_application.cpp delete_application.cpp  cgi.cpp  get_cgi_application.cpp  post_cgi_application.cpp application_result.cpp
 APPLICATION 		:= $(addprefix $(APPLICATIONDIR)/, $(APPLICATIONSRC))
 
 

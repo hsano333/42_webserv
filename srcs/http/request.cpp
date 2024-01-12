@@ -293,6 +293,16 @@ void Request::set_is_directory(bool flag)
     this->is_directory_ = flag;
 }
 
+void Request::set_cgi(bool flag)
+{
+    this->is_cgi_ = flag;
+}
+
+bool Request::is_cgi()
+{
+    return (is_cgi_);
+}
+
 bool Request::is_directory() const
 {
     return (this->is_directory_);
@@ -372,6 +382,14 @@ int Request::write(char **data, size_t size)
     (void)data;
     (void)size;
     return (0);
+}
+
+int Request::save(char *buf, size_t size)
+{
+    for(size_t i=0;i<size;i++){
+        this->tmp_buf.push_back(buf[i]);
+    }
+    return (this->tmp_buf.size());
 }
 
 bool Request::can_read()

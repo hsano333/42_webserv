@@ -63,7 +63,13 @@ class Request : public File
 
         void    set_is_file(bool flag);
         void    set_is_directory(bool flag);
+
+        bool    is_cgi();
+        void    set_cgi(bool flag);
+
         //void    set_buf_pos(size_t pos);
+        //
+        //
 
         std::string const &requested_filepath() const;
         std::string const &requested_path() const;
@@ -83,6 +89,7 @@ class Request : public File
         int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
+        int save(char *data, size_t size);
         bool can_read();
         size_t size();
         bool is_chunk();
@@ -117,6 +124,8 @@ class Request : public File
         Header         header_;
         std::string    tmp_path_info_;
         bool           read_completed_;
+        std::vector<char> tmp_buf;
+        bool            is_cgi_;
         //File *source;
 
 };

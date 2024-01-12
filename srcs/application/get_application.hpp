@@ -7,6 +7,7 @@
 //#include "webserv_cgi_event.hpp"
 #include "request.hpp"
 #include "file.hpp"
+#include "status_code.hpp"
 
 class GetApplication : public Application
 {
@@ -15,6 +16,7 @@ class GetApplication : public Application
         GetApplication();
         ~GetApplication();
         bool execute();
+        ApplicationResult *get_result();
         //bool is_cgi() const;
         //void check_permission();
         //static GetApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
@@ -27,6 +29,10 @@ class GetApplication : public Application
         const Method &which() const;
 
         WebservCgiEvent *cgi_event();
+
+        //method for application class
+        StatusCode const &code() const;
+        std::map<string, string> const &header() const;
     private:
 
         File *get_requested_file();
@@ -45,10 +51,9 @@ class GetApplication : public Application
         std::string path_info_;
         Method method;
 
-        //WebservCgiEvent cgi_event_;
+        StatusCode code_;
+        std::map<std::string, std::string> header_;
+        //ApplicationResult *result_;
 
-
-        //StatusCode res_status_code;
-        //std::string 
 };
 #endif

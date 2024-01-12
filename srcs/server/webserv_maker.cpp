@@ -1,6 +1,7 @@
 #include "webserv_maker.hpp"
 #include "http_exception.hpp"
-#include "webserv_application_event.hpp"
+#include "webserv_application_with_cgi_event.hpp"
+#include "webserv_application_without_cgi_event.hpp"
 #include "webserv_make_event.hpp"
 
 WebservMaker::WebservMaker(
@@ -101,7 +102,7 @@ void WebservMaker::parse_res(WebservEvent *event)
 
 void WebservMaker::make(WebservEvent *event)
 {
-    IWebservMakeEvent *make_event = static_cast<IWebservMakeEvent*>(event);
+    IWebservMakeEvent *make_event = dynamic_cast<IWebservMakeEvent*>(event);
     File *file = make_event->make();
     make_event->set_file(file);
     event->set_completed(true);

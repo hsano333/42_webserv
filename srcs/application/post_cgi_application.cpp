@@ -4,6 +4,7 @@
 #include "normal_file.hpp"
 #include "directory_file.hpp"
 #include "connection_exception.hpp"
+#include "application_result.hpp"
 
 PostCGIApplication::PostCGIApplication() : res(NULL), method(Method::from_string("GET"))
 {
@@ -18,9 +19,11 @@ PostCGIApplication::~PostCGIApplication()
 File *PostCGIApplication::get_requested_file()
 {
     return (NULL);
+    /*
     if (this->event->file()){
         return (this->event->file());
     }
+    */
 
     //File *file = NULL;
         //this->req->print_info();
@@ -36,7 +39,7 @@ File *PostCGIApplication::get_requested_file()
             throw HttpException("403");
         }
         File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
-        this->event->set_file(file);
+        //this->event->set_file(file);
         return (file);
 }
 
@@ -57,6 +60,12 @@ bool PostCGIApplication::execute()
 {
     return (true);
 
+}
+
+ApplicationResult *PostCGIApplication::get_result()
+{
+    ApplicationResult *file = ApplicationResult::from_result();
+    return (file);
 }
 
 PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader, CGI *cgi)

@@ -1,4 +1,5 @@
-#include "webserv_application_event.hpp"
+#include "webserv_application_with_cgi_event.hpp"
+#include "webserv_application_without_cgi_event.hpp"
 #include "webserv_event.hpp"
 
 WebservApplicationEvent::WebservApplicationEvent(
@@ -36,6 +37,7 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
 {
     DEBUG("WebservApplicationEvent::make_next_event");
     //todo
+    /*
     if(event->cgi_event()){
         cout << "test No.1 " << endl;
         WebservCgiEvent *cgi = event->cgi_event();
@@ -51,7 +53,9 @@ WebservEvent* WebservApplicationEvent::make_next_event(WebservEvent* event, Webs
         return (event_factory->make_nothing_event(cgi->pid(), cgi->pid()));
         //return (event_factory->make_write_event(event, event->res()));
     }
-    return (event_factory->make_write_event(event, event->res()));
+    */
+    //return (event_factory->make_write_event(event, event->res()));
+    return (event_factory->make_making_response_event(event));
 }
 
 E_EpollEvent WebservApplicationEvent::get_next_epoll_event()

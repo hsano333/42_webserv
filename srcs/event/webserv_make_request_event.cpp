@@ -28,11 +28,11 @@ WebservMakeRequestEvent::~WebservMakeRequestEvent()
 {
 };
 
-WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, Config *cfg)
+WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, Config *cfg, File *src, File *dst)
 {
     WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent(event->fd(), event->req(), reader, cfg);
-    new_event->source_file = event->dst();
-    new_event->destination_file = NULL;
+    new_event->source_file = src;
+    new_event->destination_file = dst;
     return (new_event);
 };
 
@@ -44,7 +44,14 @@ EWebservEvent WebservMakeRequestEvent::which()
 WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeRequestEvent::make_next_event");
-    return (event_factory->make_application_event(event));
+    
+    WebservEvent* new_event;
+    if(event->req()->is_cgi()){
+        new_event = event_factory->make_application_with_cgi_event(event);
+    }else{
+        new_event = event_factory->make_application_without_cgi_event(event);
+    }
+    return (new_event);
 }
 
 E_EpollEvent WebservMakeRequestEvent::get_next_epoll_event()
@@ -82,10 +89,11 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
     return (true);
 }
 
-File *WebservMakeRequestEvent::make_request()
+
+void WebservMakeRequestEvent::parse_request(Request *req)
 {
-    DEBUG("WebservMakeRequestEvent::parse_req()");
-    Request *req = Request::from_fd(this->fd());
+    DEBUG("WebservMakeRequestEvent::parse_request");
+
     cout << "test No.1" << endl;
     //this->source_file = OpenedSocketFile::from_fd(this->reader, this->fd());
 
@@ -119,16 +127,80 @@ File *WebservMakeRequestEvent::make_request()
         throw HttpException("400");
     }
 
-    cout << "test No.8" << endl;
-    req->print_info();
-    cout << "test No.9" << endl;
-    this->set_completed(true);
+    //cout << "test No.8" << endl;
+    //req->print_info();
+    //cout << "test No.9" << endl;
+    //this->set_completed(true);
+
+    //return (req);
+
+}
+
+bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation *location) const
+{
+    (void)req;
+    (void)location;
+    const ConfigLimit *limit = location->limit();
+
+    if (req->is_file() == false){
+        WARNING("not CGI");
+        return (false);
+        //throw std::invalid_argument("not CGI");
+    }
+
+    if (limit == NULL){
+        WARNING("not CGI");
+        return (false);
+        //throw std::invalid_argument("not CGI");
+    }
+
+    const ConfigCgi *config_cgi = limit->cgi();
+    if (config_cgi == NULL){
+        WARNING("not CGI");
+        return (false);
+        throw std::invalid_argument("not CGI");
+    }
+
+    const std::map<std::string, std::string> &ext = config_cgi->get_extensions();
+    std::map<std::string, std::string>::const_iterator ite = ext.begin();
+    std::map<std::string, std::string>::const_iterator end = ext.end();
+
+    std::string const filepath = req->requested_filepath();
+    size_t pos = filepath.rfind("/");
+    std::string filename = filepath.substr(pos+1);
+
+    while(ite != end){
+        const std::string &file_ext = ite->first;
+        pos = filename.rfind(file_ext);
+        if (pos != std::string::npos && (pos + file_ext.size() == filename.size())){
+            MYINFO("CGI::is_cgi execve:" + ite->second);
+            MYINFO("CGI::is_cgi filepath:" + filepath);
+            return (true);
+            //return ite->second;
+            //return ;
+        }
+        ite++;
+    }
+    WARNING("not CGI");
+    //throw std::invalid_argument("not CGI");
+    return (false);
+}
+
+
+
+File *WebservMakeRequestEvent::make_request()
+{
+
+    Request *req = Request::from_fd(this->fd());
+    this->parse_request(req);
 
     const ConfigServer *server = this->cfg->get_server(req);
     const ConfigLocation *location= this->cfg->get_location(server, req);
-    req->set_requested_filepath(location);
 
+    req->set_requested_filepath(location);
     this->check_body_size(req, server);
+    this->is_cgi = check_cgi(req, location);
+
     return (req);
 }
 

@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "cgi.hpp"
-//#include "file_utility.hpp"
 #include "request.hpp"
 #include "response.hpp"
 #include "tcp_socket.hpp"
@@ -36,29 +35,23 @@ Webserv::Webserv(
         WebservEventFactory *event_factory,
         EventManager        *event_manager,
         EventController     *event_controller,
-        //WebservStarter      &starter,
         WebservWaiter       &waiter,
         WebservReceiver     &receiver,
         WebservMaker        &maker,
         WebservExecuter     &executer,
-        WebservCGIWorker    &cgi_worker,
+        WebservIOWorker    &io_worker,
         WebservSender       &sender,
         WebservCleaner      &cleaner
         ) :
-                     //_epfd(0),
                      cfg(cfg),
-                     //socket_manager(socket_manager),
                      event_factory(event_factory),
                      event_manager(event_manager),
                      event_controller(event_controller),
-                     //epoll_controller(epoll_controller),
-                     //starter(starter),
                      waiter(waiter),
                      receiver(receiver),
                      maker(maker),
-                     //parser(parser),
                      executer(executer),
-                     cgi_worker(cgi_worker),
+                     io_worker(io_worker),
                      sender(sender),
                      cleaner(cleaner)
 {
@@ -104,13 +97,9 @@ void Webserv::communication()
             {
                 switch(event->which())
                 {
-                    //case INIT_EVENT:
-                        //DEBUG("Webserv::Init Event");
-                        //starter.init(event);
-                        //break;
-                    case READ_EVENT:
-                        DEBUG("Webserv::Read Event");
-                        receiver.recv(event);
+                    case IO_EVENT:
+                        DEBUG("Webserv::IO Event");
+                        io_worker.work(event);
                         break;
                     case MAKE_EVENT:
                         DEBUG("Webserv::MAKE_EVENT Event");
@@ -120,10 +109,10 @@ void Webserv::communication()
                         DEBUG("Webserv::Application Event");
                         executer.execute(event);
                         break;
-                    case WRITE_EVENT:
-                        DEBUG("Webserv::Write Event");
-                        sender.send(event);
-                        break;
+                    //case WRITE_EVENT:
+                        //DEBUG("Webserv::Write Event");
+                        //sender.send(event);
+                        //break;
                     case CLEAN_EVENT:
                         DEBUG("Webserv::Clean Event");
                         cleaner.clean(event, false);
@@ -142,10 +131,10 @@ void Webserv::communication()
                         }
                         cnt++;
                         break;
-                    case CGI_EVENT:
-                        DEBUG("Webserv::CGI_EVENT Event");
-                        cgi_worker.work(event);
-                        break;
+                    //case CGI_EVENT:
+                        //DEBUG("Webserv::CGI_EVENT Event");
+                        //io_worker.work(event);
+                        //break;
                     case TIMEOUT_EVENT:
                         DEBUG("Webserv::Timeout Event");
                         cleaner.clean_timeout_events(event);

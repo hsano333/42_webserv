@@ -5,7 +5,8 @@
 #include "config_location.hpp"
 #include "request.hpp"
 #include "file.hpp"
-#include "webserv_application_event.hpp"
+#include "webserv_application_with_cgi_event.hpp"
+#include "webserv_application_without_cgi_event.hpp"
 
 class PostCGIApplication : public Application
 {
@@ -14,6 +15,7 @@ class PostCGIApplication : public Application
         PostCGIApplication();
         ~PostCGIApplication();
         bool execute();
+        ApplicationResult *get_result();
         //bool is_cgi() const;
         void check_permission();
         //static PostCGIApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);

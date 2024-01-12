@@ -138,6 +138,12 @@ bool GetCGIApplication::execute()
     return (true);
 }
 
+ApplicationResult *GetCGIApplication::get_result()
+{
+    ApplicationResult *file = ApplicationResult::from_result();
+    return (file);
+}
+
 /*
 bool GetCGIApplication::execute()
 {

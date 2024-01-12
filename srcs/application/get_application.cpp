@@ -147,6 +147,12 @@ bool GetApplication::is_cgi() const
 //    //cgi->();
 //    return (true);
 //}
+//
+ApplicationResult *GetApplication::get_result()
+{
+    ApplicationResult *file = ApplicationResult::from_result();
+    return (file);
+}
 
 bool GetApplication::execute()
 {
@@ -272,6 +278,8 @@ WebservCgiEvent *GetApplication::cgi_event()
     //return (this->cgi_event_);
 
 }
+
+
 /*
 void GetApplication::set_path_info(std::string const &path_info)
 {
@@ -290,3 +298,15 @@ std::string const &GetApplication::path_info() const
 */
 
 
+
+/*
+StatusCode const &GetApplication::code() const
+{
+    return (this->code_);
+}
+
+StatusCode const &GetApplication::header() const
+{
+    return (this->header_);
+}
+*/
