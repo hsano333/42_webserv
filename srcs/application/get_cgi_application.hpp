@@ -14,7 +14,7 @@ class GetCGIApplication : public Application
         //bool is_cgi();
         GetCGIApplication();
         ~GetCGIApplication();
-        bool execute();
+        bool execute(WebservEvent *event);
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //static GetCGIApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);

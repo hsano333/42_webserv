@@ -3,6 +3,8 @@
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 #include "directory_file.hpp"
+#include "header_extension.hpp"
+#include "utility.hpp"
 #include <unistd.h>
 
 GetApplication::GetApplication() : method(Method::from_string("GET"))
@@ -154,8 +156,67 @@ ApplicationResult *GetApplication::get_result()
     return (file);
 }
 
-bool GetApplication::execute()
+
+string GetApplication::check_content(string const &filepath)
 {
+    string ext = Utility::get_extension(filepath);
+    if(ext == TEXT_PLAIN){
+        return (CONTENT_TEXT_PLAIN);
+    }else if(ext == TEXT_HTML){
+        return (CONTENT_TEXT_HTML);
+    }else if(ext == TEXT_CSS){
+        return (CONTENT_TEXT_CSS);
+    }else if(ext == TEXT_JAVASCRIPT){
+        return (CONTENT_TEXT_JAVASCRIPT);
+    }else if(ext == APP_JSON){
+        return (CONTENT_APPLICATION_JSON);
+    }else if(ext == APP_EXE){
+        return (CONTENT_APPLICATION_EXE);
+    }else if(ext == APP_PDF){
+        return (CONTENT_APPLICATION_PDF);
+    }else if(ext == APP_GZIP){
+        return (CONTENT_APPLICATION_GZIP);
+    }else if(ext == APP_ZIP){
+        return (CONTENT_APPLICATION_ZIP);
+    }else if(ext == APP_TAR){
+        return (CONTENT_APPLICATION_TAR);
+    }else if(ext == IMAGE_PNG){
+        return (CONTENT_IMAEG_PNG);
+    }else if(ext == IMAGE_GIF){
+        return (CONTENT_IMAEG_GIF);
+    }else if(ext == IMAGE_JPEG){
+        return (CONTENT_IMAEG_JPEG);
+    }else if(ext == IMAGE_BMP){
+        return (CONTENT_IMAEG_BMP);
+    }else if(ext == AUDIO_MP3){
+        return (CONTENT_AUDIO_MP3);
+    }
+    return ("");
+}
+
+bool GetApplication::execute(WebservEvent *event)
+{
+    (void)event;
+    DEBUG("GetApplication::execute()");
+    Request *req = event->req();
+    (void)req;
+
+
+    string extension = GetApplication::check_content(req->requested_path());
+    if(extension != ""){
+        this->header_.insert(std::make_pair(CONTENT_TYPE, extension));
+    }
+    this->code_ = StatusCode::from_int(200);
+    /*
+     if(error){
+        this->code_ = StatusCode::from_int(***);
+
+     }
+
+   */
+    //todo
+    // check file permission and chck auto index whether on/off
+
     //this->check_permission();
     /*
     if (this->is_cgi_){
@@ -174,6 +235,7 @@ bool GetApplication::execute()
         return (true);
         //this->res_status_code = this->server->first;
     }
+    return (false);
 
 
     //cout << "Get Application execute requetesd filename:" << filename << endl;

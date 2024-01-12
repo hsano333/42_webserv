@@ -261,6 +261,10 @@ void Request::set_requested_filepath(const ConfigLocation *location)
             return;
         }
         size_t pos = path.rfind(uri_sp[i]);
+        if(pos == string::npos){
+            //error
+            return;
+        }
         path = path.substr(0, pos-1);
         //tmp_path_info += uri_sp[i];
         // 対象ファイルのディレクトリが読み書き可能かどうか判定
@@ -412,12 +416,14 @@ int Request::remove()
     return (0);
 }
 
+/*
 std::string const &Request::path()
 {
     std::runtime_error("Don't use");
     //std::string tmp = "";
     return (requested_filepath_);
 }
+*/
 
 int Request::read(char** data, size_t max_read_size)
 {

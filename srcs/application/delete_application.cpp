@@ -72,8 +72,9 @@ void DeleteApplication::execute_cgi()
 }
 */
 
-bool DeleteApplication::execute()
+bool DeleteApplication::execute(WebservEvent *event)
 {
+    (void)event;
     DEBUG("DeleteApplication::execute()");
     File *file = this->get_requested_file();
     

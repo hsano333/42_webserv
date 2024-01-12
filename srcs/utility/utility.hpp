@@ -28,6 +28,7 @@ class Utility
     static size_t strlen(const char* str);
     static std::string delete_space(std::string& str);
     static char* strnstr(const char* haystack, const char* needle, size_t len);
+    static std::string get_extension(std::string const &str);
     static std::string to_lower(std::string str);
     static std::string trim_white_space(std::string const &str);
 

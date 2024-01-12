@@ -14,7 +14,7 @@ class PostApplication : public Application
         //bool is_cgi();
         PostApplication();
         ~PostApplication();
-        bool execute();
+        bool execute(WebservEvent *event);
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //static PostApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);

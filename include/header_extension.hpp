@@ -1,0 +1,37 @@
+#ifndef HEADER_EXTENSION_STRING_HPP
+#define HEADER_EXTENSION_STRING_HPP
+
+#define CONTENT_TYPE "Content-Type"
+#define CONTENT_TEXT_PLAIN "text/plain"
+#define CONTENT_TEXT_HTML "text/html"
+#define CONTENT_TEXT_CSS "text/css"
+#define CONTENT_TEXT_JAVASCRIPT "text/javascript"
+#define CONTENT_APPLICATION_JSON "application/json"
+#define CONTENT_APPLICATION_EXE "application/octet-stream"
+#define CONTENT_APPLICATION_PDF "application/pdf"
+#define CONTENT_APPLICATION_GZIP "application/gzip"
+#define CONTENT_APPLICATION_ZIP "application/zip"
+#define CONTENT_APPLICATION_TAR "application/x-tar"
+#define CONTENT_IMAEG_PNG "image/png"
+#define CONTENT_IMAEG_GIF "image/gif"
+#define CONTENT_IMAEG_JPEG "image/jpeg"
+#define CONTENT_IMAEG_BMP "image/bmp"
+#define CONTENT_AUDIO_MP3 "audio/mp3"
+
+#define TEXT_PLAIN "txt"
+#define TEXT_HTML "html"
+#define TEXT_CSS "css"
+#define TEXT_JAVASCRIPT "js"
+#define APP_JSON "json"
+#define APP_EXE "exe"
+#define APP_PDF "pdf"
+#define APP_GZIP "gzip"
+#define APP_ZIP "zip"
+#define APP_TAR "tar"
+#define IMAGE_PNG "png"
+#define IMAGE_GIF "gif"
+#define IMAGE_JPEG "jpeg"
+#define IMAGE_BMP "bmp"
+#define AUDIO_MP3 "mp3"
+
+#endif

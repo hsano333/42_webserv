@@ -61,8 +61,9 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
     return (true);
 }
 
-bool PostApplication::execute()
+bool PostApplication::execute(WebservEvent *event)
 {
+    (void)event;
     /*
     DEBUG("PostApplication::execute_not_cgi");
 

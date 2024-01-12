@@ -32,9 +32,10 @@ bool GetCGIApplication::is_cgi() const
 
 //extern char** environ;
 
-bool GetCGIApplication::execute()
+bool GetCGIApplication::execute(WebservEvent *event)
 {
 
+    (void)event;
     //this->cgi_event_.set_is_cgi(true);
     DEBUG("GetCGIApplication::execute()");
     //string &execve_path = this->cgi_application_path;

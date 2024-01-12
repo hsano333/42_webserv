@@ -14,7 +14,7 @@ class DeleteApplication : public Application
         //bool is_cgi();
         DeleteApplication();
         ~DeleteApplication();
-        bool execute();
+        bool execute(WebservEvent *event);
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //static DeleteApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);

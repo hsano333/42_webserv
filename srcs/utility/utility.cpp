@@ -102,6 +102,16 @@ char* Utility::strnstr(const char* haystack, const char* needle, size_t len)
     return (process(haystack, needle, len));
 }
 
+string Utility::get_extension(string const &str)
+{
+    size_t pos = str.rfind(".");
+    if(pos == std::string::npos || pos == str.size()-1){
+        return ("");
+    }
+    return (str.substr(pos));
+}
+
+
 string Utility::to_lower(string str)
 {
     string result = "";

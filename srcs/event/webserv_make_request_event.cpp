@@ -190,7 +190,6 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 
 File *WebservMakeRequestEvent::make_request()
 {
-
     Request *req = Request::from_fd(this->fd());
     this->parse_request(req);
 

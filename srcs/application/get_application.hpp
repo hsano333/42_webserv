@@ -15,7 +15,7 @@ class GetApplication : public Application
         //bool is_cgi();
         GetApplication();
         ~GetApplication();
-        bool execute();
+        bool execute(WebservEvent *event);
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //void check_permission();
@@ -50,6 +50,7 @@ class GetApplication : public Application
         std::map<std::string, std::string> tmp_headers;
         std::string path_info_;
         Method method;
+        string check_content(string const &filepath);
 
         StatusCode code_;
         std::map<std::string, std::string> header_;

@@ -56,8 +56,9 @@ bool PostCGIApplication::check_not_cgi_end(size_t received_size)
     return (true);
 }
 
-bool PostCGIApplication::execute()
+bool PostCGIApplication::execute(WebservEvent *event)
 {
+    (void)event;
     return (true);
 
 }
