@@ -79,10 +79,14 @@ bool DeleteApplication::execute(WebservEvent *event)
     File *file = this->get_requested_file();
     
     //ApplicationResult *result = ApplicationResult();
-    ApplicationResult *result = ApplicationResult::from_result();
+    //ApplicationResult *result = ApplicationResult::from_result();
     //result->set_file(file);
 
-    result->set_completed(true);
+
+    //todo 
+    return (true);
+
+    //result->set_completed(true);
 
     if(file->remove() < 0)
     {
@@ -92,13 +96,14 @@ bool DeleteApplication::execute(WebservEvent *event)
     //if(file){
         //delete file;
     //}
-    return (result);
+    //return (result);
 }
 
 ApplicationResult *DeleteApplication::get_result()
 {
-    ApplicationResult *file = ApplicationResult::from_result();
-    return (file);
+    //ApplicationResult *file = ApplicationResult::from_result();
+    //return (file);
+    return (NULL);
 }
 
 

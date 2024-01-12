@@ -50,8 +50,8 @@ bool PostApplication::is_cgi() const
 
 ApplicationResult *PostApplication::get_result()
 {
-    ApplicationResult *file = ApplicationResult::from_result();
-    return (file);
+    //ApplicationResult *file = ApplicationResult::from_result();
+    return (NULL);
 }
 
 bool PostApplication::check_not_cgi_end(size_t received_size)

@@ -419,7 +419,7 @@ bool Utility::is_executable_file(std::string const &path)
     return (fileInfo.st_mode & S_IFREG) && (fileInfo.st_mode & S_IXOTH);
 }
 
-bool Utility::is_redable_file(std::string const &path)
+bool Utility::is_readable_file(std::string const &path)
 {
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0){

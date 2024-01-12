@@ -1,6 +1,7 @@
 #ifndef GET_APPLICATION_HPP
 #define GET_APPLICATION_HPP
 #include "application.hpp"
+#include "application_result.hpp"
 //#include "cgi.hpp"
 #include "config_location.hpp"
 #include "config.hpp"
@@ -35,6 +36,7 @@ class GetApplication : public Application
         std::map<string, string> const &header() const;
     private:
 
+        string get_index_path(Request *req, bool *is_existed);
         File *get_requested_file();
         //bool execute_cgi();
         //bool execute_not_cgi();
@@ -54,7 +56,7 @@ class GetApplication : public Application
 
         StatusCode code_;
         std::map<std::string, std::string> header_;
-        //ApplicationResult *result_;
+        ApplicationResult *result_;
 
 };
 #endif

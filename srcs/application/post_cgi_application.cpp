@@ -59,14 +59,16 @@ bool PostCGIApplication::check_not_cgi_end(size_t received_size)
 bool PostCGIApplication::execute(WebservEvent *event)
 {
     (void)event;
+    //return (true);
     return (true);
 
 }
 
 ApplicationResult *PostCGIApplication::get_result()
 {
-    ApplicationResult *file = ApplicationResult::from_result();
-    return (file);
+    //ApplicationResult *file = ApplicationResult::from_result();
+    //return (file);
+    return (NULL);
 }
 
 PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader, CGI *cgi)

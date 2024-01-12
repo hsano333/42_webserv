@@ -280,6 +280,7 @@ void Request::set_requested_filepath(const ConfigLocation *location)
         this->is_directory_ = true;
     }
     this->requested_filepath_ = "";
+    //this->requested_directory_path = this->requested_path_;
 }
 
 void Request::set_is_file(bool flag)

@@ -141,8 +141,9 @@ bool GetCGIApplication::execute(WebservEvent *event)
 
 ApplicationResult *GetCGIApplication::get_result()
 {
-    ApplicationResult *file = ApplicationResult::from_result();
-    return (file);
+    //ApplicationResult *file = ApplicationResult::from_result();
+    //return (file);
+    return (NULL);
 }
 
 /*

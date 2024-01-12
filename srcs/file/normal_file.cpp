@@ -134,7 +134,7 @@ bool NormalFile::can_write()
 
 bool NormalFile::can_read()
 {
-    return (Utility::is_redable_file(this->filepath));
+    return (Utility::is_readable_file(this->filepath));
 }
 
 size_t NormalFile::size()

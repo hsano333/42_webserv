@@ -66,7 +66,7 @@ class Utility
     static std::string extract_json_object(const std::string &target, std::string &str);
     static bool is_regular_file(std::string const &path);
     static bool is_executable_file(std::string const &path);
-    static bool is_redable_file(std::string const &path);
+    static bool is_readable_file(std::string const &path);
     static bool is_writable_file(std::string const &path);
     static bool is_deletable_file(std::string const &path);
 

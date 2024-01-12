@@ -152,8 +152,8 @@ bool GetApplication::is_cgi() const
 //
 ApplicationResult *GetApplication::get_result()
 {
-    ApplicationResult *file = ApplicationResult::from_result();
-    return (file);
+    //ApplicationResult *file = ApplicationResult::from_result();
+    return (result_);
 }
 
 
@@ -194,53 +194,82 @@ string GetApplication::check_content(string const &filepath)
     return ("");
 }
 
+
+string GetApplication::get_index_path(Request *req, bool *is_existed)
+{
+    for(size_t i=0;i<this->location->indexes().size();i++){
+        string index_path = req->requested_path() + this->location->indexes()[i];
+        if(Utility::is_regular_file(index_path)){
+            //is_existed = true;
+            if(Utility::is_readable_file(index_path)){
+                this->code_ = StatusCode::from_int(200);
+                *is_existed = true;
+                //is_index = true;
+                return (index_path);
+
+                //return (true);
+            }
+        }
+    }
+    return ("");
+
+}
+
 bool GetApplication::execute(WebservEvent *event)
 {
-    (void)event;
     DEBUG("GetApplication::execute()");
+
     Request *req = event->req();
-    (void)req;
+    File *file = NULL;
+    string extension = "";
 
-
-    string extension = GetApplication::check_content(req->requested_path());
-    if(extension != ""){
-        this->header_.insert(std::make_pair(CONTENT_TYPE, extension));
-    }
-    this->code_ = StatusCode::from_int(200);
-    /*
-     if(error){
-        this->code_ = StatusCode::from_int(***);
-
-     }
-
-   */
-    //todo
-    // check file permission and chck auto index whether on/off
-
-    //this->check_permission();
-    /*
-    if (this->is_cgi_){
-        DEBUG("GetApplication::execute() CGI");
-        return (this->execute_cgi());
-    }else{
-        DEBUG("GetApplication::execute() Not CGI");
-        return (this->execute_not_cgi());
-    }
-    */
-    return (true);
-    if(this->location->is_redirect())
+    if(req->is_file())
     {
-        DEBUG("Redirect");
-        // Nothing to do
-        return (true);
-        //this->res_status_code = this->server->first;
+        const string &file_path = req->requested_path();
+        if(Utility::is_readable_file(file_path)){
+            this->code_ = StatusCode::from_int(200);
+            file = NormalFile::from_filepath(file_path, std::ios::in);
+            extension = GetApplication::check_content(file_path);
+        }else{
+            this->code_ = StatusCode::from_int(403);
+        }
+    }else if(req->is_directory()){
+        bool is_existed = false;
+        string index_path = get_index_path(req, &is_existed);
+
+        if(index_path != ""){
+            file = NormalFile::from_filepath(index_path, std::ios::in);
+            this->code_ = StatusCode::from_int(200);
+            extension = GetApplication::check_content(index_path);
+        }
+        else
+        {
+            if(this->location->autoindex())
+            {
+                std::string const &host = req->header().get_host();
+                std::string const &relative_path= req->req_line().uri().path();
+                file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
+                this->code_ = StatusCode::from_int(200);
+
+            }
+            else
+            {
+                if(is_existed){
+                    this->code_ = StatusCode::from_int(403);
+                }else{
+                    this->code_ = StatusCode::from_int(404);
+                }
+            }
+        }
     }
-    return (false);
 
+    this->result_ = ApplicationResult::from_status_code(this->code_);
+    if(extension != ""){
+        this->result_->add_header(CONTENT_TYPE, extension);
+    }
+    this->result_->set_file(file);
 
-    //cout << "Get Application execute requetesd filename:" << filename << endl;
-    //cout << "Get Application execute cgi application:" << this->cgi_application_path << endl;
-    //cout << filename << endl;
+    return (true);
 }
 
 /*
