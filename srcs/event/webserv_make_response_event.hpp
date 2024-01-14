@@ -12,9 +12,9 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
     public:
         //WebservMakeResponseEvent(FileDiscriptor fd, Request *req);
         ~WebservMakeResponseEvent();
-        //static WebservMakeResponseEvent *from_event(WebservEvent *event, File *src, File *dst);
+        static WebservMakeResponseEvent *from_event(WebservEvent *event, File *src, File *dst, IWriter *writer);
         EWebservEvent   which();
-        WebservEvent* make_next_event(WebservEvent* event, IWriter *writer, WebservEventFactory *event_factory);
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
         FileDiscriptor  fd();
         Request         *req();
@@ -57,7 +57,9 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         bool check_body_size(Request *req, const ConfigServer *server);
         void parse_req(WebservEvent *event);
         IReader *reader;
+        IWriter *next_event_writer;
         //Config *cfg;
+        //
 
 };
 

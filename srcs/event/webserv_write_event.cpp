@@ -107,6 +107,8 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
 
     write_event->source_file = src;
     write_event->destination_file = dst;
+    write_event->req_ = event->req();
+    write_event->res_ = event->res();
     //write_event->destination_file = OpenedSocketFile::from_fd(writer, event->fd());
 
     return (write_event);

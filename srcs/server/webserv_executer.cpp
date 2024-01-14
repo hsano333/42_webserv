@@ -79,8 +79,11 @@ void WebservExecuter::execute(WebservEvent *event)
     bool is_completed = app->execute(event);
     event->set_completed(is_completed);
     File *result = app->get_result();
-    event->set_dst(result);
 
+    ApplicationResult *result2 = static_cast<ApplicationResult*>(result);
+    cout << "make No.3 status code=" << result2->status_code().to_string() << endl;
+
+    event->set_dst(result);
     //event->set_completed(result->is_completed());
 
 

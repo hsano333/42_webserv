@@ -2,6 +2,7 @@
 #include "webserv_event.hpp"
 #include "http_exception.hpp"
 #include "opened_socket_file.hpp"
+#include "application_result.hpp"
 
 WebservMakeResponseEvent::WebservMakeResponseEvent(
                             FileDiscriptor fd,
@@ -32,49 +33,65 @@ WebservMakeResponseEvent::~WebservMakeResponseEvent()
 Response* WebservMakeResponseEvent::make_response()
 {
     //(void)event;
-    StatusCode code = StatusCode::from_int(200);
-    Response *res = Response::from_success_status_code(code, NULL);
 
+    cout << "test No.1" << endl;
+    printf("src=%p\n", this->src());
+
+    //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
+    ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
+    cout << "test No.2" << endl;
+
+    StatusCode code = result->status_code();
+    cout << "test No.3" << endl;
+
+    Response *res = Response::from_success_status_code(
+            code,
+            result->file()
+    );
+
+    cout << "test No.4" << endl;
+    cout << "test No.2" << endl;
 
     //WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent();
     //write_event->source_file = src;
     //write_event->destination_file = dst;
 
-    /*
-    std::map<std::string, std::string>::iterator ite = event->tmp_headers.begin();
-    std::map<std::string, std::string>::iterator end = event->tmp_headers.end();
+    std::map<std::string, std::string>::const_iterator ite = result->header().begin();
+    std::map<std::string, std::string>::const_iterator end = result->header().end();
+    cout << "test No.3" << endl;
     while(ite != end){
         res->add_header(ite->first, ite->second);
         ite++;
     }
-    */
+    cout << "test No.4" << endl;
     return (res);
 }
 
-//WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst)
-//{
-    //(void)src;
-    //(void)dst;
-    /*
-    WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent(event->fd(), event->req());
-    new_event->source_file = src;
-    new_event->destination_file = dst;
-    return (new_event);
-    return (event);
-    */
-    //return (new WebservMakeResponseEvent());
-//};
+WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IWriter *writer)
+{
+    DEBUG("WebservMakeResponseEvent::from_event");
+  //(void)src;
+  //(void)dst;
+  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent(event->fd(), event->req());
+  printf("src=%p\n", src);
+  new_event->source_file = src;
+  new_event->destination_file = dst;
+  new_event->next_event_writer = writer;
+  return (new_event);
+  //return (event);
+  //return (new WebservMakeResponseEvent());
+};
 
 EWebservEvent WebservMakeResponseEvent::which()
 {
     return (MAKE_EVENT);
 }
 
-WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, IWriter *writer, WebservEventFactory *event_factory)
+WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
     File *src = event->res();
-    File *dst = OpenedSocketFile::from_fd(writer, event->fd());
+    File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
     return (event_factory->make_write_event(event, src, dst));
 }
 
@@ -113,10 +130,9 @@ bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer 
     return (true);
 }
 
-
-
 File *WebservMakeResponseEvent::make()
 {
+    DEBUG("WebservMakeResponseEvent::make()");
     return (make_response());
 }
 
@@ -161,6 +177,7 @@ bool WebservMakeResponseEvent::is_completed()
 }
 void WebservMakeResponseEvent::set_completed(bool flag)
 {
+    DEBUG("WebservMakeResponseEvent::set_completed");
     this->is_completed_ = flag;
 }
 
@@ -188,6 +205,7 @@ WebservCgiEvent *WebservMakeResponseEvent::cgi_event()
 
 void WebservMakeResponseEvent::set_file(File *file)
 {
+    DEBUG("WebservMakeResponseEvent::set_file");
     this->res_ = static_cast<Response*>(file);
 }
 

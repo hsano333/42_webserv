@@ -138,6 +138,9 @@ WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bo
 {
     WebservCleanEvent *new_event = new WebservCleanEvent(event->fd(), event->req(), event->res());
     new_event->force_close = force_close;
+    new_event->source_file = event->req();
+    new_event->req_ = event->req();
+    new_event->res_ = event->res();
     return (new_event);
 }
 

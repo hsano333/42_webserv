@@ -27,12 +27,13 @@ class ApplicationResult : public File
         int remove();
 
         Method const &method() const;
-        StatusCode const &code() const;
+        StatusCode const &status_code() const;
         std::map<std::string, std::string> const &header() const;
         File *file();
         void set_file(File *file);
 
         bool is_completed();
+        //void set_status_code(StatusCode &code);
         void set_completed(bool flag);
         void add_header(std::string const &key, std::string &value) ;
 

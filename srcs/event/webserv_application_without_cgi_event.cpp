@@ -55,8 +55,10 @@ WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* e
     }
     */
     //return (event_factory->make_write_event(event, event->res()));
-    //return (event_factory->make_making_response_event(event));
-    return (event);
+    //printf("result=%p\n", this->result());
+    //cout << "status code=" << this->result()->status_code().to_string() << endl;
+    return (event_factory->make_making_response_event(event, this->dst()));
+    //return (event);
 }
 
 E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event()

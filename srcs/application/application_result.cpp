@@ -120,10 +120,17 @@ Method const &ApplicationResult::method() const
     return (this->method_);
 }
 
-StatusCode const &ApplicationResult::code() const
+StatusCode const &ApplicationResult::status_code() const
 {
     return (this->code_);
 }
+
+/*
+void ApplicationResult::set_status_code(StatusCode &code)
+{
+    this->code_ = code;
+}
+*/
 
 std::map<std::string, std::string> const &ApplicationResult::header() const
 {
@@ -144,6 +151,10 @@ void ApplicationResult::set_completed(bool flag)
 ApplicationResult *ApplicationResult::from_status_code(StatusCode &code)
 {
     ApplicationResult *result = new ApplicationResult(code);
+
+
+    cout << "make No.0 status code=" << result->status_code().to_string() << endl;
+
     return (result);
 }
 
@@ -153,6 +164,11 @@ bool ApplicationResult::is_completed()
     return (this->completed);
 }
 
+
+File *ApplicationResult::file()
+{
+    return (this->file_);
+}
 
 void ApplicationResult::set_file(File *file)
 {

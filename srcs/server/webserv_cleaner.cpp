@@ -32,13 +32,18 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     bool is_close = force_close || app_event->is_force_close();
     cout << "force_close=" << force_close << endl;
     cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
+    cout << "test No.1" << endl;
     if (app_event->req()){
+    cout << "test No.2" << endl;
         std::string const &conect = app_event->req()->header().find("Connection");
+    cout << "test No.3" << endl;
         if (conect == "close"){
+    cout << "test No.4" << endl;
             cout << "connect close=" << endl;
             is_close = true;
         }
     }
+    cout << "test No.5" << endl;
     app_event->set_force_close(is_close);
 
     //src,dstはrequest,responseであることがある

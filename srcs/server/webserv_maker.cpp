@@ -102,6 +102,7 @@ void WebservMaker::parse_res(WebservEvent *event)
 
 void WebservMaker::make(WebservEvent *event)
 {
+    DEBUG("WebservMaker::make()");
     IWebservMakeEvent *make_event = dynamic_cast<IWebservMakeEvent*>(event);
     File *file = make_event->make();
     make_event->set_file(file);

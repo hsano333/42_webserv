@@ -233,15 +233,16 @@ WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event
 
 WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, File *src)
 {
+    DEBUG("WebservEventFactory::make_making_response_event");
 
-    (void)src;
+    //(void)src;
     //File *src = src;
     //File *dst= dst;
 
-    //WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL);
+    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL, socket_writer);
 
     //this->register_file_manager(new_event);
-    return (event);
+    return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent *event)

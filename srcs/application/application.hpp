@@ -9,6 +9,7 @@
 #include "application_result.hpp"
 //#include "webserv_application_event.hpp"
 
+class ApplicationResult;
 class Application
 {
     public:

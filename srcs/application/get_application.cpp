@@ -153,7 +153,8 @@ bool GetApplication::is_cgi() const
 ApplicationResult *GetApplication::get_result()
 {
     //ApplicationResult *file = ApplicationResult::from_result();
-    return (result_);
+    //this->result_.set_status_code(this->code_);
+    return (this->result_);
 }
 
 
@@ -269,6 +270,7 @@ bool GetApplication::execute(WebservEvent *event)
     }
     this->result_->set_file(file);
 
+    cout << "make No.1 status code=" << this->result_->status_code().to_string() << endl;
     return (true);
 }
 
