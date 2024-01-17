@@ -98,7 +98,7 @@ WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, Web
 
 E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event()
 {
-    return (EPOLL_NONE);
+    return (EPOLL_WRITE);
 }
 
 bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer *server)

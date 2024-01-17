@@ -202,6 +202,7 @@ WebservEvent* WebservWriteEvent::make_next_event(WebservEvent* event, WebservEve
 
 E_EpollEvent WebservWriteEvent::get_next_epoll_event()
 {
+    DEBUG("WebservWriteEvent::get_next_epoll_event()");
     return (EPOLL_READ);
 }
 

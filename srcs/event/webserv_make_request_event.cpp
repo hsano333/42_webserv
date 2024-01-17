@@ -43,12 +43,14 @@ EWebservEvent WebservMakeRequestEvent::which()
 
 WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservMakeRequestEvent::make_next_event");
+    DEBUG("WebservMakeRequestEvent::make_next_event No.0");
     
     WebservEvent* new_event;
     if(event->req()->is_cgi()){
+        DEBUG("WebservMakeRequestEvent::make_next_event No.1");
         new_event = event_factory->make_application_with_cgi_event(event);
     }else{
+        DEBUG("WebservMakeRequestEvent::make_next_event No.2");
         new_event = event_factory->make_application_without_cgi_event(event);
     }
     return (new_event);
@@ -78,7 +80,7 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
     req->get_buf_body(&cur_body_size);
 
     if(content_len < 0 && cur_body_size > 0){
-        ERROR("Invalid Request. Content-Length is not set but body is. body size:" + Utility::to_string(max_body_size));
+        ERROR("Invalid Request. Content-Length is not set but body exist. body size:" + Utility::to_string(max_body_size));
         throw HttpException("411");
     }
     if(content_len > max_body_size){
@@ -138,6 +140,7 @@ void WebservMakeRequestEvent::parse_request(Request *req)
 
 bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation *location) const
 {
+    DEBUG("WebservMakeRequestEvent::check_cgi");
     (void)req;
     (void)location;
     const ConfigLimit *limit = location->limit();
@@ -198,7 +201,7 @@ File *WebservMakeRequestEvent::make_request()
 
     req->set_requested_filepath(location);
     this->check_body_size(req, server);
-    this->is_cgi = check_cgi(req, location);
+    req->set_cgi(check_cgi(req, location));
 
     return (req);
 }

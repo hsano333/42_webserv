@@ -85,7 +85,6 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         MYINFO("EventController::next is not epoll");
         this->event_manager->push(next_event);
     }
-
 }
 
 void EventController::next_event(WebservEvent *event)

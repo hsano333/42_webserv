@@ -63,7 +63,7 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
         void parse_req(WebservEvent *event);
         IReader *reader;
         Config *cfg;
-        bool is_cgi;
+        //bool is_cgi;
 
 };
 

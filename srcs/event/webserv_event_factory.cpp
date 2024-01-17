@@ -114,7 +114,6 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         this->make_clean_event(cached_event, true);
     }else if(event_epoll.events & EPOLLIN){
-
         if(this->fd_manager->is_registered(fd) == false)
         {
             MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
@@ -248,7 +247,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent *event)
 {
-    WebservEvent *new_event = WebservApplicationWithoutCgiEvent::from_event(event);
+    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event);
 
     this->register_file_manager(new_event);
     return (new_event);
