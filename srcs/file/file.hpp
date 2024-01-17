@@ -27,7 +27,7 @@ class File
         virtual int remove() = 0;
         //virtual bool is_chunk() = 0;
         //virtual size_t size() = 0;
-        //virtual std::string const &path() = 0;
+        virtual std::string const &path() = 0;
     private:
 
 };

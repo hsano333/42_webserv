@@ -137,7 +137,7 @@ std::map<std::string, std::string> const &ApplicationResult::header() const
     return (this->header_);
 }
 
-void ApplicationResult::add_header(std::string const &key, std::string &value)
+void ApplicationResult::add_header(std::string const &key, std::string const &value)
 {
     this->header_.insert(std::make_pair(key, value));
 }
@@ -174,3 +174,9 @@ void ApplicationResult::set_file(File *file)
 {
     this->file_ = file;
 }
+
+std::string const &ApplicationResult::path()
+{
+    throw std::runtime_error("don't use method()");
+}
+

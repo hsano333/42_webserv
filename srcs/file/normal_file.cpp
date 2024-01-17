@@ -79,7 +79,7 @@ int NormalFile::open()
     DEBUG("NormalFile::open()");
     if (this->state != FILE_NOT_OPEN){
         WARNING("NormalFile::open() state is  not FILE_NOT_OPEN");
-        throw std::runtime_error("NormalFile::open() state is  not FILE_NOT_OPEN");
+        //throw std::runtime_error("NormalFile::open() state is  not FILE_NOT_OPEN");
     }
 
     this->iofs.open(this->filepath.c_str(), this->option);

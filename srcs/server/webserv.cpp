@@ -160,8 +160,8 @@ void Webserv::communication()
                 delete event;
                 DEBUG("ConnectionException delete event:" + Utility::to_string(event));
             }catch(HttpException &e){
-                ERROR("HttpException");
-                WebservEvent *next_event = this->event_factory->make_error_event(event, e.what());
+                ERROR("HttpException:" + Utility::to_string(e.what()));
+                WebservEvent *next_event = this->event_factory->make_event_from_http_error(event, e.what());
                 this->event_manager->push(next_event);
                 try{
                     this->event_controller->change_write_event(next_event);

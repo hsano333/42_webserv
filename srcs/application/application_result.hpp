@@ -25,6 +25,7 @@ class ApplicationResult : public File
 
         bool can_read();
         int remove();
+        std::string const &path();
 
         Method const &method() const;
         StatusCode const &status_code() const;
@@ -35,7 +36,7 @@ class ApplicationResult : public File
         bool is_completed();
         //void set_status_code(StatusCode &code);
         void set_completed(bool flag);
-        void add_header(std::string const &key, std::string &value) ;
+        void add_header(std::string const &key, std::string const &value) ;
 
     private:
         ApplicationResult();

@@ -37,10 +37,13 @@ void WebservIOWorker::work(WebservEvent *event)
     destination->open();
     event->set_completed(false);
     char buf[MAX_READ_SIZE+1];
-    char *buf_p = &(buf[0]);
     ssize_t read_size_total = 0;
     while(1)
     {
+
+        char *buf_p = &(buf[0]);
+
+
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE);
         MYINFO("MYINFO::read size=" + Utility::to_string(read_size));
         if(read_size <= 0){
@@ -49,6 +52,8 @@ void WebservIOWorker::work(WebservEvent *event)
             break;
         }
         read_size_total += read_size;
+        buf_p[read_size] = '\0';
+        printf("buf_p=%s\n", buf_p);
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("MYINFO::write end");
@@ -57,7 +62,7 @@ void WebservIOWorker::work(WebservEvent *event)
             break;
         }
     }
-    source->close();
-    destination->close();
+    //source->close();
+    //destination->close();
 }
 

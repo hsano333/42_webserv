@@ -2,6 +2,7 @@
 #include "webserv_read_event.hpp"
 #include "webserv_make_request_event.hpp"
 #include "webserv_make_response_event.hpp"
+#include "webserv_make_error_response_event.hpp"
 #include "webserv_write_event.hpp"
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_application_without_cgi_event.hpp"
@@ -255,7 +256,7 @@ WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent 
 
 WebservEvent *WebservEventFactory::make_application_without_cgi_event(WebservEvent *event)
 {
-    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event);
+    WebservEvent *new_event = WebservApplicationWithoutCgiEvent::from_event(event);
 
     this->register_file_manager(new_event);
     return (new_event);
@@ -281,11 +282,15 @@ WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, File *s
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, char const *code_c)
+WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *event, char const *code_c)
 {
-    DEBUG("WebservEventFactory::make_error_event");
-    File *file = NULL;
-    Request *req = event->req();
+    DEBUG("WebservEventFactory::make_event_from_http_error");
+    //File *file = NULL;
+    //Request *req = event->req();
+    Response *res = event->res();
+    if(res){
+        delete res;
+    }
 
     std::string code_str = code_c;
     StatusCode code;
@@ -295,6 +300,13 @@ WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, char co
         code = StatusCode::from_string("500");
     }
 
+
+    //ApplicationResult *app_result = ApplicationResult::from_status_code(code);
+    //app_result->file = 
+
+    //Response::from_error_status_code(code);
+
+    /*
     if (req){
         file = cfg->get_error_file(req, code);
         if (!file || file->can_read() == false){
@@ -302,7 +314,11 @@ WebservEvent *WebservEventFactory::make_error_event(WebservEvent *event, char co
             file = NULL;
         }
     }
-    //return (WebservWriteEvent::from_error_status_code(event, code, file));
+    */
+
+    File *dst = OpenedSocketFile::from_fd(socket_writer, event->fd());
+    return (WebservMakeErrorResponseEvent::from_event(event, code, dst, socket_writer));
+    //return (WebservWriteEvent::from_error_status_code(event, src, dst));
     return (event);
 }
 

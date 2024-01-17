@@ -109,6 +109,15 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
     write_event->destination_file = dst;
     write_event->req_ = event->req();
     write_event->res_ = event->res();
+    if(event->res()->get_file()){
+            cout << "check file No.1" << endl;
+            cout << "check file No.1" << endl;
+            cout << "check file No.1" << endl;
+    }else{
+            cout << "check file not No.1" << endl;
+            cout << "check file not No.1" << endl;
+            cout << "check file not No.1" << endl;
+    }
     //write_event->destination_file = OpenedSocketFile::from_fd(writer, event->fd());
 
     return (write_event);

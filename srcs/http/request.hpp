@@ -94,7 +94,7 @@ class Request : public File
         size_t size();
         bool is_chunk();
         int remove();
-        //std::string const &path();
+        std::string const &path();
 
         //void set_source_file(File *source);
         //File *get_source_file();

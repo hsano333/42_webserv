@@ -54,7 +54,7 @@ class GetApplication : public Application
         Method method;
         string check_content(string const &filepath);
 
-        StatusCode code_;
+        //StatusCode code_;
         std::map<std::string, std::string> header_;
         ApplicationResult *result_;
 

@@ -5,6 +5,7 @@
 #include "directory_file.hpp"
 #include "header_extension.hpp"
 #include "utility.hpp"
+#include "header_word.hpp"
 #include <unistd.h>
 
 GetApplication::GetApplication() : method(Method::from_string("GET"))
@@ -19,16 +20,8 @@ GetApplication::~GetApplication()
 
 File *GetApplication::get_requested_file()
 {
-    /*
-    if (this->is_cgi_){
-        File *file = CGIFile::from_fd(this->cgi_event_.cgi_fd(), READ_ONLY);
-        return (file);
-    }
-    */
     File *file = NULL;
     try{
-        //this->req->print_info();
-
         if (this->req->is_not_executable_parent_dir()){
             ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
             throw HttpException("403");
@@ -203,7 +196,7 @@ string GetApplication::get_index_path(Request *req, bool *is_existed)
         if(Utility::is_regular_file(index_path)){
             //is_existed = true;
             if(Utility::is_readable_file(index_path)){
-                this->code_ = StatusCode::from_int(200);
+                //this->code_ = StatusCode::from_int(200);
                 *is_existed = true;
                 //is_index = true;
                 return (index_path);
@@ -223,50 +216,81 @@ bool GetApplication::execute(WebservEvent *event)
     Request *req = event->req();
     File *file = NULL;
     string extension = "";
+    StatusCode code;
+    bool is_directory = false;
 
+    cout << "test No.1" << endl;
+    DEBUG("GetApplication::execute() No.1");
     if(req->is_file())
     {
+    DEBUG("GetApplication::execute() No.2");
+    cout << "test No.2" << endl;
         const string &file_path = req->requested_path();
         if(Utility::is_readable_file(file_path)){
-            this->code_ = StatusCode::from_int(200);
+    cout << "test No.3" << endl;
+            code = StatusCode::from_int(200);
             file = NormalFile::from_filepath(file_path, std::ios::in);
             extension = GetApplication::check_content(file_path);
         }else{
-            this->code_ = StatusCode::from_int(403);
+    cout << "test No.4" << endl;
+            code = StatusCode::from_int(403);
         }
     }else if(req->is_directory()){
+    cout << "test No.5" << endl;
+    DEBUG("GetApplication::execute() No.3");
         bool is_existed = false;
         string index_path = get_index_path(req, &is_existed);
 
         if(index_path != ""){
+    DEBUG("GetApplication::execute() No.4");
             file = NormalFile::from_filepath(index_path, std::ios::in);
-            this->code_ = StatusCode::from_int(200);
+            code = StatusCode::from_int(200);
             extension = GetApplication::check_content(index_path);
+    cout << "test No.6" << endl;
         }
         else
         {
+    DEBUG("GetApplication::execute() No.5");
+    cout << "test No.7" << endl;
             if(this->location->autoindex())
             {
+    DEBUG("GetApplication::execute() No.6");
+    cout << "test No.8" << endl;
                 std::string const &host = req->header().get_host();
                 std::string const &relative_path= req->req_line().uri().path();
                 file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
-                this->code_ = StatusCode::from_int(200);
-
+                code = StatusCode::from_int(200);
+                is_directory = true;
             }
             else
             {
+    DEBUG("GetApplication::execute() No.7");
+    cout << "test No.9" << endl;
                 if(is_existed){
-                    this->code_ = StatusCode::from_int(403);
+    cout << "test No.10" << endl;
+                    code = StatusCode::from_int(403);
                 }else{
-                    this->code_ = StatusCode::from_int(404);
+    cout << "test No.11" << endl;
+                    code = StatusCode::from_int(404);
                 }
             }
         }
     }
 
-    this->result_ = ApplicationResult::from_status_code(this->code_);
+    DEBUG("GetApplication::execute() No.8");
+    cout << "test No.12" << endl;
+    this->result_ = ApplicationResult::from_status_code(code);
     if(extension != ""){
+    cout << "test No.13" << endl;
         this->result_->add_header(CONTENT_TYPE, extension);
+    }
+    if(file){
+        if(is_directory){
+            this->result_->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
+        }else{
+            string file_size = Utility::to_string(Utility::get_file_size(file->path()));
+            this->result_->add_header(CONTENT_LENGTH, file_size);
+        }
     }
     this->result_->set_file(file);
 
@@ -345,7 +369,7 @@ Response* GetApplication::make_response()
         delete res;
         throw HttpException("403");
     }
-    res->set_exist_body(true);
+    //res->set_exist_body(true);
 
     std::map<std::string, std::string>::iterator ite = this->tmp_headers.begin();
     std::map<std::string, std::string>::iterator end = this->tmp_headers.end();

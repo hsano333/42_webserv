@@ -41,7 +41,7 @@ class WebservEventFactory
         void          make_and_push_read_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in);
         WebservEvent *make_write_event_for_cgi(WebservEvent *event, Response *res);
         WebservEvent *make_write_event(WebservEvent *event, File *src, File *dst);
-        WebservEvent *make_error_event(WebservEvent *event, char const *code);
+        WebservEvent *make_event_from_http_error(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
         WebservEvent *make_read_event_from_event(WebservEvent *event);
         WebservEvent *make_nothing_event(FileDiscriptor fd);

@@ -59,6 +59,7 @@ class Response : public File
         bool is_chunk();
         int remove();
         std::string const &path();
+        void check_body_and_chunk();
 
     private:
         StatusCode status_code;
@@ -74,7 +75,9 @@ class Response : public File
         void make_header_line();
         int read_body_and_copy_chunk(char** dst, size_t size);
         int read_body_and_copy(char** dst, size_t size);
-        bool exist_body_;
+        //bool exist_body_;
+        bool has_body;
+        bool is_chunked;
         std::vector<char> tmp_buf;
 };
 

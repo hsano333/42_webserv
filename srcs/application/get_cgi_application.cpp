@@ -260,7 +260,7 @@ Response* GetCGIApplication::make_response()
         delete res;
         throw HttpException("403");
     }
-    res->set_exist_body(true);
+    //res->set_exist_body(true);
 
     std::map<std::string, std::string>::iterator ite = this->tmp_headers.begin();
     std::map<std::string, std::string>::iterator end = this->tmp_headers.end();

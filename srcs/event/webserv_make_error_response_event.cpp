@@ -1,10 +1,12 @@
 #include "webserv_make_response_event.hpp"
+#include "webserv_make_error_response_event.hpp"
 #include "webserv_event.hpp"
 #include "http_exception.hpp"
 #include "opened_socket_file.hpp"
 #include "application_result.hpp"
+#include "error_file.hpp"
 
-WebservMakeResponseEvent::WebservMakeResponseEvent(
+WebservMakeErrorResponseEvent::WebservMakeErrorResponseEvent(
                             FileDiscriptor fd,
                             Request *req
                             //IReader *reader
@@ -25,12 +27,12 @@ WebservMakeResponseEvent::WebservMakeResponseEvent(
 
 };
 
-WebservMakeResponseEvent::~WebservMakeResponseEvent()
+WebservMakeErrorResponseEvent::~WebservMakeErrorResponseEvent()
 {
 };
 
 
-Response* WebservMakeResponseEvent::make_response()
+Response* WebservMakeErrorResponseEvent::make_response()
 {
     //(void)event;
 
@@ -38,70 +40,74 @@ Response* WebservMakeResponseEvent::make_response()
     printf("src=%p\n", this->src());
 
     //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
-    ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
+    //ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
+    File *file = ErrorFile::from_status_code(this->code);
     cout << "test No.2" << endl;
 
-    StatusCode code = result->status_code();
+    //StatusCode code = result->status_code();
     cout << "test No.3" << endl;
 
     Response *res = Response::from_success_status_code(
-            code,
-            result->file()
+            this->code,
+            file
     );
 
     cout << "test No.4" << endl;
     cout << "test No.2" << endl;
 
-    //WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent();
+    //WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent();
     //write_event->source_file = src;
     //write_event->destination_file = dst;
 
-    std::map<std::string, std::string>::const_iterator ite = result->header().begin();
-    std::map<std::string, std::string>::const_iterator end = result->header().end();
+    //std::map<std::string, std::string>::const_iterator ite = result->header().begin();
+    //std::map<std::string, std::string>::const_iterator end = result->header().end();
     cout << "test No.3" << endl;
+    /*
     while(ite != end){
         res->add_header(ite->first, ite->second);
         ite++;
     }
-    res->check_body_and_chunk();
+    */
+    //res->check_body_and_chunk();
     cout << "test No.4" << endl;
     return (res);
 }
 
-WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IWriter *writer)
+WebservMakeErrorResponseEvent *WebservMakeErrorResponseEvent::from_event(WebservEvent *event, StatusCode code, File *dst, IWriter *writer)
 {
-    DEBUG("WebservMakeResponseEvent::from_event");
+    DEBUG("WebservMakeErrorResponseEvent::from_event");
   //(void)src;
   //(void)dst;
-  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent(event->fd(), event->req());
-  printf("src=%p\n", src);
-  new_event->source_file = src;
+  WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent(event->fd(), event->req());
+  //printf("src=%p\n", src);
+  new_event->source_file = NULL;
   new_event->destination_file = dst;
   new_event->next_event_writer = writer;
+  new_event->code = code;
   return (new_event);
   //return (event);
-  //return (new WebservMakeResponseEvent());
+  //return (new WebservMakeErrorResponseEvent());
 };
 
-EWebservEvent WebservMakeResponseEvent::which()
+EWebservEvent WebservMakeErrorResponseEvent::which()
 {
     return (MAKE_EVENT);
 }
 
-WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+WebservEvent* WebservMakeErrorResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservMakeResponseEvent::make_next_event");
+    DEBUG("WebservMakeErrorResponseEvent::make_next_event");
     File *src = event->res();
     File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
     return (event_factory->make_write_event(event, src, dst));
 }
 
-E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event()
+E_EpollEvent WebservMakeErrorResponseEvent::get_next_epoll_event()
 {
     return (EPOLL_NONE);
 }
 
-bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer *server)
+bool WebservMakeErrorResponseEvent::check_body_size(Request *req, const ConfigServer *server)
 {
 
     ssize_t max_body_size = (ssize_t)server->get_max_body_size();
@@ -131,82 +137,82 @@ bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer 
     return (true);
 }
 
-File *WebservMakeResponseEvent::make()
+File *WebservMakeErrorResponseEvent::make()
 {
-    DEBUG("WebservMakeResponseEvent::make()");
+    DEBUG("WebservMakeErrorResponseEvent::make()");
     return (make_response());
 }
 
-FileDiscriptor WebservMakeResponseEvent::fd()
+FileDiscriptor WebservMakeErrorResponseEvent::fd()
 {
     return (this->fd_);
 }
 
-Request *WebservMakeResponseEvent::req()
+Request *WebservMakeErrorResponseEvent::req()
 {
     return (req_);
 }
 
-Response *WebservMakeResponseEvent::res()
+Response *WebservMakeErrorResponseEvent::res()
 {
     return (this->res_);
 }
 
-File *WebservMakeResponseEvent::src()
+File *WebservMakeErrorResponseEvent::src()
 {
     return (this->source_file);
 }
 
-File *WebservMakeResponseEvent::dst()
+File *WebservMakeErrorResponseEvent::dst()
 {
     return (this->destination_file);
 }
 
-void WebservMakeResponseEvent::set_src(File *file)
+void WebservMakeErrorResponseEvent::set_src(File *file)
 {
     this->source_file = file;
 }
 
-void WebservMakeResponseEvent::set_dst(File *file)
+void WebservMakeErrorResponseEvent::set_dst(File *file)
 {
     this->destination_file = file;
 }
 
-bool WebservMakeResponseEvent::is_completed()
+bool WebservMakeErrorResponseEvent::is_completed()
 {
     return (this->is_completed_);
 }
-void WebservMakeResponseEvent::set_completed(bool flag)
+void WebservMakeErrorResponseEvent::set_completed(bool flag)
 {
-    DEBUG("WebservMakeResponseEvent::set_completed");
+    DEBUG("WebservMakeErrorResponseEvent::set_completed");
     this->is_completed_ = flag;
 }
 
-void WebservMakeResponseEvent::increase_timeout_count(int count)
+void WebservMakeErrorResponseEvent::increase_timeout_count(int count)
 {
     this->timeout_count_ += count;
-    DEBUG("WebservMakeResponseEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
+    DEBUG("WebservMakeErrorResponseEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
 }
 
-int WebservMakeResponseEvent::timeout_count()
+int WebservMakeErrorResponseEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
 
 
-void WebservMakeResponseEvent::set_cgi_event(WebservCgiEvent *cgi_event)
+void WebservMakeErrorResponseEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
 }
 
-WebservCgiEvent *WebservMakeResponseEvent::cgi_event()
+WebservCgiEvent *WebservMakeErrorResponseEvent::cgi_event()
 {
     return (this->cgi_event_);
 }
 
-void WebservMakeResponseEvent::set_file(File *file)
+void WebservMakeErrorResponseEvent::set_file(File *file)
 {
-    DEBUG("WebservMakeResponseEvent::set_file");
+    DEBUG("WebservMakeErrorResponseEvent::set_file");
     this->res_ = static_cast<Response*>(file);
 }
 

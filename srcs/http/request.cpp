@@ -417,6 +417,11 @@ int Request::remove()
     return (0);
 }
 
+std::string const &Request::path()
+{
+    throw std::runtime_error("don't use method()");
+}
+
 /*
 std::string const &Request::path()
 {
