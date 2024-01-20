@@ -76,6 +76,7 @@ void WebservExecuter::execute(WebservEvent *event)
 
     WebservApplicationEvent *app_event = dynamic_cast<WebservApplicationEvent*>(event);
     Application *app = this->get_application(app_event);
+    //app->init(event);
     bool is_completed = app->execute(event);
     event->set_completed(is_completed);
     File *result = app->get_result();

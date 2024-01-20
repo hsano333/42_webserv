@@ -13,7 +13,7 @@ class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplic
     public:
         WebservApplicationWithCgiEvent(FileDiscriptor fd, Request *req);
         ~WebservApplicationWithCgiEvent();
-        static WebservApplicationWithCgiEvent *from_event(WebservEvent *event);
+        static WebservApplicationWithCgiEvent *from_event(WebservEvent *event, IWriter *writer);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
@@ -53,6 +53,8 @@ class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplic
 
         WebservCgiEvent *cgi_event_;
         ApplicationResult *result_;
+        IWriter *next_event_writer;
+
 };
 
 #endif

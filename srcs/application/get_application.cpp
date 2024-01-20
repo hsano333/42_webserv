@@ -209,6 +209,14 @@ string GetApplication::get_index_path(Request *req, bool *is_existed)
 
 }
 
+
+/*
+void GetApplication::init(WebservEvent *event)
+{
+    (void)event;
+}
+*/
+
 bool GetApplication::execute(WebservEvent *event)
 {
     DEBUG("GetApplication::execute()");

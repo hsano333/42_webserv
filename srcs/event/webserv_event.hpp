@@ -5,7 +5,7 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "webserv_event_factory.hpp"
-#include "webserv_cgi_event.hpp"
+//#include "webserv_cgi_event.hpp"
 
 typedef enum E_WebservEvent
 {
@@ -60,8 +60,8 @@ class WebservEvent
         virtual void increase_timeout_count(int count) = 0;
         virtual int  timeout_count() = 0;
 
-        virtual void set_cgi_event(WebservCgiEvent *cgi_event) = 0;
-        virtual WebservCgiEvent *cgi_event() = 0;
+        //virtual void set_cgi_event(WebservCgiEvent *cgi_event) = 0;
+        //virtual WebservCgiEvent *cgi_event() = 0;
 
     private:
         Request *req_;

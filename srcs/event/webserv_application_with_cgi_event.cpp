@@ -1,5 +1,7 @@
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_event.hpp"
+#include "opened_socket_file.hpp"
+#include "vector_file.hpp"
 
 WebservApplicationWithCgiEvent::WebservApplicationWithCgiEvent(
                             FileDiscriptor fd,
@@ -22,9 +24,12 @@ WebservApplicationWithCgiEvent::~WebservApplicationWithCgiEvent()
 {
 };
 
-WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event)
+WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event, IWriter *writer)
 {
-    return (new WebservApplicationWithCgiEvent(event->fd(), event->req()));
+    //new_event->next_event_writer = writer;
+    WebservApplicationWithCgiEvent *new_event =  new WebservApplicationWithCgiEvent(event->fd(), event->req());
+    new_event->next_event_writer = writer;
+    return (new_event);
 };
 
 EWebservEvent WebservApplicationWithCgiEvent::which()
@@ -35,32 +40,19 @@ EWebservEvent WebservApplicationWithCgiEvent::which()
 WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservApplicationWithCgiEvent::make_next_event");
-    (void)event_factory;
-    //todo
-    /*
-    if(event->cgi_event()){
-        cout << "test No.1 " << endl;
-        WebservCgiEvent *cgi = event->cgi_event();
-        cout << "test No.2 cgi=" << cgi << endl;
-        cout << "test No.2 event->req()=" << event->req() << endl;
-        //event_factory->make_and_push_write_cgi_event(cgi->pid(), cgi->fd_out(), event->req());
-        event_factory->make_and_push_read_cgi_event(cgi->pid(), cgi->fd_in());
-        MYINFO("cgi pid=" + Utility::to_string(cgi->pid()));
-        MYINFO("cgi fd_in=" + cgi->fd_in().to_string());
-        MYINFO("cgi fd_out=" + cgi->fd_out().to_string());
-        cout << "test No.20" << endl;
 
-        return (event_factory->make_nothing_event(cgi->pid(), cgi->pid()));
-        //return (event_factory->make_write_event(event, event->res()));
-    }
-    */
-    //return (event_factory->make_write_event(event, event->res()));
-    //return (event_factory->make_making_response_event(event));
-    return (event);
+    VectorFile *file = VectorFile::from_ref(this->req()->req_line().uri().query());
+    this->req()->set_file(file);
+    //file->write();
+    File *src = this->req();
+    ApplicationResult *result = static_cast<ApplicationResult*>(this->destination_file);
+    File *dst = OpenedSocketFile::from_fd(this->next_event_writer, result->cgi_in());
+    return (event_factory->make_write_cgi_event(event, src, dst, result));
 }
 
 E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event()
 {
+    return (EPOLL_WRITE);
     if (this->is_completed_){
         if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);
@@ -105,6 +97,7 @@ void WebservApplicationWithCgiEvent::set_src(File *file)
 void WebservApplicationWithCgiEvent::set_dst(File *file)
 {
     this->destination_file = file;
+    //this->destination_file = OpenedSocketFile::from_fd(this->next_event_writer, file->cgi_in())
 }
 
 

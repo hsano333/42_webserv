@@ -8,6 +8,7 @@
 
 #define MAX_FD (200)
 #define MAX_BUF (8192)
+#define MAX_URI (1500)
 #define MAX_STATUS_LINE (MAX_BUF-1)
 #define MAX_READ_SIZE (MAX_BUF-10)
 #define MAX_READ (1024)

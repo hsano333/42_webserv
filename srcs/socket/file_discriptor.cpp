@@ -95,9 +95,9 @@ bool FileDiscriptor::operator==(int fd) const
     return (this->fd == fd);
 }
 
-bool FileDiscriptor::operator==(int fd)
+bool FileDiscriptor::operator!=(int fd) const
 {
-    return (this->fd == fd);
+    return (this->fd != fd);
 }
 
 bool FileDiscriptor::operator>=(int fd) const

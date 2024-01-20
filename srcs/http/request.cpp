@@ -363,6 +363,11 @@ ssize_t Request::get_data(char** data)
 }
 */
 
+void Request::set_file(File *file)
+{
+    this->file = file;
+}
+
 int Request::open()
 {
     DEBUG("Request::open_file()");
@@ -422,14 +427,6 @@ std::string const &Request::path()
     throw std::runtime_error("don't use method()");
 }
 
-/*
-std::string const &Request::path()
-{
-    std::runtime_error("Don't use");
-    //std::string tmp = "";
-    return (requested_filepath_);
-}
-*/
 
 int Request::read(char** data, size_t max_read_size)
 {

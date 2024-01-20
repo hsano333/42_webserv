@@ -147,6 +147,14 @@ void ApplicationResult::set_completed(bool flag)
     this->completed = flag;
 }
 
+ApplicationResult *ApplicationResult::from_fd(int in, int out, int pid)
+{
+    ApplicationResult *result = new ApplicationResult();
+    result->cgi_in_ = FileDiscriptor::from_int(in);
+    result->cgi_out_ = FileDiscriptor::from_int(out);
+    result->pid_ = ProcessID::from_int(pid);
+    return (result);
+}
 
 ApplicationResult *ApplicationResult::from_status_code(StatusCode &code)
 {
@@ -180,3 +188,18 @@ std::string const &ApplicationResult::path()
     throw std::runtime_error("don't use method()");
 }
 
+
+FileDiscriptor &ApplicationResult::cgi_in()
+{
+    return (this->cgi_in_);
+}
+
+FileDiscriptor &ApplicationResult::cgi_out()
+{
+    return (this->cgi_out_);
+}
+
+ProcessID &ApplicationResult::pid()
+{
+    return (this->pid_);
+}

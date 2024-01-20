@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/12 10:51:13 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/21 04:04:09 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ class WebservWriteEvent : public WebservEvent
         //static WebservWriteEvent *from_event_for_cgi(WebservEvent *event, Response *res);
         static WebservWriteEvent *from_event(WebservEvent *event, File *src, File *dst);
         //static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader);
-        void set_cgi_event(WebservCgiEvent *cgi_event);
-        WebservCgiEvent *cgi_event();
+        //void set_cgi_event(WebservCgiEvent *cgi_event);
+        //WebservCgiEvent *cgi_event();
 
     private:
         FileDiscriptor  fd_;

@@ -1,6 +1,7 @@
 #ifndef APPLICATION_RESULT_HPP
 #define APPLICATION_RESULT_HPP
 #include "application.hpp"
+#include "process_id.hpp"
 #include "config_location.hpp"
 #include "config.hpp"
 #include "request.hpp"
@@ -16,6 +17,7 @@ class ApplicationResult : public File
         ~ApplicationResult();
 
         static ApplicationResult* from_status_code(StatusCode &code);
+        static ApplicationResult* from_fd(int in, int out, int pid);
 
         int open();
         int read(char **data, size_t size);
@@ -38,6 +40,9 @@ class ApplicationResult : public File
         void set_completed(bool flag);
         void add_header(std::string const &key, std::string const &value) ;
 
+        FileDiscriptor &cgi_in();
+        FileDiscriptor &cgi_out();
+        ProcessID      &pid();
     private:
         ApplicationResult();
         ApplicationResult(StatusCode code);
@@ -52,6 +57,11 @@ class ApplicationResult : public File
         BufferController buffer;
         IReader *reader;
         IWriter *writer;
+        FileDiscriptor cgi_in_;
+        FileDiscriptor cgi_out_;
+        ProcessID      pid_;
+
+        
 
 };
 #endif

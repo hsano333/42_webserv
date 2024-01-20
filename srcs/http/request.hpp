@@ -96,6 +96,8 @@ class Request : public File
         int remove();
         std::string const &path();
 
+        void set_file(File *file);
+
         //void set_source_file(File *source);
         //File *get_source_file();
         //int open_source_file();

@@ -14,6 +14,7 @@ class PostCGIApplication : public Application
         //bool is_cgi();
         PostCGIApplication();
         ~PostCGIApplication();
+        void init(WebservEvent *event);
         bool execute(WebservEvent *event);
         ApplicationResult *get_result();
         //bool is_cgi() const;

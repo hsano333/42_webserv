@@ -1,6 +1,5 @@
 
 #include "webserv.hpp"
-
 #include <errno.h>
 #include <string.h>
 #include <sys/epoll.h>

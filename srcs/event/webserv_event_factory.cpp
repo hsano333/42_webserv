@@ -4,6 +4,7 @@
 #include "webserv_make_response_event.hpp"
 #include "webserv_make_error_response_event.hpp"
 #include "webserv_write_event.hpp"
+#include "webserv_write_cgi_event.hpp"
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_application_without_cgi_event.hpp"
 #include "webserv_nothing_event.hpp"
@@ -247,7 +248,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent *event)
 {
-    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event);
+    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event, socket_writer);
 
     this->register_file_manager(new_event);
     return (new_event);
@@ -270,6 +271,14 @@ WebservEvent *WebservEventFactory::make_write_event_for_cgi(WebservEvent *event,
     this->register_file_manager(new_event);
     */
     return (event);
+}
+
+WebservEvent *WebservEventFactory::make_write_cgi_event(WebservEvent *event, File *src, File *dst, ApplicationResult *result)
+{
+    WebservEvent *new_event = WebservWriteCGIEvent::from_event(event, src, dst, result);
+
+    this->register_file_manager(new_event);
+    return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, File *src, File *dst)

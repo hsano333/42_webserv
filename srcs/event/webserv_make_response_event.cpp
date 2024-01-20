@@ -39,11 +39,7 @@ Response* WebservMakeResponseEvent::make_response()
 
     //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
     ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
-    cout << "test No.2" << endl;
-
     StatusCode code = result->status_code();
-    cout << "test No.3" << endl;
-
     Response *res = Response::from_success_status_code(
             code,
             result->file()

@@ -21,6 +21,7 @@ OpenedSocketFile::~OpenedSocketFile()
 
 OpenedSocketFile* OpenedSocketFile::from_fd(IReader* reader, FileDiscriptor fd)
 {
+    DEBUG("OpenedSocketFile::from_fd reader()");
     OpenedSocketFile *file = new OpenedSocketFile();
     file->fd = fd;
     file->reader = reader;
@@ -30,6 +31,7 @@ OpenedSocketFile* OpenedSocketFile::from_fd(IReader* reader, FileDiscriptor fd)
 
 OpenedSocketFile* OpenedSocketFile::from_fd(IWriter* iwriter, FileDiscriptor fd)
 {
+    DEBUG("OpenedSocketFile::from_fd writer()");
     OpenedSocketFile *file = new OpenedSocketFile();
     file->fd = fd;
     file->writer = iwriter;

@@ -22,6 +22,16 @@ VectorFile::~VectorFile()
 {
 }
 
+
+VectorFile* VectorFile::from_ref(std::string const& buf_ref)
+{
+    VectorFile *file = new VectorFile(buf_ref.size());
+    for(size_t i=0;i<buf_ref.size();i++){
+        file->tmp_buf[i] = buf_ref[i];
+    }
+    return (file);
+}
+
 VectorFile* VectorFile::from_buf_size(size_t buf_size)
 {
     

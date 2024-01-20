@@ -13,6 +13,7 @@ class VectorFile : public File
     public:
         VectorFile();
         ~VectorFile();
+        static VectorFile* from_ref(std::string const& buf_ref);
         static VectorFile* from_buf_size(size_t buf_size);
         int open();
         int close();

@@ -1,5 +1,5 @@
-#ifndef WEBSERV_H
-#define WEBSERV_H
+#ifndef WEBSERV_HPP
+#define WEBSERV_HPP
 #include <climits>
 #include <set>
 #include <vector>

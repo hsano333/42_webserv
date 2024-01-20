@@ -1,4 +1,3 @@
-
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 #include "status_code.hpp"
