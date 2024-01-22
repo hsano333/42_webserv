@@ -1,4 +1,5 @@
 #include "socket_reader.hpp"
+#include "connection_exception.hpp"
 #include "global.hpp"
 #include <sys/types.h>          /* See NOTES */
 #include <sys/socket.h>
@@ -27,5 +28,9 @@ int SocketReader::read(FileDiscriptor fd, char *buf, size_t size, std::fstream *
 {
     (void)ifs;
     DEBUG("SocketReader::read() fd=" + fd.to_string());
-    return ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);
+    ssize_t read_size = ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);
+    if(read_size == 0){
+        throw ConnectionException("Client Read Close");
+    }
+    return (read_size);
 }

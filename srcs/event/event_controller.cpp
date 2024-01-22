@@ -67,7 +67,6 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
     }else if (next_epoll_event == EPOLL_CGI){
-
         this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
         this->io_multi_controller->add(next_event->fd(), EPOLLIN | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
