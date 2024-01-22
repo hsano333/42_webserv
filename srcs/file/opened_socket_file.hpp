@@ -15,6 +15,7 @@ class OpenedSocketFile : public File
     public:
         OpenedSocketFile();
         ~OpenedSocketFile();
+        static OpenedSocketFile* from_fd(FileDiscriptor fd, IWriter* iwriter, IReader* ireader);
         static OpenedSocketFile* from_fd(IReader* ireader, FileDiscriptor fd);
         static OpenedSocketFile* from_fd(IWriter* iwriter, FileDiscriptor fd);
         int open();

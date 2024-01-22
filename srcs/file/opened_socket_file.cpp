@@ -19,6 +19,18 @@ OpenedSocketFile::~OpenedSocketFile()
 {
 }
 
+
+OpenedSocketFile* OpenedSocketFile::from_fd(FileDiscriptor fd, IWriter* writer, IReader* reader)
+{
+    DEBUG("OpenedSocketFile::from_fd");
+    OpenedSocketFile *file = new OpenedSocketFile();
+    file->fd = fd;
+    file->reader = reader;
+    file->writer = writer;
+    file->state = FILE_NOT_OPEN;
+    return (file);
+}
+
 OpenedSocketFile* OpenedSocketFile::from_fd(IReader* reader, FileDiscriptor fd)
 {
     DEBUG("OpenedSocketFile::from_fd reader()");
@@ -41,6 +53,7 @@ OpenedSocketFile* OpenedSocketFile::from_fd(IWriter* iwriter, FileDiscriptor fd)
 
 int OpenedSocketFile::open()
 {
+    DEBUG("OpenedSocketFile::open()");
     this->state = FILE_OPEN;
     return 0;
 }
@@ -62,11 +75,24 @@ int OpenedSocketFile::read(char **buf, size_t max_size)
 int OpenedSocketFile::write(char **buf, size_t size)
 {
     DEBUG("OpenedSocketFile::write() size=" + Utility::to_string(size));
-    (void)size;
-    if (this->state != FILE_OPEN){
+    if (!(this->state == FILE_OPEN || this->state == FILE_READING)){
         return (0);
     }
-    return this->writer->write(this->fd, *buf, size, NULL);
+    DEBUG("write cgi_in=" + Utility::to_string(this->fd));
+    cout << "write buf=" ;
+    for(size_t i=0;i<size;i++){
+        cout << (*buf)[i];
+    }
+    cout << endl;
+    cout << "this->fd=" << this->fd << endl;
+    (void)size;
+    this->state = FILE_COMPLETED_READ;
+    //return this->writer->write(this->fd, *buf, size, NULL);
+
+    int rval = this->writer->write(this->fd, *buf, size, NULL);
+
+    DEBUG("write rval=" + Utility::to_string(rval));
+    return (rval);
 }
 
 int OpenedSocketFile::save(char *buf, size_t size)

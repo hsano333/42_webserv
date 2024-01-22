@@ -200,7 +200,7 @@ void EpollController::wait(int time_msec)
     }else{
         t_epoll_event *ev = epoll.allocated_event_pointer();
         for(int i=0;i<nfds;i++){
-            MYINFO("wait end fd:" + Utility::to_string(ev[i].data.fd) );
+            MYINFO("end waiting fd:" + Utility::to_string(ev[i].data.fd) );
         }
     }
 }

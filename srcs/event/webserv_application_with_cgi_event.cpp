@@ -41,18 +41,20 @@ WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* even
 {
     DEBUG("WebservApplicationWithCgiEvent::make_next_event");
 
+    MYINFO("Query=" + this->req()->req_line().uri().query());
     VectorFile *file = VectorFile::from_ref(this->req()->req_line().uri().query());
     this->req()->set_file(file);
     //file->write();
     File *src = this->req();
     ApplicationResult *result = static_cast<ApplicationResult*>(this->destination_file);
     File *dst = OpenedSocketFile::from_fd(this->next_event_writer, result->cgi_in());
+    DEBUG("cgi_in=" + Utility::to_string(result->cgi_in()));
     return (event_factory->make_write_cgi_event(event, src, dst, result));
 }
 
 E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event()
 {
-    return (EPOLL_WRITE);
+    return (EPOLL_ADD_WRITE);
     if (this->is_completed_){
         if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);

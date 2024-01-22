@@ -42,8 +42,6 @@ void WebservIOWorker::work(WebservEvent *event)
     {
 
         char *buf_p = &(buf[0]);
-
-
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE);
         MYINFO("MYINFO::read size=" + Utility::to_string(read_size));
         if(read_size <= 0){
@@ -60,6 +58,8 @@ void WebservIOWorker::work(WebservEvent *event)
             event->set_completed(false);
             source->save(buf_p, read_size);
             break;
+        }else{
+            MYINFO("Write OK::" + Utility::to_string(write_size));
         }
     }
     //source->close();

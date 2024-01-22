@@ -51,15 +51,27 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
     if (next_epoll_event == EPOLL_READ){
-        this->io_multi_controller->modify(event->fd(), EPOLLIN | EPOLLONESHOT);
+        this->io_multi_controller->modify(next_event->fd(), EPOLLIN | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
         MYINFO("EventController::next is epoll read fd=" + event->fd().to_string());
         MYINFO("EventController::next is epoll read next fd=" + next_event->fd().to_string());
     }else if (next_epoll_event == EPOLL_WRITE){
         MYINFO("EventController::next is epoll write");
-        this->io_multi_controller->modify(event->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->io_multi_controller->modify(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
         //this->event_manager->erase_event_waiting_epoll(event->fd());
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+        MYINFO("EventController::next is epoll write fd=" + event->fd().to_string());
+        MYINFO("EventController::next is epoll write next fd=" + next_event->fd().to_string());
+    }else if (next_epoll_event == EPOLL_ADD_WRITE){
+        MYINFO("EventController::next is epoll add write");
+        this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+    }else if (next_epoll_event == EPOLL_CGI){
+
+        this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->io_multi_controller->add(next_event->fd(), EPOLLIN | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+
         /*
     }else if (next_epoll_event == EPOLL_CGI_IN){
         MYINFO("EPOLL_CGI_IN:" + Utility::to_string(event->cgi_event().cgi_fd()));

@@ -43,6 +43,7 @@ ObjectFile* ObjectFile::from_status_code(StatusCode const &code)
 
 int ObjectFile::open()
 {
+    DEBUG("ObjectFile::open()");
     this->state = FILE_OPEN;
     return 0;
 }

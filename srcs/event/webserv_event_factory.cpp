@@ -14,6 +14,8 @@
 #include "webserv_clean_event.hpp"
 #include "opened_socket_file.hpp"
 #include "vector_file.hpp"
+#include "webserv_io_event.hpp"
+#include "webserv_io_socket_event.hpp"
 
 WebservEventFactory::WebservEventFactory(
         Config *cfg,
@@ -131,14 +133,16 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 MYINFO("cached_event is NULL");
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
 
-
-                File *src = OpenedSocketFile::from_fd(socket_reader, fd);
-                File *dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
-                WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd, socket_reader, src, dst);
+                File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
+                File *read_dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
+                //WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd, socket_reader, src, dst);
+                WebservEvent *event = WebservIOSocketEvent::from_fd(fd, sockfd, socket_io, read_dst);
                 //printf("event=%p\n", event);
                 //this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
             }else{
+                WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
+                io_event->set_io(EPOLLOUT);
 
                 /*
                 if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && (fd == cached_event->cgi_event().cgi_fd()))
@@ -176,6 +180,9 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+        //WebservIOSocket *io_event = reinforecment_cast<WebservIOSocket>(cached_event);
+        WebservIOEvent *io_event = dynamic_cast<WebservIOSocketEvent*>(cached_event);
+        io_event->set_io(EPOLLOUT);
 
         /*
         if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd())
@@ -248,7 +255,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent *event)
 {
-    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event, socket_writer);
+    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event, normal_writer);
 
     this->register_file_manager(new_event);
     return (new_event);

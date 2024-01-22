@@ -21,6 +21,7 @@ class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservE
         Response        *res();
         File            *src();
         File            *dst();
+        void            set_io(uint32_t epoll_event);
         void            set_src(File *file);
         void            set_dst(File *file);
 

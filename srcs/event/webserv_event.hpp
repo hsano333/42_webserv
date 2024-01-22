@@ -12,26 +12,27 @@ typedef enum E_WebservEvent
     INIT_EVENT = 0,
     READ_EVENT,
     IO_EVENT,
-    //PARSER_EVENT,
     APPLICATION_EVENT,
     WRITE_EVENT,
-    CLEAN_EVENT,
+    CLEAN_EVENT, //5
     TIMEOUT_EVENT,
     KEEPA_ALIVE_EVENT,
     NOTHING_EVENT,
-    //CGI_EVENT,
-    MAKE_EVENT,
+    MAKE_EVENT, //9
 } EWebservEvent;
 
 typedef enum E_EpollEvent
 {
     EPOLL_READ,
     EPOLL_WRITE,
+    EPOLL_ADD_READ,
+    EPOLL_ADD_WRITE,
     EPOLL_CONTINUE,
     EPOLL_CLOSE,
     EPOLL_CGI_IN,
     EPOLL_CGI_OUT,
     EPOLL_CGI_STOP,
+    EPOLL_CGI,
     EPOLL_NONE,
 } E_EpollEvent;
 
@@ -52,6 +53,8 @@ class WebservEvent
         virtual Response *res() = 0;
         virtual File *src() = 0;
         virtual File *dst() = 0;
+        //virtual void set_io(uint32_t epoll_event) = 0;
+        virtual void set_src(File *file) = 0;
         virtual void set_dst(File *file) = 0;
 
         virtual bool is_completed() = 0;

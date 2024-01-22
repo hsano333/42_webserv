@@ -17,7 +17,7 @@ SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_maker.cpp webserv_execute
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/
-EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_write_cgi_event.cpp webserv_read_event.cpp webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_make_error_response_event.cpp webserv_application_without_cgi_event.cpp  webserv_application_with_cgi_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_cgi_event.cpp 
+EVENTSRC 			:= webserv_event.cpp webserv_event_factory.cpp webserv_write_event.cpp webserv_write_cgi_event.cpp webserv_read_event.cpp webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_make_error_response_event.cpp webserv_application_without_cgi_event.cpp  webserv_application_with_cgi_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_cgi_event.cpp webserv_io_socket_event.cpp
 
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 

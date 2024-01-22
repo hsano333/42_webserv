@@ -95,7 +95,7 @@ WebservWriteCGIEvent *WebservWriteCGIEvent::from_event(WebservEvent *event, File
 {
     DEBUG("WebservWriteCGIEvent::from_event()");
     //File *file = OpenedSocketFile::from_fd(writer, res->fd());
-    WebservWriteCGIEvent *write_event =  new WebservWriteCGIEvent(event->fd());
+    WebservWriteCGIEvent *write_event =  new WebservWriteCGIEvent(result->cgi_in());
     write_event->req_ = event->req();
     write_event->res_ = event->res();
     write_event->source_file = src;
@@ -107,7 +107,7 @@ WebservWriteCGIEvent *WebservWriteCGIEvent::from_event(WebservEvent *event, File
 
 EWebservEvent WebservWriteCGIEvent::which()
 {
-    return (WRITE_EVENT);
+    return (IO_EVENT);
 }
 
 FileDiscriptor WebservWriteCGIEvent::fd()
@@ -176,6 +176,7 @@ int WebservWriteCGIEvent::timeout_count()
 
 WebservEvent* WebservWriteCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
+    DEBUG("WebservWriteCGIEvent::make_next_event");
     (void)event;
     (void)event_factory;
 
@@ -188,7 +189,7 @@ WebservEvent* WebservWriteCGIEvent::make_next_event(WebservEvent* event, Webserv
 
 E_EpollEvent WebservWriteCGIEvent::get_next_epoll_event()
 {
-    return (EPOLL_CGI_STOP);
+    return (EPOLL_ADD_WRITE);
 }
 
 

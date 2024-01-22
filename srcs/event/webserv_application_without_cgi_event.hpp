@@ -22,6 +22,7 @@ class WebservApplicationWithoutCgiEvent : public WebservEvent, public WebservApp
         Response        *res();
         File            *src();
         File            *dst();
+        void            set_io(uint32_t epoll_event);
         void            set_src(File *file);
         void            set_dst(File *file);
 

@@ -9,6 +9,7 @@ typedef enum E_FileState
     FILE_NOT_OPEN,
     FILE_OPEN,
     FILE_READING,
+    FILE_COMPLETED_READ,
     FILE_CLOSE,
     FILE_ERROR,
 }FileState;

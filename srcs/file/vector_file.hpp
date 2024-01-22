@@ -32,7 +32,7 @@ class VectorFile : public File
         std::string path_;
         std::vector<char> buf;
         size_t max_buf_size;
-        std::vector<char> tmp_buf;
+        //std::vector<char> tmp_buf;
         //char buf_c[MAX_BUF];
 };
 
