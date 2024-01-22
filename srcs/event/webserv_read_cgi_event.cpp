@@ -121,7 +121,7 @@ EWebservEvent WebservReadCGIEvent::which()
 }
 
 
-FileDiscriptor WebservReadCGIEvent::fd()
+FileDiscriptor &WebservReadCGIEvent::fd()
 {
     return (this->fd_);
 }

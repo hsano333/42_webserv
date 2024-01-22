@@ -63,6 +63,7 @@ WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* e
 
 E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event()
 {
+    return (EPOLL_NONE);
     if (this->is_completed_){
         if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);
@@ -74,7 +75,7 @@ E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event()
     }
 }
 
-FileDiscriptor WebservApplicationWithoutCgiEvent::fd()
+FileDiscriptor &WebservApplicationWithoutCgiEvent::fd()
 {
     return (this->fd_);
 }

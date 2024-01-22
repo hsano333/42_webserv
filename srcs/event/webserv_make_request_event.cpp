@@ -212,7 +212,7 @@ File *WebservMakeRequestEvent::make()
     return (make_request());
 }
 
-FileDiscriptor WebservMakeRequestEvent::fd()
+FileDiscriptor &WebservMakeRequestEvent::fd()
 {
     return (this->fd_);
 }

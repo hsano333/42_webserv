@@ -23,12 +23,12 @@ class WebservCleanEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         static WebservCleanEvent *from_webserv_event(WebservEvent *event, bool force_close);
-        FileDiscriptor  fd();
+        FileDiscriptor  &fd();
         Request         *req();
         Response        *res();
         File            *src();
         File            *dst();
-        void            set_io(uint32_t epoll_event);
+        void            switching_io(uint32_t epoll_event);
         void            set_src(File *file);
         void            set_dst(File *file);
         void set_null_res_and_req();

@@ -98,13 +98,13 @@ WebservEvent* WebservMakeErrorResponseEvent::make_next_event(WebservEvent* event
 {
     DEBUG("WebservMakeErrorResponseEvent::make_next_event");
     File *src = event->res();
-    File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
-    return (event_factory->make_write_event(event, src, dst));
+    //File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
+    return (event_factory->make_io_socket_event_as_write(event, src));
 }
 
 E_EpollEvent WebservMakeErrorResponseEvent::get_next_epoll_event()
 {
-    return (EPOLL_NONE);
+    return (EPOLL_WRITE);
 }
 
 bool WebservMakeErrorResponseEvent::check_body_size(Request *req, const ConfigServer *server)
@@ -143,7 +143,7 @@ File *WebservMakeErrorResponseEvent::make()
     return (make_response());
 }
 
-FileDiscriptor WebservMakeErrorResponseEvent::fd()
+FileDiscriptor &WebservMakeErrorResponseEvent::fd()
 {
     return (this->fd_);
 }

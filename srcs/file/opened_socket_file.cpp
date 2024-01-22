@@ -69,13 +69,15 @@ int OpenedSocketFile::read(char **buf, size_t max_size)
     if (this->state != FILE_OPEN){
         return (0);
     }
+
+    this->state = FILE_COMPLETED_READ;
     return this->reader->read(this->fd, *buf, max_size, NULL);
 }
 
 int OpenedSocketFile::write(char **buf, size_t size)
 {
     DEBUG("OpenedSocketFile::write() size=" + Utility::to_string(size));
-    if (!(this->state == FILE_OPEN || this->state == FILE_READING)){
+    if (!(this->state == FILE_OPEN || this->state == FILE_WRITING)){
         return (0);
     }
     DEBUG("write cgi_in=" + Utility::to_string(this->fd));
@@ -86,7 +88,7 @@ int OpenedSocketFile::write(char **buf, size_t size)
     cout << endl;
     cout << "this->fd=" << this->fd << endl;
     (void)size;
-    this->state = FILE_COMPLETED_READ;
+    this->state = FILE_WRITING;
     //return this->writer->write(this->fd, *buf, size, NULL);
 
     int rval = this->writer->write(this->fd, *buf, size, NULL);

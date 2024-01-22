@@ -18,12 +18,12 @@ class WebservReadCGIEvent : public WebservEvent
         static WebservReadCGIEvent *from_fd(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader);
         static WebservReadCGIEvent *from_cgi_fd(FileDiscriptor sockfd, IReader *reader);
         static WebservReadCGIEvent *from_event(WebservEvent *event, FileDiscriptor sockfd, IReader *reader);
-        FileDiscriptor  fd();
+        FileDiscriptor  &fd();
         Request         *req();
         Response        *res();
         File            *src();
         File            *dst();
-        void            set_io(uint32_t epoll_event);
+        void            switching_io(uint32_t epoll_event);
         void            set_src(File *file);
         void            set_dst(File *file);
         //File            *source();

@@ -126,11 +126,11 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
 
 EWebservEvent WebservWriteEvent::which()
 {
-    return (IO_EVENT);
+    return (WRITE_EVENT);
 }
 
 
-FileDiscriptor WebservWriteEvent::fd()
+FileDiscriptor &WebservWriteEvent::fd()
 {
     return (this->fd_);
 }

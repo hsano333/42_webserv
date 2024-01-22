@@ -45,7 +45,7 @@ class WebservEvent
         virtual EWebservEvent which() = 0;
         //static WebservEvent *from_epoll_event(t_epoll_event const &event);
 
-        virtual FileDiscriptor fd() = 0;
+        virtual FileDiscriptor &fd() = 0;
         virtual WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory) = 0;
         virtual E_EpollEvent get_next_epoll_event() = 0;
 

@@ -1,5 +1,6 @@
 #include "webserv_make_response_event.hpp"
 #include "webserv_event.hpp"
+#include "webserv_io_event.hpp"
 #include "http_exception.hpp"
 #include "opened_socket_file.hpp"
 #include "application_result.hpp"
@@ -32,6 +33,7 @@ WebservMakeResponseEvent::~WebservMakeResponseEvent()
 
 Response* WebservMakeResponseEvent::make_response()
 {
+    DEBUG("WebservMakeResponseEvent::make_response()");
     //(void)event;
 
     cout << "test No.1" << endl;
@@ -87,9 +89,16 @@ EWebservEvent WebservMakeResponseEvent::which()
 WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
-    File *src = event->res();
-    File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
-    return (event_factory->make_write_event(event, src, dst));
+    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, this->res_));
+    //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(new_event);
+    //File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
+
+    //File *src = new_event->dst();
+    //File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
+
+
+    //io_event->set_write_io(src, dst);
+    return (new_event);
 }
 
 E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event()
@@ -133,7 +142,7 @@ File *WebservMakeResponseEvent::make()
     return (make_response());
 }
 
-FileDiscriptor WebservMakeResponseEvent::fd()
+FileDiscriptor &WebservMakeResponseEvent::fd()
 {
     return (this->fd_);
 }

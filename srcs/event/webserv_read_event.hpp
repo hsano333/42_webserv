@@ -20,8 +20,8 @@ class WebservReadEvent : public WebservEvent
         static WebservReadEvent *from_fd(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader, File *src, File *dst);
         static WebservReadEvent *from_cgi_fd(FileDiscriptor sockfd,FileDiscriptor pid, IReader *reader);
         static WebservReadEvent *from_event(WebservEvent *event, FileDiscriptor sockfd, IReader *reader);
-        FileDiscriptor  fd();
-        FileDiscriptor  sock_fd();
+        FileDiscriptor  &fd();
+        FileDiscriptor  &sock_fd();
         Request         *req();
         Response        *res();
         File            *src();

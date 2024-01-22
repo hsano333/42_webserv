@@ -71,7 +71,7 @@ E_EpollEvent WebservApplicationEvent::get_next_epoll_event()
     }
 }
 
-FileDiscriptor WebservApplicationEvent::fd()
+FileDiscriptor &WebservApplicationEvent::fd()
 {
     return (this->fd_);
 }

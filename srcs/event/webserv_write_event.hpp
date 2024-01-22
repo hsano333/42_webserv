@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/22 03:11:13 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/22 15:57:43 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class WebservWriteEvent : public WebservEvent
         ~WebservWriteEvent();
         EWebservEvent which();
 
-        FileDiscriptor  fd();
+        FileDiscriptor  &fd();
         Request         *req();
         Response        *res();
         File            *src();

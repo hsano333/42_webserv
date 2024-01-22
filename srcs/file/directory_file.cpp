@@ -35,6 +35,7 @@ DirectoryFile* DirectoryFile::from_path(std::string const &path, std::string con
 
 int DirectoryFile::open()
 {
+    DEBUG("DirectoryFile::open()");
     if (this->state != FILE_NOT_OPEN){
         ERROR("DirectoryFile::open() state is  not FILE_NOT_OPEN");
         throw std::runtime_error("DirectoryFile::open() state is  not FILE_NOT_OPEN");
@@ -53,6 +54,7 @@ int DirectoryFile::open()
 int DirectoryFile::read(char **buf, size_t size)
 {
     (void)size;
+    DEBUG("DirectoryFile::read()");
     if (this->state == FILE_OPEN){
 
         size_t pos = this->path_.find(this->relative_path);

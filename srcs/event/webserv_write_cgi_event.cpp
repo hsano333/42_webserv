@@ -110,7 +110,7 @@ EWebservEvent WebservWriteCGIEvent::which()
     return (IO_EVENT);
 }
 
-FileDiscriptor WebservWriteCGIEvent::fd()
+FileDiscriptor &WebservWriteCGIEvent::fd()
 {
     return (this->fd_);
 }

@@ -4,12 +4,28 @@
 #include "opened_socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
+#include <assert.h>
 
 
 WebservIOSocketEvent::WebservIOSocketEvent()
                                         :
                                         fd_(FileDiscriptor::from_int(0)),
                                         sock_fd_(FileDiscriptor::from_int(0)),
+                                        req_(NULL),
+                                        res_(NULL),
+                                        source_file(NULL),
+                                        destination_file(NULL),
+                                        timeout_count_(0),
+                                        //writer(NULL),
+                                        is_completed_(false)
+{
+    ;
+}
+
+WebservIOSocketEvent::WebservIOSocketEvent(FileDiscriptor &fd, FileDiscriptor &sock_fd)
+                                        :
+                                        fd_(fd),
+                                        sock_fd_(sock_fd),
                                         req_(NULL),
                                         res_(NULL),
                                         source_file(NULL),
@@ -28,17 +44,33 @@ WebservIOSocketEvent::~WebservIOSocketEvent()
 }
 
 
-WebservIOSocketEvent *WebservIOSocketEvent::from_fd(FileDiscriptor &fd, FileDiscriptor &sockfd, File *socket_io, File *read_dst)
+WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *dst)
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
-    WebservIOSocketEvent *event = new WebservIOSocketEvent();
-    event->io = socket_io;
-    event->fd_ = sockfd;
+    WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
+    event->io = src;
+    event->fd_ = event->fd();
     event->sock_fd_ = sockfd;
-    event->read_dst = read_dst;
+    event->read_dst = dst;
+
+    event->switching_io(EPOLLIN);
 
     return (event);
 }
+
+WebservIOSocketEvent *WebservIOSocketEvent::as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *dst)
+{
+    DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
+    WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
+    event->io = dst;
+    event->fd_ = event->fd();
+    event->sock_fd_ = sockfd;
+    event->write_src = src;
+
+    event->switching_io(EPOLLOUT);
+    return (event);
+}
+
 
 /*
 WebservIOSocketEvent *WebservIOSocketEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file)
@@ -129,7 +161,7 @@ EWebservEvent WebservIOSocketEvent::which()
 }
 
 
-FileDiscriptor WebservIOSocketEvent::fd()
+FileDiscriptor &WebservIOSocketEvent::fd()
 {
     return (this->fd_);
 }
@@ -155,14 +187,20 @@ File *WebservIOSocketEvent::dst()
 }
 
 
-void WebservIOSocketEvent::set_io(uint32_t epoll_event)
+void WebservIOSocketEvent::switching_io(uint32_t epoll_event)
 {
+    DEBUG("WebservIOSocketEvent::switching_io");
     if(epoll_event == EPOLLIN){
         this->source_file = this->io;
         this->destination_file = this->read_dst;
-    }else{
+        this->in_out = epoll_event;
+    }else if(epoll_event == EPOLLOUT){
         this->source_file = this->write_src;
         this->destination_file = this->io;
+        this->in_out = epoll_event;
+    }else{
+        ERROR("neither EPOLLIN nor EPOLLOUT");
+        throw std::runtime_error("neither EPOLLIN nor EPOLLOUT");
     }
 }
 
@@ -175,6 +213,19 @@ void WebservIOSocketEvent::set_dst(File *file)
 {
     this->destination_file = file;
 }
+
+void WebservIOSocketEvent::set_write_io(File *src, File *dst)
+{
+    this->write_src = src;
+    this->write_dst = dst;
+}
+
+void WebservIOSocketEvent::set_read_io(File *src, File *dst)
+{
+    this->read_src = src;
+    this->read_dst = dst;
+}
+
 
 /*
 HttpData *WebservIOSocketEvent::source()
@@ -192,7 +243,6 @@ void WebservIOSocketEvent::set_completed(bool flag)
     this->is_completed_ = flag;
 }
 
-
 void WebservIOSocketEvent::increase_timeout_count(int count)
 {
     this->timeout_count_ += count;
@@ -207,16 +257,30 @@ int WebservIOSocketEvent::timeout_count()
 WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOSocketEvent::make_next_event()");
-    //return (event_factory->make_application_event(event));
+    if(this->in_out == EPOLLIN){
+        return (event_factory->make_making_request_event(event));
+    }
+
+    DEBUG("WebservIOSocketEvent::make_next_event() EPOLLOUT");
+    //EPOLLOUT
     return (event_factory->make_clean_event(event, false));
 }
 
 E_EpollEvent WebservIOSocketEvent::get_next_epoll_event()
 {
     DEBUG("WebservIOSocketEvent::get_next_epoll_event()");
-    return (EPOLL_READ);
-}
+    if(this->in_out == EPOLLIN){
+        if (this->is_completed_){
+            return (EPOLL_NONE);
+        }else{
+            return (EPOLL_READ);
+        }
+    }
 
+    DEBUG("WebservIOSocketEvent::WRITE ()");
+    //EPOLLOUT
+    return (EPOLL_NONE);
+}
 
 int WebservIOSocketEvent::write(char *buf, size_t size)
 {

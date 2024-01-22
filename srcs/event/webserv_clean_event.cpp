@@ -40,7 +40,7 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
         MYINFO("WebservCleanEvent::make_next_event() Read Event");
         printf("WebservCleanEvent::make_next_event event=%p\n", event);
         //sock_fd = this->socket_controller->accept_request(fd);
-        return (event_factory->make_nothing_event(this->fd_));
+        return (event_factory->make_keep_alive_event(this->fd_));
         //return (event_factory->make_read_event_from_event(event));
         //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
         //this->io_multi_controller->add(io_fd, EPOLLIN);
@@ -61,7 +61,7 @@ E_EpollEvent WebservCleanEvent::get_next_epoll_event()
 
 
 
-FileDiscriptor WebservCleanEvent::fd()
+FileDiscriptor &WebservCleanEvent::fd()
 {
     return (this->fd_);
 }
@@ -136,6 +136,7 @@ bool WebservCleanEvent::is_force_close()
 
 WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
 {
+    DEBUG("WebservCleanEvent::from_webserv_event");
     WebservCleanEvent *new_event = new WebservCleanEvent(event->fd(), event->req(), event->res());
     new_event->force_close = force_close;
     new_event->source_file = event->req();

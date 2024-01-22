@@ -12,6 +12,7 @@
 #include "socket_reader.hpp"
 #include "webserv_event_factory.hpp"
 #include "webserv_clean_event.hpp"
+#include "webserv_keep_alive_event.hpp"
 #include "opened_socket_file.hpp"
 #include "vector_file.hpp"
 #include "webserv_io_event.hpp"
@@ -93,6 +94,7 @@ WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd, FileDis
     return (new_event);
 }
 
+/*
 WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd)
 {
     MYINFO("make_nothing_event() fd=" + fd.to_string());
@@ -104,6 +106,21 @@ WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd)
     this->register_file_manager(new_event);
     return (new_event);
 }
+*/
+
+WebservEvent *WebservEventFactory::make_keep_alive_event(FileDiscriptor fd)
+{
+    MYINFO("make_nothing_event() fd=" + fd.to_string());
+    //FileDiscriptor sock_fd = this->fd_manager->get_sockfd(fd);
+    //this->fd_manager->add_socket_and_epoll_fd(fd, sock_fd);
+    //this->io_multi_controller->modify(fd, EPOLLIN | EPOLLONESHOT);
+    WebservEvent *new_event = WebservKeepAliveEvent::from_fd(fd);
+    //return (this->make_nothing_event(fd, sock_fd));
+    this->register_file_manager(new_event);
+    return (new_event);
+}
+
+
 
 WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_epoll)
 {
@@ -129,6 +146,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             //sock_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
             DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+            DEBUG("WebservEvent::from_epoll_event: No.1 EPOLLIN");
             if(cached_event == NULL){
                 MYINFO("cached_event is NULL");
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
@@ -136,13 +154,28 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
                 File *read_dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
                 //WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd, socket_reader, src, dst);
-                WebservEvent *event = WebservIOSocketEvent::from_fd(fd, sockfd, socket_io, read_dst);
+                WebservEvent *event = WebservIOSocketEvent::as_read(fd, sockfd, socket_io, read_dst);
                 //printf("event=%p\n", event);
                 //this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
             }else{
+            DEBUG("WebservEvent::from_epoll_event: No.2 EPOLLIN");
                 WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
-                io_event->set_io(EPOLLOUT);
+                //
+                //
+                DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(cached_event->which()));
+                //DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(->which()));
+                io_event->switching_io(EPOLLIN);
+                /*
+                if(io_event){
+                    DEBUG("WebservEvent::from_epoll_event: No.3 EPOLLIN");
+                    io_event->switching_io(EPOLLIN);
+                }else{
+
+                DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(cached_event->which()));
+                }
+                */
+            DEBUG("WebservEvent::from_epoll_event: No.4 EPOLLIN");
 
                 /*
                 if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && (fd == cached_event->cgi_event().cgi_fd()))
@@ -180,9 +213,11 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+
+
         //WebservIOSocket *io_event = reinforecment_cast<WebservIOSocket>(cached_event);
         WebservIOEvent *io_event = dynamic_cast<WebservIOSocketEvent*>(cached_event);
-        io_event->set_io(EPOLLOUT);
+        io_event->switching_io(EPOLLOUT);
 
         /*
         if (!(fd == cached_event->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd())
@@ -219,6 +254,24 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
     }
     return (NULL);
+}
+
+
+WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, File *src)
+{
+    DEBUG("WebservEventFactory::make_io_socket_event_as_write fd=" + event->fd().to_string());
+    File *dst = OpenedSocketFile::from_fd(socket_writer, event->fd());
+    FileDiscriptor &socket_fd = fd_manager->socket_fd_from_epoll_fd(event->fd());
+    return (WebservIOSocketEvent::as_write(event->fd(), socket_fd, src, dst));
+}
+
+WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *event)
+{
+    DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->fd().to_string());
+    File *src = OpenedSocketFile::from_fd(socket_reader, event->fd());
+    File *dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
+    FileDiscriptor &socket_fd = fd_manager->socket_fd_from_epoll_fd(event->fd());
+    return (WebservIOSocketEvent::as_read(event->fd(), socket_fd, src, dst));
 }
 
 

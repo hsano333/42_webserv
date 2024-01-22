@@ -32,6 +32,8 @@ class WebservEventFactory
                 );
         ~WebservEventFactory();
         WebservEvent *from_epoll_event(t_epoll_event const &event);
+        WebservEvent *make_io_socket_event_as_write(WebservEvent *event, File *src);
+        WebservEvent *make_io_socket_event_as_read(WebservEvent *event);
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
         void          register_file_manager(WebservEvent *event);
         WebservEvent *make_making_request_event(WebservEvent *event);
@@ -46,7 +48,8 @@ class WebservEventFactory
         WebservEvent *make_event_from_http_error(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
         WebservEvent *make_read_event_from_event(WebservEvent *event);
-        WebservEvent *make_nothing_event(FileDiscriptor fd);
+        WebservEvent *make_keep_alive_event(FileDiscriptor fd);
+        //WebservEvent *make_nothing_event(FileDiscriptor fd);
         WebservEvent *make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd);
     private:
         Config *cfg;

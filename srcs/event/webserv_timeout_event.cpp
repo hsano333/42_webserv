@@ -38,7 +38,7 @@ E_EpollEvent WebservTimeoutEvent::get_next_epoll_event()
 }
 
 
-FileDiscriptor WebservTimeoutEvent::fd()
+FileDiscriptor &WebservTimeoutEvent::fd()
 {
     return (this->fd_);
 }

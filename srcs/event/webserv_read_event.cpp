@@ -114,11 +114,11 @@ WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscript
 
 EWebservEvent WebservReadEvent::which()
 {
-    return (IO_EVENT);
+    return (READ_EVENT);
 }
 
 
-FileDiscriptor WebservReadEvent::fd()
+FileDiscriptor &WebservReadEvent::fd()
 {
     return (this->fd_);
 }

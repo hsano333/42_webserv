@@ -125,6 +125,7 @@ void Webserv::communication()
                             cout << "end break" << endl;
                             cout << "end break" << endl;
                             //delete event;
+                            exit_flag = true;
                             //return ;
                             break;
                         }

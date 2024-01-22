@@ -66,7 +66,7 @@ E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event()
     }
 }
 
-FileDiscriptor WebservApplicationWithCgiEvent::fd()
+FileDiscriptor &WebservApplicationWithCgiEvent::fd()
 {
     return (this->fd_);
 }

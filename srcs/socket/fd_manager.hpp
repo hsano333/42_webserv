@@ -14,7 +14,7 @@ class FDManager
     void close_socket(FileDiscriptor fd);
     void add_socket_and_epoll_fd(FileDiscriptor io_fd, FileDiscriptor socket_fd);
     void close_fd(FileDiscriptor fd);
-    FileDiscriptor socket_fd_from_epoll_fd(FileDiscriptor epoll_fd);
+    FileDiscriptor &socket_fd_from_epoll_fd(FileDiscriptor epoll_fd);
     bool is_registered(FileDiscriptor epoll_fd);
     FileDiscriptor get_sockfd(FileDiscriptor fd);
 

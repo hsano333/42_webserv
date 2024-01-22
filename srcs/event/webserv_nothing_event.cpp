@@ -50,7 +50,7 @@ E_EpollEvent WebservNothingEvent::get_next_epoll_event()
 }
 
 
-FileDiscriptor WebservNothingEvent::fd()
+FileDiscriptor &WebservNothingEvent::fd()
 {
     return (fd_);
 }

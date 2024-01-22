@@ -267,6 +267,7 @@ void Response::check_body_and_chunk()
             this->has_body = true;
         }
     }
+    DEBUG("Response::check_body_and_chunk() chunked:" + Utility::to_string(this->is_chunked));
 }
 
 int Response::read(char** data, size_t max_read_size)
@@ -275,8 +276,10 @@ int Response::read(char** data, size_t max_read_size)
     DEBUG("Response::read:");
     //cout << "this->exist_body_:" << this->exist_body_ << endl;
     if(this->send_state == SENT_BODY){
+        DEBUG("Response::read: SENT_BODY");
         return -1;
     }else if (this->send_state == STILL_NOT_SEND) {
+        DEBUG("Response::read: STILL_NOT_SEND");
         this->make_status_line();
         *data= const_cast<char*>(&(this->status_line[0]));
         this->send_state = SENT_STATUS_LINE;
@@ -284,11 +287,13 @@ int Response::read(char** data, size_t max_read_size)
         MYINFO("\nResponse Status Line:" + this->status_line);
         return (this->status_line.size());
     }else if (this->send_state == SENT_STATUS_LINE){
+        DEBUG("Response::read: SENT_STATUS_LINE");
         this->make_header_line();
         *data= const_cast<char*>(&(this->header_line[0]));
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER && this->has_body){
+        DEBUG("Response::read: SENT_HEADER");
         int size=0;
         DEBUG("Response::read chunked No.1:");
         if (this->is_chunked){
@@ -310,6 +315,7 @@ int Response::read(char** data, size_t max_read_size)
         DEBUG("Response::read chunked No.12:");
         return (size);
     }
+    DEBUG("Response::read: 0");
     return (0);
 }
 

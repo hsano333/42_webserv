@@ -38,7 +38,7 @@ WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, Webser
     (void)event;
     WARNING("WebservKeepAliveEvent::make_next_event() there is no next event");
     //
-    return (event_factory->make_read_event_from_event(event));
+    return (event_factory->make_io_socket_event_as_read(event));
     //return (NULL);
     //return (event);
 }
@@ -48,7 +48,7 @@ E_EpollEvent WebservKeepAliveEvent::get_next_epoll_event()
     return (EPOLL_READ);
 }
 
-FileDiscriptor WebservKeepAliveEvent::fd()
+FileDiscriptor &WebservKeepAliveEvent::fd()
 {
     return (fd_);
 }
@@ -118,5 +118,21 @@ WebservCgiEvent *WebservKeepAliveEvent::cgi_event()
     return (this->cgi_event_);
 }
 
+void WebservKeepAliveEvent::switching_io(uint32_t epoll_event)
+{
+    (void)epoll_event;
+}
+
+void WebservKeepAliveEvent::set_write_io(File *src, File *dst)
+{
+    (void)src;
+    (void)dst;
+}
+
+void WebservKeepAliveEvent::set_read_io(File *src, File *dst)
+{
+    (void)src;
+    (void)dst;
+}
 
 

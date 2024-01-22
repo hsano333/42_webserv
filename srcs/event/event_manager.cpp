@@ -56,7 +56,7 @@ size_t EventManager::keep_alive_event_size()
     return (cnt);
 }
 
-bool EventManager::find(FileDiscriptor fd)
+bool EventManager::find(FileDiscriptor &fd)
 {
 
     MutantStack<WebservEvent *>::iterator ite;
@@ -86,7 +86,7 @@ void EventManager::increase_timeout_count(int count)
 */
 
 
-void EventManager::add_event_waiting_epoll(FileDiscriptor fd, WebservEvent* event)
+void EventManager::add_event_waiting_epoll(FileDiscriptor &fd, WebservEvent* event)
 {
     /*
     if (this->events_waiting_epoll.find(fd) != this->events_waiting_epoll.end())
@@ -98,24 +98,26 @@ void EventManager::add_event_waiting_epoll(FileDiscriptor fd, WebservEvent* even
     this->events_waiting_epoll.insert(std::make_pair(fd, event));
 }
 
-void EventManager::erase_event_waiting_epoll(FileDiscriptor fd)
+void EventManager::erase_event_waiting_epoll(FileDiscriptor &fd)
 {
     DEBUG("erase_event_waiting_epoll() fd:" + fd.to_string());
     this->events_waiting_epoll.erase(fd);
 }
 
-WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor fd)
+WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor &fd)
 {
     DEBUG("EventManager::pop_event_waiting_epoll fd:" + Utility::to_string(fd.to_int()));
+    DEBUG("EventManager::pop_event_waiting_epoll No.0 fd:" + Utility::to_string(fd.to_int()));
     if(this->events_waiting_epoll.find(fd) == this->events_waiting_epoll.end()){
         return (NULL);
     }
+    DEBUG("EventManager::pop_event_waiting_epoll No.2 fd:" + Utility::to_string(fd.to_int()));
     WebservEvent *event = (this->events_waiting_epoll[fd]);
+    DEBUG("EventManager::pop_event_waiting_epoll No.3 fd:" + Utility::to_string(fd.to_int()));
     this->events_waiting_epoll.erase(fd);
+    DEBUG("EventManager::pop_event_waiting_epoll No.4 fd:" + Utility::to_string(fd.to_int()));
     return (event);
-
 }
-
 
 /*
 void EventManager::add_event_waiting_writing(FileDiscriptor fd, WebservEvent* event)
@@ -236,8 +238,6 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
             WebservEvent *event = this->pop_event_waiting_epoll(tmp_fds[i]);
             event_return.push_back(event);
         }
-
-
 
         //for(size_t i=0;i<event_return.size();i++){
             //this->events_waiting_epoll.erase(event_return[i]->fd());
