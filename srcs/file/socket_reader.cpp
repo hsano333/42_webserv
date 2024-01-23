@@ -30,6 +30,7 @@ int SocketReader::read(FileDiscriptor fd, char *buf, size_t size, std::fstream *
     DEBUG("SocketReader::read() fd=" + fd.to_string());
     ssize_t read_size = ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);
     if(read_size == 0){
+        ERROR("Client Read Close");
         throw ConnectionException("Client Read Close");
     }
     return (read_size);

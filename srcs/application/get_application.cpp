@@ -6,6 +6,7 @@
 #include "header_extension.hpp"
 #include "utility.hpp"
 #include "header_word.hpp"
+#include "error_file.hpp"
 #include <unistd.h>
 
 GetApplication::GetApplication() : method(Method::from_string("GET"))
@@ -20,6 +21,7 @@ GetApplication::~GetApplication()
 
 File *GetApplication::get_requested_file()
 {
+    DEBUG("GetApplication::get_requested_file()");
     File *file = NULL;
     try{
         if (this->req->is_not_executable_parent_dir()){
@@ -283,6 +285,9 @@ bool GetApplication::execute(WebservEvent *event)
                 }
             }
         }
+    }else{
+        code = StatusCode::from_int(404);
+        file = ErrorFile::from_status_code(code);
     }
 
     DEBUG("GetApplication::execute() No.8");
