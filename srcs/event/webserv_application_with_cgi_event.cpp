@@ -45,16 +45,22 @@ WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* even
     VectorFile *file = VectorFile::from_ref(this->req()->req_line().uri().query());
     this->req()->set_file(file);
     //file->write();
-    File *src = this->req();
+    File *write_src = this->req();
+    File *read_dst = this->destination_file;
     ApplicationResult *result = static_cast<ApplicationResult*>(this->destination_file);
-    File *dst = OpenedSocketFile::from_fd(this->next_event_writer, result->cgi_in());
+    VectorFile *result_file = VectorFile::from_buf_size(MAX_BUF);
+    result->set_file(result_file);
+    result->set_is_cgi(true);
+    //File *write_dst = OpenedSocketFile::from_fd(this->next_event_writer, result->cgi_in());
     DEBUG("cgi_in=" + Utility::to_string(result->cgi_in()));
-    return (event_factory->make_write_cgi_event(event, src, dst, result));
+
+    return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
 }
 
 E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event()
 {
-    return (EPOLL_ADD_WRITE);
+    return (EPOLL_FOR_CGI);
+    /*
     if (this->is_completed_){
         if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);
@@ -64,6 +70,7 @@ E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event()
     }else{
         return (EPOLL_READ);
     }
+    */
 }
 
 FileDiscriptor &WebservApplicationWithCgiEvent::fd()

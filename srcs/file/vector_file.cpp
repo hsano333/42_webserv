@@ -8,7 +8,7 @@ using std::endl;
 using std::vector;
 using std::map;
 
-VectorFile::VectorFile(): max_buf_size(0)
+VectorFile::VectorFile(): max_buf_size(MAX_BUF)
 {
     ;
 }
@@ -64,7 +64,6 @@ int VectorFile::read(char **buf, size_t size)
     *buf = &(this->buf[0]);
     for(size_t i=0;i<this->buf.size();i++){
         printf("%c", this->buf[i]);
-
     }
 
     this->state = FILE_COMPLETED_READ;
@@ -83,6 +82,8 @@ int VectorFile::write(char **buf, size_t size)
     //this->buf.push_back('\0');
 
     if(this->buf.size() > this->max_buf_size){
+        WARNING("buf size=" + Utility::to_string(this->buf.size()));
+        WARNING("max size=" + Utility::to_string(this->max_buf_size));
         // 指定したサイズを超過した際、-1を返すことで次の処理(パーサー処理)に移行する。
         // ステータスコードの超過なのか、あるいはbodyに入っているかどうかは
         // 次の処理で判定する。

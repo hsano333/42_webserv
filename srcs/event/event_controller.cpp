@@ -1,5 +1,6 @@
 #include "event_controller.hpp"
 #include "event_controller.hpp"
+#include "webserv_io_event.hpp"
 
 EventController::EventController(
             EventManager *event_manager,
@@ -66,10 +67,28 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         MYINFO("EventController::next is epoll add write");
         this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
-    }else if (next_epoll_event == EPOLL_CGI){
-        this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
-        this->io_multi_controller->add(next_event->fd(), EPOLLIN | EPOLLONESHOT);
-        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+    }else if (next_epoll_event == EPOLL_FOR_CGI){
+        MYINFO("EventController::next is epoll EPOLL_FOR_CGI");
+
+        WebservIOEvent *io_event = dynamic_cast<WebservIOEvent *>(next_event);
+        FileDiscriptor &socket_fd = io_event->get_socket_fd();
+
+        //this->io_multi_controller->add(io_event->get_write_fd(), EPOLLOUT | EPOLLONESHOT);
+        //this->event_manager->add_event_waiting_epoll(io_event->get_write_fd(), next_event);
+        //this->fd_manager->add_socket_and_epoll_fd(io_event->get_write_fd());
+
+        DEBUG("set write io=" + Utility::to_string(io_event->get_write_fd()));
+
+        this->io_multi_controller->add(io_event->get_read_fd(), EPOLLIN | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(io_event->get_read_fd(), next_event);
+        this->fd_manager->add_socket_and_epoll_fd(io_event->get_read_fd(), socket_fd);
+        //this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+        DEBUG("set read io=" + Utility::to_string(io_event->get_read_fd()));
+
+    //}else if (next_epoll_event == EPOLL_CGI){
+        //this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
+        //this->io_multi_controller->add(next_event->fd(), EPOLLIN | EPOLLONESHOT);
+        //this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
 
         /*
     }else if (next_epoll_event == EPOLL_CGI_IN){

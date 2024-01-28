@@ -110,7 +110,7 @@ void WebservMakeRequestEvent::parse_request(Request *req)
     printf("buf_=%p\n", buf_p);
     cout << "test No.2" << endl;
 
-    Split sp(buf_p, "\r\n");
+    Split sp(buf_p, CRLF);
     cout << "test No.3" << endl;
     if(sp.size() == 0){
         //delete (event);

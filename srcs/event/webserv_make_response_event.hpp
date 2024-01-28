@@ -42,7 +42,8 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
 
     private:
         WebservMakeResponseEvent(FileDiscriptor fd, Request *req);
-        Response *make_response();
+        Response *make_response(ApplicationResult *result);
+        Response *make_response_for_cgi(ApplicationResult *result);
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;

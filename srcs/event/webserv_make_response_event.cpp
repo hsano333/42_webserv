@@ -31,7 +31,70 @@ WebservMakeResponseEvent::~WebservMakeResponseEvent()
 };
 
 
-Response* WebservMakeResponseEvent::make_response()
+Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *result)
+{
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi()");
+
+    char *data;
+    int read_size = result->file()->read(&data, MAX_READ_SIZE);
+
+    if(read_size <= 0){
+        ERROR("CGI Respons Data is nothing or error");
+        throw HttpException("500");
+    }
+
+    // RFC3875にはNL(New Line)の具体的な定義がないため、
+    // 改行文字はLFとする(Linuxでの運用を想定しているため)
+    char *body_p = Utility::strnstr(data, LF2, read_size);
+    if(!body_p){
+        ERROR("CGI Statement Error: not find LFLF(double New Line)");
+        throw HttpException("500");
+    }
+    cout << "body_p:" << body_p << endl;
+    cout << "data:" << data << endl;
+    printf("body_p=%p\n", body_p);
+    printf("data=%p\n", data);
+
+    size_t header_size = body_p - data + 1;
+    if(header_size >= MAX_STATUS_LINE){
+        ERROR("exceed CGI Response Status Line" + Utility::to_string(header_size));
+        throw HttpException("exceed CGI Response Status Line:" + Utility::to_string(header_size));
+    }
+    *body_p = '\0';
+
+    Split headers_line(data, LF, false, true);
+    Response *res = Response::from_cgi_header_line(headers_line);
+
+    //File *dst = OpenedSocketFile::from_fd(socket_writer, event->fd());
+    //res->set_file(result);
+    return (res);
+
+    /*
+    //Response *res = 
+    printf("heder print printf()\n");
+    headers_line.print();
+    for(size_t i=0;i<headers_line.size();i++){
+        DEBUG(headers_line[i]);
+    }
+
+    //string status_code = headers_lind.find("");
+    sleep(5);
+    std::exit(0);
+
+    DEBUG("cgi response=" + string(data));
+    cout << "cgi read_size=" << read_size << endl;
+
+
+    StatusCode code = result->status_code();
+    Response *res = Response::from_success_status_code(
+            code,
+            result->file()
+    );
+    return (res);
+    */
+}
+
+Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
 {
     DEBUG("WebservMakeResponseEvent::make_response()");
     //(void)event;
@@ -40,7 +103,6 @@ Response* WebservMakeResponseEvent::make_response()
     printf("src=%p\n", this->src());
 
     //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
-    ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
     StatusCode code = result->status_code();
     Response *res = Response::from_success_status_code(
             code,
@@ -54,8 +116,8 @@ Response* WebservMakeResponseEvent::make_response()
     //write_event->source_file = src;
     //write_event->destination_file = dst;
 
-    std::map<std::string, std::string>::const_iterator ite = result->header().begin();
-    std::map<std::string, std::string>::const_iterator end = result->header().end();
+    std::map<std::string, std::string>::const_iterator ite = result->header().cbegin();
+    std::map<std::string, std::string>::const_iterator end = result->header().cend();
     cout << "test No.3" << endl;
     while(ite != end){
         res->add_header(ite->first, ite->second);
@@ -90,6 +152,7 @@ WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, Web
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
     WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, this->res_));
+    //this->res_->set_file()();
     //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(new_event);
     //File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
 
@@ -139,7 +202,13 @@ bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer 
 File *WebservMakeResponseEvent::make()
 {
     DEBUG("WebservMakeResponseEvent::make()");
-    return (make_response());
+
+    ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
+
+    if(result->is_cgi()){
+        return (make_response_for_cgi(result));
+    }
+    return (make_response(result));
 }
 
 FileDiscriptor &WebservMakeResponseEvent::fd()

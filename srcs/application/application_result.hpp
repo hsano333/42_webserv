@@ -31,7 +31,7 @@ class ApplicationResult : public File
 
         Method const &method() const;
         StatusCode const &status_code() const;
-        std::map<std::string, std::string> const &header() const;
+        Header const &header() const;
         File *file();
         void set_file(File *file);
 
@@ -39,6 +39,8 @@ class ApplicationResult : public File
         //void set_status_code(StatusCode &code);
         void set_completed(bool flag);
         void add_header(std::string const &key, std::string const &value) ;
+        void set_is_cgi(bool flag);
+        bool is_cgi();
 
         FileDiscriptor &cgi_in();
         FileDiscriptor &cgi_out();
@@ -48,7 +50,8 @@ class ApplicationResult : public File
         ApplicationResult(StatusCode code);
 
         StatusCode code_;
-        std::map<std::string, std::string> header_;
+        //std::map<std::string, std::string> header_;
+        Header         header_;
         Method method_;
         std::string text;
         File *file_;
@@ -60,6 +63,7 @@ class ApplicationResult : public File
         FileDiscriptor cgi_in_;
         FileDiscriptor cgi_out_;
         ProcessID      pid_;
+        bool           is_cgi_;
 
         
 

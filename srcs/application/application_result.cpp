@@ -5,12 +5,12 @@
 #include "directory_file.hpp"
 #include <unistd.h>
 
-ApplicationResult::ApplicationResult()
+ApplicationResult::ApplicationResult() : is_cgi_(false)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode code) : code_(code)
+ApplicationResult::ApplicationResult(StatusCode code) : code_(code), is_cgi_(false)
 {
     ;
 }
@@ -21,7 +21,11 @@ ApplicationResult::~ApplicationResult()
 
 int ApplicationResult::open()
 {
-    this->state = FILE_OPEN;
+    //this->state = FILE_OPEN;
+    if (this->file_){
+        DEBUG("Request::open_file() No.2");
+        return (this->file_->open());
+    }
     return 0;
 }
 
@@ -30,7 +34,7 @@ int ApplicationResult::read(char **buf, size_t max_size)
     DEBUG("ApplicationResult::read() size=" + Utility::to_string(max_size));
     (void)buf;
     (void)max_size;
-    return (0);
+    return (this->file_->read(buf, max_size));
     /*
     size_t size = this->buffer.retrieve(buf, max_size);
     if(size > 0){
@@ -49,7 +53,7 @@ int ApplicationResult::write(char **buf, size_t size)
     DEBUG("ApplicationResult::write() size=" + Utility::to_string(size));
     (void)buf;
     (void)size;
-    return (0);
+    return (this->file_->write(buf, size));
     /*
     (void)size;
     if (this->state != FILE_OPEN){
@@ -132,14 +136,14 @@ void ApplicationResult::set_status_code(StatusCode &code)
 }
 */
 
-std::map<std::string, std::string> const &ApplicationResult::header() const
+Header const &ApplicationResult::header() const
 {
     return (this->header_);
 }
 
 void ApplicationResult::add_header(std::string const &key, std::string const &value)
 {
-    this->header_.insert(std::make_pair(key, value));
+    this->header_.insert(key, value);
 }
 
 void ApplicationResult::set_completed(bool flag)
@@ -202,4 +206,14 @@ FileDiscriptor &ApplicationResult::cgi_out()
 ProcessID &ApplicationResult::pid()
 {
     return (this->pid_);
+}
+
+void ApplicationResult::set_is_cgi(bool flag)
+{
+    this->is_cgi_ = flag;
+}
+
+bool ApplicationResult::is_cgi()
+{
+    return (this->is_cgi_);
 }

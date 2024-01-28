@@ -236,6 +236,11 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
         }
         for(size_t i=0;i<tmp_fds.size();i++){
             WebservEvent *event = this->pop_event_waiting_epoll(tmp_fds[i]);
+            if(event == NULL){
+                DEBUG("EventManager::pop_event_waiting_epoll No.5 event NULL:");
+                cout << "event=NULL" << endl;
+
+            }
             event_return.push_back(event);
         }
 

@@ -45,6 +45,8 @@
 
 //unit is second
 #define TIMEOUT 30
+#define LF "\n"
+#define LF2 "\n\n"
 #define CRLF "\r\n"
 #define CRLF2 "\r\n\r\n"
 

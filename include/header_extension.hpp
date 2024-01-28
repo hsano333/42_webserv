@@ -1,7 +1,7 @@
 #ifndef HEADER_EXTENSION_STRING_HPP
 #define HEADER_EXTENSION_STRING_HPP
 
-#define CONTENT_TYPE "Content-Type"
+#define CONTENT_TYPE "content-type"
 #define CONTENT_TEXT_PLAIN "text/plain"
 #define CONTENT_TEXT_HTML "text/html"
 #define CONTENT_TEXT_CSS "text/css"

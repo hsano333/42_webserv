@@ -10,7 +10,7 @@ Epoll::Epoll() : allocated_events_space(1)
 
 Epoll::Epoll(Epoll const &epoll)
 {
-    std::cout << "copy constructo" << std::endl;
+    std::cout << "Epoll Copy Constructor" << std::endl;
     *this = epoll;
     std::cout << this->allocated_event_size() << std::endl;
     std::cout << epoll.allocated_event_size() << std::endl;
@@ -23,9 +23,9 @@ Epoll::~Epoll()
 
 Epoll& Epoll::operator=(Epoll const & epoll)
 {
+    DEBUG("Epoll::operator=");
     if (this == &epoll){
         return (*this);
-
     }
     //std::cout << "operator=" << std::endl;
     this->epfd = epoll.epfd;
@@ -129,7 +129,13 @@ void Epoll::expand_allocated_space()
 {
     DEBUG("Epoll::expand_allocated_space():" + Utility::to_string(this->allocated_events_space.size()));
     size_t size = this->allocated_events_space.size()+1;
+    for(size_t i=0; i <= this->allocated_events_space.size();i++){
+        DEBUG("Epoll pre resize fd:" + Utility::to_string(this->allocated_events_space[i].data.fd));
+    }
     this->allocated_events_space.resize(size);
+    for(size_t i=0; i <= this->allocated_events_space.size();i++){
+        DEBUG("Epoll post resize fd:" + Utility::to_string(this->allocated_events_space[i].data.fd));
+    }
 }
 
 
@@ -143,6 +149,7 @@ void Epoll::expand_allocated_space(t_epoll_event tmp)
 
 void Epoll::contract_allocated_space()
 {
+    DEBUG("Epoll::contract_allocated_space()");
     size_t size = this->allocated_events_space.size()-1;
     if(size > 0){
         this->allocated_events_space.resize(size);
@@ -154,7 +161,10 @@ void Epoll::contract_allocated_space()
 
 t_epoll_event *Epoll::event_from_fd(int fd)
 {
+    DEBUG("Epoll::event_from_fd fd:" + Utility::to_string(fd));
+    DEBUG("Epoll::event_from_fd size:" + Utility::to_string(fd));
     for(size_t i=0;i<this->allocated_events_space.size();i++){
+        DEBUG("Epoll::event_from_fd fd2:" + Utility::to_string(this->allocated_events_space[i].data.fd));
         if(this->allocated_events_space[i].data.fd == fd){
             return &(this->allocated_events_space[i]);
         }

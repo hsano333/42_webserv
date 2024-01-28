@@ -15,8 +15,8 @@ Response::Response() :
     send_state(STILL_NOT_SEND)
     //exist_body_(false)
 {
-    this->headers.insert(std::make_pair("Server", WEBSERV_VERSION));
-    this->headers.insert(std::make_pair("Date", Utility::time_to_string()));
+    this->headers.insert("Server", WEBSERV_VERSION);
+    this->headers.insert("Date", Utility::time_to_string());
 }
 
 Response::~Response()
@@ -85,6 +85,34 @@ Response* Response::from_file(File *file)
     return (res);
 }
 
+
+void Response::set_header(Split &sp, size_t offset)
+{
+    this->headers = Header::from_splited_data(sp, offset);
+}
+
+Response* Response::from_cgi_header_line(Split &header_line)
+{
+    Response *res = new Response();
+    res->set_header(header_line, 0);
+    std::string status_code = res->headers.find(STATUS_CODE_CGI);
+    try{
+        if(status_code == res->headers.not_find()){
+            res->status_code = StatusCode::from_int(200);
+        }else{
+            Split tmp(status_code, " ");
+            res->status_code = StatusCode::from_string(tmp[0]);
+            res->headers.erase(STATUS_CODE_CGI);
+        }
+    }catch(std::invalid_argument &e){
+        ERROR("Making Response ERROR: Status Code is invalid " + status_code);
+        delete res;
+        throw HttpException("500");
+    }
+
+    return (res);
+}
+
 /*
 void Response::set_exist_body(bool flag)
 {
@@ -94,7 +122,7 @@ void Response::set_exist_body(bool flag)
 
 void Response::add_header(std::string const &key, std::string const &value)
 {
-    this->headers.insert(std::make_pair(key, value));
+    this->headers.insert(key, value);
 }
 
 
@@ -145,16 +173,14 @@ int Response::read_body_and_copy_chunk(char** dst, size_t size)
     char *tmp = *dst;
     printf("tmp=%p\n", tmp);
     int chunk_size = 20;
-        DEBUG("Response::read chunked No.4:");
+    DEBUG("Response::read chunked No.4:");
     char *tmp2 = &(tmp[chunk_size]);
 
-
-
-        DEBUG("Response::read chunked No.4-2 size=:" + Utility::to_string(size));
-        printf("tmp2=%p\n", tmp2);
+    DEBUG("Response::read chunked No.4-2 size=:" + Utility::to_string(size));
+    printf("tmp2=%p\n", tmp2);
     //int read_size = 10;
     int read_size = this->file->read(&(tmp2), size - chunk_size);
-        DEBUG("Response::read chunked No.5:");
+    DEBUG("Response::read chunked No.5:");
     //int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
 
     // chunkサイズは16進数
@@ -240,9 +266,9 @@ std::string const &Response::path()
 
 bool Response::is_chunk()
 {
-    std::map<std::string, std::string>::iterator ite = this->headers.find(TRANSFER_ENCODING);
-    if(ite != this->headers.end()){
-        if(ite->second == TRANSFER_ENCODING_CHUNKED){
+    std::string enc = this->headers.find(TRANSFER_ENCODING);
+    if(enc != this->headers.not_find()){
+        if(enc == TRANSFER_ENCODING_CHUNKED){
             return (true);
         }
     }
@@ -254,16 +280,16 @@ void Response::check_body_and_chunk()
     this->has_body = false;
     this->is_chunked = false;
 
-    std::map<std::string, std::string>::iterator ite = this->headers.find(TRANSFER_ENCODING);
-    if(ite != this->headers.end()){
-        if(ite->second == TRANSFER_ENCODING_CHUNKED){
+    std::string const &enc = this->headers.find(TRANSFER_ENCODING);
+    if(enc != this->headers.not_find()){
+        if(enc == TRANSFER_ENCODING_CHUNKED){
             this->is_chunked = true;
             this->has_body = true;
         }
     }
-    ite = this->headers.find(CONTENT_LENGTH);
-    if(ite != this->headers.end()){
-        if(Utility::to_int(ite->second) > 0){
+    std::string const &len = this->headers.find(CONTENT_LENGTH);
+    if(len != this->headers.not_find()){
+        if(Utility::to_int(len) > 0){
             this->has_body = true;
         }
     }

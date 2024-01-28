@@ -1,6 +1,7 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 #include "status_code.hpp"
+#include "header.hpp"
 //#include "error_page.hpp"
 #include "file.hpp"
 #include "http_data.hpp"
@@ -28,6 +29,8 @@ class Response : public File
         static Response* from_success_status_code(StatusCode &code, File *file);
         static Response* from_error_status_code(StatusCode &code);
         static Response* from_error_file(File *file, StatusCode &code);
+        static Response* from_cgi_header_line(Split &header_line);
+        void   set_header(Split &sp, size_t offset);
         //static Response* from_error_page(ErrorPage &page);
 
         static Response* from_redirect(StatusCode &code, std::string const &filepath);
@@ -62,7 +65,7 @@ class Response : public File
 
     private:
         StatusCode status_code;
-        std::map<std::string, std::string> headers;
+        Header headers;
         File *file;
 
         bool is_redirect;

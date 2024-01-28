@@ -23,6 +23,10 @@ WebservIOWorker::~WebservIOWorker()
     ;
 }
 
+// event内にあるsrcファイルから読み出し、dstファイルに書き出す
+// 終了条件は、MAX_READ_SIZE以上のデータを読み出す。
+// あるいは、改行文字が2つ連続したとき
+// この判定はset_completed()で実施する
 void WebservIOWorker::work(WebservEvent *event)
 {
     (void)event;
@@ -40,7 +44,6 @@ void WebservIOWorker::work(WebservEvent *event)
     ssize_t read_size_total = 0;
     while(1)
     {
-
         char *buf_p = &(buf[0]);
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE);
         MYINFO("MYINFO::read size=" + Utility::to_string(read_size));
@@ -64,5 +67,6 @@ void WebservIOWorker::work(WebservEvent *event)
     }
     //source->close();
     //destination->close();
+
 }
 

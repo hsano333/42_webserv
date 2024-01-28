@@ -135,4 +135,18 @@ void WebservKeepAliveEvent::set_read_io(File *src, File *dst)
     (void)dst;
 }
 
+FileDiscriptor  &WebservKeepAliveEvent::get_write_fd()
+{
+    return (this->write_fd_);
+}
+
+FileDiscriptor  &WebservKeepAliveEvent::get_read_fd()
+{
+    return (this->read_fd_);
+}
+
+FileDiscriptor  &WebservKeepAliveEvent::get_socket_fd()
+{
+    return (this->sock_fd_);
+}
 

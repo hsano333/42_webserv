@@ -16,8 +16,8 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         WebservIOSocketEvent(FileDiscriptor &fd, FileDiscriptor sockfd, File *socket_io, File *read_dst);
         ~WebservIOSocketEvent();
         static WebservIOSocketEvent *for_cgi(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *read_dst);
-        static WebservIOSocketEvent *as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *dst);
-        static WebservIOSocketEvent *as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *dst);
+        static WebservIOSocketEvent *as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst);
+        static WebservIOSocketEvent *as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &write_fd, File *src, File *dst);
 
 
         EWebservEvent which();
@@ -33,6 +33,9 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         void            set_dst(File *file);
         void            set_write_io(File *src, File *dst);
         void            set_read_io(File *src, File *dst);
+        FileDiscriptor  &get_write_fd();
+        FileDiscriptor  &get_read_fd();
+        FileDiscriptor  &get_socket_fd();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);
@@ -61,5 +64,8 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
         uint32_t        in_out;
+
+        FileDiscriptor  write_fd_;
+        FileDiscriptor  read_fd_;
 };
 #endif

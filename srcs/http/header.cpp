@@ -6,10 +6,11 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2023/11/03 01:14:54 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/28 03:31:12 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "global.hpp"
 #include "header.hpp"
 #include "split.hpp"
 #include "utility.hpp"
@@ -53,12 +54,17 @@ Header Header::from_splited_data(Split &sp, size_t offset)
         std::string const &line = sp[i];
         Split splited_line(line, ":", false, true);
 
-        if (splited_line.size() == 2){
+        if (splited_line.size() == 1){
+            ERROR("not find ':' in header line");
+            throw HttpException("400");
+        }else if (splited_line.size() == 2){
             header._headers.insert(std::make_pair(
-                        Utility::trim_white_space(splited_line[0]) ,
-                        Utility::trim_white_space(splited_line[1]))
+            Utility::to_lower(Utility::trim_white_space(splited_line[0])) ,
+            Utility::trim_white_space(splited_line[1]))
             );
         }else{
+            //"abc:def:ghi:jkl"のように:が複数あるとき
+            // 最初のものを区切り文字として、残りは連結する
             std::string cat;
             for(size_t j=1;j<splited_line.size();j++){
                 //cat += splited_line[j];
@@ -67,8 +73,8 @@ Header Header::from_splited_data(Split &sp, size_t offset)
             }
             cat = cat.substr(0, cat.size()-1);
             header._headers.insert(std::make_pair(
-                        Utility::trim_white_space(splited_line[0]) ,
-                        Utility::trim_white_space(cat)
+            Utility::to_lower(Utility::trim_white_space(splited_line[0])) ,
+            Utility::trim_white_space(cat)
             ));
         }
     }
@@ -179,4 +185,55 @@ std::string const &Header::get_host() const
         return (this->_not_find);
     }
     return (value);
+}
+
+size_t Header::size() const
+{
+    return (this->_headers.size());
+}
+void Header::insert(std::string const &key, std::string const &value)
+{
+    this->_headers.insert(std::make_pair(Utility::to_lower(key), value));
+}
+
+void Header::erase(std::string const &key)
+{
+    this->_headers.erase(key);
+}
+
+
+/*
+std::pair<string, string> const &Header::operator[](size_t i) const
+{
+    if(i >= _headers.size()){
+        ERROR("Invalid Index" + Utility::to_string(i));
+        throw std::runtime_error("Invalid Index");
+    }
+    return (_headers[i]);
+}
+*/
+
+std::map<std::string, std::string >::iterator Header::begin()
+{
+    return (_headers.begin());
+}
+
+std::map<std::string, std::string >::iterator Header::end()
+{
+    return (_headers.end());
+}
+
+std::string const &Header::not_find() const
+{
+    return (this->_not_find);
+}
+
+std::map<std::string, std::string >::const_iterator Header::cbegin() const
+{
+    return (_headers.begin());
+}
+
+std::map<std::string, std::string >::const_iterator Header::cend() const
+{
+    return (_headers.end());
 }

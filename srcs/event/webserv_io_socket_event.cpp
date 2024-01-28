@@ -44,7 +44,7 @@ WebservIOSocketEvent::~WebservIOSocketEvent()
 }
 
 
-WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *dst)
+WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst)
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
     WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
@@ -52,13 +52,29 @@ WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDisc
     event->fd_ = event->fd();
     event->sock_fd_ = sockfd;
     event->read_dst = dst;
+    event->read_fd_ = read_fd;
 
     event->switching_io(EPOLLIN);
 
     return (event);
 }
 
-WebservIOSocketEvent *WebservIOSocketEvent::as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *dst)
+WebservIOSocketEvent *WebservIOSocketEvent::as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &write_fd, File *src, File *dst)
+{
+    DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
+    WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
+    event->io = dst;
+    event->fd_ = event->fd();
+    event->sock_fd_ = sockfd;
+    event->write_src = src;
+    event->write_fd_ = write_fd;
+
+    event->switching_io(EPOLLOUT);
+    return (event);
+}
+
+/*
+WebservIOSocketEvent *WebservIOSocketEvent::from_event(WebservEvent *event, File *io, File write_src, File *read_dst)
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
     WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
@@ -70,6 +86,8 @@ WebservIOSocketEvent *WebservIOSocketEvent::as_write(FileDiscriptor &fd, FileDis
     event->switching_io(EPOLLOUT);
     return (event);
 }
+*/
+
 
 
 /*
@@ -226,6 +244,20 @@ void WebservIOSocketEvent::set_read_io(File *src, File *dst)
     this->read_dst = dst;
 }
 
+FileDiscriptor  &WebservIOSocketEvent::get_write_fd()
+{
+    return (this->write_fd_);
+}
+
+FileDiscriptor  &WebservIOSocketEvent::get_read_fd()
+{
+    return (this->read_fd_);
+}
+
+FileDiscriptor  &WebservIOSocketEvent::get_socket_fd()
+{
+    return (this->sock_fd_);
+}
 
 /*
 HttpData *WebservIOSocketEvent::source()

@@ -37,6 +37,9 @@ class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
         void switching_io(uint32_t epoll_event);
         void set_write_io(File *src, File *dst);
         void set_read_io(File *src, File *dst);
+        FileDiscriptor  &get_write_fd();
+        FileDiscriptor  &get_read_fd();
+        FileDiscriptor  &get_socket_fd();
 
     private:
         int             timeout_count_;
@@ -44,5 +47,8 @@ class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
         WebservKeepAliveEvent(FileDiscriptor fd);
         //bool is_end_;
         WebservCgiEvent *cgi_event_;
+        FileDiscriptor  write_fd_;
+        FileDiscriptor  read_fd_;
+        FileDiscriptor  sock_fd_;
 };
 #endif

@@ -27,6 +27,7 @@ typedef enum E_EpollEvent
     EPOLL_WRITE,
     EPOLL_ADD_READ,
     EPOLL_ADD_WRITE,
+    EPOLL_FOR_CGI,
     EPOLL_CONTINUE,
     EPOLL_CLOSE,
     EPOLL_CGI_IN,

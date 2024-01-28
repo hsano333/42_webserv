@@ -11,8 +11,6 @@ WebservCgiEvent::~WebservCgiEvent()
 ;
 }
 
-
-
 WebservCgiEvent::WebservCgiEvent(WebservCgiEvent const &cgi_event)
 {
     DEBUG("WebservCgiEvent::WebservCgiEvent(): copy constructor");

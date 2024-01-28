@@ -141,10 +141,21 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
         std::exit(0);
     }
 
+    printf("fd_in=%d, fd_out=%d\n", fd_in, fd_out);
     printf("cgi pid parent\n");
     printf("cgi pid parent\n");
     printf("cgi pid parent\n");
     printf("cgi pid parent\n");
+
+    DEBUG("fd_out(for read)=" + Utility::to_string(fd_out));
+    DEBUG("fd_in(for write)=" + Utility::to_string(fd_in));
+    /*
+    char buf[10];
+    int size = read(fd_out, buf, 9);
+    buf[9] = '0';
+    DEBUG("application execute read size=" + Utility::to_string(size));
+    DEBUG("application execute read test=" + string(buf));
+    */
 
     // Get Method don't have body data, so nothing writing data to std-in in cgi
     //::close(fd_in);
@@ -175,6 +186,8 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
     //cout << "this->cgi_event_ No.2 = " << this->cgi_event_ << endl;
 
 }
+
+
 
 /*
 int execute(int fd_in, int_fd_out, int pid)

@@ -104,7 +104,7 @@ void EpollController::erase_event(t_epoll_event* ev)
 
 void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
 {
-    MYINFO("EpollController::add() epfd:" + Utility::to_string(fd_obj.to_int())) ;
+    MYINFO("EpollController::add() fd:" + Utility::to_string(fd_obj.to_int())) ;
     //if (check_error() == false){
         //return (false);
     //}
@@ -127,10 +127,11 @@ void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
     MYINFO("EpollController::modify() fd:" + Utility::to_string(fd_obj.to_int()) + ", event:" + Utility::to_string(event));
 
     int fd = fd_obj.to_int();
-    t_epoll_event *ev = this->epoll.event_from_fd(fd);
-    ev->events = event;
-    //ev.data.fd = fd;
-    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_MOD, fd, ev) != 0) {
+    //t_epoll_event *ev = this->epoll.event_from_fd(fd);
+    t_epoll_event ev;
+    ev.events = event;
+    ev.data.fd = fd;
+    if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_MOD, fd, &ev) != 0) {
         ERROR("Epoll modify Error");
         throw std::runtime_error("Epoll modify Error");
     }

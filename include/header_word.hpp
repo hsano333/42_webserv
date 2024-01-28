@@ -2,7 +2,8 @@
 #define HEADER_WORD
 
 
-#define CONTENT_LENGTH "Content-Length"
-#define TRANSFER_ENCODING "Transfer-Encoding"
+#define STATUS_CODE_CGI "status"
+#define CONTENT_LENGTH "content-length"
+#define TRANSFER_ENCODING "transfer-encoding"
 #define TRANSFER_ENCODING_CHUNKED "chunked"
 #endif
