@@ -14,7 +14,8 @@ WebservWriteEvent::WebservWriteEvent()
                                         destination_file(NULL),
                                         timeout_count_(0),
                                         //writer(NULL),
-                                        is_completed_(false)
+                                        is_completed_(false),
+                                        entity_(NULL)
 {
     ;
 }
@@ -109,6 +110,7 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
     write_event->destination_file = dst;
     write_event->req_ = event->req();
     write_event->res_ = event->res();
+    write_event->entity_ = event->entity();
     if(event->res()->get_file()){
             cout << "check file No.1" << endl;
             cout << "check file No.1" << endl;
@@ -210,6 +212,12 @@ E_EpollEvent WebservWriteEvent::get_next_epoll_event()
 int WebservWriteEvent::write(char *buf, size_t size)
 {
     return (this->dst()->write(&buf, size));
+}
+
+
+Entity *WebservWriteEvent::entity()
+{
+    return (this->entity_);
 }
 
 /*

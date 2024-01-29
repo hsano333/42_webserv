@@ -33,6 +33,7 @@ WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event
     WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent(event->fd(), event->req(), reader, cfg);
     new_event->source_file = src;
     new_event->destination_file = dst;
+    new_event->entity_ = event->entity();
     return (new_event);
 };
 
@@ -191,13 +192,13 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 
 
 
-File *WebservMakeRequestEvent::make_request()
+Request *WebservMakeRequestEvent::make_request()
 {
     Request *req = Request::from_fd(this->fd());
     this->parse_request(req);
 
     const ConfigServer *server = this->cfg->get_server(req);
-    const ConfigLocation *location= this->cfg->get_location(server, req);
+    const ConfigLocation *location = this->cfg->get_location(server, req);
 
     req->set_requested_filepath(location);
     this->check_body_size(req, server);
@@ -209,7 +210,9 @@ File *WebservMakeRequestEvent::make_request()
 
 File *WebservMakeRequestEvent::make()
 {
-    return (make_request());
+    Request *req = (make_request());
+    this->entity()->req = req;
+    return (req);
 }
 
 FileDiscriptor &WebservMakeRequestEvent::fd()
@@ -300,6 +303,10 @@ void WebservMakeRequestEvent::set_file(File *file)
     this->req_ = static_cast<Request*>(file);
 }
 
+Entity *WebservMakeRequestEvent::entity()
+{
+    return (this->entity_);
+}
 
 
 /*

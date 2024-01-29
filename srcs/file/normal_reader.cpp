@@ -23,6 +23,7 @@ NormalReader *NormalReader::get_instance()
 
 int NormalReader::read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs)
 {
+    DEBUG("NormalReader::read fd:" + fd.to_string());
     (void)ifs;
     return ::read(fd.to_int(), buf, size);
 }

@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/22 15:57:43 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/29 21:23:00 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 class WebservWriteEvent : public WebservEvent
 {
     public:
+        //struct Entity;
         WebservWriteEvent();
         WebservWriteEvent(FileDiscriptor fd);
         WebservWriteEvent(FileDiscriptor fd,  File *src,  File *dst);
@@ -53,6 +54,7 @@ class WebservWriteEvent : public WebservEvent
         //static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader);
         //void set_cgi_event(WebservCgiEvent *cgi_event);
         //WebservCgiEvent *cgi_event();
+        Entity *entity();
 
     private:
         FileDiscriptor  fd_;
@@ -66,5 +68,6 @@ class WebservWriteEvent : public WebservEvent
         //IReader *reader;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
+        Entity          *entity_;
 };
 #endif

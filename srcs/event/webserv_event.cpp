@@ -3,6 +3,16 @@
 #include "global.hpp"
 #include "socket_reader.hpp"
 
+
+/*
+WebservEventEntity::WebservEventEntity(Impl *pimpl) : pimpl(pimpl)
+{
+    ;
+}
+*/
+
+
+
 /*
 WebservEvent *WebservEvent::from_epoll_event(t_epoll_event const &event_epoll)
 {

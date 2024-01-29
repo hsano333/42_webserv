@@ -38,7 +38,8 @@ BodySize BodySize::from_number(ssize_t file_size)
 
 static bool check_over(ssize_t value, ssize_t unit)
 {
-    if(value <= LONG_MAX/unit){
+    ssize_t byte_2G = 2u*1024u*1024u*1024u;
+    if(value <= (byte_2G)/unit){
         return true;
     }else{
         ERROR("BodySize error: valid file size is 1 to 2GB. input");

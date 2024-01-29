@@ -24,7 +24,9 @@ WebservApplicationWithoutCgiEvent::~WebservApplicationWithoutCgiEvent()
 
 WebservEvent *WebservApplicationWithoutCgiEvent::from_event(WebservEvent *event)
 {
-    return (new WebservApplicationWithoutCgiEvent(event->fd(), event->req()));
+    WebservApplicationWithoutCgiEvent *new_event = new WebservApplicationWithoutCgiEvent(event->fd(), event->req());
+    new_event->entity_ = event->entity();
+    return (new_event);
 };
 
 EWebservEvent WebservApplicationWithoutCgiEvent::which()
@@ -169,4 +171,9 @@ ApplicationResult *WebservApplicationWithoutCgiEvent::result()
 void WebservApplicationWithoutCgiEvent::set_result(ApplicationResult *result)
 {
     this->result_ = result;
+}
+
+Entity *WebservApplicationWithoutCgiEvent::entity()
+{
+    return (this->entity_);
 }

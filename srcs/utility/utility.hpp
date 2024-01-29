@@ -44,11 +44,12 @@ class Utility
     static std::string to_string2(int value);
     static int to_int(std::string &str);
     static unsigned int to_uint(std::string const &str);
+    static unsigned long to_ulong(std::string const &str);
     static ssize_t to_ssize_t(std::string &str);
-    static size_t to_size_t(std::string &str);
     static int to_int(std::string const &str);
     static int to_int(char const *str);
     static ssize_t to_ssize_t(std::string const &str);
+    //static size_t to_size_t(std::string &str);
     static size_t to_size_t(std::string const &str);
     static std::string to_hexstr(size_t i);
     static IP_Address name_to_address(std::string name);

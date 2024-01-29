@@ -37,10 +37,27 @@ typedef enum E_EpollEvent
     EPOLL_NONE,
 } E_EpollEvent;
 
+/*
+struct Entity
+{
+    Request             *req;
+    Response            *res;
+    ApplicationResult   *app;
+};
+*/
+
+struct Entity
+{
+    Request             *req = NULL;
+    Response            *res = NULL;
+    Config              *cfg = NULL;
+    ApplicationResult   *app = NULL;
+};
 
 class WebservEvent
 {
     public:
+        //struct Entity;
         //WebservEvent();
         virtual ~WebservEvent(){};
         virtual EWebservEvent which() = 0;
@@ -64,13 +81,16 @@ class WebservEvent
         virtual void increase_timeout_count(int count) = 0;
         virtual int  timeout_count() = 0;
 
+        virtual Entity *entity() = 0;
         //virtual void set_cgi_event(WebservCgiEvent *cgi_event) = 0;
         //virtual WebservCgiEvent *cgi_event() = 0;
 
     private:
+        Entity *entity_;
         Request *req_;
         Response *res_;
         int timeout_count_;
+
 };
 
 #endif

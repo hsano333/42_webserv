@@ -165,3 +165,8 @@ WebservCgiEvent *WebservCleanEvent::cgi_event()
 {
     return (this->cgi_event_);
 }
+
+Entity *WebservCleanEvent::entity()
+{
+    return (this->entity_);
+}

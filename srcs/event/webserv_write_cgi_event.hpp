@@ -42,6 +42,7 @@ class WebservWriteCGIEvent : public WebservEvent
         static WebservWriteCGIEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader, IWriter *writer);
         //void set_cgi_event(WebservCgiEvent *cgi_event);
         //WebservCgiEvent *cgi_event();
+        Entity *entity();
 
     private:
         FileDiscriptor  fd_;
@@ -56,5 +57,6 @@ class WebservWriteCGIEvent : public WebservEvent
         //IReader *reader;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
+        Entity          *entity_;
 };
 #endif

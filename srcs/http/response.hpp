@@ -5,6 +5,8 @@
 //#include "error_page.hpp"
 #include "file.hpp"
 #include "http_data.hpp"
+#include "config_server.hpp"
+#include "config_location.hpp"
 #include <unistd.h>
 #include <map>
 #include <vector>
@@ -29,7 +31,8 @@ class Response : public File
         static Response* from_success_status_code(StatusCode &code, File *file);
         static Response* from_error_status_code(StatusCode &code);
         static Response* from_error_file(File *file, StatusCode &code);
-        static Response* from_cgi_header_line(Split &header_line);
+        //static Response* from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location);
+        static Response* from_cgi_header_line(Split &header_line, File *file);
         void   set_header(Split &sp, size_t offset);
         //static Response* from_error_page(ErrorPage &page);
 
@@ -44,11 +47,13 @@ class Response : public File
         int close_source_file();
         */
         File *get_file();
+        const Header &header();
         //ssize_t get_data(char** data);
         void print_info();
         void set_exist_body(bool flag);
-
-
+        bool check_body_size(ConfigServer const *server);
+        char*   get_buf_body(int *size);
+        void    set_buf_body(char *body_p, int size);
 
         // File Interface
         int open();
@@ -66,6 +71,8 @@ class Response : public File
     private:
         StatusCode status_code;
         Header headers;
+        char    *buf_body;
+        int     buf_body_size;
         File *file;
 
         bool is_redirect;

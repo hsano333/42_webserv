@@ -10,8 +10,9 @@
 #define MAX_BUF (8192)
 #define MAX_URI (1500)
 #define MAX_STATUS_LINE (MAX_BUF-1)
-#define MAX_READ_SIZE (MAX_BUF-10)
-#define MAX_READ (1024)
+//#define MAX_READ_SIZE (MAX_BUF-10)
+#define MAX_READ_SIZE (1518)
+//#define MAX_READ (1024)
 #define MAX_CONFIG_SIZE (MAX_READ_SIZE)
 #define LOG_FILE "./webserv.log"
 #define LOG_LEVEL_NOT_LOG 1

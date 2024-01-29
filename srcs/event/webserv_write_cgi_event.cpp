@@ -101,6 +101,7 @@ WebservWriteCGIEvent *WebservWriteCGIEvent::from_event(WebservEvent *event, File
     write_event->source_file = src;
     write_event->destination_file = dst;
     write_event->result = result;
+    write_event->entity_ = event->entity();
     //write_event->set_cgi_event(event->cgi_event());
     return (write_event);
 }
@@ -197,6 +198,12 @@ int WebservWriteCGIEvent::write(char *buf, size_t size)
 {
     return (this->dst()->write(&buf, size));
 }
+
+Entity *WebservWriteCGIEvent::entity()
+{
+    return (this->entity_);
+}
+
 
 /*
 void WebservWriteCGIEvent::set_cgi_event(WebservCgiEvent *cgi_event)

@@ -409,7 +409,7 @@ bool Request::can_read()
 
 bool Request::is_chunk()
 {
-    return (true);
+    return (false);
 }
 
 size_t Request::size()

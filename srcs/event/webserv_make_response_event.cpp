@@ -4,11 +4,12 @@
 #include "http_exception.hpp"
 #include "opened_socket_file.hpp"
 #include "application_result.hpp"
+#include "header_word.hpp"
 
 WebservMakeResponseEvent::WebservMakeResponseEvent(
                             FileDiscriptor fd,
-                            Request *req
-                            //IReader *reader
+                            Request *req,
+                            IReader *reader
                             //Config  *cfg
                             )
                             :
@@ -19,7 +20,8 @@ WebservMakeResponseEvent::WebservMakeResponseEvent(
                             source_file(NULL),
                             destination_file(NULL),
                             timeout_count_(0),
-                            is_completed_(false)
+                            is_completed_(false),
+                            reader(reader)
                             //reader(reader)
                             //cfg(cfg)
 {
@@ -37,15 +39,18 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
 
     char *data;
     int read_size = result->file()->read(&data, MAX_READ_SIZE);
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.2");
 
     if(read_size <= 0){
         ERROR("CGI Respons Data is nothing or error");
         throw HttpException("500");
     }
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.3");
 
     // RFC3875にはNL(New Line)の具体的な定義がないため、
     // 改行文字はLFとする(Linuxでの運用を想定しているため)
     char *body_p = Utility::strnstr(data, LF2, read_size);
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.4");
     if(!body_p){
         ERROR("CGI Statement Error: not find LFLF(double New Line)");
         throw HttpException("500");
@@ -55,18 +60,45 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
     printf("body_p=%p\n", body_p);
     printf("data=%p\n", data);
 
-    size_t header_size = body_p - data + 1;
+    size_t header_size = body_p - data;
     if(header_size >= MAX_STATUS_LINE){
         ERROR("exceed CGI Response Status Line" + Utility::to_string(header_size));
         throw HttpException("exceed CGI Response Status Line:" + Utility::to_string(header_size));
     }
     *body_p = '\0';
 
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.5");
     Split headers_line(data, LF, false, true);
-    Response *res = Response::from_cgi_header_line(headers_line);
+    File *file = OpenedSocketFile::from_fd(reader, result->cgi_out());
 
-    //File *dst = OpenedSocketFile::from_fd(socket_writer, event->fd());
-    //res->set_file(result);
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.6");
+    Request *req = this->entity()->req;
+    const ConfigServer *server = this->entity()->cfg->get_server(req);
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.7");
+    //const ConfigLocation *location = this->entity()->cfg->get_location(server, req);
+
+    Response *res = Response::from_cgi_header_line(headers_line, file);
+
+    int tmp_size = read_size - header_size - 4;
+    res->set_buf_body(body_p + 4, tmp_size);
+    //res->buf_body = body_p + 4;
+
+
+    printf("res=%p\n", res);
+    printf("req=%p\n", req);
+    printf("server=%p\n", server);
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.8");
+    if(!res->check_body_size(server))
+    {
+        delete res;
+        throw HttpException("500");
+    }
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.9");
+
+    //req->set_requested_filepath(location);
+    //this->check_body_size(req, server);
+    //req->set_cgi(check_cgi(req, location));
+
     return (res);
 
     /*
@@ -128,16 +160,17 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
     return (res);
 }
 
-WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IWriter *writer)
+WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IWriter *writer, IReader *reader)
 {
     DEBUG("WebservMakeResponseEvent::from_event");
   //(void)src;
   //(void)dst;
-  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent(event->fd(), event->req());
+  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent(event->fd(), event->req(), reader);
   printf("src=%p\n", src);
   new_event->source_file = src;
   new_event->destination_file = dst;
   new_event->next_event_writer = writer;
+  new_event->entity_ = event->entity();
   return (new_event);
   //return (event);
   //return (new WebservMakeResponseEvent());
@@ -169,8 +202,10 @@ E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event()
     return (EPOLL_WRITE);
 }
 
+/*
 bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer *server)
 {
+    DEBUG("WebservMakeResponseEvent::check_body_size");
 
     ssize_t max_body_size = (ssize_t)server->get_max_body_size();
 
@@ -198,6 +233,7 @@ bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer 
 
     return (true);
 }
+*/
 
 File *WebservMakeResponseEvent::make()
 {
@@ -284,6 +320,10 @@ void WebservMakeResponseEvent::set_file(File *file)
     this->res_ = static_cast<Response*>(file);
 }
 
+Entity *WebservMakeResponseEvent::entity()
+{
+    return (this->entity_);
+}
 
 
 /*

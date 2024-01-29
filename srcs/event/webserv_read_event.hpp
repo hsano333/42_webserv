@@ -41,6 +41,7 @@ class WebservReadEvent : public WebservEvent
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
         //IReader *reader();
+        Entity *entity();
 
     private:
         WebservReadEvent(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader);
@@ -67,5 +68,6 @@ class WebservReadEvent : public WebservEvent
         char    buf_[MAX_BUF];
         char*   buf();
         size_t  raw_buf_pos_;
+        Entity          *entity_;
 };
 #endif

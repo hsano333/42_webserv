@@ -36,9 +36,10 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
 
-        File    *make_request();
+        Request *make_request();
         File    *make();
         void    set_file(File *file);
+        Entity *entity();
 
     private:
         WebservMakeRequestEvent(FileDiscriptor fd, Request *req, IReader *reader, Config *cfg);
@@ -64,6 +65,7 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
         void parse_req(WebservEvent *event);
         IReader *reader;
         Config *cfg;
+        Entity          *entity_;
         //bool is_cgi;
 
 };

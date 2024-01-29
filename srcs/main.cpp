@@ -142,8 +142,19 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
        #include <sys/types.h>
        #include <sys/stat.h>
        #include <fcntl.h>
+
+#include <stdint.h>
 int main(int argc, char const* argv[])
 {
+    //size_t test = Utility::to_size_t("18446744073709551615");
+    //cout << "test:" << test << endl;
+    //test = Utility::to_size_t("18446744073709551619");
+    //cout << "test:" << test << endl;
+    //size_t test2 = 18446744073709551615;
+    //cout << "test2:" << test2 << endl;
+    //18446744073709551615
+    //cout << SIZE_MAX << endl;
+    //return 0;
     /*
     std::string filepath = "/var/www/html/webserv/abc/cannot_delete_dir/d3";
     Utility::is_regular_file("/var/www/html/webserv/abc/cannot_delete_dir/d3");

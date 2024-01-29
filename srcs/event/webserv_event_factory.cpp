@@ -156,16 +156,18 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             if(cached_event == NULL){
                 MYINFO("cached_event is NULL");
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
+                Entity *entity = new Entity();
+                entity->cfg = this->cfg;
 
                 File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
                 File *read_dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
                 //WebservEvent *event = WebservReadEvent::from_fd(fd, sockfd, socket_reader, src, dst);
-                WebservEvent *event = WebservIOSocketEvent::as_read(fd, sockfd, fd, socket_io, read_dst);
+                WebservEvent *event = WebservIOSocketEvent::as_read(fd, sockfd, fd, socket_io, read_dst, entity);
                 //printf("event=%p\n", event);
                 //this->event_manager->add_event_waiting_epoll(fd, event);
                 return (event);
             }else{
-            DEBUG("WebservEvent::from_epoll_event: No.2 EPOLLIN");
+                DEBUG("WebservEvent::from_epoll_event: No.2 EPOLLIN");
                 WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
                 //
                 //
@@ -280,7 +282,7 @@ WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event, F
     File *read_src = OpenedSocketFile::from_fd(normal_reader, result->cgi_out());
     FileDiscriptor socketfd = fd_manager->get_sockfd(event->fd());
 
-    return (WebservIOCGIEvent::from_fd(event->fd(), socketfd, result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst));
+    return (WebservIOCGIEvent::from_fd(event->fd(), socketfd, result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event->entity()));
 }
 
 WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, File *src)
@@ -297,7 +299,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
     File *src = OpenedSocketFile::from_fd(socket_reader, event->fd());
     File *dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
     FileDiscriptor &socket_fd = fd_manager->socket_fd_from_epoll_fd(event->fd());
-    return (WebservIOSocketEvent::as_read(event->fd(), socket_fd, event->fd(), src, dst));
+    return (WebservIOSocketEvent::as_read(event->fd(), socket_fd, event->fd(), src, dst, event->entity()));
 }
 
 
@@ -326,7 +328,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
     //File *src = src;
     //File *dst= dst;
 
-    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL, socket_writer);
+    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL, socket_writer, normal_reader);
 
     //this->register_file_manager(new_event);
     return (new_event);

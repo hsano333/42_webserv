@@ -41,6 +41,7 @@ class WebservCleanEvent : public WebservEvent
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
+        Entity *entity();
 
     private:
         FileDiscriptor  fd_;
@@ -53,6 +54,7 @@ class WebservCleanEvent : public WebservEvent
         bool is_completed_;
 
         WebservCgiEvent *cgi_event_;
+        Entity          *entity_;
 };
 
 #endif

@@ -224,6 +224,10 @@ WebservCgiEvent *WebservReadEvent::cgi_event()
     return (this->cgi_event_);
 }
 
+Entity *WebservReadEvent::entity()
+{
+    return (this->entity_);
+}
 /*
 IReader *WebservReadEvent::reader()
 {

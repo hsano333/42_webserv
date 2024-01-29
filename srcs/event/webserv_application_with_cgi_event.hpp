@@ -40,6 +40,7 @@ class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplic
 
         void set_result(ApplicationResult *result);
         ApplicationResult *result();
+        Entity *entity();
 
     private:
         FileDiscriptor  fd_;
@@ -55,6 +56,7 @@ class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplic
         WebservCgiEvent *cgi_event_;
         ApplicationResult *result_;
         IWriter *next_event_writer;
+        Entity          *entity_;
 
 };
 

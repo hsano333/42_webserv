@@ -119,4 +119,7 @@ WebservCgiEvent *WebservNothingEvent::cgi_event()
     return (this->cgi_event_);
 }
 
-
+Entity *WebservNothingEvent::entity()
+{
+    return (this->entity_);
+}

@@ -150,3 +150,7 @@ FileDiscriptor  &WebservKeepAliveEvent::get_socket_fd()
     return (this->sock_fd_);
 }
 
+Entity *WebservKeepAliveEvent::entity()
+{
+    return (this->entity_);
+}

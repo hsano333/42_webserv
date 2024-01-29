@@ -107,6 +107,10 @@ WebservCgiEvent *WebservTimeoutEvent::cgi_event()
     return (this->cgi_event_);
 }
 
+Entity *WebservTimeoutEvent::entity()
+{
+    return (this->entity_);
+}
 
 
 

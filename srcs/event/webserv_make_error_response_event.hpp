@@ -39,6 +39,7 @@ class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservE
         //File    *make_request();
         File    *make();
         void    set_file(File *file);
+        Entity *entity();
 
     private:
         WebservMakeErrorResponseEvent(FileDiscriptor fd, Request *req);
@@ -60,6 +61,7 @@ class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservE
         IReader *reader;
         IWriter *next_event_writer;
         StatusCode code;
+        Entity          *entity_;
         //Config *cfg;
         //
 

@@ -35,6 +35,8 @@ class WebservCgiEvent
         bool is_cgi();
         void set_is_cgi(bool is_cgi);
         bool is_completed();
+        //struct Entity;
+        //Entity *entity();
 
     private:
         FileDiscriptor  fd_in_;

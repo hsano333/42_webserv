@@ -276,7 +276,6 @@ static bool is_notdigit(const char &c)
 
 unsigned int Utility::to_uint(string const &str)
 {
-
     std::string::const_iterator ite = std::find_if(str.begin(), str.end(), is_notdigit);
     if(ite != str.end()){
         WARNING("Utility::to_uint() error: invalid argument:" + str);
@@ -284,6 +283,22 @@ unsigned int Utility::to_uint(string const &str)
     }
 
     unsigned int cvt;
+    stringstream ss;
+    ss << str;
+    ss >> cvt;
+
+    return (cvt);
+}
+
+unsigned long Utility::to_size_t(string const &str)
+{
+    std::string::const_iterator ite = std::find_if(str.begin(), str.end(), is_notdigit);
+    if(ite != str.end()){
+        WARNING("Utility::to_size_t() error: invalid argument:" + str);
+        throw std::invalid_argument("Utility::to_size_t() error: invalid argument");
+    }
+
+    size_t cvt;
     stringstream ss;
     ss << str;
     ss >> cvt;
@@ -346,6 +361,7 @@ ssize_t Utility::to_ssize_t(string const &str)
     return (Utility::to_ssize_t(str));
 }
 
+/*
 size_t Utility::to_size_t(string &str)
 {
     size_t cvt;
@@ -360,6 +376,7 @@ size_t Utility::to_size_t(string const &str)
 {
     return Utility::to_size_t(str);
 }
+*/
 
 /*
 int Utility::read_body_and_copy(char *src, char** dst, size_t size)
@@ -655,6 +672,15 @@ TEST_CASE("hex_string_to_uchar")
     CHECK_THROWS_AS(Utility::hex_string_to_uchar("FF0") ,std::invalid_argument);
     CHECK_THROWS_AS(Utility::hex_string_to_uchar("fg") ,std::invalid_argument);
     CHECK_THROWS_AS(Utility::hex_string_to_uchar("g3") ,std::invalid_argument);
+}
+
+TEST_CASE("hex_string_to_size_t")
+{
+    CHECK(Utility::to_size_t("0") == 0);
+    CHECK(Utility::to_size_t("18446744073709551615") == SIZE_MAX);
+    CHECK_THROWS_AS(Utility::to_size_t("18446744073709551616") ,std::invalid_argument);
+    CHECK_THROWS_AS(Utility::to_size_t("-1") ,std::invalid_argument);
+    CHECK_THROWS_AS(Utility::to_size_t("1111a11111") ,std::invalid_argument);
 }
 
 #endif

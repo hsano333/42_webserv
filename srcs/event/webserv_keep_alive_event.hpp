@@ -40,6 +40,7 @@ class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
         FileDiscriptor  &get_write_fd();
         FileDiscriptor  &get_read_fd();
         FileDiscriptor  &get_socket_fd();
+        Entity *entity();
 
     private:
         int             timeout_count_;
@@ -50,5 +51,6 @@ class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
         FileDiscriptor  write_fd_;
         FileDiscriptor  read_fd_;
         FileDiscriptor  sock_fd_;
+        Entity          *entity_;
 };
 #endif

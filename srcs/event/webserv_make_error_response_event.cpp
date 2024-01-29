@@ -84,6 +84,7 @@ WebservMakeErrorResponseEvent *WebservMakeErrorResponseEvent::from_event(Webserv
   new_event->destination_file = dst;
   new_event->next_event_writer = writer;
   new_event->code = code;
+  new_event->entity_ = event->entity();
   return (new_event);
   //return (event);
   //return (new WebservMakeErrorResponseEvent());
@@ -216,6 +217,10 @@ void WebservMakeErrorResponseEvent::set_file(File *file)
     this->res_ = static_cast<Response*>(file);
 }
 
+Entity *WebservMakeErrorResponseEvent::entity()
+{
+    return (this->entity_);
+}
 
 
 /*

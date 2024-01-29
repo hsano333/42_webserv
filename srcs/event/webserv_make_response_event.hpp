@@ -12,7 +12,7 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
     public:
         //WebservMakeResponseEvent(FileDiscriptor fd, Request *req);
         ~WebservMakeResponseEvent();
-        static WebservMakeResponseEvent *from_event(WebservEvent *event, File *src, File *dst, IWriter *writer);
+        static WebservMakeResponseEvent *from_event(WebservEvent *event, File *src, File *dst, IWriter *writer, IReader *reader);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
@@ -39,9 +39,10 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         //File    *make_request();
         File    *make();
         void    set_file(File *file);
+        Entity *entity();
 
     private:
-        WebservMakeResponseEvent(FileDiscriptor fd, Request *req);
+        WebservMakeResponseEvent(FileDiscriptor fd, Request *req, IReader *reader);
         Response *make_response(ApplicationResult *result);
         Response *make_response_for_cgi(ApplicationResult *result);
         FileDiscriptor  fd_;
@@ -60,6 +61,7 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         void parse_req(WebservEvent *event);
         IReader *reader;
         IWriter *next_event_writer;
+        Entity          *entity_;
         //Config *cfg;
         //
 

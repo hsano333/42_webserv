@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/28 03:31:12 by sano             ###   ########.fr       */
+/*   Updated: 2024/01/30 02:09:05 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "split.hpp"
 #include "utility.hpp"
 #include "body_size.hpp"
+#include "header_word.hpp"
 #include <climits>
 
 Header::Header() : _not_find("")
@@ -166,7 +167,7 @@ string const &Header::get_content_length_str() const
 
 ssize_t Header::get_content_length() const
 {
-    std::string name = "content-length";
+    std::string name = CONTENT_LENGTH;
     string const &value = find(name);
     if (value == this->_not_find){
         return (-1);

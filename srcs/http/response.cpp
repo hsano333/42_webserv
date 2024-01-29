@@ -10,9 +10,13 @@
 #include "header_word.hpp"
 
 Response::Response() :
+    buf_body(NULL),
+    buf_body_size(0),
     file(NULL),
     is_redirect(false),
-    send_state(STILL_NOT_SEND)
+    send_state(STILL_NOT_SEND),
+    has_body(false),
+    is_chunked(false)
     //exist_body_(false)
 {
     this->headers.insert("Server", WEBSERV_VERSION);
@@ -91,9 +95,12 @@ void Response::set_header(Split &sp, size_t offset)
     this->headers = Header::from_splited_data(sp, offset);
 }
 
-Response* Response::from_cgi_header_line(Split &header_line)
+//Response* Response::from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location)
+Response* Response::from_cgi_header_line(Split &header_line, File *file)
 {
+    //(void)location;
     Response *res = new Response();
+    res->file = file;
     res->set_header(header_line, 0);
     std::string status_code = res->headers.find(STATUS_CODE_CGI);
     try{
@@ -109,9 +116,58 @@ Response* Response::from_cgi_header_line(Split &header_line)
         delete res;
         throw HttpException("500");
     }
+    /*
+    */
 
     return (res);
 }
+
+const Header &Response::header()
+{
+    return (this->headers);
+
+}
+
+bool Response::check_body_size(ConfigServer const *server)
+{
+    DEBUG("Response::check_body_size");
+    string const &len_str = this->header().find(CONTENT_LENGTH);
+    DEBUG("Response::check_body_size No.1");
+
+    if(len_str != this->header().not_find()){
+        size_t len = Utility::to_size_t(len_str);
+    DEBUG("Response::check_body_size No.2");
+        if(len >= server->get_max_body_size()){
+            ERROR("Making Response ERROR: body size is exceed:" + Utility::to_string(len));
+            //delete res;
+            //throw HttpException("500");
+            return (false);
+        }
+    }else if(this->is_chunk()){
+    DEBUG("Response::check_body_size No.3");
+        this->has_body = true;
+    }
+    DEBUG("Response::check_body_size No.4");
+    return (true);
+}
+
+char* Response::get_buf_body(int *size)
+{
+    *size = this->buf_body_size;
+    return (this->buf_body);
+
+}
+
+void Response::set_buf_body(char *body_p, int size)
+{
+    DEBUG("Response::set_buf_body size:" + Utility::to_string(size));
+    this->buf_body = body_p;
+    this->buf_body_size = size;
+    if(size > 0){
+        this->has_body = true;
+    }
+}
+
 
 /*
 void Response::set_exist_body(bool flag)
@@ -164,6 +220,15 @@ void Response::make_header_line()
 
 int Response::read_body_and_copy(char** dst, size_t size)
 {
+    DEBUG("Response::read_body_and_copy");
+    if(this->buf_body_size > 0){
+        DEBUG("Response::read_body_and_copy buf_body_size:" + Utility::to_string(this->buf_body_size));
+        int tmp = this->buf_body_size;
+        this->buf_body_size = 0;
+        *dst = this->buf_body;
+        return (tmp);
+    }
+    DEBUG("read_body_and_copy:" + Utility::to_string(size));
     return (this->file->read(dst, size));
 }
 
@@ -266,6 +331,7 @@ std::string const &Response::path()
 
 bool Response::is_chunk()
 {
+    DEBUG("Response::is_chunk()");
     std::string enc = this->headers.find(TRANSFER_ENCODING);
     if(enc != this->headers.not_find()){
         if(enc == TRANSFER_ENCODING_CHUNKED){
@@ -333,12 +399,14 @@ int Response::read(char** data, size_t max_read_size)
             }
         }else{
             cout << " not chunk" << endl;
+        DEBUG("Response::read chunked No.12:");
             size = this->read_body_and_copy(data, max_read_size);
             if (size <= 0){
+        DEBUG("Response::read chunked No.13:");
                 this->send_state = SENT_BODY;
             }
         }
-        DEBUG("Response::read chunked No.12:");
+        DEBUG("Response::read chunked No.13:");
         return (size);
     }
     DEBUG("Response::read: 0");

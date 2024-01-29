@@ -29,6 +29,7 @@ WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::from_event(Webse
     //new_event->next_event_writer = writer;
     WebservApplicationWithCgiEvent *new_event =  new WebservApplicationWithCgiEvent(event->fd(), event->req());
     new_event->next_event_writer = writer;
+    new_event->entity_ = event->entity();
     return (new_event);
 };
 
@@ -169,4 +170,9 @@ ApplicationResult *WebservApplicationWithCgiEvent::result()
 void WebservApplicationWithCgiEvent::set_result(ApplicationResult *result)
 {
     this->result_ = result;
+}
+
+Entity *WebservApplicationWithCgiEvent::entity()
+{
+    return (this->entity_);
 }

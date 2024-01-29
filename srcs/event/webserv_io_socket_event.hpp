@@ -16,7 +16,7 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         WebservIOSocketEvent(FileDiscriptor &fd, FileDiscriptor sockfd, File *socket_io, File *read_dst);
         ~WebservIOSocketEvent();
         static WebservIOSocketEvent *for_cgi(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *read_dst);
-        static WebservIOSocketEvent *as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst);
+        static WebservIOSocketEvent *as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst, Entity *entity);
         static WebservIOSocketEvent *as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &write_fd, File *src, File *dst);
 
 
@@ -45,6 +45,7 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         int write(char *buf, size_t size);
         int read(char *buf, size_t size);
         //static WebservIOSocketEvent *from_event(WebservEvent *event, File *src, File *dst);
+        Entity *entity();
 
     private:
         WebservIOSocketEvent();
@@ -67,5 +68,6 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
 
         FileDiscriptor  write_fd_;
         FileDiscriptor  read_fd_;
+        Entity          *entity_;
 };
 #endif

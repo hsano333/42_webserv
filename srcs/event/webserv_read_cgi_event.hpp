@@ -40,6 +40,7 @@ class WebservReadCGIEvent : public WebservEvent
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
         //IReader *reader();
+        Entity *entity();
 
     private:
         WebservReadCGIEvent(FileDiscriptor fd, IReader *reader);
@@ -54,5 +55,6 @@ class WebservReadCGIEvent : public WebservEvent
         //IWriter *writer;
         IReader *reader;
         WebservCgiEvent *cgi_event_;
+        Entity          *entity_;
 };
 #endif

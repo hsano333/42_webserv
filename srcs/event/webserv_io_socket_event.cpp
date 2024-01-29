@@ -44,7 +44,7 @@ WebservIOSocketEvent::~WebservIOSocketEvent()
 }
 
 
-WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst)
+WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst, Entity *entity)
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
     WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
@@ -53,6 +53,7 @@ WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDisc
     event->sock_fd_ = sockfd;
     event->read_dst = dst;
     event->read_fd_ = read_fd;
+    event->entity_ = entity;
 
     event->switching_io(EPOLLIN);
 
@@ -317,6 +318,11 @@ E_EpollEvent WebservIOSocketEvent::get_next_epoll_event()
 int WebservIOSocketEvent::write(char *buf, size_t size)
 {
     return (this->dst()->write(&buf, size));
+}
+
+Entity *WebservIOSocketEvent::entity()
+{
+    return (this->entity_);
 }
 
 /*

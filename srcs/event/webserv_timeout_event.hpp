@@ -29,6 +29,7 @@ class WebservTimeoutEvent : public WebservEvent
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
+        Entity *entity();
 
     private:
         FileDiscriptor fd_;
@@ -36,5 +37,6 @@ class WebservTimeoutEvent : public WebservEvent
         int timeout_count_;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
+        Entity          *entity_;
 };
 #endif
