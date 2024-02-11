@@ -1,12 +1,12 @@
 #include "webserv_application_without_cgi_event.hpp"
 #include "webserv_event.hpp"
 
-WebservApplicationWithoutCgiEvent::WebservApplicationWithoutCgiEvent(
-                            FileDiscriptor fd,
-                            Request *req)
-                            :
-                            fd_(fd),
-                            req_(req),
+WebservApplicationWithoutCgiEvent::WebservApplicationWithoutCgiEvent():
+                            //FileDiscriptor fd,
+                            //Request *req)
+                            //:
+                            //fd_(fd),
+                            //req_(req),
                             res_(NULL),
                             file_(NULL),
                             source_file(NULL),
@@ -24,7 +24,7 @@ WebservApplicationWithoutCgiEvent::~WebservApplicationWithoutCgiEvent()
 
 WebservEvent *WebservApplicationWithoutCgiEvent::from_event(WebservEvent *event)
 {
-    WebservApplicationWithoutCgiEvent *new_event = new WebservApplicationWithoutCgiEvent(event->fd(), event->req());
+    WebservApplicationWithoutCgiEvent *new_event = new WebservApplicationWithoutCgiEvent();
     new_event->entity_ = event->entity();
     return (new_event);
 };
@@ -173,7 +173,7 @@ void WebservApplicationWithoutCgiEvent::set_result(ApplicationResult *result)
     this->result_ = result;
 }
 
-Entity *WebservApplicationWithoutCgiEvent::entity()
+WebservEntity*WebservApplicationWithoutCgiEvent::entity()
 {
     return (this->entity_);
 }

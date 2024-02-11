@@ -172,7 +172,7 @@ PostApplication* PostApplication::from_location(const Config *cfg, WebservApplic
 
     PostApplication *app = new PostApplication();
     app->cfg = cfg;
-    app->req = event->req();
+    app->req = event->entity()->request();
     app->server = cfg->get_server(app->req);
     app->location = cfg->get_location(app->server, app->req);
     //app->cgi = cgi;

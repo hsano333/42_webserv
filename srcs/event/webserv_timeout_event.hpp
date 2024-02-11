@@ -3,6 +3,7 @@
 #include "webserv_event.hpp"
 #include "file_discriptor.hpp"
 #include "webserv_cgi_event.hpp"
+#include "webserv_entity.hpp"
 
 class WebservTimeoutEvent : public WebservEvent
 {
@@ -29,7 +30,7 @@ class WebservTimeoutEvent : public WebservEvent
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
         FileDiscriptor fd_;
@@ -37,6 +38,6 @@ class WebservTimeoutEvent : public WebservEvent
         int timeout_count_;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

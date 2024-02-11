@@ -103,7 +103,36 @@ void WebservMaker::parse_res(WebservEvent *event)
 void WebservMaker::make(WebservEvent *event)
 {
     DEBUG("WebservMaker::make()");
+
+    DEBUG("WebservMaker::make() No.1");
+    event->entity()->config()->check();
+    DEBUG("WebservMaker::make() No.2");
+    event->entity()->config()->check();
     IWebservMakeEvent *make_event = dynamic_cast<IWebservMakeEvent*>(event);
+    //IWebservMakeEvent *make_event = const_cast<void*>(static_cast<void const volatile*>(event));
+
+    DEBUG("WebservMaker::make() No.3");
+    event->entity()->config()->check();
+    DEBUG("WebservMaker::make() No.4");
+    event->entity()->config()->check();
+
+
+
+    DEBUG("WebservMaker::make() No.5");
+    if(!make_event){
+        cout << "NULL" << endl;
+    }
+    printf("event=%p\n", make_event);
+    make_event->set_file(NULL);
+
+    DEBUG("WebservMaker::make() No.6");
+    event->entity()->config()->check();
+    DEBUG("WebservMaker::make() No.7");
+    event->entity()->config()->check();
+    DEBUG("WebservMaker::make() No.8");
+
+
+
     File *file = make_event->make();
     make_event->set_file(file);
     event->set_completed(true);

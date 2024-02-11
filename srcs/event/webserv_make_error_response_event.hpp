@@ -6,6 +6,7 @@
 #include "webserv_cgi_event.hpp"
 #include "webserv_make_event.hpp"
 #include "config.hpp"
+#include "webserv_entity.hpp"
 
 class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservEvent
 {
@@ -16,9 +17,9 @@ class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservE
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
-        FileDiscriptor  &fd();
-        Request         *req();
-        Response        *res();
+        //FileDiscriptor  &fd();
+        //Request         *req();
+        //Response        *res();
         File            *src();
         File            *dst();
         void            switching_io(uint32_t epoll_event);
@@ -39,14 +40,15 @@ class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservE
         //File    *make_request();
         File    *make();
         void    set_file(File *file);
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
-        WebservMakeErrorResponseEvent(FileDiscriptor fd, Request *req);
+        //WebservMakeErrorResponseEvent(FileDiscriptor fd, Request *req);
+        WebservMakeErrorResponseEvent();
         Response *make_response();
-        FileDiscriptor  fd_;
-        Request         *req_;
-        Response        *res_;
+        //FileDiscriptor  fd_;
+        //Request         *req_;
+        //Response        *res_;
         File            *file_;
         File            *source_file;
         File            *destination_file;
@@ -61,7 +63,7 @@ class WebservMakeErrorResponseEvent : public  IWebservMakeEvent, public WebservE
         IReader *reader;
         IWriter *next_event_writer;
         StatusCode code;
-        Entity          *entity_;
+        WebservEntity         *entity_;
         //Config *cfg;
         //
 

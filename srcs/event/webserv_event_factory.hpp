@@ -12,9 +12,11 @@
 #include "event_manager.hpp"
 #include "config.hpp"
 #include "application_result.hpp"
+#include "webserv_entity.hpp"
 
 class EventManager;
 class WebservEvent;
+class ApplicationResult;
 class WebservEventFactory
 {
     public:
@@ -42,7 +44,7 @@ class WebservEventFactory
         WebservEvent *make_application_with_cgi_event(WebservEvent *event);
         WebservEvent *make_application_without_cgi_event(WebservEvent *event);
         void          make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req);
-        void          make_and_push_read_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in);
+        //void          make_and_push_read_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in);
         WebservEvent *make_write_event_for_cgi(WebservEvent *event, Response *res);
         WebservEvent *make_write_event(WebservEvent *event, File *src, File *dst);
         WebservEvent *make_write_cgi_event(WebservEvent *event, File *src, File *dst, ApplicationResult *result);

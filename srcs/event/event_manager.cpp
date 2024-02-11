@@ -63,7 +63,7 @@ bool EventManager::find(FileDiscriptor &fd)
     MutantStack<WebservEvent *>::iterator end;
     while(ite != end){
         WebservEvent *event = *ite;
-        if(fd == event->fd()){
+        if(fd == event->entity()->fd()){
             return (true);
         }
         ite++;
@@ -86,7 +86,7 @@ void EventManager::increase_timeout_count(int count)
 */
 
 
-void EventManager::add_event_waiting_epoll(FileDiscriptor &fd, WebservEvent* event)
+void EventManager::add_event_waiting_epoll(FileDiscriptor const &fd, WebservEvent* event)
 {
     /*
     if (this->events_waiting_epoll.find(fd) != this->events_waiting_epoll.end())
@@ -98,7 +98,7 @@ void EventManager::add_event_waiting_epoll(FileDiscriptor &fd, WebservEvent* eve
     this->events_waiting_epoll.insert(std::make_pair(fd, event));
 }
 
-void EventManager::erase_event_waiting_epoll(FileDiscriptor &fd)
+void EventManager::erase_event_waiting_epoll(FileDiscriptor const &fd)
 {
     DEBUG("erase_event_waiting_epoll() fd:" + fd.to_string());
     this->events_waiting_epoll.erase(fd);
@@ -328,9 +328,10 @@ void EventManager::close_all_events()
     DEBUG("EventManager::close_all_events()");
     while(events.size() > 0){
         WebservEvent *event = this->pop_first();
-        close(event->fd().to_int());
-        delete event->req();
-        delete event->res();
+        close(event->entity()->fd().to_int());
+        //delete event->entity()->req();
+        //delete event->entity()->res();
+        delete event->entity();
         delete event;
     }
 }

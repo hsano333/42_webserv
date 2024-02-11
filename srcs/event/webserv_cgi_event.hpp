@@ -2,6 +2,7 @@
 #define WEBSERV_CGI_EVENT_HPP
 
 #include "file_discriptor.hpp"
+#include "webserv_entity.hpp"
 
 typedef enum CGI_Triger
 {
@@ -36,7 +37,7 @@ class WebservCgiEvent
         void set_is_cgi(bool is_cgi);
         bool is_completed();
         //struct Entity;
-        //Entity *entity();
+        //WebservEntity *entity();
 
     private:
         FileDiscriptor  fd_in_;

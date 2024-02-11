@@ -207,7 +207,7 @@ WebservCgiEvent *WebservReadCGIEvent::cgi_event()
     return (this->cgi_event_);
 }
 
-Entity *WebservReadCGIEvent::entity()
+WebservEntity*WebservReadCGIEvent::entity()
 {
     return (this->entity_);
 }

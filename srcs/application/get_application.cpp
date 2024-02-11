@@ -223,7 +223,7 @@ bool GetApplication::execute(WebservEvent *event)
 {
     DEBUG("GetApplication::execute()");
 
-    Request *req = event->req();
+    Request *req = event->entity()->request();
     File *file = NULL;
     string extension = "";
     StatusCode code;

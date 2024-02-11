@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/29 21:23:00 by sano             ###   ########.fr       */
+/*   Updated: 2024/02/07 18:47:38 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,14 @@
 #include "file.hpp"
 #include "webserv_cgi_event.hpp"
 #include "http_data.hpp"
+#include "webserv_entity.hpp"
 
 // source_fileからデータを読み出し、fdに対して書き込む
 class WebservWriteEvent : public WebservEvent
 {
     public:
         //struct Entity;
-        WebservWriteEvent();
-        WebservWriteEvent(FileDiscriptor fd);
-        WebservWriteEvent(FileDiscriptor fd,  File *src,  File *dst);
+        //WebservWriteEvent(FileDiscriptor fd);
         ~WebservWriteEvent();
         EWebservEvent which();
 
@@ -54,9 +53,12 @@ class WebservWriteEvent : public WebservEvent
         //static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader);
         //void set_cgi_event(WebservCgiEvent *cgi_event);
         //WebservCgiEvent *cgi_event();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
+        WebservWriteEvent();
+        WebservWriteEvent(File *src,  File *dst);
+
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
@@ -68,6 +70,6 @@ class WebservWriteEvent : public WebservEvent
         //IReader *reader;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
-        Entity          *entity_;
+        WebservEntity   *entity_;
 };
 #endif

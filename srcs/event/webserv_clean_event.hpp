@@ -5,15 +5,11 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "webserv_cgi_event.hpp"
+#include "webserv_entity.hpp"
 
 class WebservCleanEvent : public WebservEvent
 {
     public:
-        WebservCleanEvent(
-                            FileDiscriptor fd,
-                            Request *req,
-                            Response *res
-                );
         ~WebservCleanEvent();
         EWebservEvent which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
@@ -23,30 +19,31 @@ class WebservCleanEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         static WebservCleanEvent *from_webserv_event(WebservEvent *event, bool force_close);
-        FileDiscriptor  &fd();
-        Request         *req();
-        Response        *res();
+        //FileDiscriptor  &fd();
+        //Request         *req();
+        //Response        *res();
         File            *src();
         File            *dst();
         void            switching_io(uint32_t epoll_event);
         void            set_src(File *file);
         void            set_dst(File *file);
-        void set_null_res_and_req();
+        //void set_null_res_and_req();
 
         bool is_completed();
         void set_completed(bool flag);
         bool is_force_close();
         void set_force_close(bool flag);
-        void clean_res_and_req();
+        //void clean_res_and_req();
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
-        FileDiscriptor  fd_;
-        Request         *req_;
-        Response        *res_;
+        WebservCleanEvent();
+        //FileDiscriptor  fd_;
+        //Request         *req_;
+        //Response        *res_;
         File            *source_file;
         File            *destination_file;
         int             timeout_count_;
@@ -54,7 +51,7 @@ class WebservCleanEvent : public WebservEvent
         bool is_completed_;
 
         WebservCgiEvent *cgi_event_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 
 #endif

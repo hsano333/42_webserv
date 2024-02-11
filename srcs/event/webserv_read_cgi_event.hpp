@@ -6,6 +6,7 @@
 #include "webserv_cgi_event.hpp"
 #include "http_data.hpp"
 #include "file.hpp"
+#include "webserv_entity.hpp"
 
 // source_fileからデータを最大8k-10バイト程度読み出し、これを保持する。
 class WebservReadCGIEvent : public WebservEvent
@@ -40,7 +41,7 @@ class WebservReadCGIEvent : public WebservEvent
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
         //IReader *reader();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
         WebservReadCGIEvent(FileDiscriptor fd, IReader *reader);
@@ -55,6 +56,6 @@ class WebservReadCGIEvent : public WebservEvent
         //IWriter *writer;
         IReader *reader;
         WebservCgiEvent *cgi_event_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

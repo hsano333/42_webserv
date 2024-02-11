@@ -68,7 +68,7 @@ Application* ApplicationFactory::make_application(WebservApplicationEvent *event
 {
     DEBUG("ApplicationFactory::make_application()");
     Application* app;
-    Request *req = event->req();
+    Request *req = event->entity()->request();
     RequestLine const &req_line = req->req_line();
     Method const &method = req_line.method();
 

@@ -4,6 +4,7 @@
 #include "socket_reader.hpp"
 
 
+
 /*
 WebservEventEntity::WebservEventEntity(Impl *pimpl) : pimpl(pimpl)
 {

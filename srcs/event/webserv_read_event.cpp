@@ -7,11 +7,11 @@
 
 WebservReadEvent::WebservReadEvent()
                                         :
-                                        req_(NULL),
-                                        res_(NULL),
+                                        //req_(NULL),
+                                        //res_(NULL),
                                         source_file(NULL),
                                         destination_file(NULL),
-                                        fd_(FileDiscriptor::from_int(0)),
+                                        //fd_(FileDiscriptor::from_int(0)),
                                         //event_type(READ_EVENT),
                                         timeout_count_(0),
                                         is_completed_(false),
@@ -34,15 +34,16 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd)
 }
 */
 
-WebservReadEvent::WebservReadEvent(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader)
+/*
+WebservReadEvent::WebservReadEvent(IReader *reader)
     :
         //req_(new Request()),
-        req_(NULL),
-        res_(NULL),
+        //req_(NULL),
+        //res_(NULL),
         source_file(NULL),
         destination_file(NULL),
-        fd_(fd),
-        sockfd_(sockfd),
+        //fd_(fd),
+        //sockfd_(sockfd),
         timeout_count_(0),
         reader(reader)
 {
@@ -51,6 +52,7 @@ WebservReadEvent::WebservReadEvent(FileDiscriptor fd, FileDiscriptor sockfd, IRe
     //File *file = OpenedSocketFile::from_fd(reader, fd);
     //this->file = file;
 }
+*/
 
 
 
@@ -63,51 +65,60 @@ WebservReadEvent *WebservReadEvent::from_fd(FileDiscriptor fd, FileDiscriptor so
 {
     (void)sockfd;
     DEBUG("WebservReadEvent::from_fd() fd:" + fd.to_string());
-    WebservReadEvent *event = new WebservReadEvent(fd, sockfd, reader);
+    WebservReadEvent *event = new WebservReadEvent();
     //event->source_file = OpenedSocketFile::from_fd(reader, fd);
     //event->destination_file = VectorFile::from_buf_size(MAX_STATUS_LINE);
     event->source_file = src;
     event->destination_file = dst;
+    event->reader = reader;
 
     return (event);
 }
 
 
+/*
 WebservReadEvent *WebservReadEvent::from_cgi_fd(FileDiscriptor fd, FileDiscriptor pid, IReader *reader)
 {
-    WebservReadEvent *event = new WebservReadEvent(fd, pid, reader);
+    WebservReadEvent *event = new WebservReadEvent();
+    event->reader = reader;
+    event->entity_ = 
     event->source_file = OpenedSocketFile::from_fd(reader, fd);
     //req->set_source_file(file);
     return (event);
 }
+*/
 
-WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, FileDiscriptor sockfd, IReader *reader)
+WebservReadEvent *WebservReadEvent::from_event(WebservEvent *event, IReader *reader)
 {
     DEBUG("WebservReadEvent::from_event()");
-    WebservReadEvent *new_event = new WebservReadEvent(event->fd(), sockfd, reader);
+    WebservReadEvent *new_event = new WebservReadEvent();
+    new_event->reader = reader;
     DEBUG("WebservReadEvent::from_event() No.1");
     //if (event->req()){
         //delete event->req();
     //}
+    /*
+    Response *res = 
     if (event->res()){
         DEBUG("WebservReadEvent::from_event() No.11");
         delete event->res();
     }
+    */
     DEBUG("WebservReadEvent::from_event() No.2");
-    Request *req;
-    if(event->req()){
-        req = event->req();
-    }else{
+    Request *req = event->entity()->request();
+    if(!req){
+        //req = event->req();
+    //}else{
         //FileDiscriptor sockfd = fd_manager->get_sockfd(event->fd());
-        req = Request::from_fd(event->fd());
+        req = Request::from_fd(event->entity()->fd());
         //File *file = OpenedSocketFile::from_fd(reader, event->fd());
         //new_event->source_file = OpenedSocketFile::from_fd(reader, event->fd());
         //req->set_source_file(file);
     }
     DEBUG("WebservReadEvent::from_event() No.3");
-    new_event->req_ = req;
-    new_event->res_ = NULL;
-    new_event->source_file = req;
+    new_event->entity()->set_request(req);
+    //new_event->res_ = NULL;
+    new_event->source_file = (req);
     DEBUG("WebservReadEvent::from_event() No.4 make event:" + Utility::to_string(new_event));
     return (new_event);
 }
@@ -118,20 +129,22 @@ EWebservEvent WebservReadEvent::which()
 }
 
 
+/*
 FileDiscriptor &WebservReadEvent::fd()
 {
     return (this->fd_);
 }
 
-Request *WebservReadEvent::req()
+Request const *WebservReadEvent::req()
 {
     return (req_);
 }
 
-Response *WebservReadEvent::res()
+Response const *WebservReadEvent::res()
 {
     return (NULL);
 }
+*/
 
 File *WebservReadEvent::src()
 {
@@ -224,7 +237,7 @@ WebservCgiEvent *WebservReadEvent::cgi_event()
     return (this->cgi_event_);
 }
 
-Entity *WebservReadEvent::entity()
+WebservEntity*WebservReadEvent::entity()
 {
     return (this->entity_);
 }

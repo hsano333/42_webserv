@@ -32,7 +32,7 @@ class Config : public ConfigObject<ConfigHttp*>
         ~Config();
 
         void load();
-        static Config *get_instance();
+        //static Config *get_instance();
         static void set_filepath(const char *filepath);
         ConfigHttp *http;
         void retrieve(const std::string &word, std::map<std::string, std::string> &map, void(*f)(char *str));
@@ -51,6 +51,7 @@ class Config : public ConfigObject<ConfigHttp*>
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigHttp*> const &vec);
         void check();
+        void check() const;
         void check(SocketRepository *socket_repository);
 
         File *get_error_file(Request const *req, StatusCode &code) const;

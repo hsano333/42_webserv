@@ -124,6 +124,7 @@ void Config::set_filepath(const char *filepath)
     Config::_filepath = string(filepath);
 }
 
+/*
 Config* Config::get_instance()
 {
     //if (Config::_singleton == NULL){
@@ -132,6 +133,7 @@ Config* Config::get_instance()
     //return (Config::_singleton);
     return (NULL);
 }
+*/
 
 map<pair<Port, string>, const ConfigServer*> Config::servers_cache;
 //map<pair<Port, string>, vector<string> > Config::locations_cache;
@@ -210,14 +212,19 @@ const ConfigServer* Config::get_server(Request const *req) const
 
 const ConfigServer *Config::get_server(Port const& port, string const& host) const
 {
+    DEBUG("Config::get_server");
+
+    DEBUG("Config::get_server No.1");
     map<pair<Port, string>, ConfigServer const*>::iterator cash_ite = servers_cache.find(make_pair(port, host));
     if (cash_ite != servers_cache.end()){
         return (cash_ite->second);
     }
+    DEBUG("Config::get_server No.2");
     if(servers_cache.size() > 100){
         servers_cache.clear();
     }
 
+    DEBUG("Config::get_server No.3");
     vector<ConfigServer const*> servers;
 
     /*
@@ -231,14 +238,23 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
 
     IP_Address host_address = IP_Address::from_string_or_name(host);
 
+    this->check();
 
+    DEBUG("Config::get_server No.4");
     //std::vector<Port>
+    cout << "http test NULL?" << endl;
+    printf("http=%p\n", http);
+    cout << "http test NULL No.2?" << endl;
     ConfigServer const *default_server = NULL;
     for (size_t i = 0; i < http->get_server_size(); i++) {
+    DEBUG("Config::get_server No.5");
         if (http->server(i)->listen() == port){
+    DEBUG("Config::get_server No.6");
             if(default_server == NULL){
+    DEBUG("Config::get_server No.7");
                 default_server = http->server(i);
             }
+    DEBUG("Config::get_server No.8");
 
             IP_Address config_address = IP_Address::from_string_or_name(http->server(i)->server_name());
             MYINFO("config_address:" + config_address.to_string());
@@ -254,6 +270,7 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
         return (default_server);
     }
 
+    DEBUG("Config::get_server No.6");
     return (http->server(0));
     //return (http->server(i));
     //return (NULL);
@@ -430,8 +447,11 @@ void Config::assign_out_properties(std::vector<std::string> &properties)
 
 void Config::push_all(std::vector<ConfigHttp*> const &vec)
 {
+    DEBUG("Config::push_all");
     if(vec.size() == 1){
         this->http = vec[0];
+        DEBUG("Config::push_all No.2");
+        printf("http=%p\n", http);
     }else{
         ERROR("Invalid Config Error: http is only one");
         throw std::runtime_error("config parser error: http is only one");
@@ -504,8 +524,20 @@ void Config::print_cfg()
 
 }
 
+
 void Config::check()
 {
+    DEBUG("Config::check()");
+    printf("http=%p\n", http);
+    if(http == NULL){
+        ERROR("Config::check(),  http is null");
+        throw std::runtime_error("Config::check(),  http is null");
+    }
+}
+
+void Config::check() const
+{
+    DEBUG("Config::check() const");
     if(http == NULL){
         ERROR("Config::check(),  http is null");
         throw std::runtime_error("Config::check(),  http is null");

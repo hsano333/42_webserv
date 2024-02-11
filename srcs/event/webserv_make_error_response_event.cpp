@@ -6,16 +6,16 @@
 #include "application_result.hpp"
 #include "error_file.hpp"
 
-WebservMakeErrorResponseEvent::WebservMakeErrorResponseEvent(
-                            FileDiscriptor fd,
-                            Request *req
+WebservMakeErrorResponseEvent::WebservMakeErrorResponseEvent():
+                            //FileDiscriptor fd,
+                            //Request *req
                             //IReader *reader
                             //Config  *cfg
-                            )
-                            :
-                            fd_(fd),
-                            req_(req),
-                            res_(NULL),
+                            //)
+                            //:
+                            //fd_(fd),
+                            //req_(req),
+                            //res_(NULL),
                             file_(NULL),
                             source_file(NULL),
                             destination_file(NULL),
@@ -78,7 +78,7 @@ WebservMakeErrorResponseEvent *WebservMakeErrorResponseEvent::from_event(Webserv
     DEBUG("WebservMakeErrorResponseEvent::from_event");
   //(void)src;
   //(void)dst;
-  WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent(event->fd(), event->req());
+  WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent();
   //printf("src=%p\n", src);
   new_event->source_file = NULL;
   new_event->destination_file = dst;
@@ -98,7 +98,7 @@ EWebservEvent WebservMakeErrorResponseEvent::which()
 WebservEvent* WebservMakeErrorResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeErrorResponseEvent::make_next_event");
-    File *src = event->res();
+    File *src = event->entity()->response();
     //File *dst = OpenedSocketFile::from_fd(this->next_event_writer, event->fd());
     return (event_factory->make_io_socket_event_as_write(event, src));
 }
@@ -144,6 +144,7 @@ File *WebservMakeErrorResponseEvent::make()
     return (make_response());
 }
 
+/*
 FileDiscriptor &WebservMakeErrorResponseEvent::fd()
 {
     return (this->fd_);
@@ -158,6 +159,7 @@ Response *WebservMakeErrorResponseEvent::res()
 {
     return (this->res_);
 }
+*/
 
 File *WebservMakeErrorResponseEvent::src()
 {
@@ -214,10 +216,11 @@ WebservCgiEvent *WebservMakeErrorResponseEvent::cgi_event()
 void WebservMakeErrorResponseEvent::set_file(File *file)
 {
     DEBUG("WebservMakeErrorResponseEvent::set_file");
-    this->res_ = static_cast<Response*>(file);
+    //this->res_ = static_cast<Response*>(file);
+    this->entity_->set_response(static_cast<Response*>(file));
 }
 
-Entity *WebservMakeErrorResponseEvent::entity()
+WebservEntity*WebservMakeErrorResponseEvent::entity()
 {
     return (this->entity_);
 }

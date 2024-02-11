@@ -26,8 +26,29 @@ using std::vector;
 
 #define BODY_TMP_DIRECTORY_PATH "/tmp/webserv_body_tmp/"
 
+/*
 Request::Request() :
     file(NULL),
+    //fd_(std::move(FileDiscriptor::from_int(0))),
+    //raw_buf_pos_(0),
+    buf_body_size(0),
+    // -1 is for '\0'
+    //raw_buf_rest_size_(MAX_BUF-1),
+    is_file_(false),
+    is_directory_(false),
+    is_not_executable_parent_dir_(false)
+    //source_file(NULL)
+    //is_redable_darectory(false)
+{
+
+    //fd_ = FileDiscriptor::from_int(0);
+    DEBUG("Request::Request()");
+}
+*/
+
+Request::Request(FileDiscriptor const &fd) :
+    file(NULL),
+    fd_(fd),
     //raw_buf_pos_(0),
     buf_body_size(0),
     // -1 is for '\0'
@@ -47,10 +68,10 @@ Request::~Request()
 }
 
 
-Request *Request::from_fd(FileDiscriptor fd)
+Request *Request::from_fd(FileDiscriptor const &fd)
 {
-    Request *req = new Request();
-    req->fd_ = fd;
+    Request *req = new Request(fd);
+    //req->fd_ = fd;
     //req->sockfd_ = sockfd;
     return (req);
 }

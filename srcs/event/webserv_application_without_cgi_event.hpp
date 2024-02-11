@@ -7,11 +7,11 @@
 #include "application.hpp"
 #include "application_result.hpp"
 #include "webserv_application_event.hpp"
+#include "webserv_entity.hpp"
 
 class WebservApplicationWithoutCgiEvent : public WebservEvent, public WebservApplicationEvent
 {
     public:
-        WebservApplicationWithoutCgiEvent(FileDiscriptor fd, Request *req);
         ~WebservApplicationWithoutCgiEvent();
         static WebservEvent *from_event(WebservEvent *event);
         EWebservEvent   which();
@@ -40,9 +40,10 @@ class WebservApplicationWithoutCgiEvent : public WebservEvent, public WebservApp
 
         void set_result(ApplicationResult *result);
         ApplicationResult *result();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
+        WebservApplicationWithoutCgiEvent();
         FileDiscriptor  fd_;
         Request         *req_;
         Response        *res_;
@@ -55,7 +56,7 @@ class WebservApplicationWithoutCgiEvent : public WebservEvent, public WebservApp
 
         WebservCgiEvent *cgi_event_;
         ApplicationResult *result_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 
 #endif

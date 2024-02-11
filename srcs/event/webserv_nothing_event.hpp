@@ -5,6 +5,7 @@
 #include "file_discriptor.hpp"
 #include "ireader.hpp"
 #include "webserv_cgi_event.hpp"
+#include "webserv_entity.hpp"
 
 class WebservNothingEvent : public WebservEvent
 {
@@ -32,7 +33,7 @@ class WebservNothingEvent : public WebservEvent
 
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
-        Entity *entity();
+        WebservEntity *entity();
         
 
     private:
@@ -40,6 +41,6 @@ class WebservNothingEvent : public WebservEvent
         FileDiscriptor fd_;
         //bool is_completed_;
         WebservCgiEvent *cgi_event_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

@@ -3,23 +3,14 @@
 #include "http_exception.hpp"
 #include "opened_socket_file.hpp"
 
-WebservMakeRequestEvent::WebservMakeRequestEvent(
-                            FileDiscriptor fd,
-                            Request *req,
-                            IReader *reader,
-                            Config  *cfg
-                            )
-                            :
-                            fd_(fd),
-                            req_(req),
-                            res_(NULL),
+WebservMakeRequestEvent::WebservMakeRequestEvent():
                             file_(NULL),
                             source_file(NULL),
                             destination_file(NULL),
                             timeout_count_(0),
                             is_completed_(false),
-                            reader(reader),
-                            cfg(cfg)
+                            reader(NULL)
+                            //cfg(cfg)
 {
 
 };
@@ -28,12 +19,14 @@ WebservMakeRequestEvent::~WebservMakeRequestEvent()
 {
 };
 
-WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, Config *cfg, File *src, File *dst)
+WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, File *src, File *dst)
 {
-    WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent(event->fd(), event->req(), reader, cfg);
+    DEBUG("WebservMakeRequestEvent::from_event");
+    WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent();
     new_event->source_file = src;
     new_event->destination_file = dst;
     new_event->entity_ = event->entity();
+    new_event->reader = reader;
     return (new_event);
 };
 
@@ -47,7 +40,7 @@ WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, Webs
     DEBUG("WebservMakeRequestEvent::make_next_event No.0");
     
     WebservEvent* new_event;
-    if(event->req()->is_cgi()){
+    if(event->entity()->request()->is_cgi()){
         DEBUG("WebservMakeRequestEvent::make_next_event No.1");
         new_event = event_factory->make_application_with_cgi_event(event);
     }else{
@@ -194,7 +187,7 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 
 Request *WebservMakeRequestEvent::make_request()
 {
-    Request *req = Request::from_fd(this->fd());
+    Request *req = Request::from_fd(this->entity_->fd());
     this->parse_request(req);
 
     const ConfigServer *server = this->cfg->get_server(req);
@@ -211,10 +204,11 @@ Request *WebservMakeRequestEvent::make_request()
 File *WebservMakeRequestEvent::make()
 {
     Request *req = (make_request());
-    this->entity()->req = req;
+    this->entity()->set_request(req);
     return (req);
 }
 
+/*
 FileDiscriptor &WebservMakeRequestEvent::fd()
 {
     return (this->fd_);
@@ -229,6 +223,7 @@ Response *WebservMakeRequestEvent::res()
 {
     return (this->res_);
 }
+*/
 
 File *WebservMakeRequestEvent::src()
 {
@@ -300,10 +295,10 @@ WebservCgiEvent *WebservMakeRequestEvent::cgi_event()
 
 void WebservMakeRequestEvent::set_file(File *file)
 {
-    this->req_ = static_cast<Request*>(file);
+    this->entity_->set_request(static_cast<Request*>(file));
 }
 
-Entity *WebservMakeRequestEvent::entity()
+WebservEntity*WebservMakeRequestEvent::entity()
 {
     return (this->entity_);
 }

@@ -6,22 +6,13 @@
 #include "application_result.hpp"
 #include "header_word.hpp"
 
-WebservMakeResponseEvent::WebservMakeResponseEvent(
-                            FileDiscriptor fd,
-                            Request *req,
-                            IReader *reader
-                            //Config  *cfg
-                            )
-                            :
-                            fd_(fd),
-                            req_(req),
-                            res_(NULL),
+WebservMakeResponseEvent::WebservMakeResponseEvent():
                             file_(NULL),
                             source_file(NULL),
                             destination_file(NULL),
                             timeout_count_(0),
                             is_completed_(false),
-                            reader(reader)
+                            reader(NULL)
                             //reader(reader)
                             //cfg(cfg)
 {
@@ -72,8 +63,8 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
     File *file = OpenedSocketFile::from_fd(reader, result->cgi_out());
 
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.6");
-    Request *req = this->entity()->req;
-    const ConfigServer *server = this->entity()->cfg->get_server(req);
+    Request const *req = this->entity_->request();
+    ConfigServer const *server = this->entity_->config()->get_server(req);
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.7");
     //const ConfigLocation *location = this->entity()->cfg->get_location(server, req);
 
@@ -165,11 +156,12 @@ WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *eve
     DEBUG("WebservMakeResponseEvent::from_event");
   //(void)src;
   //(void)dst;
-  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent(event->fd(), event->req(), reader);
+  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent();
   printf("src=%p\n", src);
   new_event->source_file = src;
   new_event->destination_file = dst;
   new_event->next_event_writer = writer;
+  new_event->reader = reader;
   new_event->entity_ = event->entity();
   return (new_event);
   //return (event);
@@ -184,7 +176,7 @@ EWebservEvent WebservMakeResponseEvent::which()
 WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
-    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, this->res_));
+    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, this->entity_->response()));
     //this->res_->set_file()();
     //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(new_event);
     //File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
@@ -247,6 +239,7 @@ File *WebservMakeResponseEvent::make()
     return (make_response(result));
 }
 
+/*
 FileDiscriptor &WebservMakeResponseEvent::fd()
 {
     return (this->fd_);
@@ -261,6 +254,7 @@ Response *WebservMakeResponseEvent::res()
 {
     return (this->res_);
 }
+*/
 
 File *WebservMakeResponseEvent::src()
 {
@@ -317,10 +311,11 @@ WebservCgiEvent *WebservMakeResponseEvent::cgi_event()
 void WebservMakeResponseEvent::set_file(File *file)
 {
     DEBUG("WebservMakeResponseEvent::set_file");
-    this->res_ = static_cast<Response*>(file);
+    //this->res_ = static_cast<Response*>(file);
+    this->entity_->set_response(static_cast<Response*>(file));
 }
 
-Entity *WebservMakeResponseEvent::entity()
+WebservEntity*WebservMakeResponseEvent::entity()
 {
     return (this->entity_);
 }

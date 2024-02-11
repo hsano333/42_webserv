@@ -7,19 +7,20 @@
 #include "application.hpp"
 #include "application_result.hpp"
 #include "webserv_application_event.hpp"
+#include "webserv_entity.hpp"
 
 class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplicationEvent
 {
     public:
-        WebservApplicationWithCgiEvent(FileDiscriptor fd, Request *req);
+        //WebservApplicationWithCgiEvent(FileDiscriptor fd, Request *req);
         ~WebservApplicationWithCgiEvent();
         static WebservApplicationWithCgiEvent *from_event(WebservEvent *event, IWriter *writer);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
-        FileDiscriptor  &fd();
-        Request         *req();
-        Response        *res();
+        //FileDiscriptor  &fd();
+        //Request         *req();
+        //Response        *res();
         File            *src();
         File            *dst();
         void            switching_io(uint32_t epoll_event);
@@ -39,13 +40,14 @@ class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplic
         WebservCgiEvent *cgi_event();
 
         void set_result(ApplicationResult *result);
-        ApplicationResult *result();
-        Entity *entity();
+        //ApplicationResult *result();
+        WebservEntity *entity();
 
     private:
-        FileDiscriptor  fd_;
-        Request         *req_;
-        Response        *res_;
+        WebservApplicationWithCgiEvent();
+        //FileDiscriptor  fd_;
+        //Request         *req_;
+        //Response        *res_;
         File            *file_;
         File            *source_file;
         File            *destination_file;
@@ -54,9 +56,9 @@ class WebservApplicationWithCgiEvent : public WebservEvent, public WebservApplic
         bool            is_completed_;
 
         WebservCgiEvent *cgi_event_;
-        ApplicationResult *result_;
+        //ApplicationResult *result_;
         IWriter *next_event_writer;
-        Entity          *entity_;
+        WebservEntity          *entity_;
 
 };
 

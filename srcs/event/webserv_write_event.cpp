@@ -21,14 +21,14 @@ WebservWriteEvent::WebservWriteEvent()
 }
 
 WebservWriteEvent::WebservWriteEvent(
-        FileDiscriptor fd,
+        //FileDiscriptor fd,
         File *src,
         File *dst
         //File *source
         //IWriter *writer
         )
     :
-        fd_(fd),
+        //fd_(fd),
         source_file(src),
         destination_file(dst),
         //source_file(source),
@@ -99,7 +99,7 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
     DEBUG("WebservWriteEvent::from_event()");
     //File *file = OpenedSocketFile::from_fd(writer, res->fd());
     WebservWriteEvent *write_event =  (new WebservWriteEvent(
-            event->fd(),
+            //event->fd(),
             src,
             dst
             //writer
@@ -108,9 +108,10 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
 
     write_event->source_file = src;
     write_event->destination_file = dst;
-    write_event->req_ = event->req();
-    write_event->res_ = event->res();
+    //write_event->req_ = event->req();
+    //write_event->res_ = event->res();
     write_event->entity_ = event->entity();
+    /*
     if(event->res()->get_file()){
             cout << "check file No.1" << endl;
             cout << "check file No.1" << endl;
@@ -120,6 +121,7 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
             cout << "check file not No.1" << endl;
             cout << "check file not No.1" << endl;
     }
+    */
     //write_event->destination_file = OpenedSocketFile::from_fd(writer, event->fd());
 
     return (write_event);
@@ -215,7 +217,7 @@ int WebservWriteEvent::write(char *buf, size_t size)
 }
 
 
-Entity *WebservWriteEvent::entity()
+WebservEntity*WebservWriteEvent::entity()
 {
     return (this->entity_);
 }

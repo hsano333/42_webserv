@@ -35,10 +35,9 @@ typedef enum E_STATE
 class Request : public File
 {
     public:
-        Request();
         ~Request();
 
-        static Request *from_fd(FileDiscriptor fd);
+        static Request *from_fd(FileDiscriptor const &fd);
         //char*   buf();
         void    clear_raw_buf();
         //size_t  buf_size();
@@ -105,8 +104,11 @@ class Request : public File
         //ssize_t get_data(char** data);
         //
     private:
+        Request();
+        Request(FileDiscriptor const &fd);
+
         File *file;
-        FileDiscriptor fd_;
+        FileDiscriptor const &fd_;
         //FileDiscriptor sockfd_;
         //char    raw_buf[MAX_BUF];
         //char    raw_buf[200];

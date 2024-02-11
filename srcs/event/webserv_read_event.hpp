@@ -6,24 +6,25 @@
 #include "webserv_cgi_event.hpp"
 #include "http_data.hpp"
 #include "file.hpp"
+#include "webserv_entity.hpp"
 
 // source_fileからデータを最大8k-10バイト程度読み出し、これを保持する。
 class WebservReadEvent : public WebservEvent
 {
     public:
-        WebservReadEvent();
+        //WebservReadEvent();
         //WebservReadEvent(FileDiscriptor fd, IReader* ireader);
         ~WebservReadEvent();
         EWebservEvent which();
 
         //static WebservReadEvent *from_fd(FileDiscriptor fd, IReader *reader);
         static WebservReadEvent *from_fd(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader, File *src, File *dst);
-        static WebservReadEvent *from_cgi_fd(FileDiscriptor sockfd,FileDiscriptor pid, IReader *reader);
-        static WebservReadEvent *from_event(WebservEvent *event, FileDiscriptor sockfd, IReader *reader);
-        FileDiscriptor  &fd();
-        FileDiscriptor  &sock_fd();
-        Request         *req();
-        Response        *res();
+        //static WebservReadEvent *from_cgi_fd(FileDiscriptor sockfd,FileDiscriptor pid, IReader *reader);
+        static WebservReadEvent *from_event(WebservEvent *event, IReader *reader);
+        //FileDiscriptor  &fd();
+        //FileDiscriptor  &sock_fd();
+        //Request         *req();
+        //Response        *res();
         File            *src();
         File            *dst();
         void            set_src(File *file);
@@ -41,16 +42,17 @@ class WebservReadEvent : public WebservEvent
         void set_cgi_event(WebservCgiEvent *cgi_event);
         WebservCgiEvent *cgi_event();
         //IReader *reader();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
-        WebservReadEvent(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader);
-        Request         *req_;
-        Response        *res_;
+        WebservReadEvent();
+        //WebservReadEvent(FileDiscriptor fd, FileDiscriptor sockfd, IReader *reader);
+        //Request         *req_;
+        //Response        *res_;
         File            *source_file;
         File            *destination_file;
-        FileDiscriptor  fd_;
-        FileDiscriptor  sockfd_;
+        //FileDiscriptor  fd_;
+        //FileDiscriptor  sockfd_;
         //EWebservEvent event_type;
         int timeout_count_;
         bool is_completed_;
@@ -68,6 +70,6 @@ class WebservReadEvent : public WebservEvent
         char    buf_[MAX_BUF];
         char*   buf();
         size_t  raw_buf_pos_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

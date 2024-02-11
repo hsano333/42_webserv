@@ -8,6 +8,7 @@
 #include "webserv_cgi_event.hpp"
 #include "http_data.hpp"
 #include "application_result.hpp"
+#include "webserv_entity.hpp"
 
 // source_fileからデータを読み出し、fdに対して書き込む
 class WebservWriteCGIEvent : public WebservEvent
@@ -42,7 +43,7 @@ class WebservWriteCGIEvent : public WebservEvent
         static WebservWriteCGIEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader, IWriter *writer);
         //void set_cgi_event(WebservCgiEvent *cgi_event);
         //WebservCgiEvent *cgi_event();
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
         FileDiscriptor  fd_;
@@ -57,6 +58,6 @@ class WebservWriteCGIEvent : public WebservEvent
         //IReader *reader;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

@@ -26,10 +26,10 @@ EventController::~EventController()
 void EventController::restart_communication(WebservEvent *event)
 {
     (void)event;
-    if (event_manager->find(event->fd()) == false){
+    if (event_manager->find(event->entity()->fd()) == false){
         DEBUG("EventController::restart_communication: add ");
         // 同じfdが登録されていないので、再度登録する。
-        event_manager->add_event_waiting_epoll(event->fd(), event);
+        event_manager->add_event_waiting_epoll(event->entity()->fd(), event);
 
         //もし同じfdが登録されている場合、同じクライアントから、
         //再度HTTP通信が始まったことを意味するので、イベントを削除する。
@@ -40,9 +40,9 @@ void EventController::restart_communication(WebservEvent *event)
 
 void EventController::change_write_event(WebservEvent *event)
 {
-    DEBUG("EventController::change_write_event() fd=" + event->fd().to_string());
+    DEBUG("EventController::change_write_event() fd=" + event->entity()->fd().to_string());
     (void)event;
-    this->io_multi_controller->modify(event->fd(), EPOLLIN | EPOLLONESHOT);
+    this->io_multi_controller->modify(event->entity()->fd(), EPOLLIN | EPOLLONESHOT);
 
 }
 
@@ -52,26 +52,26 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
     if (next_epoll_event == EPOLL_READ){
-        this->io_multi_controller->modify(next_event->fd(), EPOLLIN | EPOLLONESHOT);
-        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
-        MYINFO("EventController::next is epoll read fd=" + event->fd().to_string());
-        MYINFO("EventController::next is epoll read next fd=" + next_event->fd().to_string());
+        this->io_multi_controller->modify(next_event->entity()->fd(), EPOLLIN | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
+        MYINFO("EventController::next is epoll read fd=" + event->entity()->fd().to_string());
+        MYINFO("EventController::next is epoll read next fd=" + next_event->entity()->fd().to_string());
     }else if (next_epoll_event == EPOLL_WRITE){
         MYINFO("EventController::next is epoll write");
-        this->io_multi_controller->modify(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
-        //this->event_manager->erase_event_waiting_epoll(event->fd());
-        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
-        MYINFO("EventController::next is epoll write fd=" + event->fd().to_string());
-        MYINFO("EventController::next is epoll write next fd=" + next_event->fd().to_string());
+        this->io_multi_controller->modify(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
+        //this->event_manager->erase_event_waiting_epoll(event->entity()->fd());
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
+        MYINFO("EventController::next is epoll write fd=" + event->entity()->fd().to_string());
+        MYINFO("EventController::next is epoll write next fd=" + next_event->entity()->fd().to_string());
     }else if (next_epoll_event == EPOLL_ADD_WRITE){
         MYINFO("EventController::next is epoll add write");
-        this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
-        this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+        this->io_multi_controller->add(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
     }else if (next_epoll_event == EPOLL_FOR_CGI){
         MYINFO("EventController::next is epoll EPOLL_FOR_CGI");
 
         WebservIOEvent *io_event = dynamic_cast<WebservIOEvent *>(next_event);
-        FileDiscriptor &socket_fd = io_event->get_socket_fd();
+        FileDiscriptor const &socket_fd = next_event->entity()->socket_fd();
 
         //this->io_multi_controller->add(io_event->get_write_fd(), EPOLLOUT | EPOLLONESHOT);
         //this->event_manager->add_event_waiting_epoll(io_event->get_write_fd(), next_event);
@@ -82,32 +82,32 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         this->io_multi_controller->add(io_event->get_read_fd(), EPOLLIN | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(io_event->get_read_fd(), next_event);
         this->fd_manager->add_socket_and_epoll_fd(io_event->get_read_fd(), socket_fd);
-        //this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+        //this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
         DEBUG("set read io=" + Utility::to_string(io_event->get_read_fd()));
 
     //}else if (next_epoll_event == EPOLL_CGI){
-        //this->io_multi_controller->add(next_event->fd(), EPOLLOUT | EPOLLONESHOT);
-        //this->io_multi_controller->add(next_event->fd(), EPOLLIN | EPOLLONESHOT);
-        //this->event_manager->add_event_waiting_epoll(next_event->fd(), next_event);
+        //this->io_multi_controller->add(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
+        //this->io_multi_controller->add(next_event->entity()->fd(), EPOLLIN | EPOLLONESHOT);
+        //this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
 
         /*
     }else if (next_epoll_event == EPOLL_CGI_IN){
         MYINFO("EPOLL_CGI_IN:" + Utility::to_string(event->cgi_event().cgi_fd()));
-        this->io_multi_controller->modify(event->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->io_multi_controller->modify(event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
         this->io_multi_controller->modify(event->cgi_event().cgi_fd(), EPOLLOUT | EPOLLONESHOT);
-        //this->fd_manager->close_fd(app_event->fd());
+        //this->fd_manager->close_fd(app_event->entity()->fd());
     }else if (next_epoll_event == EPOLL_CGI_OUT){
         MYINFO("EPOLL_CGI_OUT:" + Utility::to_string(event->cgi_event().cgi_fd()));
-        this->io_multi_controller->modify(event->fd(), EPOLLOUT | EPOLLONESHOT);
+        this->io_multi_controller->modify(event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
         MYINFO("EPOLL_CGI_OUT No.1:" + Utility::to_string(event->cgi_event().cgi_fd()));
         this->io_multi_controller->modify(event->cgi_event().cgi_fd(), EPOLLIN | EPOLLONESHOT);
         MYINFO("EPOLL_CGI_OUT No.2:" + Utility::to_string(event->cgi_event().cgi_fd()));
-        //this->fd_manager->close_fd(app_event->fd());
+        //this->fd_manager->close_fd(app_event->entity()->fd());
         */
     //}else if (next_epoll_event == EPOLL_CGI_STOP){
-        //this->io_multi_controller->modify(event->fd(), EPOLLIN | EPOLLONESHOT);
+        //this->io_multi_controller->modify(event->entity()->fd(), EPOLLIN | EPOLLONESHOT);
     }else if (next_epoll_event == EPOLL_CLOSE){
-        this->fd_manager->close_fd(event->fd());
+        this->fd_manager->close_fd(event->entity()->fd());
         //DEBUG("EventController::next_event No.1 delete event:" + Utility::to_string(event));
         //delete event;
         //event = NULL;

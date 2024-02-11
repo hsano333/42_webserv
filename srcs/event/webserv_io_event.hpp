@@ -12,7 +12,7 @@ class WebservIOEvent
         virtual void set_read_io(File *src, File *dst) = 0;
         virtual FileDiscriptor &get_write_fd() = 0;
         virtual FileDiscriptor &get_read_fd() = 0;
-        virtual FileDiscriptor &get_socket_fd() = 0;
+        //virtual FileDiscriptor &get_socket_fd() = 0;
 
     private:
 };

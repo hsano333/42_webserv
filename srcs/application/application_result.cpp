@@ -3,6 +3,7 @@
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 #include "directory_file.hpp"
+#include "application_result.hpp"
 #include <unistd.h>
 
 ApplicationResult::ApplicationResult() : is_cgi_(false)

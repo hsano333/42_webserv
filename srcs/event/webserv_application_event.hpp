@@ -5,13 +5,15 @@
 #include "file_discriptor.hpp"
 #include "webserv_cgi_event.hpp"
 #include "application.hpp"
+#include "webserv_entity.hpp"
 
 class WebservApplicationEvent
 {
     public:
         //WebservApplicationEvent(FileDiscriptor fd, Request *req);
         ~WebservApplicationEvent(){};
-        virtual Request         *req() = 0;
+        virtual WebservEntity *entity() = 0;
+        //virtual Request         *req() = 0;
         /*
         static WebservApplicationEvent *from_event(WebservEvent *event);
         EWebservEvent   which();

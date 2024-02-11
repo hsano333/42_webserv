@@ -5,6 +5,7 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "webserv_event_factory.hpp"
+#include "webserv_entity.hpp"
 //#include "webserv_cgi_event.hpp"
 
 typedef enum E_WebservEvent
@@ -38,7 +39,7 @@ typedef enum E_EpollEvent
 } E_EpollEvent;
 
 /*
-struct Entity
+struct WebservEntity
 {
     Request             *req;
     Response            *res;
@@ -46,29 +47,23 @@ struct Entity
 };
 */
 
-struct Entity
-{
-    Request             *req = NULL;
-    Response            *res = NULL;
-    Config              *cfg = NULL;
-    ApplicationResult   *app = NULL;
-};
 
+class WebservEntity;
 class WebservEvent
 {
     public:
-        //struct Entity;
+        //struct WebservEntity;
         //WebservEvent();
         virtual ~WebservEvent(){};
         virtual EWebservEvent which() = 0;
         //static WebservEvent *from_epoll_event(t_epoll_event const &event);
 
-        virtual FileDiscriptor &fd() = 0;
+        //virtual FileDiscriptor const &fd() = 0;
         virtual WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory) = 0;
         virtual E_EpollEvent get_next_epoll_event() = 0;
 
-        virtual Request *req() = 0;
-        virtual Response *res() = 0;
+        //virtual Request *req() = 0;
+        //virtual Response *res() = 0;
         virtual File *src() = 0;
         virtual File *dst() = 0;
         //virtual void set_io(uint32_t epoll_event) = 0;
@@ -81,16 +76,17 @@ class WebservEvent
         virtual void increase_timeout_count(int count) = 0;
         virtual int  timeout_count() = 0;
 
-        virtual Entity *entity() = 0;
+        virtual WebservEntity *entity() = 0;
+
+        //virtual void handle() const = 0;
         //virtual void set_cgi_event(WebservCgiEvent *cgi_event) = 0;
         //virtual WebservCgiEvent *cgi_event() = 0;
 
     private:
-        Entity *entity_;
-        Request *req_;
-        Response *res_;
+        WebservEntity *entity_;
+        //Request *req_;
+        //Response *res_;
         int timeout_count_;
-
 };
 
 #endif

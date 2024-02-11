@@ -6,6 +6,7 @@
 #include "ireader.hpp"
 #include "webserv_cgi_event.hpp"
 #include "webserv_io_event.hpp"
+#include "webserv_entity.hpp"
 
 class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
 {
@@ -39,8 +40,8 @@ class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
         void set_read_io(File *src, File *dst);
         FileDiscriptor  &get_write_fd();
         FileDiscriptor  &get_read_fd();
-        FileDiscriptor  &get_socket_fd();
-        Entity *entity();
+        //FileDiscriptor  &get_socket_fd();
+        WebservEntity *entity();
 
     private:
         int             timeout_count_;
@@ -51,6 +52,6 @@ class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
         FileDiscriptor  write_fd_;
         FileDiscriptor  read_fd_;
         FileDiscriptor  sock_fd_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

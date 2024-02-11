@@ -82,7 +82,7 @@ PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, Webserv
 
     PostCGIApplication *app = new PostCGIApplication();
     app->cfg = cfg;
-    app->req = event->req();
+    app->req = static_cast<Request const*>(event->entity()->request());
     app->server = cfg->get_server(app->req);
     app->location = cfg->get_location(app->server, app->req);
     app->cgi = cgi;

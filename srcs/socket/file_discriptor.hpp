@@ -28,7 +28,7 @@ class FileDiscriptor : PositiveNumber
         void close() const;
         int to_int() const;
         int to_int();
-        std::string const to_string();
+        std::string const to_string() const;
     private:
         FileDiscriptor(int fd);
         int fd;

@@ -6,6 +6,7 @@
 #include "webserv_cgi_event.hpp"
 #include "webserv_make_event.hpp"
 #include "config.hpp"
+#include "webserv_entity.hpp"
 
 class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
 {
@@ -16,9 +17,9 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
-        FileDiscriptor  &fd();
-        Request         *req();
-        Response        *res();
+        //FileDiscriptor  &fd();
+        //Request         *req();
+        //Response        *res();
         File            *src();
         File            *dst();
         void            switching_io(uint32_t epoll_event);
@@ -39,15 +40,16 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         //File    *make_request();
         File    *make();
         void    set_file(File *file);
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
-        WebservMakeResponseEvent(FileDiscriptor fd, Request *req, IReader *reader);
+        WebservMakeResponseEvent();
+        //WebservMakeResponseEvent(FileDiscriptor fd, Request *req, IReader *reader);
         Response *make_response(ApplicationResult *result);
         Response *make_response_for_cgi(ApplicationResult *result);
-        FileDiscriptor  fd_;
-        Request         *req_;
-        Response        *res_;
+        //FileDiscriptor  fd_;
+        //Request         *req_;
+        //Response        *res_;
         File            *file_;
         File            *source_file;
         File            *destination_file;
@@ -61,7 +63,7 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         void parse_req(WebservEvent *event);
         IReader *reader;
         IWriter *next_event_writer;
-        Entity          *entity_;
+        WebservEntity         *entity_;
         //Config *cfg;
         //
 

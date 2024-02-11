@@ -8,16 +8,17 @@
 #include "file.hpp"
 #include "request.hpp"
 #include "response.hpp"
+#include "webserv_entity.hpp"
 
 // source_fileからデータを読み出し、fdに対して書き込む
 class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
 {
     public:
-        WebservIOSocketEvent(FileDiscriptor &fd, FileDiscriptor sockfd, File *socket_io, File *read_dst);
+        WebservIOSocketEvent(File *socket_io, File *read_dst);
         ~WebservIOSocketEvent();
-        static WebservIOSocketEvent *for_cgi(FileDiscriptor &fd, FileDiscriptor &sockfd, File *src, File *read_dst);
-        static WebservIOSocketEvent *as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst, Entity *entity);
-        static WebservIOSocketEvent *as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &write_fd, File *src, File *dst);
+        static WebservIOSocketEvent *for_cgi(File *src, File *read_dst);
+        static WebservIOSocketEvent *as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity);
+        static WebservIOSocketEvent *as_write(WebservEntity *entity, FileDiscriptor const &write_fd, File *src, File *dst);
 
 
         EWebservEvent which();
@@ -35,7 +36,7 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         void            set_read_io(File *src, File *dst);
         FileDiscriptor  &get_write_fd();
         FileDiscriptor  &get_read_fd();
-        FileDiscriptor  &get_socket_fd();
+        //FileDiscriptor  &get_socket_fd();
         bool is_completed();
         void set_completed(bool flag);
         void increase_timeout_count(int count);
@@ -45,11 +46,11 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
         int write(char *buf, size_t size);
         int read(char *buf, size_t size);
         //static WebservIOSocketEvent *from_event(WebservEvent *event, File *src, File *dst);
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
         WebservIOSocketEvent();
-        WebservIOSocketEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
+        //WebservIOSocketEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
         FileDiscriptor  fd_;
         FileDiscriptor  sock_fd_;
         Request         *req_;
@@ -68,6 +69,6 @@ class WebservIOSocketEvent : public WebservEvent, public WebservIOEvent
 
         FileDiscriptor  write_fd_;
         FileDiscriptor  read_fd_;
-        Entity          *entity_;
+        WebservEntity         *entity_;
 };
 #endif

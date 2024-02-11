@@ -6,19 +6,20 @@
 #include "webserv_cgi_event.hpp"
 #include "webserv_make_event.hpp"
 #include "config.hpp"
+#include "webserv_entity.hpp"
 
 class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
 {
     public:
         //WebservMakeRequestEvent(FileDiscriptor fd, Request *req);
         ~WebservMakeRequestEvent();
-        static WebservMakeRequestEvent *from_event(WebservEvent *event, IReader *reader, Config *cfg, File *src, File *dst);
+        static WebservMakeRequestEvent *from_event(WebservEvent *event, IReader *reader, File *src, File *dst);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event();
-        FileDiscriptor  &fd();
-        Request         *req();
-        Response        *res();
+        //FileDiscriptor  &fd();
+        //Request         *req();
+        //Response        *res();
         File            *src();
         File            *dst();
         void            switching_io(uint32_t epoll_event);
@@ -39,19 +40,20 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
         Request *make_request();
         File    *make();
         void    set_file(File *file);
-        Entity *entity();
+        WebservEntity *entity();
 
     private:
-        WebservMakeRequestEvent(FileDiscriptor fd, Request *req, IReader *reader, Config *cfg);
+        //WebservMakeRequestEvent(FileDiscriptor fd, Request *req, IReader *reader, Config *cfg);
+        WebservMakeRequestEvent();
 
         void parse_request(Request *req);
         bool check_cgi(const Request *req, const ConfigLocation *location) const;
 
 
 
-        FileDiscriptor  fd_;
-        Request         *req_;
-        Response        *res_;
+        //FileDiscriptor  fd_;
+        //Request         *req_;
+        //Response        *res_;
         File            *file_;
         File            *source_file;
         File            *destination_file;
@@ -65,7 +67,7 @@ class WebservMakeRequestEvent : public  IWebservMakeEvent, public WebservEvent
         void parse_req(WebservEvent *event);
         IReader *reader;
         Config *cfg;
-        Entity          *entity_;
+        WebservEntity         *entity_;
         //bool is_cgi;
 
 };

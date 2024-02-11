@@ -3,19 +3,15 @@
 #include "opened_socket_file.hpp"
 #include "vector_file.hpp"
 
-WebservApplicationWithCgiEvent::WebservApplicationWithCgiEvent(
-                            FileDiscriptor fd,
-                            Request *req)
+WebservApplicationWithCgiEvent::WebservApplicationWithCgiEvent()
                             :
-                            fd_(fd),
-                            req_(req),
-                            res_(NULL),
                             file_(NULL),
                             source_file(NULL),
                             destination_file(NULL),
                             timeout_count_(0),
                             is_completed_(false),
-                            cgi_event_(NULL)
+                            cgi_event_(NULL),
+                            entity_(NULL)
 {
 
 };
@@ -27,7 +23,7 @@ WebservApplicationWithCgiEvent::~WebservApplicationWithCgiEvent()
 WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event, IWriter *writer)
 {
     //new_event->next_event_writer = writer;
-    WebservApplicationWithCgiEvent *new_event =  new WebservApplicationWithCgiEvent(event->fd(), event->req());
+    WebservApplicationWithCgiEvent *new_event =  new WebservApplicationWithCgiEvent();
     new_event->next_event_writer = writer;
     new_event->entity_ = event->entity();
     return (new_event);
@@ -42,11 +38,12 @@ WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* even
 {
     DEBUG("WebservApplicationWithCgiEvent::make_next_event");
 
-    MYINFO("Query=" + this->req()->req_line().uri().query());
-    VectorFile *file = VectorFile::from_ref(this->req()->req_line().uri().query());
-    this->req()->set_file(file);
+    Request *req = this->entity_->request();
+    MYINFO("Query=" + req->req_line().uri().query());
+    VectorFile *file = VectorFile::from_ref(req->req_line().uri().query());
+    req->set_file(file);
     //file->write();
-    File *write_src = this->req();
+    File *write_src = this->entity()->request();
     File *read_dst = this->destination_file;
     ApplicationResult *result = static_cast<ApplicationResult*>(this->destination_file);
     VectorFile *result_file = VectorFile::from_buf_size(MAX_BUF);
@@ -74,9 +71,10 @@ E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event()
     */
 }
 
-FileDiscriptor &WebservApplicationWithCgiEvent::fd()
+/*
+FileDiscriptor const &WebservApplicationWithCgiEvent::fd()
 {
-    return (this->fd_);
+    return (this->entity()->fd());
 }
 
 Request *WebservApplicationWithCgiEvent::req()
@@ -88,6 +86,7 @@ Response *WebservApplicationWithCgiEvent::res()
 {
     return (this->res_);
 }
+*/
 
 File *WebservApplicationWithCgiEvent::src()
 {
@@ -132,11 +131,6 @@ int WebservApplicationWithCgiEvent::timeout_count()
     return (this->timeout_count_);
 }
 
-void WebservApplicationWithCgiEvent::set_response(Response *res)
-{
-    this->res_ = res;
-}
-
 
 void WebservApplicationWithCgiEvent::set_file(File *file)
 {
@@ -162,17 +156,25 @@ WebservCgiEvent *WebservApplicationWithCgiEvent::cgi_event()
 }
 
 
+/*
 ApplicationResult *WebservApplicationWithCgiEvent::result()
 {
     return (this->result_);
 }
+*/
+
+
+void WebservApplicationWithCgiEvent::set_response(Response *res)
+{
+    this->entity_->set_response(res);
+}
 
 void WebservApplicationWithCgiEvent::set_result(ApplicationResult *result)
 {
-    this->result_ = result;
+    this->entity_->set_result(result);
 }
 
-Entity *WebservApplicationWithCgiEvent::entity()
+WebservEntity *WebservApplicationWithCgiEvent::entity()
 {
     return (this->entity_);
 }

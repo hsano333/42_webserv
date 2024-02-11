@@ -9,6 +9,21 @@
 
 WebservIOSocketEvent::WebservIOSocketEvent()
                                         :
+                                        //fd_(FileDiscriptor::from_int(0)),
+                                        //sock_fd_(FileDiscriptor::from_int(0)),
+                                        //req_(NULL),
+                                        //res_(NULL),
+                                        source_file(NULL),
+                                        destination_file(NULL),
+                                        timeout_count_(0),
+                                        //writer(NULL),
+                                        is_completed_(false)
+{
+    ;
+}
+/*
+WebservIOSocketEvent::WebservIOSocketEvent()
+                                        :
                                         fd_(FileDiscriptor::from_int(0)),
                                         sock_fd_(FileDiscriptor::from_int(0)),
                                         req_(NULL),
@@ -24,8 +39,8 @@ WebservIOSocketEvent::WebservIOSocketEvent()
 
 WebservIOSocketEvent::WebservIOSocketEvent(FileDiscriptor &fd, FileDiscriptor &sock_fd)
                                         :
-                                        fd_(fd),
-                                        sock_fd_(sock_fd),
+                                        //fd_(fd),
+                                        //sock_fd_(sock_fd),
                                         req_(NULL),
                                         res_(NULL),
                                         source_file(NULL),
@@ -36,6 +51,7 @@ WebservIOSocketEvent::WebservIOSocketEvent(FileDiscriptor &fd, FileDiscriptor &s
 {
     ;
 }
+*/
 
 
 WebservIOSocketEvent::~WebservIOSocketEvent()
@@ -44,13 +60,13 @@ WebservIOSocketEvent::~WebservIOSocketEvent()
 }
 
 
-WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &read_fd, File *src, File *dst, Entity *entity)
+WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity)
 {
-    DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
-    WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
+    //DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
+    WebservIOSocketEvent *event = new WebservIOSocketEvent();
     event->io = src;
-    event->fd_ = event->fd();
-    event->sock_fd_ = sockfd;
+    //event->fd_ = event->fd();
+    //event->sock_fd_ = sockfd;
     event->read_dst = dst;
     event->read_fd_ = read_fd;
     event->entity_ = entity;
@@ -60,15 +76,16 @@ WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor &fd, FileDisc
     return (event);
 }
 
-WebservIOSocketEvent *WebservIOSocketEvent::as_write(FileDiscriptor &fd, FileDiscriptor &sockfd, FileDiscriptor &write_fd, File *src, File *dst)
+WebservIOSocketEvent *WebservIOSocketEvent::as_write(WebservEntity *entity, FileDiscriptor const &write_fd, File *src, File *dst)
 {
-    DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
-    WebservIOSocketEvent *event = new WebservIOSocketEvent(fd, sockfd);
+    DEBUG("WebservIOSocketEvent::from_fd fd:" + entity->fd().to_string());
+    WebservIOSocketEvent *event = new WebservIOSocketEvent();
     event->io = dst;
-    event->fd_ = event->fd();
-    event->sock_fd_ = sockfd;
+    //event->fd_ = event->fd();
+    //event->sock_fd_ = sockfd;
     event->write_src = src;
     event->write_fd_ = write_fd;
+    event->entity_ = entity;
 
     event->switching_io(EPOLLOUT);
     return (event);
@@ -255,10 +272,12 @@ FileDiscriptor  &WebservIOSocketEvent::get_read_fd()
     return (this->read_fd_);
 }
 
+/*
 FileDiscriptor  &WebservIOSocketEvent::get_socket_fd()
 {
     return (this->sock_fd_);
 }
+*/
 
 /*
 HttpData *WebservIOSocketEvent::source()
@@ -320,7 +339,7 @@ int WebservIOSocketEvent::write(char *buf, size_t size)
     return (this->dst()->write(&buf, size));
 }
 
-Entity *WebservIOSocketEvent::entity()
+WebservEntity*WebservIOSocketEvent::entity()
 {
     return (this->entity_);
 }

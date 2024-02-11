@@ -26,7 +26,7 @@ class Application
         virtual ApplicationResult *get_result() = 0;
         virtual bool is_cgi() const = 0;
         virtual Response* make_response() = 0;
-        virtual WebservCgiEvent *cgi_event() = 0;
+        //virtual WebservCgiEvent *cgi_event() = 0;
         //virtual void set_result(ApplicationResult *result) = 0;
         virtual const Method &which() const = 0;
 

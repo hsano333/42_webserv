@@ -23,6 +23,10 @@
 #include "connection_exception.hpp"
 #include "event_controller.hpp"
 
+#include "event.hpp"
+#include "test_handle_event.hpp"
+
+
 #define NEVENTS 16
 using std::cout;
 using std::endl;
@@ -69,9 +73,32 @@ Webserv& Webserv::operator=(const Webserv& socket)
     return (*this);
 }
 
+#include "test_event.hpp"
+void func(TestEvent *event2)
+{
+    cout << "test func No.1 val:" << event2->test_val << endl;
+}
 
 void Webserv::communication()
 {
+
+    /*
+    //typedef CircleModel = EventModel<Event, OpenGLDrawStrategy>;
+    //typedef OwningEventModel<EventT, HandleStrategy> EventModel;
+    TestEvent *test_event = new TestEvent();
+    void (*test_func)(TestEvent *) = func;
+    //(void)test_func();
+    //(void)test_event;
+    Event event1( test_event,  test_func);
+    handle(event1);
+    handle(event1);
+    handle(event1);
+    handle(event1);
+    
+    //test_func();
+    exit(1);
+    */
+
     bool exit_flag = false;
     DEBUG("Webserv::communication() start");
     int cnt = 0;
@@ -108,10 +135,6 @@ void Webserv::communication()
                         DEBUG("Webserv::Application Event");
                         executer.execute(event);
                         break;
-                    //case WRITE_EVENT:
-                        //DEBUG("Webserv::Write Event");
-                        //sender.send(event);
-                        //break;
                     case CLEAN_EVENT:
                         DEBUG("Webserv::Clean Event");
                         cleaner.clean(event, false);

@@ -3,14 +3,14 @@
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
 
-WebservCleanEvent::WebservCleanEvent(
-                            FileDiscriptor fd,
-                            Request *req,
-                            Response *res
-                            ):
-                            fd_(fd),
-                            req_(req),
-                            res_(res),
+WebservCleanEvent::WebservCleanEvent():
+                            //FileDiscriptor fd,
+                            //Request *req,
+                            //Response *res
+                            //):
+                            //fd_(fd),
+                            //req_(req),
+                            //res_(res),
                             source_file(NULL),
                             destination_file(NULL),
                             timeout_count_(0),
@@ -40,7 +40,7 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
         MYINFO("WebservCleanEvent::make_next_event() Read Event");
         printf("WebservCleanEvent::make_next_event event=%p\n", event);
         //sock_fd = this->socket_controller->accept_request(fd);
-        return (event_factory->make_keep_alive_event(this->fd_));
+        return (event_factory->make_keep_alive_event(this->entity_->fd()));
         //return (event_factory->make_read_event_from_event(event));
         //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
         //this->io_multi_controller->add(io_fd, EPOLLIN);
@@ -59,8 +59,7 @@ E_EpollEvent WebservCleanEvent::get_next_epoll_event()
     }
 }
 
-
-
+/*
 FileDiscriptor &WebservCleanEvent::fd()
 {
     return (this->fd_);
@@ -75,6 +74,7 @@ Response *WebservCleanEvent::res()
 {
     return (this->res_);
 }
+*/
 
 File *WebservCleanEvent::src()
 {
@@ -96,11 +96,13 @@ void WebservCleanEvent::set_dst(File *file)
     this->destination_file = file;
 }
 
+/*
 void WebservCleanEvent::set_null_res_and_req()
 {
-    this->res_ = NULL;
-    this->req_ = NULL;
+    //this->res_ = NULL;
+    //this->req_ = NULL;
 }
+*/
 
 bool WebservCleanEvent::is_completed()
 {
@@ -137,24 +139,27 @@ bool WebservCleanEvent::is_force_close()
 WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
-    WebservCleanEvent *new_event = new WebservCleanEvent(event->fd(), event->req(), event->res());
+    WebservCleanEvent *new_event = new WebservCleanEvent();
     new_event->force_close = force_close;
-    new_event->source_file = event->req();
-    new_event->req_ = event->req();
-    new_event->res_ = event->res();
+    new_event->source_file = event->entity()->request();
+    new_event->entity_ = event->entity();
+    //new_event->req_ = event->req();
+    //new_event->res_ = event->res();
     return (new_event);
 }
 
 
+/*
 void WebservCleanEvent::clean_res_and_req()
 {
-    delete this->res_;
-    delete this->req_;
+    //delete this->res_;
+    //delete this->req_;
 
     this->res_ = NULL;
     this->req_ = NULL;
 
 }
+*/
 
 void WebservCleanEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
@@ -166,7 +171,7 @@ WebservCgiEvent *WebservCleanEvent::cgi_event()
     return (this->cgi_event_);
 }
 
-Entity *WebservCleanEvent::entity()
+WebservEntity*WebservCleanEvent::entity()
 {
     return (this->entity_);
 }

@@ -96,8 +96,8 @@ WebservWriteCGIEvent *WebservWriteCGIEvent::from_event(WebservEvent *event, File
     DEBUG("WebservWriteCGIEvent::from_event()");
     //File *file = OpenedSocketFile::from_fd(writer, res->fd());
     WebservWriteCGIEvent *write_event =  new WebservWriteCGIEvent(result->cgi_in());
-    write_event->req_ = event->req();
-    write_event->res_ = event->res();
+    //write_event->req_ = event->req();
+    //write_event->res_ = event->res();
     write_event->source_file = src;
     write_event->destination_file = dst;
     write_event->result = result;
@@ -199,7 +199,7 @@ int WebservWriteCGIEvent::write(char *buf, size_t size)
     return (this->dst()->write(&buf, size));
 }
 
-Entity *WebservWriteCGIEvent::entity()
+WebservEntity*WebservWriteCGIEvent::entity()
 {
     return (this->entity_);
 }

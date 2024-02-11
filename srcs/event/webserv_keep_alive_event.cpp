@@ -145,12 +145,14 @@ FileDiscriptor  &WebservKeepAliveEvent::get_read_fd()
     return (this->read_fd_);
 }
 
+/*
 FileDiscriptor  &WebservKeepAliveEvent::get_socket_fd()
 {
     return (this->sock_fd_);
 }
+*/
 
-Entity *WebservKeepAliveEvent::entity()
+WebservEntity*WebservKeepAliveEvent::entity()
 {
     return (this->entity_);
 }
