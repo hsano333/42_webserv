@@ -49,17 +49,7 @@ EWebservEvent WebservMakeRequestEvent::which()
 
 WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservMakeRequestEvent::make_next_event No.0");
-    
-    WebservEvent* new_event;
-    if(event->entity()->request()->is_cgi()){
-        DEBUG("WebservMakeRequestEvent::make_next_event No.1");
-        new_event = event_factory->make_application_with_cgi_event(event);
-    }else{
-        DEBUG("WebservMakeRequestEvent::make_next_event No.2");
-        new_event = event_factory->make_application_without_cgi_event(event);
-    }
-    return (new_event);
+    return (event_factory->make_application_event(event));
 }
 
 E_EpollEvent WebservMakeRequestEvent::get_next_epoll_event(WebservEvent *event)
@@ -195,8 +185,6 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
     //throw std::invalid_argument("not CGI");
     return (false);
 }
-
-
 
 Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
 {

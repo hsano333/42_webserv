@@ -76,7 +76,7 @@ ApplicationResult *PostCGIApplication::get_result()
     return (NULL);
 }
 
-PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, WebservEvent *event, IReader *reader, CGI *cgi)
+PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, WebservEvent *event, CGI *cgi)
 {
     DEBUG("PostCGIApplication::from_location");
 
@@ -93,7 +93,7 @@ PostCGIApplication* PostCGIApplication::from_location(const Config *cfg, Webserv
         //app->file = event->res()->get_file();
     //}
     app->event = event;
-    app->reader = reader;
+    //app->reader = reader;
 
 
     return (app);

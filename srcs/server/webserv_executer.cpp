@@ -40,11 +40,16 @@ std::string identify_path(URI &uri)
     return ("test");
 }
 
+/*
 Application *WebservExecuter::get_application(WebservEvent *event)
 {
     //Request *req = event->req();
-    return (factory->make_application(event, reader));
+
+    ApplicationFactory *factory = ApplicationFactory::get_instance();
+    Application app = (factory->make_application());
+    app->execute(event);
 }
+*/
 
 /*
 bool WebservExecuter::check_redirect(WebservApplicationEvent *event)
@@ -80,9 +85,18 @@ bool WebservExecuter::check_redirect(WebservApplicationEvent *event)
 void WebservExecuter::execute(WebservEvent *event)
 {
     DEBUG("WebservExecuter::execute");
+    ApplicationFactory *factory = ApplicationFactory::get_instance();
+    Application *app = factory->make_application(event);
+
+    bool is_completed = app->execute(event);
+    event->entity()->set_completed(is_completed);
+    ApplicationResult *result = app->get_result();
+
+    event->entity()->io()->set_destination(result);
+    delete app;
     //EVENT::handle(event);
     //(void)entity;
-    handle(event);
+    //handle(event);
 
     /*
     SocketReader reader = SocketReader();

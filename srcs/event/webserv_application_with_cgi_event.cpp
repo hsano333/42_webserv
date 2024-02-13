@@ -17,17 +17,12 @@ void execute(WebservApplicationWithCgiEvent *event, WebservEntity *entity)
 {
     (void)event;
     (void)entity;
-    //Request *req = event->make_request(entity);
-    //event->entity()->set_request(req);
 }
 
 WebservEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event)
 {
-    //new_event->next_event_writer = writer;
     WebservApplicationWithCgiEvent *app_event =  new WebservApplicationWithCgiEvent();
     WebservEvent *new_event =  new WebservEvent( app_event, execute, event->entity());
-    //new_event->next_event_writer = writer;
-    //new_event->entity_ = event->entity();
     return (new_event);
 };
 
@@ -74,114 +69,3 @@ E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event(WebservEvent *
     */
 }
 
-/*
-FileDiscriptor const &WebservApplicationWithCgiEvent::fd()
-{
-    return (this->entity()->fd());
-}
-
-Request *WebservApplicationWithCgiEvent::req()
-{
-    return (req_);
-}
-
-Response *WebservApplicationWithCgiEvent::res()
-{
-    return (this->res_);
-}
-*/
-
-/*
-File *WebservApplicationWithCgiEvent::src()
-{
-    return (this->source_file);
-}
-
-File *WebservApplicationWithCgiEvent::dst()
-{
-    return (this->destination_file);
-}
-
-void WebservApplicationWithCgiEvent::set_src(File *file)
-{
-    this->source_file = file;
-}
-
-void WebservApplicationWithCgiEvent::set_dst(File *file)
-{
-    this->destination_file = file;
-    //this->destination_file = OpenedSocketFile::from_fd(this->next_event_writer, file->cgi_in())
-}
-
-
-bool WebservApplicationWithCgiEvent::is_completed()
-{
-    return (this->is_completed_);
-}
-void WebservApplicationWithCgiEvent::set_completed(bool flag)
-{
-    DEBUG("WebservApplicationWithCgiEvent::set_completed");
-    this->is_completed_ = flag;
-}
-
-void WebservApplicationWithCgiEvent::increase_timeout_count(int count)
-{
-    this->timeout_count_ += count;
-    DEBUG("WebservApplicationWithCgiEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
-}
-
-int WebservApplicationWithCgiEvent::timeout_count()
-{
-    return (this->timeout_count_);
-}
-
-
-void WebservApplicationWithCgiEvent::set_file(File *file)
-{
-    this->file_ = file;
-}
-
-File *WebservApplicationWithCgiEvent::file()
-{
-    return (this->file_);
-}
-
-void WebservApplicationWithCgiEvent::set_cgi_event(WebservCgiEvent *cgi_event)
-{
-    DEBUG("WebservApplicationWithCgiEvent::set_cgi_event()");
-    cout << "copy cgi_event=" << cgi_event << endl;
-    this->cgi_event_ = cgi_event;
-}
-
-WebservCgiEvent *WebservApplicationWithCgiEvent::cgi_event()
-{
-    DEBUG("WebservApplicationWithCgiEvent::cgi_event()");
-    return (this->cgi_event_);
-}
-*/
-
-
-/*
-ApplicationResult *WebservApplicationWithCgiEvent::result()
-{
-    return (this->result_);
-}
-*/
-
-
-/*
-void WebservApplicationWithCgiEvent::set_response(Response *res)
-{
-    this->entity_->set_response(res);
-}
-
-void WebservApplicationWithCgiEvent::set_result(ApplicationResult *result)
-{
-    this->entity_->set_result(result);
-}
-
-WebservEntity *WebservApplicationWithCgiEvent::entity()
-{
-    return (this->entity_);
-}
-*/

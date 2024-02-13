@@ -20,7 +20,7 @@ class PostCGIApplication : public Application
         //bool is_cgi() const;
         void check_permission();
         //static PostCGIApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
-        static PostCGIApplication* from_location(const Config *cfg, WebservEvent *event, IReader *reader, CGI *cgi);
+        static PostCGIApplication* from_location(const Config *cfg, WebservEvent *event, CGI *cgi);
         Response* make_response();
         void set_path_info(std::string const &path_info);
         //std::string &get_path_info();
@@ -49,7 +49,7 @@ class PostCGIApplication : public Application
         //bool is_cgi_;
         std::map<std::string, std::string> tmp_headers;
         std::string path_info_;
-        IReader *reader;
+        //IReader *reader;
         WebservCgiEvent *cgi_event_;
         Method method;
 };

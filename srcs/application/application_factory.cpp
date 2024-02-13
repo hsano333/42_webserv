@@ -13,16 +13,24 @@
 //#include "post_application.hpp"
 //#include "delete_application.hpp"
 
-ApplicationFactory::ApplicationFactory(Config *cfg, CGI *cgi) 
-    : 
-        cfg(cfg),
-        cgi(cgi)
+ApplicationFactory::ApplicationFactory() : cgi(NULL)
 {
     ;
 }
 
+
+ApplicationFactory *ApplicationFactory::singleton = NULL;
+ApplicationFactory *ApplicationFactory::get_instance()
+{
+    if (ApplicationFactory::singleton == NULL){
+        singleton = new ApplicationFactory();
+    }
+    return (singleton);
+}
+
 ApplicationFactory::~ApplicationFactory()
 {
+    delete (singleton);
 }
 
 std::string ApplicationFactory::get_server_name()
@@ -64,11 +72,22 @@ const ConfigServer *ApplicationFactory::get_server(Request *req)
 */
 
 
+
+void ApplicationFactory::set_cgi(CGI *cgi_)
+{
+    if(this->cgi != NULL){
+        ERROR("cgi is already existed");
+        throw std::runtime_error("cgi is already existed");
+    }
+    this->cgi = cgi_;
+}
+
 //Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
-Application* ApplicationFactory::make_application(WebservEvent *event, IReader *ireader)
+Application* ApplicationFactory::make_application(WebservEvent *event)
 {
     DEBUG("ApplicationFactory::make_application()");
     Application* app;
+    const Config *cfg = event->entity()->config();
     Request *req = event->entity()->request();
     RequestLine const &req_line = req->req_line();
     Method const &method = req_line.method();
@@ -94,10 +113,10 @@ Application* ApplicationFactory::make_application(WebservEvent *event, IReader *
             if (is_cgi){
                 DEBUG("ApplicationFactory::make_application() Post Method with CGI");
                 //app = PostCGIApplication::from_location(cfg, req, cgi);
-                app = PostCGIApplication::from_location(cfg, event, ireader, cgi);
+                app = PostCGIApplication::from_location(cfg, event, cgi);
             }else{
                 DEBUG("ApplicationFactory::make_application() Post Method with not CGI");
-                app = PostApplication::from_location(cfg, event, ireader);
+                app = PostApplication::from_location(cfg, event);
             }
             break;
         case DELETE:

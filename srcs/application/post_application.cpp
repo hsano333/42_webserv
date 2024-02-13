@@ -166,7 +166,7 @@ bool PostApplication::execute(WebservEvent *event)
 
 
 
-PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent *event, IReader *reader)
+PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent *event)
 {
     DEBUG("PostApplication::from_location");
 
@@ -183,7 +183,7 @@ PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent 
         //app->file = event->res()->get_file();
     //}
     app->event = event;
-    app->reader = reader;
+    //app->reader = reader;
     return (app);
 }
 

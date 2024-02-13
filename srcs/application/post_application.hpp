@@ -18,7 +18,7 @@ class PostApplication : public Application
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //static PostApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
-        static PostApplication* from_location(const Config *cfg, WebservEvent *event, IReader *reader);
+        static PostApplication* from_location(const Config *cfg, WebservEvent *event);
         Response* make_response();
         void set_path_info(std::string const &path_info);
         //std::string &get_path_info();
@@ -45,7 +45,7 @@ class PostApplication : public Application
         //bool is_cgi_;
         std::map<std::string, std::string> tmp_headers;
         //std::string path_info_;
-        IReader *reader;
+        //IReader *reader;
         Method method;
         //WebservCgiEvent cgi_event_;
 };

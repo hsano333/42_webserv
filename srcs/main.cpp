@@ -267,7 +267,8 @@ int main(int argc, char const* argv[])
             );
 
     CGI *cgi = new CGI();
-    ApplicationFactory *application_factory = new ApplicationFactory(cfg, cgi);
+    ApplicationFactory *application_factory = ApplicationFactory::get_instance();
+    application_factory->set_cgi(cgi);
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     //WebservReceiver reader(epoll_controller, fd_manager, event_manager, socket_reader);

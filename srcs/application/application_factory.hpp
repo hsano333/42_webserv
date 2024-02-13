@@ -14,17 +14,20 @@
 class ApplicationFactory
 {
     public:
-        ApplicationFactory(Config *cfg, CGI *cgi);
         ~ApplicationFactory();
         //Application* make_application(WebservApplicationEvent *event, IReader *ireader);
-        Application* make_application(WebservEvent *event, IReader *ireader);
+        static ApplicationFactory *get_instance();
+        Application* make_application(WebservEvent *event);
+        void set_cgi(CGI *cgi);
         //bool is_cgi();
         std::string get_target_path();
         std::string get_server_name();
     private:
+        ApplicationFactory();
+        static ApplicationFactory *singleton;
         const ConfigServer *get_server(Request *req);
         void check_permission(Method &method);
-        Config *cfg;
+        //Config *cfg;
         CGI *cgi;
 
 };

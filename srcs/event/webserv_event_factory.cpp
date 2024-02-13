@@ -354,21 +354,19 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent *event)
+WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 {
-    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event);
+    WebservEvent *new_event;
+    if(event->entity()->request()->is_cgi()){
+        new_event = WebservApplicationWithCgiEvent::from_event(event);
+    }else{
+        new_event = WebservApplicationWithoutCgiEvent::from_event(event);
+    }
 
     this->register_file_manager(new_event);
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_application_without_cgi_event(WebservEvent *event)
-{
-    WebservEvent *new_event = WebservApplicationWithoutCgiEvent::from_event(event);
-
-    this->register_file_manager(new_event);
-    return (new_event);
-}
 
 /*
 WebservEvent *WebservEventFactory::make_write_event_for_cgi(WebservEvent *event, Response *res)
