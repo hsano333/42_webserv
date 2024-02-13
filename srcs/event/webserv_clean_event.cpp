@@ -148,7 +148,7 @@ WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool fo
     WebservEvent *new_event =  new WebservEvent( clean_event, dummy_func, event->entity());
     //new_event->entity_ = event->entity();
     new_event->entity()->set_force_close(force_close);
-    new_event->entity()->io()->set_source(event->entity()->request());
+    new_event->entity()->io().set_source(event->entity()->request());
     //new_event->req_ = event->req();
     //new_event->res_ = event->res();
     return (new_event);

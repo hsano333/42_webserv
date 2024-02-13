@@ -93,10 +93,10 @@ class OwningEventModel : public EventConcept
            {
               typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
               pimpl_ = new Model(event, handler, entity);
-              //this->smart_p = pimpl_;
            }
            ~WebservEvent(){delete pimpl_;};
            WebservEntity *entity(){return(this->entity_);}
+
            template<typename EventPointer>
            EventPointer event(){return (this->pimpl_);};
            int  timeout_count();

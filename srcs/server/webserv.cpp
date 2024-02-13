@@ -121,6 +121,7 @@ void Webserv::communication()
             }
             try
             {
+                MYINFO("event:" + Utility::to_string(event->which()));
                 switch((event->which()))
                 {
                     case IO_EVENT:
@@ -168,6 +169,7 @@ void Webserv::communication()
                         break;
                     case NOTHING_EVENT:
                         delete event;
+                        continue;
                         DEBUG("Webserv::Nothing Event");
                         break;
                     default:

@@ -41,8 +41,11 @@ WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* even
     req->set_file(file);
     //file->write();
     File *write_src = event->entity()->request();
-    File *read_dst = event->entity()->io()->destination();
-    ApplicationResult *result = static_cast<ApplicationResult*>(event->entity()->io()->destination());
+    File *read_dst = event->entity()->app_result();
+    printf("write_src=%p\n", write_src);
+    printf("read_src=%p\n", write_src);
+    //ApplicationResult *result = static_cast<ApplicationResult*>(event->entity()->io().destination());
+    ApplicationResult *result = event->entity()->app_result();
     VectorFile *result_file = VectorFile::from_buf_size(MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);

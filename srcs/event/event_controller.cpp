@@ -79,11 +79,11 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
 
         //DEBUG("set write io=" + Utility::to_string(io_event->get_write_fd()));
 
-        this->io_multi_controller->add(next_event->entity()->io()->get_read_fd(), EPOLLIN | EPOLLONESHOT);
-        this->event_manager->add_event_waiting_epoll(next_event->entity()->io()->get_read_fd(), next_event);
-        this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io()->get_read_fd(), socket_fd);
+        this->io_multi_controller->add(next_event->entity()->io().get_read_fd(), EPOLLIN | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_read_fd(), next_event);
+        this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_read_fd(), socket_fd);
         //this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
-        DEBUG("set read next=" + Utility::to_string(next_event->entity()->io()->get_read_fd()));
+        DEBUG("set read next=" + Utility::to_string(next_event->entity()->io().get_read_fd()));
 
     //}else if (next_epoll_event == EPOLL_CGI){
         //this->io_multi_controller->add(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
@@ -124,24 +124,33 @@ void EventController::next_event(WebservEvent *event)
     //if (event->is_completed() == false){
         //return ;
     //}
-    DEBUG("EventController::next_event()");
+    printf("event->entity()=%d\n", event->timeout_count());
+    DEBUG("EventController::next_event() No.1");
+    printf("event->entity()=%p\n", event->entity());
     WebservEvent *next_event;
     if(event->entity()->completed()){
+    DEBUG("EventController::next_event() No.2");
         next_event = event->make_next_event(event, this->event_factory);
+    DEBUG("EventController::next_event() No.3");
         if(next_event){
             MYINFO("next_event=" + Utility::to_string(next_event->which()));
         }
     }else{
+    DEBUG("EventController::next_event() No.4");
         next_event = event;
     }
+    DEBUG("EventController::next_event() No.5");
     printf("next event=%p\n", next_event);
 
     set_next_epoll_event(event, next_event);
+    DEBUG("EventController::next_event() No.6");
     //if (next_epoll_event != EPOLL_CONTINUE){
     if(event && next_event != event){
+    DEBUG("EventController::next_event() No.7");
         //MYINFO("EventController::next_event() delete current event");
         DEBUG("EventController::next_event No.2 delete event:" + Utility::to_string(event));
         delete event;
     }
+    DEBUG("EventController::next_event() No.8");
 }
 

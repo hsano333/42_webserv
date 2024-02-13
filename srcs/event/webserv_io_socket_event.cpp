@@ -60,9 +60,9 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File 
     //DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
     WebservIOSocketEvent *io_event = new WebservIOSocketEvent();
     WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, entity);
-    new_event->entity()->io()->set_read_io(src, dst);
-    new_event->entity()->io()->set_read_fd(read_fd);
-    new_event->entity()->io()->switching_io(EPOLLIN);
+    new_event->entity()->io().set_read_io(src, dst);
+    new_event->entity()->io().set_read_fd(read_fd);
+    new_event->entity()->io().switching_io(EPOLLIN);
 
     return (new_event);
 }
@@ -72,9 +72,9 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
     DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = new WebservIOSocketEvent();
     WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, event->entity());
-    new_event->entity()->io()->set_write_io(src, dst);
-    new_event->entity()->io()->set_write_fd(write_fd);
-    new_event->entity()->io()->switching_io(EPOLLOUT);
+    new_event->entity()->io().set_write_io(src, dst);
+    new_event->entity()->io().set_write_fd(write_fd);
+    new_event->entity()->io().switching_io(EPOLLOUT);
     return (new_event);
 }
 
@@ -300,7 +300,7 @@ int WebservIOSocketEvent::timeout_count()
 WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOSocketEvent::make_next_event()");
-    if(event->entity()->io()->in_out() == EPOLLIN){
+    if(event->entity()->io().in_out() == EPOLLIN){
         return (event_factory->make_making_request_event(event));
     }
 
@@ -312,7 +312,7 @@ WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, Webserv
 E_EpollEvent WebservIOSocketEvent::get_next_epoll_event(WebservEvent *event)
 {
     DEBUG("WebservIOSocketEvent::get_next_epoll_event()");
-    if(event->entity()->io()->in_out() == EPOLLIN){
+    if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
             return (EPOLL_NONE);
         }else{

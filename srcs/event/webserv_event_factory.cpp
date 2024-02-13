@@ -52,8 +52,8 @@ WebservEventFactory::~WebservEventFactory()
 
 void WebservEventFactory::register_file_manager(WebservEvent *event)
 {
-    file_manager->insert(event->entity()->fd(), event->entity()->io()->source());
-    file_manager->insert(event->entity()->fd(), event->entity()->io()->destination());
+    file_manager->insert(event->entity()->fd(), event->entity()->io().source());
+    file_manager->insert(event->entity()->fd(), event->entity()->io().destination());
 }
 
 void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req)
@@ -191,7 +191,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 //
                 DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string((cached_event->which())));
                 //DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(->which()));
-                cached_event->entity()->io()->switching_io(EPOLLIN);
+                cached_event->entity()->io().switching_io(EPOLLIN);
                 /*
                 if(io_event){
                     DEBUG("WebservEvent::from_epoll_event: No.3 EPOLLIN");
@@ -243,7 +243,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
         //WebservIOSocket *io_event = reinforecment_cast<WebservIOSocket>(cached_event);
         //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
-        cached_event->entity()->io()->switching_io(EPOLLOUT);
+        cached_event->entity()->io().switching_io(EPOLLOUT);
 
         /*
         if (!(fd == cached_event->entity()->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd())
@@ -334,7 +334,7 @@ WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *even
 WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_making_request_event");
-    WebservEvent *new_event = WebservMakeRequestEvent::from_event(event, event->entity()->io()->destination(), NULL);
+    WebservEvent *new_event = WebservMakeRequestEvent::from_event(event, event->entity()->io().destination(), NULL);
 
     this->register_file_manager(new_event);
     return (new_event);

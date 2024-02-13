@@ -25,7 +25,7 @@ File *WebservMakeRequestEvent::make()
 void make(WebservMakeRequestEvent *event, WebservEntity *entity)
 {
     Request *req = event->make_request(entity);
-    event->entity()->set_request(req);
+    entity->set_request(req);
 }
 
 WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src, File *dst)
@@ -34,8 +34,8 @@ WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src
     WebservMakeRequestEvent *req_event = new WebservMakeRequestEvent();
     WebservEvent *new_event =  new WebservEvent( req_event, make, event->entity());
     //new_event->entity_ = event->entity();
-    new_event->entity()->io()->set_source(src);
-    new_event->entity()->io()->set_destination(dst);
+    new_event->entity()->io().set_source(src);
+    new_event->entity()->io().set_destination(dst);
 
     //new_event->reader = reader; //socket_reader
 
@@ -89,7 +89,7 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
 }
 
 
-void WebservMakeRequestEvent::parse_request(Request *req)
+void WebservMakeRequestEvent::parse_request(Request *req, File *src)
 {
     DEBUG("WebservMakeRequestEvent::parse_request");
 
@@ -100,7 +100,8 @@ void WebservMakeRequestEvent::parse_request(Request *req)
     char *buf_p;
 
     printf("buf_=%p\n", buf_p);
-    File *src = this->src();
+    //File *src = this->src();
+    printf("src=%p\n", src);
     size_t buf_size = src->read(&buf_p, MAX_STATUS_LINE);
     (void)buf_size;
     printf("buf_size=%zu\n",buf_size);
@@ -189,10 +190,10 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
 {
     Request *req = Request::from_fd(entity->fd());
-    this->parse_request(req);
+    this->parse_request(req, entity->io().source());
 
-    const ConfigServer *server = this->cfg->get_server(req);
-    const ConfigLocation *location = this->cfg->get_location(server, req);
+    const ConfigServer *server = entity->config()->get_server(req);
+    const ConfigLocation *location = entity->config()->get_location(server, req);
 
     req->set_requested_filepath(location);
     this->check_body_size(req, server);
@@ -220,6 +221,7 @@ Response *WebservMakeRequestEvent::res()
 }
 */
 
+/*
 File *WebservMakeRequestEvent::src()
 {
     return (this->source_file);
@@ -259,6 +261,7 @@ int WebservMakeRequestEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
+*/
 
 /*
 void WebservMakeRequestEvent::set_response(Response *res)
@@ -278,6 +281,7 @@ File *WebservMakeRequestEvent::file()
 }
 */
 
+/*
 void WebservMakeRequestEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
@@ -297,6 +301,7 @@ WebservEntity*WebservMakeRequestEvent::entity()
 {
     return (this->entity_);
 }
+*/
 
 
 /*

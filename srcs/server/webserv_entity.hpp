@@ -29,7 +29,7 @@ class WebservEntity
         ApplicationResult *app_result();
         Request     *request();
         Response    *response();
-        WebservIO   *io();
+        WebservIO   &io();
 
 
         Config const *config();
@@ -42,7 +42,7 @@ class WebservEntity
         Response *res_;
         Config *cfg_;
         ApplicationResult *app_result_;
-        WebservIO   *io_;
+        WebservIO   io_;
 
         bool completed_;
         bool force_close_;

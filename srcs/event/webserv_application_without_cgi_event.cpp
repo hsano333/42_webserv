@@ -57,7 +57,7 @@ WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* e
     //return (event_factory->make_write_event(event, event->res()));
     //printf("result=%p\n", this->result());
     //cout << "status code=" << this->result()->status_code().to_string() << endl;
-    return (event_factory->make_making_response_event(event, event->entity()->io()->destination()));
+    return (event_factory->make_making_response_event(event, event->entity()->io().destination()));
     //return (event);
 }
 

@@ -77,8 +77,8 @@ WebservEvent *WebservMakeErrorResponseEvent::from_event(WebservEvent *event, Sta
     error_event->code = code;
     WebservEvent *new_event =  new WebservEvent( error_event, make, event->entity());
 
-    new_event->entity()->io()->set_source(NULL);
-    new_event->entity()->io()->set_destination(dst);
+    new_event->entity()->io().set_source(NULL);
+    new_event->entity()->io().set_destination(dst);
 
     //new_event->entity_ = event->entity();
     return (new_event);

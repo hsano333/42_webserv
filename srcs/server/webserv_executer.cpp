@@ -92,7 +92,7 @@ void WebservExecuter::execute(WebservEvent *event)
     event->entity()->set_completed(is_completed);
     ApplicationResult *result = app->get_result();
 
-    event->entity()->io()->set_destination(result);
+    event->entity()->set_result(result);
     delete app;
     //EVENT::handle(event);
     //(void)entity;

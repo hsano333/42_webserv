@@ -2,17 +2,16 @@
 #include "request.hpp"
 #include "response.hpp"
 
-WebservEntity::WebservEntity()
+WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_result_(NULL)
 {
 ;
 }
 
 
 // fd,socket_fdはコピーする
-WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd),  cfg_(cfg)
+WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_result_(NULL)
 {
     DEBUG("WebservEntity::WebservEntity");
-;
 }
 
 WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_result_(entity.app_result_)
@@ -52,10 +51,13 @@ void WebservEntity::set_result(ApplicationResult *result)
 }
 void WebservEntity::set_request(Request *req)
 {
+    DEBUG("WebservEntity::set_request");
     if(this->req_ == req){
         return ;
     }
+    DEBUG("WebservEntity::set_request No.1");
     delete this->req_;
+    DEBUG("WebservEntity::set_request No.2");
     this->req_ = req;
 }
 
@@ -94,7 +96,7 @@ Response *WebservEntity::response()
     return (this->res_);
 }
 
-WebservIO *WebservEntity::io()
+WebservIO &WebservEntity::io()
 {
     return (this->io_);
 }

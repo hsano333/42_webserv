@@ -50,8 +50,8 @@ WebservEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src, File
     WebservWriteEvent *write_event =  new WebservWriteEvent();
     WebservEvent *new_event =  new WebservEvent(write_event, tmp_func, event->entity());
 
-    new_event->entity()->io()->set_source(src);
-    new_event->entity()->io()->set_destination(dst);
+    new_event->entity()->io().set_source(src);
+    new_event->entity()->io().set_destination(dst);
     /*
     if(event->res()->get_file()){
             cout << "check file No.1" << endl;

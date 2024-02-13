@@ -6,25 +6,17 @@
 #include "application_result.hpp"
 #include "header_word.hpp"
 
-WebservMakeResponseEvent::WebservMakeResponseEvent():
-                            file_(NULL),
-                            source_file(NULL),
-                            destination_file(NULL),
-                            timeout_count_(0),
-                            is_completed_(false),
-                            reader(NULL)
-                            //reader(reader)
-                            //cfg(cfg)
+WebservMakeResponseEvent::WebservMakeResponseEvent()
 {
-
-};
+    ;
+}
 
 WebservMakeResponseEvent::~WebservMakeResponseEvent()
 {
 };
 
 
-Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *result)
+Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *result, WebservEntity *entity)
 {
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi()");
 
@@ -63,8 +55,9 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
     File *file = OpenedSocketFile::from_fd(reader, result->cgi_out());
 
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.6");
-    Request const *req = this->entity_->request();
-    ConfigServer const *server = this->entity_->config()->get_server(req);
+    Request const *req = entity->request();
+    DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.6-2");
+    ConfigServer const *server = entity->config()->get_server(req);
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.7");
     //const ConfigLocation *location = this->entity()->cfg->get_location(server, req);
 
@@ -123,7 +116,7 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
     //(void)event;
 
     cout << "test No.1" << endl;
-    printf("src=%p\n", this->src());
+    //printf("src=%p\n", this->src());
 
     //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
     StatusCode code = result->status_code();
@@ -151,11 +144,12 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
     return (res);
 }
 
-Response *WebservMakeResponseEvent::make(ApplicationResult *result)
+Response *WebservMakeResponseEvent::make(WebservEntity *entity)
 {
+    ApplicationResult *result = entity->app_result();
     DEBUG("WebservMakeResponseEvent::make()");
     if(result->is_cgi()){
-        return (make_response_for_cgi(result));
+        return (make_response_for_cgi(result, entity));
     }
     return (make_response(result));
 }
@@ -164,8 +158,7 @@ namespace FREE
 {
     void make(WebservMakeResponseEvent *event, WebservEntity *entity)
     {
-        ApplicationResult *result = entity->app_result();
-        Response *res = event->make(result);
+        Response *res = event->make(entity);
         entity->set_response(res);
     }
 }
@@ -179,8 +172,8 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *sr
     WebservMakeResponseEvent *res_event = new WebservMakeResponseEvent();
     WebservEvent *new_event =  new WebservEvent( res_event, FREE::make, event->entity());
     //new_event->entity_ = event->entity();
-    new_event->entity()->io()->set_source(src);
-    new_event->entity()->io()->set_destination(dst);
+    new_event->entity()->io().set_source(src);
+    new_event->entity()->io().set_destination(dst);
 
 
     //todo
@@ -200,7 +193,7 @@ EWebservEvent WebservMakeResponseEvent::which()
 WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
-    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, this->entity_->response()));
+    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, event->entity()->response()));
     //this->res_->set_file()();
     //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(new_event);
     //File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
@@ -269,6 +262,7 @@ Response *WebservMakeResponseEvent::res()
     return (this->res_);
 }
 */
+/*
 
 File *WebservMakeResponseEvent::src()
 {
@@ -333,6 +327,7 @@ WebservEntity*WebservMakeResponseEvent::entity()
 {
     return (this->entity_);
 }
+*/
 
 
 /*

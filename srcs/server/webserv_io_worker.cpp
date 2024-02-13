@@ -37,10 +37,16 @@ void WebservIOWorker::work(WebservEvent *event)
 
     WebservEntity *entity = event->entity();
 
-    File *source = entity->io()->source();
-    File *destination = entity->io()->destination();
+    File *source = entity->io().source();
+    File *destination = entity->io().destination();
+    printf("souce=%p\n", source);
+    printf("destination=%p\n", destination);
+    printf("souce=%p\n", source);
+    printf("souce=%p\n", source);
+    printf("destination=%p\n", destination);
+    printf("destination=%p\n", destination);
     if(source == NULL || destination == NULL){
-        ERROR("WebservReceiver::recv():  source is NULL");
+        ERROR("WebservReceiver::recv():  either source or destination is NULL");
         throw HttpException("500");
     }
     source->open();
