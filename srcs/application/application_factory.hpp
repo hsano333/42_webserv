@@ -16,7 +16,8 @@ class ApplicationFactory
     public:
         ApplicationFactory(Config *cfg, CGI *cgi);
         ~ApplicationFactory();
-        Application* make_application(WebservApplicationEvent *event, IReader *ireader);
+        //Application* make_application(WebservApplicationEvent *event, IReader *ireader);
+        Application* make_application(WebservEvent *event, IReader *ireader);
         //bool is_cgi();
         std::string get_target_path();
         std::string get_server_name();

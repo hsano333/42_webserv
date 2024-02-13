@@ -17,6 +17,8 @@ class WebservCleaner
 
                 );
         ~WebservCleaner();
+        //void clean(WebservEvent *event, bool force_close);
+        //template<typename EventPointer>
         void clean(WebservEvent *event, bool force_close);
         void clean_timeout_events(WebservEvent *event);
     private:
@@ -25,4 +27,8 @@ class WebservCleaner
         FDManager *fd_manager;
 
 };
+
+//template<typename EventPointer>
+
+
 #endif

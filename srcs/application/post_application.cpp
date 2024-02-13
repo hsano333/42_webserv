@@ -166,7 +166,7 @@ bool PostApplication::execute(WebservEvent *event)
 
 
 
-PostApplication* PostApplication::from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader)
+PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent *event, IReader *reader)
 {
     DEBUG("PostApplication::from_location");
 

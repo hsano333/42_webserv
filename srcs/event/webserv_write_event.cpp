@@ -6,16 +6,6 @@
 
 
 WebservWriteEvent::WebservWriteEvent()
-                                        :
-                                        fd_(FileDiscriptor::from_int(0)),
-                                        req_(NULL),
-                                        res_(NULL),
-                                        source_file(NULL),
-                                        destination_file(NULL),
-                                        timeout_count_(0),
-                                        //writer(NULL),
-                                        is_completed_(false),
-                                        entity_(NULL)
 {
     ;
 }
@@ -44,73 +34,24 @@ WebservWriteEvent::~WebservWriteEvent()
     ;
 }
 
-/*
-WebservWriteEvent *WebservWriteEvent::from_error_status_code(WebservEvent *event, StatusCode &code, File *file)
-{
-    DEBUG("WebservWriteEvent::from_error_status_code()");
-    delete event->res();
 
-    Response *res;
-    if (file){
-        res = Response::from_error_file(file, code);
-    }else{
-        res = Response::from_error_status_code(code);
-    }
-    return (new WebservWriteEvent(
-            event->fd(),
-            event->req(),
-            res,
-            res
-            //writer
-    ));
+void tmp_func(WebservWriteEvent *event, WebservEntity *entity)
+{
+    (void)event;
+    (void)entity;
+    // do nothing
+
 }
 
-WebservWriteEvent *WebservWriteEvent::from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader)
-{
-    DEBUG("WebservWriteEvent::from_cgi_fd()");
-    File *file = OpenedSocketFile::from_fd(reader, req->fd());
-    //req->set_source_file(file);
-    return (new WebservWriteEvent(
-            fd,
-            req,
-            NULL,
-            file
-            //writer
-    ));
-}
-
-WebservWriteEvent *WebservWriteEvent::from_event_for_cgi(WebservEvent *event, Response *res)
-{
-    DEBUG("WebservWriteEvent::from_event_for_cgi()");
-    WebservWriteEvent *write_event =  (new WebservWriteEvent(
-            event->fd(),
-            event->req(),
-            res,
-            NULL
-            //writer
-    ));
-    write_event->set_cgi_event(event->cgi_event());
-    return (write_event);
-}
-*/
-
-WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src, File *dst)
+WebservEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src, File *dst)
 {
     DEBUG("WebservWriteEvent::from_event()");
     //File *file = OpenedSocketFile::from_fd(writer, res->fd());
-    WebservWriteEvent *write_event =  (new WebservWriteEvent(
-            //event->fd(),
-            src,
-            dst
-            //writer
-    ));
-    //write_event->set_cgi_event(event->cgi_event());
+    WebservWriteEvent *write_event =  new WebservWriteEvent();
+    WebservEvent *new_event =  new WebservEvent(write_event, tmp_func, event->entity());
 
-    write_event->source_file = src;
-    write_event->destination_file = dst;
-    //write_event->req_ = event->req();
-    //write_event->res_ = event->res();
-    write_event->entity_ = event->entity();
+    new_event->entity()->io()->set_source(src);
+    new_event->entity()->io()->set_destination(dst);
     /*
     if(event->res()->get_file()){
             cout << "check file No.1" << endl;
@@ -124,7 +65,7 @@ WebservWriteEvent *WebservWriteEvent::from_event(WebservEvent *event, File *src,
     */
     //write_event->destination_file = OpenedSocketFile::from_fd(writer, event->fd());
 
-    return (write_event);
+    return (new_event);
 }
 
 
@@ -197,6 +138,7 @@ int WebservWriteEvent::timeout_count()
     return (this->timeout_count_);
 }
 
+//WebservEvent* WebservWriteEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 WebservEvent* WebservWriteEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservWriteEvent::make_next_event()");
@@ -204,8 +146,9 @@ WebservEvent* WebservWriteEvent::make_next_event(WebservEvent* event, WebservEve
     return (event_factory->make_clean_event(event, false));
 }
 
-E_EpollEvent WebservWriteEvent::get_next_epoll_event()
+E_EpollEvent WebservWriteEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     DEBUG("WebservWriteEvent::get_next_epoll_event()");
     return (EPOLL_READ);
 }
@@ -217,12 +160,12 @@ int WebservWriteEvent::write(char *buf, size_t size)
 }
 
 
+/*
 WebservEntity*WebservWriteEvent::entity()
 {
     return (this->entity_);
 }
 
-/*
 void WebservWriteEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;

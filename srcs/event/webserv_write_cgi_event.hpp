@@ -35,7 +35,7 @@ class WebservWriteCGIEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event();
+        E_EpollEvent get_next_epoll_event(WebservEvent *event);
         int write(char *buf, size_t size);
         static WebservWriteCGIEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file, IWriter *writer);
         static WebservWriteCGIEvent *from_event_for_cgi(WebservEvent *event, Response *res, IWriter *writer);

@@ -36,7 +36,7 @@ class WebservReadEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event();
+        E_EpollEvent get_next_epoll_event(WebservEvent *event);
         //int read(char *buf, size_t size);
 
         void set_cgi_event(WebservCgiEvent *cgi_event);

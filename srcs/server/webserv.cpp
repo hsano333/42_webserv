@@ -23,8 +23,8 @@
 #include "connection_exception.hpp"
 #include "event_controller.hpp"
 
-#include "event.hpp"
-#include "test_handle_event.hpp"
+//#include "event.hpp"
+//#include "test_handle_event.hpp"
 
 
 #define NEVENTS 16
@@ -39,11 +39,11 @@ Webserv::Webserv(
         EventManager        *event_manager,
         EventController     *event_controller,
         WebservWaiter       &waiter,
-        WebservReceiver     &receiver,
+        //WebservReceiver     &receiver,
         WebservMaker        &maker,
         WebservExecuter     &executer,
         WebservIOWorker    &io_worker,
-        WebservSender       &sender,
+        //WebservSender       &sender,
         WebservCleaner      &cleaner
         ) :
                      cfg(cfg),
@@ -51,11 +51,11 @@ Webserv::Webserv(
                      event_manager(event_manager),
                      event_controller(event_controller),
                      waiter(waiter),
-                     receiver(receiver),
+                     //receiver(receiver),
                      maker(maker),
                      executer(executer),
                      io_worker(io_worker),
-                     sender(sender),
+                     //sender(sender),
                      cleaner(cleaner)
 {
     ;
@@ -116,12 +116,12 @@ void Webserv::communication()
         {
             WebservEvent *event = this->event_manager->pop_first();
             if(event == NULL){
-                cout << "NULL" << endl;
+                //cout << "NULL" << endl;
                 break;
             }
             try
             {
-                switch(event->which())
+                switch((event->which()))
                 {
                     case IO_EVENT:
                         DEBUG("Webserv::IO Event");
@@ -167,6 +167,7 @@ void Webserv::communication()
                         //cleaner.clean_timeout_events(event);
                         break;
                     case NOTHING_EVENT:
+                        delete event;
                         DEBUG("Webserv::Nothing Event");
                         break;
                     default:
@@ -219,5 +220,5 @@ void Webserv::communication()
 
 void Webserv::reset()
 {
-
+;
 }

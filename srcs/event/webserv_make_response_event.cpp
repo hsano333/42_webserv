@@ -151,21 +151,45 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
     return (res);
 }
 
-WebservMakeResponseEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IWriter *writer, IReader *reader)
+Response *WebservMakeResponseEvent::make(ApplicationResult *result)
+{
+    DEBUG("WebservMakeResponseEvent::make()");
+    if(result->is_cgi()){
+        return (make_response_for_cgi(result));
+    }
+    return (make_response(result));
+}
+
+namespace FREE
+{
+    void make(WebservMakeResponseEvent *event, WebservEntity *entity)
+    {
+        ApplicationResult *result = entity->app_result();
+        Response *res = event->make(result);
+        entity->set_response(res);
+    }
+}
+
+
+WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IReader *reader)
 {
     DEBUG("WebservMakeResponseEvent::from_event");
-  //(void)src;
-  //(void)dst;
-  WebservMakeResponseEvent *new_event = new WebservMakeResponseEvent();
-  printf("src=%p\n", src);
-  new_event->source_file = src;
-  new_event->destination_file = dst;
-  new_event->next_event_writer = writer;
-  new_event->reader = reader;
-  new_event->entity_ = event->entity();
-  return (new_event);
-  //return (event);
-  //return (new WebservMakeResponseEvent());
+    //(void)src;
+    //(void)dst;
+    WebservMakeResponseEvent *res_event = new WebservMakeResponseEvent();
+    WebservEvent *new_event =  new WebservEvent( res_event, FREE::make, event->entity());
+    //new_event->entity_ = event->entity();
+    new_event->entity()->io()->set_source(src);
+    new_event->entity()->io()->set_destination(dst);
+
+
+    //todo
+    //res_event->next_event_writer = writer; //socket_writer
+    res_event->reader = reader;            //normal_reader
+
+    return (new_event);
+    //return (event);
+    //return (new WebservMakeResponseEvent());
 };
 
 EWebservEvent WebservMakeResponseEvent::which()
@@ -189,8 +213,9 @@ WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, Web
     return (new_event);
 }
 
-E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event()
+E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_WRITE);
 }
 
@@ -227,17 +252,6 @@ bool WebservMakeResponseEvent::check_body_size(Request *req, const ConfigServer 
 }
 */
 
-File *WebservMakeResponseEvent::make()
-{
-    DEBUG("WebservMakeResponseEvent::make()");
-
-    ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
-
-    if(result->is_cgi()){
-        return (make_response_for_cgi(result));
-    }
-    return (make_response(result));
-}
 
 /*
 FileDiscriptor &WebservMakeResponseEvent::fd()

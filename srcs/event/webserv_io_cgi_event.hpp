@@ -1,5 +1,5 @@
-#ifndef WEBSERV_IO_SOCKET_EVENT_HPP
-#define WEBSERV_IO_SOCKET_EVENT_HPP
+#ifndef WEBSERV_IO_CGI_EVENT_HPP
+#define WEBSERV_IO_CGI_EVENT_HPP
 #include "webserv_event.hpp"
 #include "webserv_io_event.hpp"
 #include "file_discriptor.hpp"
@@ -11,14 +11,14 @@
 #include "webserv_entity.hpp"
 
 // source_fileからデータを読み出し、fdに対して書き込む
-class WebservIOSocketEvent
+class WebservIOCGIEvent
 {
     public:
-        WebservIOSocketEvent(File *socket_io, File *read_dst);
-        ~WebservIOSocketEvent();
-        static WebservIOSocketEvent *for_cgi(File *src, File *read_dst);
-        static WebservEvent *as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity);
-        static WebservEvent *as_write(WebservEvent *event, FileDiscriptor const &write_fd, File *src, File *dst);
+        ~WebservIOCGIEvent();
+        //static WebservIOCGIEvent *from_fd(FileDiscriptor &fd, FileDiscriptor &sockfd, File *io, File *read_src, File *write_dst);
+        static WebservEvent *from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, File *read_src, File *read_dst, File *write_src, File *write_dst, WebservEvent *event);
+        //static WebservEvent *as_read(FileDiscriptor const &fd, FileDiscriptor &sockfd, File *src, File *dst);
+        //static WebservEvent *as_write(FileDiscriptor const &fd, FileDiscriptor &sockfd, File *src, File *dst);
 
 
         EWebservEvent which();
@@ -36,26 +36,27 @@ class WebservIOSocketEvent
         //void            set_read_io(File *src, File *dst);
         //FileDiscriptor  &get_write_fd();
         //FileDiscriptor  &get_read_fd();
-        //FileDiscriptor  &get_socket_fd();
+        //FileDiscriptor  const &get_socket_fd();
         //bool is_completed();
         //void set_completed(bool flag);
         //void increase_timeout_count(int count);
         //int  timeout_count();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
-        int write(char *buf, size_t size);
-        int read(char *buf, size_t size);
-        //static WebservIOSocketEvent *from_event(WebservEvent *event, File *src, File *dst);
+        //int write(char *buf, size_t size);
+        //int read(char *buf, size_t size);
+
+        static WebservIOCGIEvent *from_event(WebservEvent *event, File *io, File *write_src, File *read_dst);
         //WebservEntity *entity();
 
     private:
-        WebservIOSocketEvent();
-        //WebservIOSocketEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
+        WebservIOCGIEvent();
+        WebservIOCGIEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
         //FileDiscriptor  fd_;
         //FileDiscriptor  sock_fd_;
         //Request         *req_;
         //Response        *res_;
-        File            *io;
+        //File            *io;
         //File            *read_src;
         //File            *read_dst;
         //File            *write_src;

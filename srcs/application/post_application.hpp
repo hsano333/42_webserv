@@ -18,7 +18,7 @@ class PostApplication : public Application
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //static PostApplication* from_location(const ConfigLocation *location, const Request *req, CGI *cgi);
-        static PostApplication* from_location(const Config *cfg, WebservApplicationEvent *event, IReader *reader);
+        static PostApplication* from_location(const Config *cfg, WebservEvent *event, IReader *reader);
         Response* make_response();
         void set_path_info(std::string const &path_info);
         //std::string &get_path_info();
@@ -31,7 +31,7 @@ class PostApplication : public Application
 
         File *get_requested_file();
         //File *file;
-        WebservApplicationEvent *event;
+        WebservEvent *event;
         bool check_not_cgi_end(size_t sum);
 
         //bool is_continued;

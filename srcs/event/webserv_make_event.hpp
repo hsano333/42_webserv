@@ -3,14 +3,11 @@
 #include "file.hpp"
 #include "webserv_event.hpp"
 
-class IWebservMakeEvent
+class WebservMakeEvent
 {
     public:
-        virtual ~IWebservMakeEvent(){};
-        virtual File *make() = 0;
-        virtual void set_file(File *file) = 0;
-        virtual void set_src(File *file) = 0;
-        virtual void set_dst(File *file) = 0;
+        WebservEntity   *entity();
+        void            set_file(File *file);
     private:
 };
 

@@ -270,18 +270,18 @@ int main(int argc, char const* argv[])
     ApplicationFactory *application_factory = new ApplicationFactory(cfg, cgi);
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
-    WebservReceiver reader(epoll_controller, fd_manager, event_manager, socket_reader);
+    //WebservReceiver reader(epoll_controller, fd_manager, event_manager, socket_reader);
     //WebservParser parser(epoll_controller, event_manager, event_factory, cfg);
     WebservMaker maker(epoll_controller, event_manager, event_factory, cfg);
     WebservExecuter app(application_factory, epoll_controller, event_factory, event_manager, fd_manager, cfg, socket_reader);
     WebservIOWorker io_worker(epoll_controller, event_manager, socket_writer, socket_reader);
     //WebservMaker maker(epoll_controller, event_manager, socket_writer, socket_reader);
-    WebservSender sender(epoll_controller, event_manager, socket_writer);
+    //WebservSender sender(epoll_controller, event_manager, socket_writer);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
     //SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg, event_factory, event_manager, event_controller,waiter,reader,maker,app,io_worker, sender, cleaner);
+    Webserv webserv(cfg, event_factory, event_manager, event_controller,waiter,maker,app,io_worker, cleaner);
     while (1) {
         try{
             server(webserv);

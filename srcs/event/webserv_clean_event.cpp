@@ -40,7 +40,7 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
         MYINFO("WebservCleanEvent::make_next_event() Read Event");
         printf("WebservCleanEvent::make_next_event event=%p\n", event);
         //sock_fd = this->socket_controller->accept_request(fd);
-        return (event_factory->make_keep_alive_event(this->entity_->fd()));
+        return (event_factory->make_keep_alive_event(event ));
         //return (event_factory->make_read_event_from_event(event));
         //this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
         //this->io_multi_controller->add(io_fd, EPOLLIN);
@@ -50,9 +50,9 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
     return (NULL);
 }
 
-E_EpollEvent WebservCleanEvent::get_next_epoll_event()
+E_EpollEvent WebservCleanEvent::get_next_epoll_event(WebservEvent *event)
 {
-    if (this->force_close){
+    if (event->entity()->force_close()){
         return (EPOLL_CLOSE);
     }else{
         return (EPOLL_READ);
@@ -135,14 +135,20 @@ bool WebservCleanEvent::is_force_close()
     return (this->force_close);
 }
 
+void dummy_func(WebservCleanEvent *event, WebservEntity *entity)
+{
+    (void)event;
+    (void)entity;
+}
 
-WebservCleanEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
+WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
-    WebservCleanEvent *new_event = new WebservCleanEvent();
-    new_event->force_close = force_close;
-    new_event->source_file = event->entity()->request();
-    new_event->entity_ = event->entity();
+    WebservCleanEvent *clean_event = new WebservCleanEvent();
+    WebservEvent *new_event =  new WebservEvent( clean_event, dummy_func, event->entity());
+    //new_event->entity_ = event->entity();
+    new_event->entity()->set_force_close(force_close);
+    new_event->entity()->io()->set_source(event->entity()->request());
     //new_event->req_ = event->req();
     //new_event->res_ = event->res();
     return (new_event);

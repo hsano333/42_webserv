@@ -3,21 +3,16 @@
 #include "global.hpp"
 
 WebservNothingEvent::WebservNothingEvent()
-    :
-        timeout_count_(0)
-        //req_(NULL),
-        //res_(NULL),
-        //source_file(NULL),
-        //destination_file(NULL),
-        //is_completed_(false)
 {
-    this->fd_ = FileDiscriptor::from_int(0);
+    //this->fd_ = FileDiscriptor::from_int(0);
 }
 
+/*
 WebservNothingEvent::WebservNothingEvent(FileDiscriptor fd) : timeout_count_(0), fd_(fd)
 {
     ;
 }
+*/
 
 
 WebservNothingEvent::~WebservNothingEvent()
@@ -25,10 +20,17 @@ WebservNothingEvent::~WebservNothingEvent()
     ;
 }
 
-WebservNothingEvent *WebservNothingEvent::from_fd(FileDiscriptor fd)
+void dummy_func(WebservNothingEvent *event, WebservEntity *entity)
 {
-    WebservNothingEvent *event = new WebservNothingEvent(fd);
-    return (event);
+    (void)event;
+    (void)entity;
+}
+
+WebservEvent *WebservNothingEvent::make_nothing_event()
+{
+    WebservNothingEvent *null_event = new WebservNothingEvent();
+    WebservEvent *new_event =  new WebservEvent( null_event, dummy_func, NULL);
+    return (new_event);
 }
 
 EWebservEvent WebservNothingEvent::which()
@@ -44,82 +46,10 @@ WebservEvent* WebservNothingEvent::make_next_event(WebservEvent* event, WebservE
     return (NULL);
 }
 
-E_EpollEvent WebservNothingEvent::get_next_epoll_event()
+E_EpollEvent WebservNothingEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_NONE);
 }
 
 
-FileDiscriptor &WebservNothingEvent::fd()
-{
-    return (fd_);
-}
-
-Request *WebservNothingEvent::req()
-{
-    return (NULL);
-}
-
-Response *WebservNothingEvent::res()
-{
-    return (NULL);
-}
-
-File *WebservNothingEvent::src()
-{
-    return (NULL);
-}
-
-File *WebservNothingEvent::dst()
-{
-    return (NULL);
-}
-
-void WebservNothingEvent::set_src(File *file)
-{
-    (void)file;
-    //this->source_file = file;
-}
-
-void WebservNothingEvent::set_dst(File *file)
-{
-    (void)file;
-    //this->destination_file = file;
-}
-
-bool WebservNothingEvent::is_completed()
-{
-    return (true);
-    //return (this->is_completed_);
-}
-void WebservNothingEvent::set_completed(bool flag)
-{
-    (void)flag;
-    //this->is_completed_ = flag;
-}
-
-void WebservNothingEvent::increase_timeout_count(int count)
-{
-    this->timeout_count_ += count;
-    DEBUG("WebservNothingEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
-}
-
-int WebservNothingEvent::timeout_count()
-{
-    return (this->timeout_count_);
-}
-
-void WebservNothingEvent::set_cgi_event(WebservCgiEvent *cgi_event)
-{
-    this->cgi_event_ = cgi_event;
-}
-
-WebservCgiEvent *WebservNothingEvent::cgi_event()
-{
-    return (this->cgi_event_);
-}
-
-WebservEntity*WebservNothingEvent::entity()
-{
-    return (this->entity_);
-}

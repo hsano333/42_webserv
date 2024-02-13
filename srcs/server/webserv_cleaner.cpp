@@ -26,24 +26,29 @@ WebservCleaner::~WebservCleaner()
 // Socket fd is not cleaned
 void WebservCleaner::clean(WebservEvent *event, bool force_close)
 {
-    WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
-    FileDiscriptor const &fd = event->entity()->fd();
+    //bool force_close = event->entity()->force_close();
+    //WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
+    //EventPointer app_event = event->event();
+    WebservEntity *entity = event->entity();
+    FileDiscriptor const &fd = entity->fd();
     DEBUG("WebservCleaner::clean:" + fd.to_string());
 
-    bool is_close = force_close || app_event->is_force_close();
+    bool is_close = force_close || entity->force_close();
     cout << "force_close=" << force_close << endl;
-    cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
+    //cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
     cout << "test No.1" << endl;
-    Request *req = app_event->entity()->request();
-    Response *res = app_event->entity()->response();
+    Request *req = entity->request();
+    Response *res = entity->response();
+    (void)res;
     if (req){
         std::string const &conect = req->header().find("Connection");
         if (conect == "close"){
             is_close = true;
         }
     }
-    app_event->set_force_close(is_close);
+    entity->set_force_close(is_close);
 
+    /*
     if(app_event->src() != req && app_event->src() != res){
         cout << "delete src" << endl;
         delete app_event->src();
@@ -52,15 +57,15 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
         cout << "delete dst" << endl;
         delete app_event->dst();
     }
+    */
 
-    app_event->entity()->clean();
+    entity->clean();
         cout << "delete req" << endl;
     //delete app_event->req();
         cout << "delete res" << endl;
     //delete app_event->res();
         cout << "delete end" << endl;
 
-    //app_event->set_null_res_and_req();
 
     //this->io_multi_controller->erase(app_fd);
     //
@@ -81,7 +86,7 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
         //this->event_manager->add_event_waiting_epoll(app_fd, new_event);
         //
     }
-    event->set_completed(true);
+    entity->set_completed(true);
 }
 
 void WebservCleaner::clean_timeout_events(WebservEvent *event)
@@ -93,6 +98,6 @@ void WebservCleaner::clean_timeout_events(WebservEvent *event)
     for(size_t i=0;i<timeout_events.size();i++){
         this->clean(timeout_events[i], true);
     }
-    event->set_completed(true);
+    event->entity()->set_completed(true);
 }
 

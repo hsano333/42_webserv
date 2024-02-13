@@ -3,30 +3,42 @@
 #include "http_exception.hpp"
 #include "opened_socket_file.hpp"
 
-WebservMakeRequestEvent::WebservMakeRequestEvent():
-                            file_(NULL),
-                            source_file(NULL),
-                            destination_file(NULL),
-                            timeout_count_(0),
-                            is_completed_(false),
-                            reader(NULL)
-                            //cfg(cfg)
+WebservMakeRequestEvent::WebservMakeRequestEvent()
 {
-
-};
+    ;
+}
 
 WebservMakeRequestEvent::~WebservMakeRequestEvent()
 {
 };
 
-WebservMakeRequestEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, IReader *reader, File *src, File *dst)
+
+/*
+File *WebservMakeRequestEvent::make()
+{
+    Request *req = (make_request());
+    this->entity()->set_request(req);
+    return (req);
+}
+*/
+
+void make(WebservMakeRequestEvent *event, WebservEntity *entity)
+{
+    Request *req = event->make_request(entity);
+    event->entity()->set_request(req);
+}
+
+WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src, File *dst)
 {
     DEBUG("WebservMakeRequestEvent::from_event");
-    WebservMakeRequestEvent *new_event = new WebservMakeRequestEvent();
-    new_event->source_file = src;
-    new_event->destination_file = dst;
-    new_event->entity_ = event->entity();
-    new_event->reader = reader;
+    WebservMakeRequestEvent *req_event = new WebservMakeRequestEvent();
+    WebservEvent *new_event =  new WebservEvent( req_event, make, event->entity());
+    //new_event->entity_ = event->entity();
+    new_event->entity()->io()->set_source(src);
+    new_event->entity()->io()->set_destination(dst);
+
+    //new_event->reader = reader; //socket_reader
+
     return (new_event);
 };
 
@@ -50,8 +62,9 @@ WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, Webs
     return (new_event);
 }
 
-E_EpollEvent WebservMakeRequestEvent::get_next_epoll_event()
+E_EpollEvent WebservMakeRequestEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_NONE);
 }
 
@@ -185,9 +198,9 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 
 
 
-Request *WebservMakeRequestEvent::make_request()
+Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
 {
-    Request *req = Request::from_fd(this->entity_->fd());
+    Request *req = Request::from_fd(entity->fd());
     this->parse_request(req);
 
     const ConfigServer *server = this->cfg->get_server(req);
@@ -201,12 +214,6 @@ Request *WebservMakeRequestEvent::make_request()
 }
 
 
-File *WebservMakeRequestEvent::make()
-{
-    Request *req = (make_request());
-    this->entity()->set_request(req);
-    return (req);
-}
 
 /*
 FileDiscriptor &WebservMakeRequestEvent::fd()

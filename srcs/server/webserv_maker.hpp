@@ -11,7 +11,6 @@ class WebservMaker
         //WebservMaker();
         WebservMaker(
                       IOMultiplexing *io_multi_controller,
-                      //FDManager *fd_manager,
                       EventManager *event_manager,
                       WebservEventFactory *event_factory,
                       Config *cfg
@@ -24,9 +23,22 @@ class WebservMaker
         EventManager *event_manager;
         WebservEventFactory *event_factory;
         Config *cfg;
-        bool check_body_size(Request *req, const ConfigServer *server);
-        void parse_req(WebservEvent *event);
-        void parse_res(WebservEvent *event);
+        //bool check_body_size(Request *req, const ConfigServer *server);
+        //void parse_req(WebservEvent *event);
+        //void parse_res(WebservEvent *event);
 };
+
+/*
+template<typename EventPointer>
+void make(EventPointer event)
+{
+    DEBUG("WebservMaker::make()");
+    event->entity()->set_completed(false);
+    File *file = event->make();
+    event->set_file(file);
+    event->entity()->set_completed(true);
+}
+*/
+
 
 #endif

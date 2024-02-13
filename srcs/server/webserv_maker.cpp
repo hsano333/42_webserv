@@ -100,6 +100,7 @@ void WebservMaker::parse_res(WebservEvent *event)
 }
 */
 
+/*
 void WebservMaker::make(WebservEvent *event)
 {
     DEBUG("WebservMaker::make()");
@@ -108,8 +109,8 @@ void WebservMaker::make(WebservEvent *event)
     event->entity()->config()->check();
     DEBUG("WebservMaker::make() No.2");
     event->entity()->config()->check();
-    IWebservMakeEvent *make_event = dynamic_cast<IWebservMakeEvent*>(event);
-    //IWebservMakeEvent *make_event = const_cast<void*>(static_cast<void const volatile*>(event));
+    WebservMakeEvent *make_event = dynamic_cast<WebservMakeEvent*>(event);
+    //WebservMakeEvent *make_event = const_cast<void*>(static_cast<void const volatile*>(event));
 
     DEBUG("WebservMaker::make() No.3");
     event->entity()->config()->check();
@@ -137,3 +138,29 @@ void WebservMaker::make(WebservEvent *event)
     make_event->set_file(file);
     event->set_completed(true);
 }
+*/
+
+
+#include "webserv_make_request_event.hpp"
+#include "webserv_make_response_event.hpp"
+
+void WebservMaker::make(WebservEvent *event)
+{
+    DEBUG("WebservMaker(WebservMakeRequestEvent)::make()");
+    handle(event);
+    event->entity()->set_completed(true);
+}
+
+
+/*
+void make(WebservMakeResponseEvent *event, WebservEntity *entity)
+{
+    DEBUG("WebservMaker(WebservMakeResponseEvent)::make()");
+    entity->set_completed(false);
+    File *file = event->handle();
+    event->set_file(file);
+    entity->set_completed(true);
+}
+*/
+
+

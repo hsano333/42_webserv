@@ -45,13 +45,13 @@ class WebservEventFactory
         WebservEvent *make_application_without_cgi_event(WebservEvent *event);
         void          make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req);
         //void          make_and_push_read_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in);
-        WebservEvent *make_write_event_for_cgi(WebservEvent *event, Response *res);
-        WebservEvent *make_write_event(WebservEvent *event, File *src, File *dst);
-        WebservEvent *make_write_cgi_event(WebservEvent *event, File *src, File *dst, ApplicationResult *result);
+        //WebservEvent *make_write_event_for_cgi(WebservEvent *event, Response *res);
+        //WebservEvent *make_write_event(WebservEvent *event, File *src, File *dst);
+        //WebservEvent *make_write_cgi_event(WebservEvent *event, File *src, File *dst, ApplicationResult *result);
         WebservEvent *make_event_from_http_error(WebservEvent *event, char const *code);
         WebservEvent *make_clean_event(WebservEvent *event, bool force_close);
-        WebservEvent *make_read_event_from_event(WebservEvent *event);
-        WebservEvent *make_keep_alive_event(FileDiscriptor fd);
+        //WebservEvent *make_read_event_from_event(WebservEvent *event);
+        WebservEvent *make_keep_alive_event(WebservEvent *event);
         //WebservEvent *make_nothing_event(FileDiscriptor fd);
         WebservEvent *make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd);
     private:

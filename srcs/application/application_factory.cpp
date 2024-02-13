@@ -64,7 +64,8 @@ const ConfigServer *ApplicationFactory::get_server(Request *req)
 */
 
 
-Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
+//Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
+Application* ApplicationFactory::make_application(WebservEvent *event, IReader *ireader)
 {
     DEBUG("ApplicationFactory::make_application()");
     Application* app;

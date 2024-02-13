@@ -112,7 +112,7 @@ void WebservWaiter::fetch_events()
 
     if(event_manager->check_timeout()){
         MYINFO("WebservWaiter::fetch_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
-        event_manager->push(new WebservTimeoutEvent());
+        event_manager->push(WebservTimeoutEvent::make());
     }
     MYINFO("WebservWaiter::fetch_event() return new WebservNothingEvent():");
     //return (new WebservNothingEvent);

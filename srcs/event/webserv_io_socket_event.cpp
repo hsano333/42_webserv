@@ -8,16 +8,6 @@
 
 
 WebservIOSocketEvent::WebservIOSocketEvent()
-                                        :
-                                        //fd_(FileDiscriptor::from_int(0)),
-                                        //sock_fd_(FileDiscriptor::from_int(0)),
-                                        //req_(NULL),
-                                        //res_(NULL),
-                                        source_file(NULL),
-                                        destination_file(NULL),
-                                        timeout_count_(0),
-                                        //writer(NULL),
-                                        is_completed_(false)
 {
     ;
 }
@@ -59,36 +49,33 @@ WebservIOSocketEvent::~WebservIOSocketEvent()
     ;
 }
 
-
-WebservIOSocketEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity)
+void dummy_func(WebservIOSocketEvent *event, WebservEntity *entity)
 {
-    //DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
-    WebservIOSocketEvent *event = new WebservIOSocketEvent();
-    event->io = src;
-    //event->fd_ = event->fd();
-    //event->sock_fd_ = sockfd;
-    event->read_dst = dst;
-    event->read_fd_ = read_fd;
-    event->entity_ = entity;
-
-    event->switching_io(EPOLLIN);
-
-    return (event);
+    (void)event;
+    (void)entity;
 }
 
-WebservIOSocketEvent *WebservIOSocketEvent::as_write(WebservEntity *entity, FileDiscriptor const &write_fd, File *src, File *dst)
+WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity)
 {
-    DEBUG("WebservIOSocketEvent::from_fd fd:" + entity->fd().to_string());
-    WebservIOSocketEvent *event = new WebservIOSocketEvent();
-    event->io = dst;
-    //event->fd_ = event->fd();
-    //event->sock_fd_ = sockfd;
-    event->write_src = src;
-    event->write_fd_ = write_fd;
-    event->entity_ = entity;
+    //DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
+    WebservIOSocketEvent *io_event = new WebservIOSocketEvent();
+    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, entity);
+    new_event->entity()->io()->set_read_io(src, dst);
+    new_event->entity()->io()->set_read_fd(read_fd);
+    new_event->entity()->io()->switching_io(EPOLLIN);
 
-    event->switching_io(EPOLLOUT);
-    return (event);
+    return (new_event);
+}
+
+WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor const &write_fd, File *src, File *dst)
+{
+    DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
+    WebservIOSocketEvent *io_event = new WebservIOSocketEvent();
+    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, event->entity());
+    new_event->entity()->io()->set_write_io(src, dst);
+    new_event->entity()->io()->set_write_fd(write_fd);
+    new_event->entity()->io()->switching_io(EPOLLOUT);
+    return (new_event);
 }
 
 /*
@@ -196,6 +183,7 @@ EWebservEvent WebservIOSocketEvent::which()
     return (IO_EVENT);
 }
 
+/*
 
 FileDiscriptor &WebservIOSocketEvent::fd()
 {
@@ -271,6 +259,7 @@ FileDiscriptor  &WebservIOSocketEvent::get_read_fd()
 {
     return (this->read_fd_);
 }
+*/
 
 /*
 FileDiscriptor  &WebservIOSocketEvent::get_socket_fd()
@@ -285,6 +274,7 @@ HttpData *WebservIOSocketEvent::source()
     return (this->source_);
 }
 */
+/*
 
 bool WebservIOSocketEvent::is_completed()
 {
@@ -305,11 +295,12 @@ int WebservIOSocketEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
+*/
 
 WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOSocketEvent::make_next_event()");
-    if(this->in_out == EPOLLIN){
+    if(event->entity()->io()->in_out() == EPOLLIN){
         return (event_factory->make_making_request_event(event));
     }
 
@@ -318,11 +309,11 @@ WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, Webserv
     return (event_factory->make_clean_event(event, false));
 }
 
-E_EpollEvent WebservIOSocketEvent::get_next_epoll_event()
+E_EpollEvent WebservIOSocketEvent::get_next_epoll_event(WebservEvent *event)
 {
     DEBUG("WebservIOSocketEvent::get_next_epoll_event()");
-    if(this->in_out == EPOLLIN){
-        if (this->is_completed_){
+    if(event->entity()->io()->in_out() == EPOLLIN){
+        if (event->entity()->completed()){
             return (EPOLL_NONE);
         }else{
             return (EPOLL_READ);
@@ -334,6 +325,7 @@ E_EpollEvent WebservIOSocketEvent::get_next_epoll_event()
     return (EPOLL_NONE);
 }
 
+/*
 int WebservIOSocketEvent::write(char *buf, size_t size)
 {
     return (this->dst()->write(&buf, size));
@@ -343,6 +335,7 @@ WebservEntity*WebservIOSocketEvent::entity()
 {
     return (this->entity_);
 }
+*/
 
 /*
 void WebservIOSocketEvent::set_cgi_event(WebservCgiEvent *cgi_event)

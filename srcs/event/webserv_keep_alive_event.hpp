@@ -8,50 +8,17 @@
 #include "webserv_io_event.hpp"
 #include "webserv_entity.hpp"
 
-class WebservKeepAliveEvent : public WebservEvent, public WebservIOEvent
+class WebservKeepAliveEvent
 {
     public:
-        WebservKeepAliveEvent();
         ~WebservKeepAliveEvent();
         EWebservEvent which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event();
+        E_EpollEvent get_next_epoll_event(WebservEvent *event);
 
-        static WebservKeepAliveEvent *from_fd(FileDiscriptor fd);
-        FileDiscriptor  &fd();
-        Request         *req();
-        Response        *res();
-        File            *src();
-        File            *dst();
-        //void            switching_io(uint32_t epoll_event);
-        void            set_src(File *file);
-        void            set_dst(File *file);
-        bool is_completed();
-        void set_completed(bool flag);
-        void increase_timeout_count(int count);
-        int  timeout_count();
-
-        void set_cgi_event(WebservCgiEvent *cgi_event);
-        WebservCgiEvent *cgi_event();
-
-
-        void switching_io(uint32_t epoll_event);
-        void set_write_io(File *src, File *dst);
-        void set_read_io(File *src, File *dst);
-        FileDiscriptor  &get_write_fd();
-        FileDiscriptor  &get_read_fd();
-        //FileDiscriptor  &get_socket_fd();
-        WebservEntity *entity();
+        static WebservEvent *from_event(WebservEvent *event);
 
     private:
-        int             timeout_count_;
-        FileDiscriptor fd_;
-        WebservKeepAliveEvent(FileDiscriptor fd);
-        //bool is_end_;
-        WebservCgiEvent *cgi_event_;
-        FileDiscriptor  write_fd_;
-        FileDiscriptor  read_fd_;
-        FileDiscriptor  sock_fd_;
-        WebservEntity         *entity_;
+        WebservKeepAliveEvent();
 };
 #endif

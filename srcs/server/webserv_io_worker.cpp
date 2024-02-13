@@ -35,15 +35,17 @@ void WebservIOWorker::work(WebservEvent *event)
     //test 後で消す
     event->entity()->config()->check();
 
-    File *source = event->src();
-    File *destination = event->dst();
+    WebservEntity *entity = event->entity();
+
+    File *source = entity->io()->source();
+    File *destination = entity->io()->destination();
     if(source == NULL || destination == NULL){
         ERROR("WebservReceiver::recv():  source is NULL");
         throw HttpException("500");
     }
     source->open();
     destination->open();
-    event->set_completed(false);
+    entity->set_completed(false);
     char buf[MAX_READ_SIZE+1];
     ssize_t read_size_total = 0;
     while(1)
@@ -53,7 +55,7 @@ void WebservIOWorker::work(WebservEvent *event)
         MYINFO("MYINFO::read size=" + Utility::to_string(read_size));
         if(read_size <= 0){
             MYINFO("MYINFO::read end");
-            event->set_completed(true);
+            entity->set_completed(true);
             break;
         }
         read_size_total += read_size;
@@ -62,7 +64,7 @@ void WebservIOWorker::work(WebservEvent *event)
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("MYINFO::write end");
-            event->set_completed(false);
+            entity->set_completed(false);
             source->save(buf_p, read_size);
             break;
         }else{

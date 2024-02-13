@@ -8,15 +8,15 @@
 #include "config.hpp"
 #include "webserv_entity.hpp"
 
-class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
+class WebservMakeResponseEvent
 {
     public:
         //WebservMakeResponseEvent(FileDiscriptor fd, Request *req);
         ~WebservMakeResponseEvent();
-        static WebservMakeResponseEvent *from_event(WebservEvent *event, File *src, File *dst, IWriter *writer, IReader *reader);
+        static WebservEvent *from_event(WebservEvent *event, File *src, File *dst, IReader *reader);
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event();
+        E_EpollEvent get_next_epoll_event(WebservEvent *event);
         //FileDiscriptor  &fd();
         //Request         *req();
         //Response        *res();
@@ -38,7 +38,7 @@ class WebservMakeResponseEvent : public  IWebservMakeEvent, public WebservEvent
         WebservCgiEvent *cgi_event();
 
         //File    *make_request();
-        File    *make();
+        Response  *make(ApplicationResult *result);
         void    set_file(File *file);
         WebservEntity *entity();
 

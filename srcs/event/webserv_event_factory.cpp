@@ -52,8 +52,8 @@ WebservEventFactory::~WebservEventFactory()
 
 void WebservEventFactory::register_file_manager(WebservEvent *event)
 {
-    file_manager->insert(event->entity()->fd(), event->src());
-    file_manager->insert(event->entity()->fd(), event->dst());
+    file_manager->insert(event->entity()->fd(), event->entity()->io()->source());
+    file_manager->insert(event->entity()->fd(), event->entity()->io()->destination());
 }
 
 void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req)
@@ -85,6 +85,7 @@ void WebservEventFactory::make_and_push_read_cgi_event(FileDiscriptor pid, FileD
 */
 
 
+/*
 WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd)
 {
     MYINFO("make_nothing_event() pid=" + fd.to_string() + ", fd_out=" + sock_fd.to_string());
@@ -96,6 +97,7 @@ WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd, FileDis
     this->register_file_manager(new_event);
     return (new_event);
 }
+*/
 
 /*
 WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd)
@@ -111,13 +113,13 @@ WebservEvent *WebservEventFactory::make_nothing_event(FileDiscriptor fd)
 }
 */
 
-WebservEvent *WebservEventFactory::make_keep_alive_event(FileDiscriptor fd)
+WebservEvent *WebservEventFactory::make_keep_alive_event(WebservEvent *event)
 {
-    MYINFO("make_nothing_event() fd=" + fd.to_string());
+    //MYINFO("make_nothing_event() fd=" + fd.to_string());
     //FileDiscriptor sock_fd = this->fd_manager->get_sockfd(fd);
     //this->fd_manager->add_socket_and_epoll_fd(fd, sock_fd);
     //this->io_multi_controller->modify(fd, EPOLLIN | EPOLLONESHOT);
-    WebservEvent *new_event = WebservKeepAliveEvent::from_fd(fd);
+    WebservEvent *new_event = WebservKeepAliveEvent::from_event(event);
     //return (this->make_nothing_event(fd, sock_fd));
     this->register_file_manager(new_event);
     return (new_event);
@@ -150,7 +152,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
             this->io_multi_controller->add(io_fd, EPOLLIN);
 
-            return (new WebservNothingEvent(io_fd));
+            return (WebservNothingEvent::make_nothing_event());
         }else{
             //sock_fd = this->fd_manager->socket_fd_from_epoll_fd(fd);
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
@@ -184,12 +186,12 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 return (event);
             }else{
                 DEBUG("WebservEvent::from_epoll_event: No.2 EPOLLIN");
-                WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
+                //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
                 //
                 //
-                DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(cached_event->which()));
+                DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string((cached_event->which())));
                 //DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(->which()));
-                io_event->switching_io(EPOLLIN);
+                cached_event->entity()->io()->switching_io(EPOLLIN);
                 /*
                 if(io_event){
                     DEBUG("WebservEvent::from_epoll_event: No.3 EPOLLIN");
@@ -240,10 +242,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
 
         //WebservIOSocket *io_event = reinforecment_cast<WebservIOSocket>(cached_event);
-        WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
-        if(io_event){
-            io_event->switching_io(EPOLLOUT);
-        }
+        //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
+        cached_event->entity()->io()->switching_io(EPOLLOUT);
 
         /*
         if (!(fd == cached_event->entity()->fd()) && cached_event->cgi_event().is_cgi() && fd == cached_event->cgi_event().cgi_fd())
@@ -298,7 +298,7 @@ WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event, F
     File *read_src = OpenedSocketFile::from_fd(normal_reader, result->cgi_out());
     FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
 
-    return (WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event->entity()));
+    return (WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event));
 }
 
 WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, File *src)
@@ -306,7 +306,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *e
     DEBUG("WebservEventFactory::make_io_socket_event_as_write fd=" + event->entity()->fd().to_string());
     File *dst = OpenedSocketFile::from_fd(socket_writer, event->entity()->fd());
     //FileDiscriptor &socket_fd = fd_manager->socket_fd_from_epoll_fd(event->entity()->fd());
-    return (WebservIOSocketEvent::as_write(event->entity(), event->entity()->fd(), src, dst));
+    return (WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, dst));
 }
 
 WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *event)
@@ -320,6 +320,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
 }
 
 
+/*
 WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *event)
 {
     //FileDiscriptor sockfd = fd_manager->get_sockfd(event->entity()->fd());
@@ -328,11 +329,12 @@ WebservEvent *WebservEventFactory::make_read_event_from_event(WebservEvent *even
     this->register_file_manager(new_event);
     return (new_event);
 }
+*/
 
 WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_making_request_event");
-    WebservEvent *new_event = WebservMakeRequestEvent::from_event(event, this->socket_reader, event->dst(), NULL);
+    WebservEvent *new_event = WebservMakeRequestEvent::from_event(event, event->entity()->io()->destination(), NULL);
 
     this->register_file_manager(new_event);
     return (new_event);
@@ -346,7 +348,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
     //File *src = src;
     //File *dst= dst;
 
-    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL, socket_writer, normal_reader);
+    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL, normal_reader);
 
     //this->register_file_manager(new_event);
     return (new_event);
@@ -354,7 +356,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_application_with_cgi_event(WebservEvent *event)
 {
-    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event, normal_writer);
+    WebservEvent *new_event = WebservApplicationWithCgiEvent::from_event(event);
 
     this->register_file_manager(new_event);
     return (new_event);
@@ -368,17 +370,15 @@ WebservEvent *WebservEventFactory::make_application_without_cgi_event(WebservEve
     return (new_event);
 }
 
+/*
 WebservEvent *WebservEventFactory::make_write_event_for_cgi(WebservEvent *event, Response *res)
 {
     (void)res;
-    /*
-    WebservEvent *new_event = WebservWriteEvent::from_event_for_cgi(event, res);
-
-    this->register_file_manager(new_event);
-    */
     return (event);
 }
+*/
 
+/*
 WebservEvent *WebservEventFactory::make_write_cgi_event(WebservEvent *event, File *src, File *dst, ApplicationResult *result)
 {
     WebservEvent *new_event = WebservWriteCGIEvent::from_event(event, src, dst, result);
@@ -386,7 +386,9 @@ WebservEvent *WebservEventFactory::make_write_cgi_event(WebservEvent *event, Fil
     this->register_file_manager(new_event);
     return (new_event);
 }
+*/
 
+/*
 WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, File *src, File *dst)
 {
     //File *dst = OpenedSocketFile::from_fd(socket_writer, event->entity()->fd());
@@ -395,6 +397,7 @@ WebservEvent *WebservEventFactory::make_write_event(WebservEvent *event, File *s
     this->register_file_manager(new_event);
     return (new_event);
 }
+*/
 
 WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *event, char const *code_c)
 {
@@ -431,7 +434,7 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
     */
 
     File *dst = OpenedSocketFile::from_fd(socket_writer, event->entity()->fd());
-    return (WebservMakeErrorResponseEvent::from_event(event, code, dst, socket_writer));
+    return (WebservMakeErrorResponseEvent::from_event(event, code, dst));
     //return (WebservWriteEvent::from_error_status_code(event, src, dst));
     return (event);
 }
@@ -439,7 +442,7 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool force_close)
 {
-    WebservCleanEvent *new_event = WebservCleanEvent::from_webserv_event(event, force_close);
+    WebservEvent *new_event = WebservCleanEvent::from_webserv_event(event, force_close);
 
     this->register_file_manager(new_event);
     return (new_event);

@@ -1,31 +1,29 @@
 #include "webserv_application_without_cgi_event.hpp"
 #include "webserv_event.hpp"
 
-WebservApplicationWithoutCgiEvent::WebservApplicationWithoutCgiEvent():
-                            //FileDiscriptor fd,
-                            //Request *req)
-                            //:
-                            //fd_(fd),
-                            //req_(req),
-                            res_(NULL),
-                            file_(NULL),
-                            source_file(NULL),
-                            destination_file(NULL),
-                            timeout_count_(0),
-                            is_completed_(false),
-                            cgi_event_(NULL)
+WebservApplicationWithoutCgiEvent::WebservApplicationWithoutCgiEvent()
 {
-
-};
+    ;
+}
 
 WebservApplicationWithoutCgiEvent::~WebservApplicationWithoutCgiEvent()
 {
-};
+    ;
+}
+
+void execute(WebservApplicationWithoutCgiEvent *event, WebservEntity *entity)
+{
+    (void)event;
+    (void)entity;
+    //Request *req = event->make_request(entity);
+    //event->entity()->set_request(req);
+}
 
 WebservEvent *WebservApplicationWithoutCgiEvent::from_event(WebservEvent *event)
 {
-    WebservApplicationWithoutCgiEvent *new_event = new WebservApplicationWithoutCgiEvent();
-    new_event->entity_ = event->entity();
+    WebservApplicationWithoutCgiEvent *app_event = new WebservApplicationWithoutCgiEvent();
+    WebservEvent *new_event =  new WebservEvent( app_event, execute, event->entity());
+    //new_event->entity_ = event->entity();
     return (new_event);
 };
 
@@ -59,13 +57,15 @@ WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* e
     //return (event_factory->make_write_event(event, event->res()));
     //printf("result=%p\n", this->result());
     //cout << "status code=" << this->result()->status_code().to_string() << endl;
-    return (event_factory->make_making_response_event(event, this->dst()));
+    return (event_factory->make_making_response_event(event, event->entity()->io()->destination()));
     //return (event);
 }
 
-E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event()
+E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_NONE);
+    /*
     if (this->is_completed_){
         if(this->cgi_event() == NULL){
             return (EPOLL_WRITE);
@@ -75,8 +75,10 @@ E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event()
     }else{
         return (EPOLL_READ);
     }
+    */
 }
 
+/*
 FileDiscriptor &WebservApplicationWithoutCgiEvent::fd()
 {
     return (this->fd_);
@@ -177,3 +179,4 @@ WebservEntity*WebservApplicationWithoutCgiEvent::entity()
 {
     return (this->entity_);
 }
+*/

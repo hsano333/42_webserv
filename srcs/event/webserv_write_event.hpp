@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 01:24:28 by hsano             #+#    #+#             */
-/*   Updated: 2024/02/07 18:47:38 by sano             ###   ########.fr       */
+/*   Updated: 2024/02/13 16:27:05 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,9 @@
 #include "webserv_entity.hpp"
 
 // source_fileからデータを読み出し、fdに対して書き込む
-class WebservWriteEvent : public WebservEvent
+class WebservWriteEvent
 {
     public:
-        //struct Entity;
-        //WebservWriteEvent(FileDiscriptor fd);
         ~WebservWriteEvent();
         EWebservEvent which();
 
@@ -45,15 +43,15 @@ class WebservWriteEvent : public WebservEvent
         void increase_timeout_count(int count);
         int  timeout_count();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event();
+        E_EpollEvent get_next_epoll_event(WebservEvent *event);
         int write(char *buf, size_t size);
         //static WebservWriteEvent *from_error_status_code(WebservEvent *event, StatusCode &code, File *file);
         //static WebservWriteEvent *from_event_for_cgi(WebservEvent *event, Response *res);
-        static WebservWriteEvent *from_event(WebservEvent *event, File *src, File *dst);
+        static WebservEvent *from_event(WebservEvent *event, File *src, File *dst);
         //static WebservWriteEvent *from_cgi_fd(FileDiscriptor fd, Request *req, IReader *reader);
         //void set_cgi_event(WebservCgiEvent *cgi_event);
         //WebservCgiEvent *cgi_event();
-        WebservEntity *entity();
+        //WebservEntity *entity();
 
     private:
         WebservWriteEvent();
@@ -70,6 +68,6 @@ class WebservWriteEvent : public WebservEvent
         //IReader *reader;
         bool is_completed_;
         WebservCgiEvent *cgi_event_;
-        WebservEntity   *entity_;
+        //WebservEntity   *entity_;
 };
 #endif

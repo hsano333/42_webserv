@@ -70,20 +70,20 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     }else if (next_epoll_event == EPOLL_FOR_CGI){
         MYINFO("EventController::next is epoll EPOLL_FOR_CGI");
 
-        WebservIOEvent *io_event = dynamic_cast<WebservIOEvent *>(next_event);
+        //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent *>(next_event);
         FileDiscriptor const &socket_fd = next_event->entity()->socket_fd();
 
         //this->io_multi_controller->add(io_event->get_write_fd(), EPOLLOUT | EPOLLONESHOT);
         //this->event_manager->add_event_waiting_epoll(io_event->get_write_fd(), next_event);
         //this->fd_manager->add_socket_and_epoll_fd(io_event->get_write_fd());
 
-        DEBUG("set write io=" + Utility::to_string(io_event->get_write_fd()));
+        //DEBUG("set write io=" + Utility::to_string(io_event->get_write_fd()));
 
-        this->io_multi_controller->add(io_event->get_read_fd(), EPOLLIN | EPOLLONESHOT);
-        this->event_manager->add_event_waiting_epoll(io_event->get_read_fd(), next_event);
-        this->fd_manager->add_socket_and_epoll_fd(io_event->get_read_fd(), socket_fd);
+        this->io_multi_controller->add(next_event->entity()->io()->get_read_fd(), EPOLLIN | EPOLLONESHOT);
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->io()->get_read_fd(), next_event);
+        this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io()->get_read_fd(), socket_fd);
         //this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
-        DEBUG("set read io=" + Utility::to_string(io_event->get_read_fd()));
+        DEBUG("set read next=" + Utility::to_string(next_event->entity()->io()->get_read_fd()));
 
     //}else if (next_epoll_event == EPOLL_CGI){
         //this->io_multi_controller->add(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
@@ -126,7 +126,7 @@ void EventController::next_event(WebservEvent *event)
     //}
     DEBUG("EventController::next_event()");
     WebservEvent *next_event;
-    if(event->is_completed()){
+    if(event->entity()->completed()){
         next_event = event->make_next_event(event, this->event_factory);
         if(next_event){
             MYINFO("next_event=" + Utility::to_string(next_event->which()));

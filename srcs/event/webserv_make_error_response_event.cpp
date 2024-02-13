@@ -6,30 +6,15 @@
 #include "application_result.hpp"
 #include "error_file.hpp"
 
-WebservMakeErrorResponseEvent::WebservMakeErrorResponseEvent():
-                            //FileDiscriptor fd,
-                            //Request *req
-                            //IReader *reader
-                            //Config  *cfg
-                            //)
-                            //:
-                            //fd_(fd),
-                            //req_(req),
-                            //res_(NULL),
-                            file_(NULL),
-                            source_file(NULL),
-                            destination_file(NULL),
-                            timeout_count_(0),
-                            is_completed_(false)
-                            //reader(reader)
-                            //cfg(cfg)
+WebservMakeErrorResponseEvent::WebservMakeErrorResponseEvent()
 {
-
-};
+    ;
+}
 
 WebservMakeErrorResponseEvent::~WebservMakeErrorResponseEvent()
 {
-};
+    ;
+}
 
 
 Response* WebservMakeErrorResponseEvent::make_response()
@@ -37,7 +22,7 @@ Response* WebservMakeErrorResponseEvent::make_response()
     //(void)event;
 
     cout << "test No.1" << endl;
-    printf("src=%p\n", this->src());
+    //printf("src=%p\n", this->src());
 
     //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
     //ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
@@ -73,21 +58,32 @@ Response* WebservMakeErrorResponseEvent::make_response()
     return (res);
 }
 
-WebservMakeErrorResponseEvent *WebservMakeErrorResponseEvent::from_event(WebservEvent *event, StatusCode code, File *dst, IWriter *writer)
+
+void make(WebservMakeErrorResponseEvent *event, WebservEntity *entity)
+{
+    //ApplicationResult *result = entity->app_result();
+    Response *res = event->make_response();
+    entity->set_response(res);
+}
+
+
+WebservEvent *WebservMakeErrorResponseEvent::from_event(WebservEvent *event, StatusCode code, File *dst)
 {
     DEBUG("WebservMakeErrorResponseEvent::from_event");
-  //(void)src;
-  //(void)dst;
-  WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent();
-  //printf("src=%p\n", src);
-  new_event->source_file = NULL;
-  new_event->destination_file = dst;
-  new_event->next_event_writer = writer;
-  new_event->code = code;
-  new_event->entity_ = event->entity();
-  return (new_event);
-  //return (event);
-  //return (new WebservMakeErrorResponseEvent());
+    //(void)src;
+    //(void)dst;
+    WebservMakeErrorResponseEvent *error_event = new WebservMakeErrorResponseEvent();
+    //error_event->next_event_writer = writer;
+    error_event->code = code;
+    WebservEvent *new_event =  new WebservEvent( error_event, make, event->entity());
+
+    new_event->entity()->io()->set_source(NULL);
+    new_event->entity()->io()->set_destination(dst);
+
+    //new_event->entity_ = event->entity();
+    return (new_event);
+    //return (event);
+    //return (new WebservMakeErrorResponseEvent());
 };
 
 EWebservEvent WebservMakeErrorResponseEvent::which()
@@ -103,8 +99,9 @@ WebservEvent* WebservMakeErrorResponseEvent::make_next_event(WebservEvent* event
     return (event_factory->make_io_socket_event_as_write(event, src));
 }
 
-E_EpollEvent WebservMakeErrorResponseEvent::get_next_epoll_event()
+E_EpollEvent WebservMakeErrorResponseEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_WRITE);
 }
 
@@ -138,11 +135,15 @@ bool WebservMakeErrorResponseEvent::check_body_size(Request *req, const ConfigSe
     return (true);
 }
 
+
+
+/*
 File *WebservMakeErrorResponseEvent::make()
 {
     DEBUG("WebservMakeErrorResponseEvent::make()");
     return (make_response());
 }
+*/
 
 /*
 FileDiscriptor &WebservMakeErrorResponseEvent::fd()
@@ -161,6 +162,7 @@ Response *WebservMakeErrorResponseEvent::res()
 }
 */
 
+/*
 File *WebservMakeErrorResponseEvent::src()
 {
     return (this->source_file);
@@ -201,8 +203,10 @@ int WebservMakeErrorResponseEvent::timeout_count()
 {
     return (this->timeout_count_);
 }
+*/
 
 
+/*
 void WebservMakeErrorResponseEvent::set_cgi_event(WebservCgiEvent *cgi_event)
 {
     this->cgi_event_ = cgi_event;
@@ -212,18 +216,23 @@ WebservCgiEvent *WebservMakeErrorResponseEvent::cgi_event()
 {
     return (this->cgi_event_);
 }
+*/
 
+/*
 void WebservMakeErrorResponseEvent::set_file(File *file)
 {
     DEBUG("WebservMakeErrorResponseEvent::set_file");
     //this->res_ = static_cast<Response*>(file);
     this->entity_->set_response(static_cast<Response*>(file));
 }
+*/
 
+/*
 WebservEntity*WebservMakeErrorResponseEvent::entity()
 {
     return (this->entity_);
 }
+*/
 
 
 /*

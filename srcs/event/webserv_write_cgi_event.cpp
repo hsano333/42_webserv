@@ -188,8 +188,9 @@ WebservEvent* WebservWriteCGIEvent::make_next_event(WebservEvent* event, Webserv
     return (NULL);
 }
 
-E_EpollEvent WebservWriteCGIEvent::get_next_epoll_event()
+E_EpollEvent WebservWriteCGIEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_ADD_WRITE);
 }
 

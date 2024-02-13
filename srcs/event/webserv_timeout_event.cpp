@@ -1,15 +1,6 @@
 #include "webserv_timeout_event.hpp"
 
-WebservTimeoutEvent::WebservTimeoutEvent() 
-                                        :
-                                        fd_(FileDiscriptor::from_int(0)),
-                                        //req_(NULL),
-                                        //res_(NULL),
-                                        //source_file(NULL),
-                                        //destination_file(NULL),
-                                        event_type(TIMEOUT_EVENT),
-                                        timeout_count_(0),
-                                        is_completed_(false)
+WebservTimeoutEvent::WebservTimeoutEvent()
 {
     ;
 }
@@ -19,9 +10,22 @@ WebservTimeoutEvent::~WebservTimeoutEvent()
     ;
 }
 
+void dummy_func(WebservTimeoutEvent *event, WebservEntity *entity)
+{
+    (void)event;
+    (void)entity;
+}
+
+WebservEvent *WebservTimeoutEvent::make()
+{
+    WebservTimeoutEvent *timeout_event = new WebservTimeoutEvent();
+    WebservEvent *new_event =  new WebservEvent( timeout_event, dummy_func, NULL);
+    return (new_event);
+}
+
 EWebservEvent WebservTimeoutEvent::which()
 {
-    return (this->event_type);
+    return (TIMEOUT_EVENT);
 }
 
 WebservEvent* WebservTimeoutEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
@@ -32,85 +36,9 @@ WebservEvent* WebservTimeoutEvent::make_next_event(WebservEvent* event, WebservE
     return (NULL);
 }
 
-E_EpollEvent WebservTimeoutEvent::get_next_epoll_event()
+E_EpollEvent WebservTimeoutEvent::get_next_epoll_event(WebservEvent *event)
 {
+    (void)event;
     return (EPOLL_NONE);
 }
-
-
-FileDiscriptor &WebservTimeoutEvent::fd()
-{
-    return (this->fd_);
-}
-
-Request *WebservTimeoutEvent::req()
-{
-    return (NULL);
-}
-
-Response *WebservTimeoutEvent::res()
-{
-    return (NULL);
-}
-
-File *WebservTimeoutEvent::src()
-{
-    return (NULL);
-}
-
-File *WebservTimeoutEvent::dst()
-{
-    return (NULL);
-}
-
-void WebservTimeoutEvent::set_src(File *file)
-{
-    (void)file;
-    //this->source_file = file;
-}
-
-void WebservTimeoutEvent::set_dst(File *file)
-{
-    (void)file;
-    //this->destination_file = file;
-}
-
-bool WebservTimeoutEvent::is_completed()
-{
-    return (this->is_completed_);
-}
-void WebservTimeoutEvent::set_completed(bool flag)
-{
-    this->is_completed_ = flag;
-}
-
-
-void WebservTimeoutEvent::increase_timeout_count(int count)
-{
-    this->timeout_count_ += count;
-    DEBUG("WebservTimeoutEvent::increase_timeout_count add:" + Utility::to_string(count) + ", after:" + Utility::to_string(this->timeout_count_));
-}
-
-int WebservTimeoutEvent::timeout_count()
-{
-    return (this->timeout_count_);
-}
-
-
-void WebservTimeoutEvent::set_cgi_event(WebservCgiEvent *cgi_event)
-{
-    this->cgi_event_ = cgi_event;
-}
-
-WebservCgiEvent *WebservTimeoutEvent::cgi_event()
-{
-    return (this->cgi_event_);
-}
-
-WebservEntity*WebservTimeoutEvent::entity()
-{
-    return (this->entity_);
-}
-
-
 

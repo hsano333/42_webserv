@@ -38,13 +38,13 @@ class Webserv
             //EpollController epoll_controller,
             //WebservStarter      &starter,
             WebservWaiter       &waiter,
-            WebservReceiver     &receiver,
+            //WebservReceiver     &receiver,
             //WebservParser &parser,
             WebservMaker        &maker,
             WebservExecuter     &executer,
             WebservIOWorker    &io_worker,
             //WebservMaker &maker,
-            WebservSender       &sender,
+            //WebservSender       &sender,
             WebservCleaner      &cleaner
             );
     Webserv(const std::vector<std::string> ports);
@@ -64,12 +64,12 @@ class Webserv
     //EpollController     &epoll_controller;
     //WebservStarter      &starter;
     WebservWaiter       &waiter;
-    WebservReceiver     &receiver;
+    //WebservReceiver     &receiver;
     WebservMaker        &maker;
     //WebservParser       &parser;
     WebservExecuter     &executer;
     WebservIOWorker    &io_worker;
-    WebservSender       &sender;
+    //WebservSender       &sender;
     WebservCleaner      &cleaner;
     IOMultiplexing      *io_multi_controller;
 

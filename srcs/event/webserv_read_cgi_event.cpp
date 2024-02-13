@@ -175,9 +175,9 @@ WebservEvent* WebservReadCGIEvent::make_next_event(WebservEvent* event, WebservE
     //return (event_factory->make_application_event(event));
 }
 
-E_EpollEvent WebservReadCGIEvent::get_next_epoll_event()
+E_EpollEvent WebservReadCGIEvent::get_next_epoll_event(WebservEvent *event)
 {
-    if (this->is_completed_){
+    if (event->is_completed_){
         return (EPOLL_NONE);
     }else{
         return (EPOLL_READ);

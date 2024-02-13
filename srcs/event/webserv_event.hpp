@@ -6,7 +6,9 @@
 #include "response.hpp"
 #include "webserv_event_factory.hpp"
 #include "webserv_entity.hpp"
+#include <memory>
 //#include "webserv_cgi_event.hpp"
+//
 
 typedef enum E_WebservEvent
 {
@@ -48,45 +50,102 @@ struct WebservEntity
 */
 
 
+class WebservEvent;
 class WebservEntity;
-class WebservEvent
+class EventConcept
 {
     public:
-        //struct WebservEntity;
-        //WebservEvent();
-        virtual ~WebservEvent(){};
-        virtual EWebservEvent which() = 0;
-        //static WebservEvent *from_epoll_event(t_epoll_event const &event);
+        virtual ~EventConcept(){};
+        virtual void handle() const = 0;
+        virtual EWebservEvent which() const = 0;
+        virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
+        virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
+};
 
-        //virtual FileDiscriptor const &fd() = 0;
-        virtual WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory) = 0;
-        virtual E_EpollEvent get_next_epoll_event() = 0;
-
-        //virtual Request *req() = 0;
-        //virtual Response *res() = 0;
-        virtual File *src() = 0;
-        virtual File *dst() = 0;
-        //virtual void set_io(uint32_t epoll_event) = 0;
-        virtual void set_src(File *file) = 0;
-        virtual void set_dst(File *file) = 0;
-
-        virtual bool is_completed() = 0;
-        virtual void set_completed(bool flag) = 0;
-
-        virtual void increase_timeout_count(int count) = 0;
-        virtual int  timeout_count() = 0;
-
-        virtual WebservEntity *entity() = 0;
-
-        //virtual void handle() const = 0;
-        //virtual void set_cgi_event(WebservCgiEvent *cgi_event) = 0;
-        //virtual WebservCgiEvent *cgi_event() = 0;
+template<typename EventPointer, typename HandleStrategyPointer>
+class OwningEventModel : public EventConcept
+{
+    public:
+        OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : event_(event), handler_(handler), entity_(entity){};
+        void handle() const {handler_(event_, entity_);}
+        EWebservEvent which() const {return (event_->which());}
+        //E_EpollEvent get_next_epoll_event() const {return (event_->get_next_epoll_event());}
+        E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
 
     private:
+        EventPointer event_;
+        HandleStrategyPointer handler_;
         WebservEntity *entity_;
-        //Request *req_;
-        //Response *res_;
-        int timeout_count_;
 };
+
+
+
+//namespace EVENT
+//{
+
+    class WebservEntity;
+    class WebservEvent
+    {
+        public:
+           template<typename EventPointer, typename HandleStrategyPointer>
+           WebservEvent( EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : entity_(entity)
+           {
+              typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
+              pimpl_ = new Model(event, handler, entity);
+              //this->smart_p = pimpl_;
+           }
+           ~WebservEvent(){delete pimpl_;};
+           WebservEntity *entity(){return(this->entity_);}
+           template<typename EventPointer>
+           EventPointer event(){return (this->pimpl_);};
+           int  timeout_count();
+           void increase_timeout_count(int count);
+
+            EWebservEvent which()
+            {
+                return (pimpl_->which());
+            }
+            E_EpollEvent get_next_epoll_event()
+            {
+                return (pimpl_->get_next_epoll_event(this));
+            }
+            WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory)
+            {
+                return (pimpl_->make_next_event(event, factory));
+            }
+
+        private:
+            WebservEntity *entity_;
+            int timeout_count_;
+
+            friend void handle(WebservEvent const *event)
+            {
+                event->pimpl_->handle();
+            }
+            /*
+            friend void make(WebservEvent const *event)
+            {
+                event->pimpl_->handle();
+            }
+            friend void invoke(WebservEvent const *event)
+            {
+                event->pimpl_->handle();
+            }
+            */
+            EventConcept *pimpl_;
+    };
+//}
+
+namespace EVENT_DUMMY
+{
+    template<typename EventPointer, typename HandleStrategyPointer>
+    void func(EventPointer *event, WebservEntity *entity)
+    {
+        (void)event;
+        (void)entity;
+    }
+}
+//using EVENT;
 
 #endif

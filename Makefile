@@ -13,11 +13,11 @@ FILESYSTEMSRC 		:= normal_file.cpp directory_file.cpp error_file.cpp opened_sock
 FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
-SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_maker.cpp webserv_executer.cpp webserv_io_worker.cpp  webserv_cleaner.cpp webserv_time_keeper.cpp webserv_receiver.cpp webserv_sender.cpp webserv_entity.cpp
+SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_maker.cpp webserv_executer.cpp webserv_io_worker.cpp  webserv_cleaner.cpp webserv_time_keeper.cpp  webserv_entity.cpp webserv_io.cpp
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/
-EVENTSRC 			:= webserv_event.cpp  webserv_event_factory.cpp webserv_write_event.cpp webserv_write_cgi_event.cpp webserv_read_event.cpp webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_make_error_response_event.cpp webserv_application_without_cgi_event.cpp  webserv_application_with_cgi_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_cgi_event.cpp webserv_io_socket_event.cpp webserv_io_cgi_event.cpp test_event.cpp test_handle_event.cpp
+EVENTSRC 			:= webserv_event.cpp  webserv_event_factory.cpp webserv_write_event.cpp  webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_make_error_response_event.cpp webserv_application_without_cgi_event.cpp  webserv_application_with_cgi_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_cgi_event.cpp webserv_io_socket_event.cpp webserv_io_cgi_event.cpp test_event.cpp test_handle_event.cpp
 
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 
