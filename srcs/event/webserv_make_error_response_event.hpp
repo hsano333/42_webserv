@@ -46,6 +46,7 @@ class WebservMakeErrorResponseEvent
     private:
         //WebservMakeErrorResponseEvent(FileDiscriptor fd, Request *req);
         WebservMakeErrorResponseEvent();
+        static WebservMakeErrorResponseEvent *singleton;
         //FileDiscriptor  fd_;
         //Request         *req_;
         //Response        *res_;

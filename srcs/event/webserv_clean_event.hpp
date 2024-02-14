@@ -41,6 +41,8 @@ class WebservCleanEvent
 
     private:
         WebservCleanEvent();
+        static WebservCleanEvent *singleton;
+        static WebservCleanEvent *get_instance();
         //FileDiscriptor  fd_;
         //Request         *req_;
         //Response        *res_;

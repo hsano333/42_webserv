@@ -60,6 +60,8 @@ class EventConcept
         virtual EWebservEvent which() const = 0;
         virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
+
+        //virtual void change_event(WebservEvent* event, HandleStrategyPointer handler_) const = 0;
 };
 
 template<typename EventPointer, typename HandleStrategyPointer>
@@ -67,6 +69,7 @@ class OwningEventModel : public EventConcept
 {
     public:
         OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : event_(event), handler_(handler), entity_(entity){};
+        OwningEventModel(OwningEventModel const &model) : event_(model.event), handler_(model.handler), entity_(model.entity){};
         void handle() const {handler_(event_, entity_);}
         EWebservEvent which() const {return (event_->which());}
         //E_EpollEvent get_next_epoll_event() const {return (event_->get_next_epoll_event());}
@@ -94,15 +97,6 @@ class WebservEvent
             typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
             pimpl_ = new Model(event, handler, entity);
         }
-
-        template<typename EventPointer, typename HandleStrategyPointer>
-        void change_event( EventPointer event, HandleStrategyPointer handler)
-        {
-            //delete pimpl_->event_;
-            //pimpl_->event_ = event;
-            //pimpl_->handler_ = handler;
-        }
-
 
         ~WebservEvent(){delete pimpl_;};
         WebservEntity *entity(){return(this->entity_);}

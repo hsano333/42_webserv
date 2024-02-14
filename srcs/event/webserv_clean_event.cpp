@@ -137,10 +137,20 @@ void dummy_func(WebservCleanEvent *event, WebservEntity *entity)
     (void)entity;
 }
 
+
+WebservCleanEvent *WebservCleanEvent::singleton = NULL;
+WebservCleanEvent *WebservCleanEvent::get_instance()
+{
+    if (WebservCleanEvent::singleton == NULL){
+        singleton = new WebservCleanEvent();
+    }
+    return (singleton);
+}
+
 WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
-    WebservCleanEvent *clean_event = new WebservCleanEvent();
+    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( clean_event, dummy_func, event->entity());
     //new_event->entity_ = event->entity();
     new_event->entity()->set_force_close(force_close);

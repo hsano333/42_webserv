@@ -8,7 +8,6 @@
 class WebservTimeoutEvent
 {
     public:
-        WebservTimeoutEvent();
         WebservTimeoutEvent(FileDiscriptor fd);
         ~WebservTimeoutEvent();
         static WebservEvent *make();
@@ -17,5 +16,8 @@ class WebservTimeoutEvent
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
 
     private:
+        WebservTimeoutEvent();
+        static WebservTimeoutEvent *singleton;
+        static WebservTimeoutEvent *get_instance();
 };
 #endif

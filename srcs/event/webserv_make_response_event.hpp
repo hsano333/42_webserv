@@ -44,6 +44,8 @@ class WebservMakeResponseEvent
 
     private:
         WebservMakeResponseEvent();
+        static WebservMakeResponseEvent *singleton;
+        static WebservMakeResponseEvent *get_instance();
         //WebservMakeResponseEvent(FileDiscriptor fd, Request *req, IReader *reader);
         Response *make_response(ApplicationResult *result);
         Response *make_response_for_cgi(ApplicationResult *result, WebservEntity *entity);

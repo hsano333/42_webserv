@@ -16,9 +16,18 @@ void dummy_func(WebservTimeoutEvent *event, WebservEntity *entity)
     (void)entity;
 }
 
+WebservTimeoutEvent *WebservTimeoutEvent::singleton = NULL;
+WebservTimeoutEvent *WebservTimeoutEvent::get_instance()
+{
+    if (WebservTimeoutEvent::singleton == NULL){
+        singleton = new WebservTimeoutEvent();
+    }
+    return (singleton);
+}
+
 WebservEvent *WebservTimeoutEvent::make()
 {
-    WebservTimeoutEvent *timeout_event = new WebservTimeoutEvent();
+    WebservTimeoutEvent *timeout_event = WebservTimeoutEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( timeout_event, dummy_func, NULL);
     return (new_event);
 }

@@ -20,5 +20,7 @@ class WebservKeepAliveEvent
 
     private:
         WebservKeepAliveEvent();
+        static WebservKeepAliveEvent *singleton;
+        static WebservKeepAliveEvent *get_instance();
 };
 #endif

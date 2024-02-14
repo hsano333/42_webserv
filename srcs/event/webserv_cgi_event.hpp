@@ -15,7 +15,6 @@ class WebservCgiEvent
 {
     public:
 
-        WebservCgiEvent();
         ~WebservCgiEvent();
         WebservCgiEvent(WebservCgiEvent const &cgi_event);
         WebservCgiEvent& operator=(WebservCgiEvent const &cgi_event);
@@ -40,6 +39,9 @@ class WebservCgiEvent
         //WebservEntity *entity();
 
     private:
+        WebservCgiEvent();
+        static WebservCgiEvent *singleton;
+        static WebservCgiEvent *get_instance();
         FileDiscriptor  fd_in_;
         FileDiscriptor  fd_out_;
         FileDiscriptor  pid_;

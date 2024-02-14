@@ -12,7 +12,7 @@ NormalReader::~NormalReader()
     //delete (singleton);
 }
 
-NormalReader* NormalReader::singleton = NULL;
+NormalReader *NormalReader::singleton = NULL;
 NormalReader *NormalReader::get_instance()
 {
     if (NormalReader::singleton == NULL){

@@ -28,10 +28,20 @@ void make(WebservMakeRequestEvent *event, WebservEntity *entity)
     entity->set_request(req);
 }
 
+WebservMakeRequestEvent *WebservMakeRequestEvent::singleton = NULL;
+WebservMakeRequestEvent *WebservMakeRequestEvent::get_instance()
+{
+    if (WebservMakeRequestEvent::singleton == NULL){
+        singleton = new WebservMakeRequestEvent();
+    }
+    return (singleton);
+}
+
+
 WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src, File *dst)
 {
     DEBUG("WebservMakeRequestEvent::from_event");
-    WebservMakeRequestEvent *req_event = new WebservMakeRequestEvent();
+    WebservMakeRequestEvent *req_event = WebservMakeRequestEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( req_event, make, event->entity());
     //new_event->entity_ = event->entity();
     new_event->entity()->io().set_source(src);

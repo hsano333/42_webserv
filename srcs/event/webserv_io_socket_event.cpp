@@ -55,10 +55,20 @@ void dummy_func(WebservIOSocketEvent *event, WebservEntity *entity)
     (void)entity;
 }
 
+WebservIOSocketEvent *WebservIOSocketEvent::singleton = NULL;
+WebservIOSocketEvent *WebservIOSocketEvent::get_instance()
+{
+    if (WebservIOSocketEvent::singleton == NULL){
+        singleton = new WebservIOSocketEvent();
+    }
+    return (singleton);
+}
+
+
 WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity)
 {
     //DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
-    WebservIOSocketEvent *io_event = new WebservIOSocketEvent();
+    WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, entity);
     new_event->entity()->io().set_read_io(src, dst);
     new_event->entity()->io().set_read_fd(read_fd);
@@ -70,7 +80,7 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File 
 WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor const &write_fd, File *src, File *dst)
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
-    WebservIOSocketEvent *io_event = new WebservIOSocketEvent();
+    WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
     new_event->entity()->io().set_write_fd(write_fd);

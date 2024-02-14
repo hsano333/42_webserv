@@ -43,10 +43,20 @@ void dummy_func(WebservIOCGIEvent *event, WebservEntity *entity)
     //event->entity()->set_request(req);
 }
 
+WebservIOCGIEvent *WebservIOCGIEvent::singleton = NULL;
+WebservIOCGIEvent *WebservIOCGIEvent::get_instance()
+{
+    if (WebservIOCGIEvent::singleton == NULL){
+        singleton = new WebservIOCGIEvent();
+    }
+    return (singleton);
+}
+
+
 WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, File *read_src, File *read_dst, File *write_src, File *write_dst, WebservEvent * event)
 {
     //DEBUG("WebservIOCGIEvent::from_fd fd:" + fd.to_string());
-    WebservIOCGIEvent *io_event = new WebservIOCGIEvent();
+    WebservIOCGIEvent *io_event = WebservIOCGIEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, event->entity());
     //event->io = io;
     //event->fd_ = event->fd();

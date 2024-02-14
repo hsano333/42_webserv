@@ -50,6 +50,8 @@ class WebservIOSocketEvent
 
     private:
         WebservIOSocketEvent();
+        static WebservIOSocketEvent *singleton;
+        static WebservIOSocketEvent *get_instance();
         //WebservIOSocketEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
         //FileDiscriptor  fd_;
         //FileDiscriptor  sock_fd_;

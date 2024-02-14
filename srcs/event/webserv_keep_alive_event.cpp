@@ -18,9 +18,18 @@ void dummy_func(WebservKeepAliveEvent *event, WebservEntity *entity)
     (void)entity;
 }
 
+WebservKeepAliveEvent *WebservKeepAliveEvent::singleton = NULL;
+WebservKeepAliveEvent *WebservKeepAliveEvent::get_instance()
+{
+    if (WebservKeepAliveEvent::singleton == NULL){
+        singleton = new WebservKeepAliveEvent();
+    }
+    return (singleton);
+}
+
 WebservEvent *WebservKeepAliveEvent::from_event(WebservEvent *event)
 {
-    WebservKeepAliveEvent *keep_event = new WebservKeepAliveEvent();
+    WebservKeepAliveEvent *keep_event = WebservKeepAliveEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( keep_event, dummy_func, event->entity());
     return (new_event);
 }

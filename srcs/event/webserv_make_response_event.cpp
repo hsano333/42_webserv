@@ -165,13 +165,21 @@ namespace FREE
     }
 }
 
+WebservMakeResponseEvent *WebservMakeResponseEvent::singleton = NULL;
+WebservMakeResponseEvent *WebservMakeResponseEvent::get_instance()
+{
+    if (WebservMakeResponseEvent::singleton == NULL){
+        singleton = new WebservMakeResponseEvent();
+    }
+    return (singleton);
+}
 
 WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst)
 {
     DEBUG("WebservMakeResponseEvent::from_event");
     //(void)src;
     //(void)dst;
-    WebservMakeResponseEvent *res_event = new WebservMakeResponseEvent();
+    WebservMakeResponseEvent *res_event = WebservMakeResponseEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( res_event, FREE::make, event->entity());
     //new_event->entity_ = event->entity();
     new_event->entity()->io().set_source(src);

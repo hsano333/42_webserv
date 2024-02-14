@@ -51,6 +51,8 @@ class WebservIOCGIEvent
 
     private:
         WebservIOCGIEvent();
+        static WebservIOCGIEvent *singleton;
+        static WebservIOCGIEvent *get_instance();
         WebservIOCGIEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
         //FileDiscriptor  fd_;
         //FileDiscriptor  sock_fd_;

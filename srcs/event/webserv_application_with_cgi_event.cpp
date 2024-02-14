@@ -19,9 +19,19 @@ void execute(WebservApplicationWithCgiEvent *event, WebservEntity *entity)
     (void)entity;
 }
 
+WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::singleton = NULL;
+WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::get_instance()
+{
+    if (WebservApplicationWithCgiEvent::singleton == NULL){
+        singleton = new WebservApplicationWithCgiEvent();
+    }
+    return (singleton);
+}
+
+
 WebservEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event)
 {
-    WebservApplicationWithCgiEvent *app_event =  new WebservApplicationWithCgiEvent();
+    WebservApplicationWithCgiEvent *app_event =  WebservApplicationWithCgiEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( app_event, execute, event->entity());
     return (new_event);
 };

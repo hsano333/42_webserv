@@ -43,8 +43,9 @@ class WebservMakeRequestEvent
         //WebservEntity *entity();
 
     private:
-        //WebservMakeRequestEvent(FileDiscriptor fd, Request *req, IReader *reader, Config *cfg);
         WebservMakeRequestEvent();
+        static WebservMakeRequestEvent *singleton;
+        static WebservMakeRequestEvent *get_instance();
 
         void parse_request(Request *req, File *src);
         bool check_cgi(const Request *req, const ConfigLocation *location) const;

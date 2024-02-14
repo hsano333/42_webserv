@@ -44,6 +44,8 @@ class WebservApplicationWithCgiEvent
         //WebservEntity *entity();
 
     private:
+        static WebservApplicationWithCgiEvent *singleton;
+        static WebservApplicationWithCgiEvent *get_instance();
         WebservApplicationWithCgiEvent();
         //FileDiscriptor  fd_;
         //Request         *req_;
