@@ -48,17 +48,17 @@ class WebservApplicationWithCgiEvent
         //FileDiscriptor  fd_;
         //Request         *req_;
         //Response        *res_;
-        File            *file_;
-        File            *source_file;
-        File            *destination_file;
+        //File            *file_;
+        //File            *source_file;
+        //File            *destination_file;
 
-        int             timeout_count_;
-        bool            is_completed_;
+        //int             timeout_count_;
+        //bool            is_completed_;
 
-        WebservCgiEvent *cgi_event_;
+        //WebservCgiEvent *cgi_event_;
         //ApplicationResult *result_;
-        IWriter *next_event_writer;
-        WebservEntity          *entity_;
+        //IWriter *next_event_writer;
+        //WebservEntity          *entity_;
 
 };
 

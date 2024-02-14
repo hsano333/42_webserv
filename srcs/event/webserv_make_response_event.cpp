@@ -5,6 +5,7 @@
 #include "opened_socket_file.hpp"
 #include "application_result.hpp"
 #include "header_word.hpp"
+#include "normal_reader.hpp"
 
 WebservMakeResponseEvent::WebservMakeResponseEvent()
 {
@@ -52,6 +53,7 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
 
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.5");
     Split headers_line(data, LF, false, true);
+    IReader *reader = NormalReader::get_instance();
     File *file = OpenedSocketFile::from_fd(reader, result->cgi_out());
 
     DEBUG("WebservMakeResponseEvent::make_response_for_cgi() No.6");
@@ -164,7 +166,7 @@ namespace FREE
 }
 
 
-WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst, IReader *reader)
+WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst)
 {
     DEBUG("WebservMakeResponseEvent::from_event");
     //(void)src;
@@ -178,7 +180,7 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *sr
 
     //todo
     //res_event->next_event_writer = writer; //socket_writer
-    res_event->reader = reader;            //normal_reader
+    //res_event->reader = reader;            //normal_reader
 
     return (new_event);
     //return (event);

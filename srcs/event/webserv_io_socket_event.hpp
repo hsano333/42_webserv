@@ -55,7 +55,7 @@ class WebservIOSocketEvent
         //FileDiscriptor  sock_fd_;
         //Request         *req_;
         //Response        *res_;
-        File            *io;
+        //File            *io;
         //File            *read_src;
         //File            *read_dst;
         //File            *write_src;

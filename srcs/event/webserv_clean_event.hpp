@@ -44,14 +44,14 @@ class WebservCleanEvent
         //FileDiscriptor  fd_;
         //Request         *req_;
         //Response        *res_;
-        File            *source_file;
-        File            *destination_file;
-        int             timeout_count_;
-        bool            force_close;
-        bool is_completed_;
+        //File            *source_file;
+        //File            *destination_file;
+        //int             timeout_count_;
+        //bool            force_close;
+        //bool is_completed_;
 
-        WebservCgiEvent *cgi_event_;
-        WebservEntity         *entity_;
+        //WebservCgiEvent *cgi_event_;
+        //WebservEntity         *entity_;
 };
 
 #endif

@@ -41,13 +41,13 @@ typedef enum E_EpollEvent
 } E_EpollEvent;
 
 /*
-struct WebservEntity
-{
-    Request             *req;
-    Response            *res;
-    ApplicationResult   *app;
-};
-*/
+   struct WebservEntity
+   {
+   Request             *req;
+   Response            *res;
+   ApplicationResult   *app;
+   };
+   */
 
 
 class WebservEvent;
@@ -84,67 +84,77 @@ class OwningEventModel : public EventConcept
 //namespace EVENT
 //{
 
-    class WebservEntity;
-    class WebservEvent
-    {
-        public:
-           template<typename EventPointer, typename HandleStrategyPointer>
-           WebservEvent( EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : entity_(entity)
+class WebservEntity;
+class WebservEvent
+{
+    public:
+        template<typename EventPointer, typename HandleStrategyPointer>
+        WebservEvent( EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : entity_(entity)
+        {
+            typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
+            pimpl_ = new Model(event, handler, entity);
+        }
+
+        template<typename EventPointer, typename HandleStrategyPointer>
+        void change_event( EventPointer event, HandleStrategyPointer handler)
+        {
+            //delete pimpl_->event_;
+            //pimpl_->event_ = event;
+            //pimpl_->handler_ = handler;
+        }
+
+
+        ~WebservEvent(){delete pimpl_;};
+        WebservEntity *entity(){return(this->entity_);}
+
+        template<typename EventPointer>
+            EventPointer event(){return (this->pimpl_);};
+        int  timeout_count();
+        void increase_timeout_count(int count);
+
+        EWebservEvent which()
+        {
+            return (pimpl_->which());
+        }
+        E_EpollEvent get_next_epoll_event()
+        {
+            return (pimpl_->get_next_epoll_event(this));
+        }
+        WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory)
+        {
+            return (pimpl_->make_next_event(event, factory));
+        }
+
+    private:
+        WebservEntity *entity_;
+        int timeout_count_;
+
+        friend void handle(WebservEvent const *event)
+        {
+            event->pimpl_->handle();
+        }
+        /*
+           friend void make(WebservEvent const *event)
            {
-              typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
-              pimpl_ = new Model(event, handler, entity);
+           event->pimpl_->handle();
            }
-           ~WebservEvent(){delete pimpl_;};
-           WebservEntity *entity(){return(this->entity_);}
-
-           template<typename EventPointer>
-           EventPointer event(){return (this->pimpl_);};
-           int  timeout_count();
-           void increase_timeout_count(int count);
-
-            EWebservEvent which()
-            {
-                return (pimpl_->which());
-            }
-            E_EpollEvent get_next_epoll_event()
-            {
-                return (pimpl_->get_next_epoll_event(this));
-            }
-            WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory)
-            {
-                return (pimpl_->make_next_event(event, factory));
-            }
-
-        private:
-            WebservEntity *entity_;
-            int timeout_count_;
-
-            friend void handle(WebservEvent const *event)
-            {
-                event->pimpl_->handle();
-            }
-            /*
-            friend void make(WebservEvent const *event)
-            {
-                event->pimpl_->handle();
-            }
-            friend void invoke(WebservEvent const *event)
-            {
-                event->pimpl_->handle();
-            }
-            */
-            EventConcept *pimpl_;
-    };
+           friend void invoke(WebservEvent const *event)
+           {
+           event->pimpl_->handle();
+           }
+           */
+        EventConcept *pimpl_;
+};
 //}
 
 namespace EVENT_DUMMY
 {
     template<typename EventPointer, typename HandleStrategyPointer>
-    void func(EventPointer *event, WebservEntity *entity)
-    {
-        (void)event;
-        (void)entity;
-    }
+        void func(EventPointer *event, WebservEntity *entity)
+        {
+            (void)event;
+            (void)entity;
+        }
 }
 //using EVENT;
 

@@ -164,10 +164,6 @@ ApplicationResult *ApplicationResult::from_fd(int in, int out, int pid)
 ApplicationResult *ApplicationResult::from_status_code(StatusCode &code)
 {
     ApplicationResult *result = new ApplicationResult(code);
-
-
-    cout << "make No.0 status code=" << result->status_code().to_string() << endl;
-
     return (result);
 }
 

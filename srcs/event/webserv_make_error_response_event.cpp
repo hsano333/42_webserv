@@ -17,28 +17,30 @@ WebservMakeErrorResponseEvent::~WebservMakeErrorResponseEvent()
 }
 
 
-Response* WebservMakeErrorResponseEvent::make_response()
+Response* WebservMakeErrorResponseEvent::make_response(ApplicationResult *result)
 {
-    //(void)event;
+    (void)result;
 
+    /*
     cout << "test No.1" << endl;
     //printf("src=%p\n", this->src());
 
     //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
     //ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
-    File *file = ErrorFile::from_status_code(this->code);
+    File *file = ErrorFile::from_status_code(result->status_code());
     cout << "test No.2" << endl;
 
     //StatusCode code = result->status_code();
     cout << "test No.3" << endl;
 
     Response *res = Response::from_success_status_code(
-            this->code,
+            result->status_code(),
             file
     );
 
     cout << "test No.4" << endl;
     cout << "test No.2" << endl;
+    */
 
     //WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent();
     //write_event->source_file = src;
@@ -55,15 +57,18 @@ Response* WebservMakeErrorResponseEvent::make_response()
     */
     //res->check_body_and_chunk();
     cout << "test No.4" << endl;
-    return (res);
+    //return (res);
+    return (NULL);
 }
 
 
 void make(WebservMakeErrorResponseEvent *event, WebservEntity *entity)
 {
+    (void)event;
+    (void)entity;
     //ApplicationResult *result = entity->app_result();
-    Response *res = event->make_response();
-    entity->set_response(res);
+    //Response *res = event->make_response(event->entity()->app_result());
+    //entity->set_response(res);
 }
 
 
@@ -73,8 +78,10 @@ WebservEvent *WebservMakeErrorResponseEvent::from_event(WebservEvent *event, Sta
     //(void)src;
     //(void)dst;
     WebservMakeErrorResponseEvent *error_event = new WebservMakeErrorResponseEvent();
+    (void)code;
     //error_event->next_event_writer = writer;
-    error_event->code = code;
+    //error_event->code = code;
+
     WebservEvent *new_event =  new WebservEvent( error_event, make, event->entity());
 
     new_event->entity()->io().set_source(NULL);

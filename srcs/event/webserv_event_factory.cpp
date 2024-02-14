@@ -18,6 +18,7 @@
 #include "webserv_io_event.hpp"
 #include "webserv_io_socket_event.hpp"
 #include "webserv_io_cgi_event.hpp"
+#include "error_file.hpp"
 
 WebservEventFactory::WebservEventFactory(
         Config *cfg,
@@ -343,14 +344,8 @@ WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event
 WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, File *src)
 {
     DEBUG("WebservEventFactory::make_making_response_event");
+    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL);
 
-    //(void)src;
-    //File *src = src;
-    //File *dst= dst;
-
-    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL, normal_reader);
-
-    //this->register_file_manager(new_event);
     return (new_event);
 }
 
@@ -415,26 +410,20 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
         code = StatusCode::from_string("500");
     }
 
-
-    //ApplicationResult *app_result = ApplicationResult::from_status_code(code);
-    //app_result->file = 
-
-    //Response::from_error_status_code(code);
-
-    /*
-    if (req){
-        file = cfg->get_error_file(req, code);
-        if (!file || file->can_read() == false){
-            delete file;
-            file = NULL;
-        }
-    }
-    */
-
     File *dst = OpenedSocketFile::from_fd(socket_writer, event->entity()->fd());
-    return (WebservMakeErrorResponseEvent::from_event(event, code, dst));
+
+    File *file = ErrorFile::from_status_code(code);
+    if(event->entity()->app_result() != NULL){
+        delete event->entity()->app_result();
+    }
+    ApplicationResult *result = ApplicationResult::from_status_code(code);
+    result->set_file(file);
+    event->entity()->set_result(result);
+
+
+    return (WebservMakeResponseEvent::from_event(event, result, dst));
     //return (WebservWriteEvent::from_error_status_code(event, src, dst));
-    return (event);
+    //return (event);
 }
 
 

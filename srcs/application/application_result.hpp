@@ -65,7 +65,5 @@ class ApplicationResult : public File
         ProcessID      pid_;
         bool           is_cgi_;
 
-        
-
 };
 #endif

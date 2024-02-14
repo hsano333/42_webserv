@@ -17,7 +17,7 @@ class WebservMakeErrorResponseEvent
         EWebservEvent   which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
-        Response *make_response();
+        Response *make_response(ApplicationResult *result);
         //FileDiscriptor  &fd();
         //Request         *req();
         //Response        *res();
@@ -62,7 +62,7 @@ class WebservMakeErrorResponseEvent
         //void parse_req(WebservEvent *event);
         //IReader *reader;
         //IWriter *next_event_writer;
-        StatusCode code;
+        //StatusCode code;
         //WebservEntity         *entity_;
         //Config *cfg;
         //
