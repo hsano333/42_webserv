@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   webserv_executer.cpp                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/15 03:01:59 by hsano             #+#    #+#             */
+/*   Updated: 2024/02/15 03:48:26 by sano             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 
 #include "webserv_executer.hpp"
@@ -82,42 +94,3 @@ bool WebservExecuter::check_redirect(WebservApplicationEvent *event)
 
 
 
-void WebservExecuter::execute(WebservEvent *event)
-{
-    DEBUG("WebservExecuter::execute");
-    ApplicationFactory *factory = ApplicationFactory::get_instance();
-    Application *app = factory->make_application(event);
-
-    bool is_completed = app->execute(event);
-    event->entity()->set_completed(is_completed);
-    ApplicationResult *result = app->get_result();
-
-    event->entity()->set_result(result);
-    delete app;
-    //EVENT::handle(event);
-    //(void)entity;
-    //handle(event);
-
-    /*
-    SocketReader reader = SocketReader();
-    //WebservApplicationEvent *app_event = dynamic_cast<WebservApplicationEvent*>(event);
-    entity->set_completed(false);
-    Application *app = make_application(event, reader);
-    //app->init(event);
-    bool is_completed = app->execute(event);
-    entity->set_completed(is_completed);
-    File *result = app->get_result();
-
-    ApplicationResult *result2 = static_cast<ApplicationResult*>(result);
-    cout << "make No.3 status code=" << result2->status_code().to_string() << endl;
-    */
-
-    //event->set_dst(result);
-    //event->set_completed(result->is_completed());
-    //WebservApplicationEvent *app_event = static_cast<WebservApplicationEvent*>(event);
-    //bool is_completed = this->get_application(event);
-    //File *result = app->get_result();
-
-
-    //File *result_file = dynamic_cast<File *>(result);
-}

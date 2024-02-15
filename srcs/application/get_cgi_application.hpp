@@ -14,6 +14,7 @@ class GetCGIApplication : public Application
         GetCGIApplication();
         ~GetCGIApplication();
         bool execute(WebservEvent *event);
+        bool invoke(WebservEntity *entity);
         ApplicationResult *get_result();
         static GetCGIApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         Response* make_response();

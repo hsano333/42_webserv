@@ -29,6 +29,46 @@ bool GetCGIApplication::is_cgi() const
     return (true);
 }
 
+bool GetCGIApplication::invoke(WebservEntity *entity)
+{
+    (void)entity;
+    this->result_ = this->cgi->execute(this->location, this->req);
+
+    //this->fd_manager->add_socket_and_epoll_fd(pid_fd, fdout_fd);
+    //
+    //
+    /*
+    WebservEvent* cgi_events[2];
+    cgi_events = this->event_factory->make_cgi_event(pid_fd, cgi_fd_in, cgi_fd_out, &(event[0]));
+    this->event_manager->push(*events[0]);
+    this->event_manager->push(*events[1]);
+    */
+
+    //WebservEvent[0]
+
+
+    /*
+    sleep(1);
+    char buf[1000]={0};
+    int rval = read(fd_out, buf, 1000);
+    if(rval < 0){
+        cout << "read error" << endl;
+        exit(0);
+    }
+    buf[rval] = '\0';
+    cout << "cgi buf=" << buf << endl;
+        exit(0);
+        */
+
+    //int rval = this->cgi->execute(fd_in, fd_out, pid);
+    //cout << "execve_path:" << execve_path << endl;
+    //cout << "file_path:" << file_path << endl;
+    //cout << "query:" << query << endl;
+    //cout << "this->cgi_event_ No.3 = " << this->cgi_event_ << endl;
+
+    return (true);
+}
+
 bool GetCGIApplication::execute(WebservEvent *event)
 {
     (void)event;

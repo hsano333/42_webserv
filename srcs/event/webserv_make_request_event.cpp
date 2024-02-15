@@ -24,8 +24,10 @@ File *WebservMakeRequestEvent::make()
 
 void make(WebservMakeRequestEvent *event, WebservEntity *entity)
 {
+    entity->set_completed(false);
     Request *req = event->make_request(entity);
     entity->set_request(req);
+    entity->set_completed(true);
 }
 
 WebservMakeRequestEvent *WebservMakeRequestEvent::singleton = NULL;

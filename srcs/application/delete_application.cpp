@@ -72,6 +72,12 @@ void DeleteApplication::execute_cgi()
 }
 */
 
+bool DeleteApplication::invoke(WebservEntity *entity)
+{
+    (void)entity;
+    return (false);
+}
+
 bool DeleteApplication::execute(WebservEvent *event)
 {
     (void)event;

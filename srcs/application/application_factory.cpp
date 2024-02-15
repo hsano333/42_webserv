@@ -83,12 +83,12 @@ void ApplicationFactory::set_cgi(CGI *cgi_)
 }
 
 //Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
-Application* ApplicationFactory::make_application(WebservEvent *event)
+Application* ApplicationFactory::make_application(WebservEntity *entity)
 {
     DEBUG("ApplicationFactory::make_application()");
     Application* app;
-    const Config *cfg = event->entity()->config();
-    Request *req = event->entity()->request();
+    const Config *cfg = entity->config();
+    Request *req = entity->request();
     RequestLine const &req_line = req->req_line();
     Method const &method = req_line.method();
 
@@ -110,13 +110,16 @@ Application* ApplicationFactory::make_application(WebservEvent *event)
             }
             break;
         case POST:
+            //todo
             if (is_cgi){
                 DEBUG("ApplicationFactory::make_application() Post Method with CGI");
+                app = NULL;
                 //app = PostCGIApplication::from_location(cfg, req, cgi);
-                app = PostCGIApplication::from_location(cfg, event, cgi);
+                //app = PostCGIApplication::from_location(cfg, event, cgi);
             }else{
+                app = NULL;
                 DEBUG("ApplicationFactory::make_application() Post Method with not CGI");
-                app = PostApplication::from_location(cfg, event);
+                //app = PostApplication::from_location(cfg, event);
             }
             break;
         case DELETE:

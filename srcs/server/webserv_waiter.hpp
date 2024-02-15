@@ -5,6 +5,7 @@
 #include "webserv_event_factory.hpp"
 #include "event_manager.hpp"
 #include "epoll_controller.hpp"
+#include "webserv_timeout_event.hpp"
 
 /*
 typedef enum E_WebservEvent

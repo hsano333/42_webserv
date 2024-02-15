@@ -219,6 +219,99 @@ void GetApplication::init(WebservEvent *event)
 }
 */
 
+bool GetApplication::invoke(WebservEntity *entity)
+{
+    DEBUG("GetApplication::execute()");
+
+    Request *req = entity->request();
+    File *file = NULL;
+    string extension = "";
+    StatusCode code;
+    bool is_directory = false;
+
+    cout << "test No.1" << endl;
+    DEBUG("GetApplication::execute() No.1");
+    if(req->is_file())
+    {
+    DEBUG("GetApplication::execute() No.2");
+    cout << "test No.2" << endl;
+        const string &file_path = req->requested_path();
+        if(Utility::is_readable_file(file_path)){
+    cout << "test No.3" << endl;
+            code = StatusCode::from_int(200);
+            file = NormalFile::from_filepath(file_path, std::ios::in);
+            extension = GetApplication::check_content(file_path);
+        }else{
+    cout << "test No.4" << endl;
+            code = StatusCode::from_int(403);
+        }
+    }else if(req->is_directory()){
+    cout << "test No.5" << endl;
+    DEBUG("GetApplication::execute() No.3");
+        bool is_existed = false;
+        string index_path = get_index_path(req, &is_existed);
+
+        if(index_path != ""){
+    DEBUG("GetApplication::execute() No.4");
+            file = NormalFile::from_filepath(index_path, std::ios::in);
+            code = StatusCode::from_int(200);
+            extension = GetApplication::check_content(index_path);
+    cout << "test No.6" << endl;
+        }
+        else
+        {
+    DEBUG("GetApplication::execute() No.5");
+    cout << "test No.7" << endl;
+            if(this->location->autoindex())
+            {
+    DEBUG("GetApplication::execute() No.6");
+    cout << "test No.8" << endl;
+                std::string const &host = req->header().get_host();
+                std::string const &relative_path= req->req_line().uri().path();
+                file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
+                code = StatusCode::from_int(200);
+                is_directory = true;
+            }
+            else
+            {
+    DEBUG("GetApplication::execute() No.7");
+    cout << "test No.9" << endl;
+                if(is_existed){
+    cout << "test No.10" << endl;
+                    code = StatusCode::from_int(403);
+                }else{
+    cout << "test No.11" << endl;
+                    code = StatusCode::from_int(404);
+                }
+            }
+        }
+    }else{
+        code = StatusCode::from_int(404);
+        file = ErrorFile::from_status_code(code);
+    }
+
+    DEBUG("GetApplication::execute() No.8");
+    cout << "test No.12" << endl;
+    this->result_ = ApplicationResult::from_status_code(code);
+    if(extension != ""){
+    cout << "test No.13" << endl;
+        this->result_->add_header(CONTENT_TYPE, extension);
+    }
+    if(file){
+        if(is_directory){
+            this->result_->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
+        }else{
+            string file_size = Utility::to_string(Utility::get_file_size(file->path()));
+            this->result_->add_header(CONTENT_LENGTH, file_size);
+        }
+    }
+    this->result_->set_file(file);
+
+    cout << "make No.1 status code=" << this->result_->status_code().to_string() << endl;
+    return (true);
+}
+
+
 bool GetApplication::execute(WebservEvent *event)
 {
     DEBUG("GetApplication::execute()");

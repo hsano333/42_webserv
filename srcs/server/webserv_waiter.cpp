@@ -1,7 +1,6 @@
 
 #include "webserv_waiter.hpp"
 #include "timeout_exception.hpp"
-#include "webserv_timeout_event.hpp"
 #include "webserv_nothing_event.hpp"
 
 WebservWaiter::WebservWaiter(
@@ -112,7 +111,10 @@ void WebservWaiter::fetch_events()
 
     if(event_manager->check_timeout()){
         MYINFO("WebservWaiter::fetch_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
-        event_manager->push(WebservTimeoutEvent::make());
+
+        //WebservTimeoutEvent::make();
+        WebservEvent *event = event_factory->make_timeout_event();
+        event_manager->push(event);
     }
     MYINFO("WebservWaiter::fetch_event() return new WebservNothingEvent():");
     //return (new WebservNothingEvent);

@@ -61,6 +61,12 @@ void PostCGIApplication::init(WebservEvent *event)
     (void)event;
 }
 
+bool PostCGIApplication::invoke(WebservEntity *entity)
+{
+    (void)entity;
+    return (false);
+}
+
 bool PostCGIApplication::execute(WebservEvent *event)
 {
     (void)event;

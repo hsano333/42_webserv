@@ -28,11 +28,31 @@ WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::get_instance()
     return (singleton);
 }
 
+#include "application_factory.hpp"
+/*
+template<typename EventT>
+void invoke(EventT event, WebservEntity *entity)
+{
+    DEBUG("WebservExecuter::execute");
+    ApplicationFactory *factory = ApplicationFactory::get_instance();
+    Application *app = factory->make_application(entity);
 
+    bool is_completed = app->invoke(entity);
+    entity->set_completed(is_completed);
+    ApplicationResult *result = app->get_result();
+
+    entity->set_result(result);
+    delete app;
+}
+*/
+
+#include "webserv_executer.hpp"
 WebservEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event)
 {
     WebservApplicationWithCgiEvent *app_event =  WebservApplicationWithCgiEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( app_event, execute, event->entity());
+    //template void invoke(WebservApplicationWithCgiEvent *event, WebservEntity *entity) invoke_func;
+    //typedef invoke<WebservApplicationWithCgiEvent> invoke_func;
+    WebservEvent *new_event =  new WebservEvent( app_event, invoke<WebservApplicationWithCgiEvent>, event->entity());
     return (new_event);
 };
 

@@ -24,7 +24,7 @@ class WebservExecuter
                 );
         ~WebservExecuter();
         //bool check_redirect(WebservApplicationEvent *event);
-        void execute(WebservEvent *event);
+        //void invoke(WebservEvent *event);
     private:
         ApplicationFactory *factory;
         IOMultiplexing *io_multi_controller;
@@ -56,5 +56,20 @@ void execute(EventPointer event)
 }
 */
 
+template<typename EventT>
+void invoke(EventT *event, WebservEntity *entity)
+{
+    (void)event;
+    DEBUG("WebservExecuter::execute");
+    ApplicationFactory *factory = ApplicationFactory::get_instance();
+    Application *app = factory->make_application(entity);
+
+    bool is_completed = app->invoke(entity);
+    entity->set_completed(is_completed);
+    ApplicationResult *result = app->get_result();
+
+    entity->set_result(result);
+    delete app;
+}
 
 #endif

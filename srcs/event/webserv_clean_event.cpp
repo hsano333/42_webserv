@@ -131,36 +131,32 @@ bool WebservCleanEvent::is_force_close()
 }
 */
 
-void dummy_func(WebservCleanEvent *event, WebservEntity *entity)
-{
-    (void)event;
-    (void)entity;
-}
-
-
 WebservCleanEvent *WebservCleanEvent::singleton = NULL;
-WebservCleanEvent *WebservCleanEvent::get_instance()
+WebservCleanEvent *WebservCleanEvent::get_instance(FDManager* fd_manager)
 {
     if (WebservCleanEvent::singleton == NULL){
         singleton = new WebservCleanEvent();
+        singleton->fd_manager = fd_manager;
     }
     return (singleton);
 }
 
-WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close)
+#include "webserv_cleaner.hpp"
+WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close, FDManager *fd_manager)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
-    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( clean_event, dummy_func, event->entity());
-    //new_event->entity_ = event->entity();
+    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance(fd_manager);
+    WebservEvent *new_event =  new WebservEvent(clean_event, clean, event->entity());
     new_event->entity()->set_force_close(force_close);
     new_event->entity()->io().set_source(event->entity()->request());
-    //new_event->req_ = event->req();
-    //new_event->res_ = event->res();
     return (new_event);
 }
 
 
+void WebservCleanEvent::close_fd(FileDiscriptor const &fd)
+{
+    this->fd_manager->close_fd(fd);
+}
 /*
 void WebservCleanEvent::clean_res_and_req()
 {

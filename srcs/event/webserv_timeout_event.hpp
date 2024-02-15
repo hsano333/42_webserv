@@ -8,16 +8,18 @@
 class WebservTimeoutEvent
 {
     public:
-        WebservTimeoutEvent(FileDiscriptor fd);
         ~WebservTimeoutEvent();
-        static WebservEvent *make();
+        static WebservEvent *make(FDManager *fd_manager, EventManager *event_manager);
         EWebservEvent which();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
+        void close_fd(FileDiscriptor const &fd);
+        FDManager *fd_manager;
+        EventManager *event_manager;
 
     private:
         WebservTimeoutEvent();
         static WebservTimeoutEvent *singleton;
-        static WebservTimeoutEvent *get_instance();
+        static WebservTimeoutEvent *get_instance(FDManager *fd_manager, EventManager *event_manager);
 };
 #endif

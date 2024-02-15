@@ -7,6 +7,7 @@
 #include <stack>
 #include <queue>
 
+class WebservEvent;
 class WebservCleaner;
 class EventManager
 {

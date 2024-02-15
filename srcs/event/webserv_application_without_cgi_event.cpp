@@ -28,10 +28,11 @@ WebservApplicationWithoutCgiEvent *WebservApplicationWithoutCgiEvent::get_instan
     return (singleton);
 }
 
+#include "webserv_executer.hpp"
 WebservEvent *WebservApplicationWithoutCgiEvent::from_event(WebservEvent *event)
 {
     WebservApplicationWithoutCgiEvent *app_event = WebservApplicationWithoutCgiEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( app_event, execute, event->entity());
+    WebservEvent *new_event =  new WebservEvent( app_event, invoke<WebservApplicationWithoutCgiEvent>, event->entity());
     //new_event->entity_ = event->entity();
     return (new_event);
 };

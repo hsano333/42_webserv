@@ -130,15 +130,17 @@ void Webserv::communication()
                         break;
                     case MAKE_EVENT:
                         DEBUG("Webserv::MAKE_EVENT Event");
-                        maker.make(event);
+                        handle(event);
                         break;
                     case APPLICATION_EVENT:
                         DEBUG("Webserv::Application Event");
-                        executer.execute(event);
+                        handle(event);
+                        //executer.execute(event);
                         break;
                     case CLEAN_EVENT:
                         DEBUG("Webserv::Clean Event");
-                        cleaner.clean(event, false);
+                        handle(event);
+                        //cleaner.clean(event, false);
 
                         if (cnt >= 10){
                             cnt = 0;
@@ -161,7 +163,8 @@ void Webserv::communication()
                         //break;
                     case TIMEOUT_EVENT:
                         DEBUG("Webserv::Timeout Event");
-                        cleaner.clean_timeout_events(event);
+                        handle(event);
+                        //cleaner.clean_timeout_events(event);
                         break;
                     case KEEPA_ALIVE_EVENT:
                         DEBUG("Webserv::KEEPA_ALIVE_EVENT Event");

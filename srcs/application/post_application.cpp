@@ -61,6 +61,13 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
     return (true);
 }
 
+
+bool PostApplication::invoke(WebservEntity *entity)
+{
+    (void)entity;
+    return (false);
+}
+
 bool PostApplication::execute(WebservEvent *event)
 {
     (void)event;

@@ -17,6 +17,7 @@ class GetApplication : public Application
         GetApplication();
         ~GetApplication();
         bool execute(WebservEvent *event);
+        bool invoke(WebservEntity *entity);
         ApplicationResult *get_result();
         //bool is_cgi() const;
         //void check_permission();

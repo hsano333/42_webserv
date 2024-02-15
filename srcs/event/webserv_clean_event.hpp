@@ -6,6 +6,7 @@
 #include "response.hpp"
 #include "webserv_cgi_event.hpp"
 #include "webserv_entity.hpp"
+#include "fd_manager.hpp"
 
 class WebservCleanEvent
 {
@@ -16,44 +17,16 @@ class WebservCleanEvent
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
-        void increase_timeout_count(int count);
-        int  timeout_count();
-        static WebservEvent *from_webserv_event(WebservEvent *event, bool force_close);
-        //FileDiscriptor  &fd();
-        //Request         *req();
-        //Response        *res();
-        File            *src();
-        File            *dst();
-        void            switching_io(uint32_t epoll_event);
-        void            set_src(File *file);
-        void            set_dst(File *file);
-        //void set_null_res_and_req();
-
-        bool is_completed();
-        void set_completed(bool flag);
-        bool is_force_close();
-        void set_force_close(bool flag);
-        //void clean_res_and_req();
-
-        void set_cgi_event(WebservCgiEvent *cgi_event);
-        WebservCgiEvent *cgi_event();
-        WebservEntity *entity();
+        //void increase_timeout_count(int count);
+        //int  timeout_count();
+        static WebservEvent *from_webserv_event(WebservEvent *event, bool force_close, FDManager *fd_manager);
+        void close_fd(FileDiscriptor const &fd);
 
     private:
         WebservCleanEvent();
         static WebservCleanEvent *singleton;
-        static WebservCleanEvent *get_instance();
-        //FileDiscriptor  fd_;
-        //Request         *req_;
-        //Response        *res_;
-        //File            *source_file;
-        //File            *destination_file;
-        //int             timeout_count_;
-        //bool            force_close;
-        //bool is_completed_;
-
-        //WebservCgiEvent *cgi_event_;
-        //WebservEntity         *entity_;
+        static WebservCleanEvent *get_instance(FDManager* fd_manager);
+        FDManager *fd_manager;
 };
 
 #endif

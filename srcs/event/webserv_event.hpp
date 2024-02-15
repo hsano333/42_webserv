@@ -71,6 +71,7 @@ class OwningEventModel : public EventConcept
         OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : event_(event), handler_(handler), entity_(entity){};
         OwningEventModel(OwningEventModel const &model) : event_(model.event), handler_(model.handler), entity_(model.entity){};
         void handle() const {handler_(event_, entity_);}
+        void clean() const {handler_(event_, entity_);}
         EWebservEvent which() const {return (event_->which());}
         //E_EpollEvent get_next_epoll_event() const {return (event_->get_next_epoll_event());}
         E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
@@ -118,6 +119,10 @@ class WebservEvent
         {
             return (pimpl_->make_next_event(event, factory));
         }
+        //void clean()
+        //{
+            //delete entity_;
+        //}
 
     private:
         WebservEntity *entity_;

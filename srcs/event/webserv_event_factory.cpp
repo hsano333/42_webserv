@@ -12,6 +12,7 @@
 #include "socket_reader.hpp"
 #include "webserv_event_factory.hpp"
 #include "webserv_clean_event.hpp"
+#include "webserv_timeout_event.hpp"
 #include "webserv_keep_alive_event.hpp"
 #include "opened_socket_file.hpp"
 #include "vector_file.hpp"
@@ -429,9 +430,14 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool force_close)
 {
-    WebservEvent *new_event = WebservCleanEvent::from_webserv_event(event, force_close);
+    WebservEvent *new_event = WebservCleanEvent::from_webserv_event(event, force_close, fd_manager);
 
     this->register_file_manager(new_event);
     return (new_event);
+}
+
+WebservEvent *WebservEventFactory::make_timeout_event()
+{
+    return (WebservTimeoutEvent::make(this->fd_manager, this->event_manager));
 }
 

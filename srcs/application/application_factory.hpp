@@ -17,7 +17,7 @@ class ApplicationFactory
         ~ApplicationFactory();
         //Application* make_application(WebservApplicationEvent *event, IReader *ireader);
         static ApplicationFactory *get_instance();
-        Application* make_application(WebservEvent *event);
+        Application* make_application(WebservEntity *entity);
         void set_cgi(CGI *cgi);
         //bool is_cgi();
         std::string get_target_path();
