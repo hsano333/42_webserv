@@ -4,6 +4,7 @@
 #include "opened_socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
+#include "webserv_io_worker.hpp"
 #include <assert.h>
 
 
@@ -69,7 +70,7 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File 
 {
     //DEBUG("WebservIOSocketEvent::from_fd fd:" + fd.to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, entity);
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, entity);
     new_event->entity()->io().set_read_io(src, dst);
     new_event->entity()->io().set_read_fd(read_fd);
     new_event->entity()->io().switching_io(EPOLLIN);
@@ -81,7 +82,7 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
     new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLOUT);

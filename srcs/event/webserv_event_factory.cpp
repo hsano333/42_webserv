@@ -191,7 +191,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 //WebservIOEvent *io_event = dynamic_cast<WebservIOEvent*>(cached_event);
                 //
                 //
-                DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string((cached_event->which())));
+                //DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string((cached_event->which())));
                 //DEBUG("WebservEvent::from_epoll_event: No.4 whici=:" + Utility::to_string(->which()));
                 cached_event->entity()->io().switching_io(EPOLLIN);
                 /*

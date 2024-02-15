@@ -1,4 +1,5 @@
 #include "event_manager.hpp"
+#include "webserv_keep_alive_event.hpp"
 
 
 
@@ -48,7 +49,8 @@ size_t EventManager::keep_alive_event_size()
     //MutantStack<WebservEvent *>::iterator end;
     while(ite != end){
         WebservEvent *event = *ite;
-        if(event->which() == KEEPA_ALIVE_EVENT){
+        if(event->is_keepalive()){
+        //if(event->which() == KEEPA_ALIVE_EVENT){
             cnt++;
         }
         ite++;

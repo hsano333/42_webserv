@@ -101,7 +101,7 @@ void Webserv::communication()
 
     bool exit_flag = false;
     DEBUG("Webserv::communication() start");
-    int cnt = 0;
+    //int cnt = 0;
     while(1)
     {
         if(waiter.is_not_busy()){
@@ -121,12 +121,16 @@ void Webserv::communication()
             }
             try
             {
-                MYINFO("event:" + Utility::to_string(event->which()));
+                //MYINFO("event:" + Utility::to_string(event->which()));
+
+                handle(event);
+                /*
                 switch((event->which()))
                 {
                     case IO_EVENT:
                         DEBUG("Webserv::IO Event");
-                        io_worker.work(event);
+                        //io_worker.work(event);
+                        handle(event);
                         break;
                     case MAKE_EVENT:
                         DEBUG("Webserv::MAKE_EVENT Event");
@@ -178,6 +182,7 @@ void Webserv::communication()
                     default:
                         break;
                 }
+                */
                 event_controller->next_event(event);
                 if(exit_flag){
                     break;

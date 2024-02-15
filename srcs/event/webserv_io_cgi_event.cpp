@@ -4,6 +4,7 @@
 #include "opened_socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
+#include "webserv_io_worker.hpp"
 #include <assert.h>
 
 
@@ -57,7 +58,7 @@ WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscripto
 {
     //DEBUG("WebservIOCGIEvent::from_fd fd:" + fd.to_string());
     WebservIOCGIEvent *io_event = WebservIOCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOCGIEvent>, event->entity());
     //event->io = io;
     //event->fd_ = event->fd();
     //event->sock_fd_ = sockfd;

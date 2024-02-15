@@ -127,7 +127,7 @@ void clean(WebservCleanEvent *event, WebservEntity *entity)
     }
     */
 
-    entity->clean();
+        entity->clean();
         cout << "delete req" << endl;
     //delete app_event->req();
         cout << "delete res" << endl;

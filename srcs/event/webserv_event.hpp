@@ -60,10 +60,14 @@ class EventConcept
         virtual EWebservEvent which() const = 0;
         virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
+        virtual bool is_keepalive() const = 0;
 
         //virtual void change_event(WebservEvent* event, HandleStrategyPointer handler_) const = 0;
 };
 
+#include <typeinfo>
+#include "webserv_keep_alive_event.hpp"
+class WebservKeepAliveEvent;
 template<typename EventPointer, typename HandleStrategyPointer>
 class OwningEventModel : public EventConcept
 {
@@ -72,6 +76,7 @@ class OwningEventModel : public EventConcept
         OwningEventModel(OwningEventModel const &model) : event_(model.event), handler_(model.handler), entity_(model.entity){};
         void handle() const {handler_(event_, entity_);}
         void clean() const {handler_(event_, entity_);}
+        bool is_keepalive() const {return (typeid(*event_) == typeid(WebservKeepAliveEvent));}
         EWebservEvent which() const {return (event_->which());}
         //E_EpollEvent get_next_epoll_event() const {return (event_->get_next_epoll_event());}
         E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
@@ -118,6 +123,10 @@ class WebservEvent
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory)
         {
             return (pimpl_->make_next_event(event, factory));
+        }
+        bool is_keepalive()
+        {
+            return (pimpl_->is_keepalive());
         }
         //void clean()
         //{

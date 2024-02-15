@@ -119,6 +119,10 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
 
 void EventController::next_event(WebservEvent *event)
 {
+    if(event->entity() == NULL){
+        delete event;
+        return;
+    }
     DEBUG("EventController::next_event() No.0");
     printf("event=%p\n", event);
     //if (event->is_completed() == false){
@@ -132,9 +136,9 @@ void EventController::next_event(WebservEvent *event)
     DEBUG("EventController::next_event() No.2");
         next_event = event->make_next_event(event, this->event_factory);
     DEBUG("EventController::next_event() No.3");
-        if(next_event){
-            MYINFO("next_event=" + Utility::to_string(next_event->which()));
-        }
+        //if(next_event){
+            //MYINFO("next_event=" + Utility::to_string(next_event->which()));
+        //}
     }else{
     DEBUG("EventController::next_event() No.4");
         next_event = event;
