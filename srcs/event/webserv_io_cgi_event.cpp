@@ -38,11 +38,6 @@ WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscripto
     return (new_event);
 }
 
-EWebservEvent WebservIOCGIEvent::which()
-{
-    return (IO_EVENT);
-}
-
 WebservEvent* WebservIOCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOCGIEvent::make_next_event()");

@@ -50,11 +50,6 @@ WebservEvent *WebservTimeoutEvent::make(FDManager *fd_manager, EventManager *eve
     return (new_event);
 }
 
-EWebservEvent WebservTimeoutEvent::which()
-{
-    return (TIMEOUT_EVENT);
-}
-
 WebservEvent* WebservTimeoutEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     (void)event_factory;

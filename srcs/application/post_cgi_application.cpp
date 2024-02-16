@@ -148,11 +148,6 @@ const Method &PostCGIApplication::which() const
     return (this->method);
 }
 
-WebservCgiEvent *PostCGIApplication::cgi_event()
-{
-    return (this->cgi_event_);
-
-}
 
 /*
 void PostCGIApplication::set_path_info(std::string const &path_info)

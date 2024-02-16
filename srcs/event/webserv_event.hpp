@@ -7,8 +7,6 @@
 #include "webserv_event_factory.hpp"
 #include "webserv_entity.hpp"
 #include <memory>
-//#include "webserv_cgi_event.hpp"
-//
 
 typedef enum E_WebservEvent
 {
@@ -40,14 +38,6 @@ typedef enum E_EpollEvent
     EPOLL_NONE,
 } E_EpollEvent;
 
-/*
-   struct WebservEntity
-   {
-   Request             *req;
-   Response            *res;
-   ApplicationResult   *app;
-   };
-   */
 
 
 class WebservEvent;
@@ -57,7 +47,6 @@ class EventConcept
     public:
         virtual ~EventConcept(){};
         virtual void handle() const = 0;
-        virtual EWebservEvent which() const = 0;
         virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
         virtual bool is_keepalive() const = 0;
@@ -77,8 +66,6 @@ class OwningEventModel : public EventConcept
         void handle() const {handler_(event_, entity_);}
         void clean() const {handler_(event_, entity_);}
         bool is_keepalive() const {return (typeid(*event_) == typeid(WebservKeepAliveEvent));}
-        EWebservEvent which() const {return (event_->which());}
-        //E_EpollEvent get_next_epoll_event() const {return (event_->get_next_epoll_event());}
         E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
 
@@ -112,10 +99,6 @@ class WebservEvent
         int  timeout_count();
         void increase_timeout_count(int count);
 
-        EWebservEvent which()
-        {
-            return (pimpl_->which());
-        }
         E_EpollEvent get_next_epoll_event()
         {
             return (pimpl_->get_next_epoll_event(this));

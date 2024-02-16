@@ -21,29 +21,6 @@ void WebservIO::set_destination(File *file)
     this->destination_ = file;
 }
 
-/*
-void WebservIO::set_source_for_read(File *file)
-{
-    this->read_source_ = file;
-}
-
-void WebservIO::set_source_for_write(File *file)
-{
-    this->write_source_ = file;
-}
-
-
-void WebservIO::set_destination_for_read(File *file)
-{
-    this->read_destination_ = file;
-}
-
-void WebservIO::set_destination_for_write(File *file)
-{
-    this->write_destination_ = file;
-}
-*/
-
 File *WebservIO::source()
 {
     return (this->source_);

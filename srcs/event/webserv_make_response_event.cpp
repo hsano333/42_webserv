@@ -122,10 +122,6 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *sr
     return (new_event);
 };
 
-EWebservEvent WebservMakeResponseEvent::which()
-{
-    return (MAKE_EVENT);
-}
 
 WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {

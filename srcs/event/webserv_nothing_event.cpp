@@ -25,11 +25,6 @@ WebservEvent *WebservNothingEvent::make_nothing_event()
     return (new_event);
 }
 
-EWebservEvent WebservNothingEvent::which()
-{
-    return (NOTHING_EVENT);
-}
-
 WebservEvent* WebservNothingEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     (void)event_factory;

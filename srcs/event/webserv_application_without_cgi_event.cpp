@@ -28,11 +28,6 @@ WebservEvent *WebservApplicationWithoutCgiEvent::from_event(WebservEvent *event)
     return (new_event);
 };
 
-EWebservEvent WebservApplicationWithoutCgiEvent::which()
-{
-    return (APPLICATION_EVENT);
-}
-
 WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservApplicationWithoutCgiEvent::make_next_event");

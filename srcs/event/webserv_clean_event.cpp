@@ -14,11 +14,6 @@ WebservCleanEvent::~WebservCleanEvent()
     ;
 }
 
-EWebservEvent WebservCleanEvent::which()
-{
-    return (CLEAN_EVENT);
-}
-
 WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     MYINFO("WebservCleanEvent::make_next_event");

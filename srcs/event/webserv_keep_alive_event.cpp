@@ -34,11 +34,6 @@ WebservEvent *WebservKeepAliveEvent::from_event(WebservEvent *event)
     return (new_event);
 }
 
-EWebservEvent WebservKeepAliveEvent::which()
-{
-    return (KEEPA_ALIVE_EVENT);
-}
-
 WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     (void)event_factory;

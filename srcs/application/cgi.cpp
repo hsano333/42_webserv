@@ -87,24 +87,18 @@ bool CGI::check_cgi_application_path(const Request *req, const ConfigLocation *l
             MYINFO("CGI::is_cgi execve:" + ite->second);
             MYINFO("CGI::is_cgi filepath:" + filepath);
             return (true);
-            //return ite->second;
-            //return ;
         }
         ite++;
     }
     WARNING("not CGI");
-    //throw std::invalid_argument("not CGI");
     return (false);
 }
 
 
 ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *req)
 {
-    DEBUG("CGI::execute_cgi()");
-    //this->cgi_event_.set_is_cgi(true);
     DEBUG("GetCGIApplication::execute()");
-    //string &execve_path = this->cgi_application_path;
-    string const &exe_root = location->root();
+    //string const &exe_root = location->root();
     string const &file_path = req->requested_filepath();
     string const &query = req->req_line().uri().query();
     string const path_info = location->root() + "/" + req->tmp_path_info();
@@ -112,20 +106,12 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
     string env_path_info = "PATH_INFO:" + path_info;
 
     char* argv[2] = {NULL};
-    //argv[0] = const_cast<char*>(execve_path.c_str());
     argv[0] = const_cast<char*>(file_path.c_str());
 
 
     char* env[3] = {NULL};
     env[0] = const_cast<char*>(env_query.c_str());
     env[1] = const_cast<char*>(env_path_info.c_str());
-
-    //char *env[];
-    printf("argv[0]=%s\n", argv[0]);
-    printf("argv[1]=%s\n", argv[1]);
-    printf("env[0]=%s\n", env[0]);
-    printf("env[1]=%s\n", env[1]);
-    printf("exe_root=%s\n", exe_root.c_str());
 
     int fd_in;
     int fd_out;
@@ -141,59 +127,10 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
         std::exit(0);
     }
 
-    printf("fd_in=%d, fd_out=%d\n", fd_in, fd_out);
-    printf("cgi pid parent\n");
-    printf("cgi pid parent\n");
-    printf("cgi pid parent\n");
-    printf("cgi pid parent\n");
-
-    DEBUG("fd_out(for read)=" + Utility::to_string(fd_out));
-    DEBUG("fd_in(for write)=" + Utility::to_string(fd_in));
-    /*
-    char buf[10];
-    int size = read(fd_out, buf, 9);
-    buf[9] = '0';
-    DEBUG("application execute read size=" + Utility::to_string(size));
-    DEBUG("application execute read test=" + string(buf));
-    */
-
-    // Get Method don't have body data, so nothing writing data to std-in in cgi
-    //::close(fd_in);
-
-
-    //this->cgi_out = FileDiscriptor::from_int(fd_out);
-    //
-    /*
-    this->cgi_event_.set_pid(pid);
-    this->cgi_event_.set_cgi_fd(FileDiscriptor::from_int(fd_out));
-    */
-    //int fd_in;
-    //int fd_out;
-
+    MYINFO("fd_out(for read)=" + Utility::to_string(fd_out));
+    MYINFO("fd_in(for write)=" + Utility::to_string(fd_in));
 
     ApplicationResult *result = ApplicationResult::from_fd(fd_in, fd_out, pid);
-    //WebservCgiEvent *cgi_event_ = new WebservCgiEvent();
-    //cout << "this->cgi_event_ No.1 = " << cgi_event_ << endl;
-    //FileDiscriptor pid_fd = FileDiscriptor::from_int(pid);
-    //FileDiscriptor cgi_pid = FileDiscriptor::from_int(pid);
-    //FileDiscriptor cgi_fd_in = FileDiscriptor::from_int(fd_in);
-    //FileDiscriptor cgi_fd_out = FileDiscriptor::from_int(fd_out);
-    //cgi_event_->set_pid(cgi_pid);
-    //cgi_event_->set_fd_in(cgi_fd_in);
-    //cgi_event_->set_fd_out(cgi_fd_out);
     return (result);
-
-    //cout << "this->cgi_event_ No.2 = " << this->cgi_event_ << endl;
-
 }
-
-
-
-/*
-int execute(int fd_in, int_fd_out, int pid)
-{
-
-
-}
-*/
 

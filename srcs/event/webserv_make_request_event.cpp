@@ -41,11 +41,6 @@ WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src
     return (new_event);
 };
 
-EWebservEvent WebservMakeRequestEvent::which()
-{
-    return (MAKE_EVENT);
-}
-
 WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     return (event_factory->make_application_event(event));

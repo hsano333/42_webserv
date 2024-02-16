@@ -54,11 +54,6 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
     return (new_event);
 }
 
-EWebservEvent WebservIOSocketEvent::which()
-{
-    return (IO_EVENT);
-}
-
 WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOSocketEvent::make_next_event()");
