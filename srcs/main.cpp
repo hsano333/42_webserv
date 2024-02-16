@@ -27,11 +27,6 @@
 #include "webserv_waiter.hpp"
 #include "webserv_event.hpp"
 #include "webserv_event_factory.hpp"
-#include "webserv_receiver.hpp"
-#include "webserv_parser.hpp"
-#include "webserv_executer.hpp"
-#include "webserv_io_worker.hpp"
-#include "webserv_sender.hpp"
 #include "event_manager.hpp"
 #include "event_controller.hpp"
 #include "fd_manager.hpp"
@@ -273,16 +268,17 @@ int main(int argc, char const* argv[])
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     //WebservReceiver reader(epoll_controller, fd_manager, event_manager, socket_reader);
     //WebservParser parser(epoll_controller, event_manager, event_factory, cfg);
-    WebservMaker maker(epoll_controller, event_manager, event_factory, cfg);
-    WebservExecuter app(application_factory, epoll_controller, event_factory, event_manager, fd_manager, cfg, socket_reader);
-    WebservIOWorker io_worker(epoll_controller, event_manager, socket_writer, socket_reader);
+    //WebservMaker maker(epoll_controller, event_manager, event_factory, cfg);
+    //WebservExecuter app(application_factory, epoll_controller, event_factory, event_manager, fd_manager, cfg, socket_reader);
+    //WebservIOWorker io_worker(epoll_controller, event_manager, socket_writer, socket_reader);
     //WebservMaker maker(epoll_controller, event_manager, socket_writer, socket_reader);
     //WebservSender sender(epoll_controller, event_manager, socket_writer);
     WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
     //SocketManager* socket_manager = new SocketManager();
 
-    Webserv webserv(cfg, event_factory, event_manager, event_controller,waiter,maker,app,io_worker, cleaner);
+    //Webserv webserv(cfg, event_factory, event_manager, event_controller,waiter,maker,app,io_worker, cleaner);
+    Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter, cleaner);
     while (1) {
         try{
             server(webserv);

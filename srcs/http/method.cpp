@@ -1,5 +1,4 @@
 #include "method.hpp"
-#include "get_method.hpp"
 #include "http_exception.hpp"
 #include "global.hpp"
 #include <string>

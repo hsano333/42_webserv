@@ -32,9 +32,6 @@ Webserv::Webserv(
         EventManager        *event_manager,
         EventController     *event_controller,
         WebservWaiter       &waiter,
-        WebservMaker        &maker,
-        WebservExecuter     &executer,
-        WebservIOWorker    &io_worker,
         WebservCleaner      &cleaner
         ) :
                      cfg(cfg),
@@ -42,9 +39,6 @@ Webserv::Webserv(
                      event_manager(event_manager),
                      event_controller(event_controller),
                      waiter(waiter),
-                     maker(maker),
-                     executer(executer),
-                     io_worker(io_worker),
                      cleaner(cleaner)
 {
     ;

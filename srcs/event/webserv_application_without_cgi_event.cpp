@@ -1,6 +1,5 @@
 #include "webserv_application_without_cgi_event.hpp"
 #include "webserv_event.hpp"
-#include "webserv_executer.hpp"
 
 WebservApplicationWithoutCgiEvent::WebservApplicationWithoutCgiEvent()
 {
@@ -12,11 +11,6 @@ WebservApplicationWithoutCgiEvent::~WebservApplicationWithoutCgiEvent()
     ;
 }
 
-void execute(WebservApplicationWithoutCgiEvent *event, WebservEntity *entity)
-{
-    (void)event;
-    (void)entity;
-}
 
 WebservApplicationWithoutCgiEvent *WebservApplicationWithoutCgiEvent::singleton = NULL;
 WebservApplicationWithoutCgiEvent *WebservApplicationWithoutCgiEvent::get_instance()

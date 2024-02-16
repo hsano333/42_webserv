@@ -2,6 +2,7 @@
 #include "webserv_event.hpp"
 #include "opened_socket_file.hpp"
 #include "vector_file.hpp"
+#include "application_factory.hpp"
 
 WebservApplicationWithCgiEvent::WebservApplicationWithCgiEvent()
 {
@@ -13,12 +14,6 @@ WebservApplicationWithCgiEvent::~WebservApplicationWithCgiEvent()
     ;
 }
 
-void execute(WebservApplicationWithCgiEvent *event, WebservEntity *entity)
-{
-    (void)event;
-    (void)entity;
-}
-
 WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::singleton = NULL;
 WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::get_instance()
 {
@@ -28,9 +23,6 @@ WebservApplicationWithCgiEvent *WebservApplicationWithCgiEvent::get_instance()
     return (singleton);
 }
 
-#include "application_factory.hpp"
-
-#include "webserv_executer.hpp"
 WebservEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event)
 {
     WebservApplicationWithCgiEvent *app_event =  WebservApplicationWithCgiEvent::get_instance();

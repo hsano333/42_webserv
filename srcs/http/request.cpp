@@ -12,7 +12,6 @@
 #include <unistd.h>
 #include "no_request_line.hpp"
 #include "global.hpp"
-#include "get_method.hpp"
 #include "http_exception.hpp"
 #include "utility.hpp"
 

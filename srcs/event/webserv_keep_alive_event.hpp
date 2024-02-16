@@ -4,7 +4,7 @@
 #include "file_discriptor.hpp"
 #include "ireader.hpp"
 #include "webserv_cgi_event.hpp"
-#include "webserv_io_event.hpp"
+//#include "webserv_io_event.hpp"
 #include "webserv_entity.hpp"
 
 class WebservKeepAliveEvent

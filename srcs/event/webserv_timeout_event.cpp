@@ -1,5 +1,5 @@
 #include "webserv_timeout_event.hpp"
-#include "webserv_cleaner.hpp"
+//#include "webserv_cleaner.hpp"
 
 WebservTimeoutEvent::WebservTimeoutEvent()
 {
@@ -27,6 +27,21 @@ WebservTimeoutEvent *WebservTimeoutEvent::get_instance(FDManager *fd_manager, Ev
     }
     return (singleton);
 }
+
+
+void clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)
+{
+    (void)event;
+    std::vector<WebservEvent *> timeout_events;
+
+    event->event_manager->retrieve_timeout_events(timeout_events);
+    for(size_t i=0;i<timeout_events.size();i++){
+        //force_clean(timeout_events[i], entity->entity()->fd());
+        event->close_fd(entity->fd());
+    }
+    entity->set_completed(true);
+}
+
 
 WebservEvent *WebservTimeoutEvent::make(FDManager *fd_manager, EventManager *event_manager)
 {

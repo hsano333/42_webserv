@@ -3,11 +3,11 @@
 #include "config.hpp"
 #include "request.hpp"
 #include "cgi.hpp"
-#include "cgi_application.hpp"
-#include "server_application.hpp"
-#include "get_application.hpp"
-#include "webserv_application_with_cgi_event.hpp"
-#include "webserv_application_without_cgi_event.hpp"
+//#include "cgi_application.hpp"
+//#include "server_application.hpp"
+//#include "get_application.hpp"
+//#include "webserv_application_with_cgi_event.hpp"
+//#include "webserv_application_without_cgi_event.hpp"
 #include "method.hpp"
 #include <string>
 
