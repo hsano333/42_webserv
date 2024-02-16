@@ -1,10 +1,8 @@
 #include "webserv_io_cgi_event.hpp"
-#include "webserv_write_event.hpp"
 #include "socket_writer.hpp"
 #include "opened_socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
-#include "webserv_io_worker.hpp"
 #include <assert.h>
 
 
