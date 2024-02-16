@@ -4,25 +4,39 @@
 #include <vector>
 #include <unistd.h>
 #include "socket.hpp"
+
+typedef enum E_EpollEvent
+{
+    EPOLL_READ,
+    EPOLL_WRITE,
+    EPOLL_ADD_READ,
+    EPOLL_ADD_WRITE,
+    EPOLL_FOR_CGI,
+    EPOLL_CONTINUE,
+    EPOLL_CLOSE,
+    EPOLL_CGI_IN,
+    EPOLL_CGI_OUT,
+    EPOLL_CGI_STOP,
+    EPOLL_CGI,
+    EPOLL_NONE,
+} E_EpollEvent;
+
+
 typedef struct epoll_event t_epoll_event;
-//DTO? entity?
 class Epoll
 {
     public:
         Epoll();
         Epoll(Epoll const &epoll);
         ~Epoll();
-        //static Epoll from_sockets(SocketRepository const &socket_repository);
         Epoll& operator=(Epoll const & epoll);
         void init();
         FileDiscriptor fd();
         t_epoll_event *allocated_event_pointer();
         t_epoll_event const *event_related_with_fd(FileDiscriptor fd);
         size_t allocated_event_size() const;
-        //void resize_allocated_event_size(size_t size);
         void save_executable_events_number(int number);
         void expand_allocated_space();
-        //void expand_allocated_space(t_epoll_event tmp);
         void contract_allocated_space();
         std::vector<t_epoll_event> &get_events();
         int executable_event_number();

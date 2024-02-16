@@ -179,7 +179,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
     }
 }
 
-void EventManager::close_all_events_waiting_epoll(WebservCleaner &cleaner)
+void EventManager::close_all_events_waiting_epoll(WebservCleaner *cleaner)
 {
     DEBUG("EventManager::close_all_events_waiting_epoll");
     std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
@@ -191,7 +191,7 @@ void EventManager::close_all_events_waiting_epoll(WebservCleaner &cleaner)
     }
     DEBUG("EventManager::close_all_events_waiting_epoll size:" + Utility::to_string(tmp.size()));
     for(size_t i=0;i<tmp.size();i++){
-        cleaner.clean(tmp[i], true);
+        cleaner->clean(tmp[i], true);
         delete tmp[i];
     }
 }

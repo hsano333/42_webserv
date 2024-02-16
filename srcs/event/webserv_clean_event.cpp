@@ -38,11 +38,11 @@ E_EpollEvent WebservCleanEvent::get_next_epoll_event(WebservEvent *event)
 }
 
 WebservCleanEvent *WebservCleanEvent::singleton = NULL;
-WebservCleanEvent *WebservCleanEvent::get_instance(FDManager* fd_manager)
+WebservCleanEvent *WebservCleanEvent::get_instance(WebservCleaner *cleaner)
 {
     if (WebservCleanEvent::singleton == NULL){
         singleton = new WebservCleanEvent();
-        singleton->fd_manager = fd_manager;
+        singleton->cleaner = cleaner;
     }
     return (singleton);
 }
@@ -116,6 +116,7 @@ void clean(WebservCleanEvent *event, WebservEntity *entity)
 
 
 
+/*
 WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close, FDManager *fd_manager)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
@@ -125,9 +126,20 @@ WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool fo
     new_event->entity()->io().set_source(event->entity()->request());
     return (new_event);
 }
+*/
+
+WebservEvent *WebservCleanEvent::from_event(WebservEvent *event, WebservCleaner *cleaner, bool force_close)
+{
+    DEBUG("WebservCleanEvent::from_webserv_event");
+    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance(cleaner);
+    WebservEvent *new_event =  new WebservEvent(clean_event, clean, event->entity());
+    new_event->entity()->set_force_close(force_close);
+    new_event->entity()->io().set_source(event->entity()->request());
+    return (new_event);
+}
 
 
 void WebservCleanEvent::close_fd(FileDiscriptor const &fd)
 {
-    this->fd_manager->close_fd(fd);
+    this->cleaner->close_fd(fd);
 }

@@ -58,7 +58,7 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         this->io_multi_controller->modify(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
     }else if (next_epoll_event == EPOLL_ADD_WRITE){
-        MYINFO("EventController::next is epoll add write");
+        MYINFO("EventController::next is epoll add writing");
         this->io_multi_controller->add(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
     }else if (next_epoll_event == EPOLL_FOR_CGI){
@@ -68,6 +68,7 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_read_fd(), next_event);
         this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_read_fd(), socket_fd);
     }else if (next_epoll_event == EPOLL_CLOSE){
+        MYINFO("EventController::next is epoll closed");
         this->fd_manager->close_fd(event->entity()->fd());
     }else if(next_event){
         MYINFO("EventController::next is not epoll");

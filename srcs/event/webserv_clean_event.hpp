@@ -15,14 +15,16 @@ class WebservCleanEvent
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
-        static WebservEvent *from_webserv_event(WebservEvent *event, bool force_close, FDManager *fd_manager);
+        static WebservEvent *from_event(WebservEvent *event, WebservCleaner *cleaner, bool force_close);
         void close_fd(FileDiscriptor const &fd);
 
     private:
         WebservCleanEvent();
         static WebservCleanEvent *singleton;
-        static WebservCleanEvent *get_instance(FDManager* fd_manager);
-        FDManager *fd_manager;
+        static WebservCleanEvent *get_instance(WebservCleaner *cleaner);
+        bool force_close;
+        WebservCleaner *cleaner;
+        //FDManager *fd_manager;
 };
 
 #endif

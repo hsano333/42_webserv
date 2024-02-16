@@ -31,15 +31,15 @@ Webserv::Webserv(
         WebservEventFactory *event_factory,
         EventManager        *event_manager,
         EventController     *event_controller,
-        WebservWaiter       &waiter,
-        WebservCleaner      &cleaner
+        WebservWaiter       &waiter
+        //WebservCleaner      *cleaner
         ) :
                      cfg(cfg),
                      event_factory(event_factory),
                      event_manager(event_manager),
                      event_controller(event_controller),
-                     waiter(waiter),
-                     cleaner(cleaner)
+                     waiter(waiter)
+                     //cleaner(cleaner)
 {
     ;
 }

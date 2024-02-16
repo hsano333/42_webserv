@@ -7,6 +7,7 @@
 #include "application_result.hpp"
 #include "webserv_application_event.hpp"
 #include "webserv_entity.hpp"
+#include "webserv_cleaner.hpp"
 
 class WebservApplicationWithoutCgiEvent
 {

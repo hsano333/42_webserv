@@ -13,6 +13,7 @@
 #include "config.hpp"
 #include "application_result.hpp"
 #include "webserv_entity.hpp"
+#include "webserv_cleaner.hpp"
 
 class EventManager;
 class WebservEvent;
@@ -30,7 +31,8 @@ class WebservEventFactory
                 IWriter *normal_writer,
                 IWriter *socket_writer,
                 IReader *normal_reader,
-                IReader *wocket_reader
+                IReader *socket_reader,
+                WebservCleaner *cleaner
                 );
         ~WebservEventFactory();
         WebservEvent *from_epoll_event(t_epoll_event const &event);
@@ -65,7 +67,7 @@ class WebservEventFactory
         IWriter *socket_writer;
         IReader *normal_reader;
         IReader *socket_reader;
-        
+        WebservCleaner *cleaner;
 
 };
 

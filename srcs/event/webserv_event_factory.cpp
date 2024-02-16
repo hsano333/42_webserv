@@ -26,7 +26,8 @@ WebservEventFactory::WebservEventFactory(
         IWriter *normal_writer,
         IWriter *socket_writer,
         IReader *normal_reader,
-        IReader *socket_reader
+        IReader *socket_reader,
+        WebservCleaner *cleaner
         ) :
         cfg(cfg),
         socket_controller(socket_controller),
@@ -37,7 +38,8 @@ WebservEventFactory::WebservEventFactory(
         normal_writer(normal_writer),
         socket_writer(socket_writer),
         normal_reader(normal_reader),
-        socket_reader(socket_reader)
+        socket_reader(socket_reader),
+        cleaner(cleaner)
 {
 ;
 }
@@ -214,8 +216,7 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool force_close)
 {
-    WebservEvent *new_event = WebservCleanEvent::from_webserv_event(event, force_close, fd_manager);
-
+    WebservEvent *new_event = WebservCleanEvent::from_event(event, this->cleaner, force_close);
     this->register_file_manager(new_event);
     return (new_event);
 }

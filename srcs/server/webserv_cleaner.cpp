@@ -87,45 +87,12 @@ void WebservCleaner::clean(WebservEvent *event, bool force_close)
     entity->set_completed(true);
 }
 
-
-
-
-/*
-void force_clean(WebservTimeoutEvent *event, FileDiscriptor const &fd)
+void WebservCleaner::close_fd(FileDiscriptor const &fd)
 {
-    (void)event;
-    //bool force_close = event->entity()->force_close();
-    //WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
-    //EventPointer app_event = event->event();
-    //WebservEntity *entity = event->entity();
-    //FileDiscriptor const &fd = entity->fd();
-    DEBUG("WebservCleaner::clean:" + fd.to_string());
-
-    //bool is_close =  entity->force_close();
-    //cout << "force_close=" << force_close << endl;
-    //cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
-    cout << "test No.1" << endl;
-    //Request *req = entity->request();
-    //Response *res = entity->response();
-    //(void)res;
-
-
-    //entity->clean();
-    //event->close_fd(fd);
-    event->close_fd(fd);
-
-
-    MYINFO("close fd:" + fd.to_string());
-    //ヘッダーでcloseするように指定されているので、closeする
-    //this->io_multi_controller->erase(app_fd);
-    event->clean();
-    //this->fd_manager->close_fd(fd);
-    //entity->set_completed(true);
+    fd_manager->close_fd(fd);
 }
-*/
 
 
-//class WebservEntity;
 #include "webserv_timeout_event.hpp"
 #include "webserv_entity.hpp"
 

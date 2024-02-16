@@ -20,10 +20,8 @@ class WebservCleaner
 
                 );
         ~WebservCleaner();
-        //void clean(WebservEvent *event, bool force_close);
-        //template<typename EventPointer>
         void clean(WebservEvent *event, bool force_close);
-        //void clean_timeout_events(WebservEvent *event);
+        void close_fd(FileDiscriptor const &fd);
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
@@ -32,14 +30,14 @@ class WebservCleaner
 };
 
 //template<typename EventPointer>
-class WebservCleanEvent;
-class WebservEntity;
-void clean(WebservCleanEvent *event, WebservEntity *entity);
+//class WebservCleanEvent;
+//class WebservEntity;
+//void clean(WebservCleanEvent *event, WebservEntity *entity);
 
 
-class WebservTimeoutEvent;
-void force_clean(WebservTimeoutEvent *event);
-void clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity);
+//class WebservTimeoutEvent;
+//void force_clean(WebservTimeoutEvent *event);
+//void clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity);
 //void clean(WebservEvent *event);
 
 

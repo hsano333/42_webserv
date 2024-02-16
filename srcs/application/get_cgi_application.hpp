@@ -20,7 +20,6 @@ class GetCGIApplication : public Application
         bool is_cgi() const;
         const Method &which() const;
     private:
-        //File *get_requested_file();
         const Config *cfg;
         const ConfigServer *server;
         const ConfigLocation *location;

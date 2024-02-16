@@ -25,8 +25,8 @@ class Webserv
             WebservEventFactory *event_factory,
             EventManager        *event_manager,
             EventController     *event_controller,
-            WebservWaiter       &waiter,
-            WebservCleaner      &cleaner
+            WebservWaiter       &waiter
+            //WebservCleaner      &cleaner
             );
     Webserv(const std::vector<std::string> ports);
     Webserv(const Webserv& sockets);
@@ -41,7 +41,7 @@ class Webserv
     EventManager        *event_manager;
     EventController     *event_controller;
     WebservWaiter       &waiter;
-    WebservCleaner      &cleaner;
+    //WebservCleaner      &cleaner;
     IOMultiplexing      *io_multi_controller;
 
     void               wait_for_event();

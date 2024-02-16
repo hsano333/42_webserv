@@ -6,39 +6,9 @@
 #include "response.hpp"
 #include "webserv_event_factory.hpp"
 #include "webserv_entity.hpp"
+#include "webserv_keep_alive_event.hpp"
 #include <memory>
-
-typedef enum E_WebservEvent
-{
-    INIT_EVENT = 0,
-    READ_EVENT,
-    IO_EVENT,
-    APPLICATION_EVENT,
-    WRITE_EVENT,
-    CLEAN_EVENT, //5
-    TIMEOUT_EVENT,
-    KEEPA_ALIVE_EVENT,
-    NOTHING_EVENT,
-    MAKE_EVENT, //9
-} EWebservEvent;
-
-typedef enum E_EpollEvent
-{
-    EPOLL_READ,
-    EPOLL_WRITE,
-    EPOLL_ADD_READ,
-    EPOLL_ADD_WRITE,
-    EPOLL_FOR_CGI,
-    EPOLL_CONTINUE,
-    EPOLL_CLOSE,
-    EPOLL_CGI_IN,
-    EPOLL_CGI_OUT,
-    EPOLL_CGI_STOP,
-    EPOLL_CGI,
-    EPOLL_NONE,
-} E_EpollEvent;
-
-
+#include <typeinfo>
 
 class WebservEvent;
 class WebservEntity;
@@ -50,12 +20,8 @@ class EventConcept
         virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
         virtual bool is_keepalive() const = 0;
-
-        //virtual void change_event(WebservEvent* event, HandleStrategyPointer handler_) const = 0;
 };
 
-#include <typeinfo>
-#include "webserv_keep_alive_event.hpp"
 class WebservKeepAliveEvent;
 template<typename EventPointer, typename HandleStrategyPointer>
 class OwningEventModel : public EventConcept
@@ -74,11 +40,6 @@ class OwningEventModel : public EventConcept
         HandleStrategyPointer handler_;
         WebservEntity *entity_;
 };
-
-
-
-//namespace EVENT
-//{
 
 class WebservEntity;
 class WebservEvent
@@ -111,10 +72,6 @@ class WebservEvent
         {
             return (pimpl_->is_keepalive());
         }
-        //void clean()
-        //{
-            //delete entity_;
-        //}
 
     private:
         WebservEntity *entity_;
@@ -124,29 +81,8 @@ class WebservEvent
         {
             event->pimpl_->handle();
         }
-        /*
-           friend void make(WebservEvent const *event)
-           {
-           event->pimpl_->handle();
-           }
-           friend void invoke(WebservEvent const *event)
-           {
-           event->pimpl_->handle();
-           }
-           */
         EventConcept *pimpl_;
 };
-//}
 
-namespace EVENT_DUMMY
-{
-    template<typename EventPointer, typename HandleStrategyPointer>
-        void func(EventPointer *event, WebservEntity *entity)
-        {
-            (void)event;
-            (void)entity;
-        }
-}
-//using EVENT;
 
 #endif

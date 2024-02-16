@@ -77,7 +77,7 @@ void server(Webserv& webserv)
 #include "uri.hpp"
 
 
-void clean_all(WebservCleaner &cleaner, EventManager *event_manager)
+void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
 {
     event_manager->close_all_events_waiting_epoll(cleaner);
     //event_manager->close_all_events_waiting_writing(cleaner);
@@ -240,8 +240,9 @@ int main(int argc, char const* argv[])
     SocketWriter *socket_writer = SocketWriter::get_instance();
     NormalReader *normal_reader = NormalReader::get_instance();
     //StreamReader *stream_reader = StreamReader::get_instance();
-
     EventManager *event_manager = new EventManager();
+    WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager);
+
     WebservEventFactory *event_factory = new WebservEventFactory(
             cfg,
             socket_controller,
@@ -252,7 +253,8 @@ int main(int argc, char const* argv[])
             normal_writer,
             socket_writer,
             normal_reader,
-            socket_reader
+            socket_reader,
+            cleaner
             );
     EventController *event_controller = new EventController(
             event_manager,
@@ -273,12 +275,12 @@ int main(int argc, char const* argv[])
     //WebservIOWorker io_worker(epoll_controller, event_manager, socket_writer, socket_reader);
     //WebservMaker maker(epoll_controller, event_manager, socket_writer, socket_reader);
     //WebservSender sender(epoll_controller, event_manager, socket_writer);
-    WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
+    //WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
 
     //SocketManager* socket_manager = new SocketManager();
 
     //Webserv webserv(cfg, event_factory, event_manager, event_controller,waiter,maker,app,io_worker, cleaner);
-    Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter, cleaner);
+    Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter);
     while (1) {
         try{
             server(webserv);
