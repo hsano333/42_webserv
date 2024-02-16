@@ -20,44 +20,6 @@ WebservMakeErrorResponseEvent::~WebservMakeErrorResponseEvent()
 Response* WebservMakeErrorResponseEvent::make_response(ApplicationResult *result)
 {
     (void)result;
-
-    /*
-    cout << "test No.1" << endl;
-    //printf("src=%p\n", this->src());
-
-    //ApplicationResult *result = dynamic_cast<ApplicationResult*>(this->src());
-    //ApplicationResult *result = static_cast<ApplicationResult*>(this->src());
-    File *file = ErrorFile::from_status_code(result->status_code());
-    cout << "test No.2" << endl;
-
-    //StatusCode code = result->status_code();
-    cout << "test No.3" << endl;
-
-    Response *res = Response::from_success_status_code(
-            result->status_code(),
-            file
-    );
-
-    cout << "test No.4" << endl;
-    cout << "test No.2" << endl;
-    */
-
-    //WebservMakeErrorResponseEvent *new_event = new WebservMakeErrorResponseEvent();
-    //write_event->source_file = src;
-    //write_event->destination_file = dst;
-
-    //std::map<std::string, std::string>::const_iterator ite = result->header().begin();
-    //std::map<std::string, std::string>::const_iterator end = result->header().end();
-    cout << "test No.3" << endl;
-    /*
-    while(ite != end){
-        res->add_header(ite->first, ite->second);
-        ite++;
-    }
-    */
-    //res->check_body_and_chunk();
-    cout << "test No.4" << endl;
-    //return (res);
     return (NULL);
 }
 
@@ -66,9 +28,6 @@ void make(WebservMakeErrorResponseEvent *event, WebservEntity *entity)
 {
     (void)event;
     (void)entity;
-    //ApplicationResult *result = entity->app_result();
-    //Response *res = event->make_response(event->entity()->app_result());
-    //entity->set_response(res);
 }
 
 

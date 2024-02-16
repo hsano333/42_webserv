@@ -44,13 +44,11 @@ void WebservCgiEvent::set_fd_out(FileDiscriptor fd)
 
 FileDiscriptor WebservCgiEvent::fd_in()
 {
-    cout << "fd in No.2" << endl;
     return (this->fd_in_);
 }
 
 FileDiscriptor WebservCgiEvent::fd_out()
 {
-    cout << "fd out No.1" << endl;
     return (this->fd_out_);
 }
 
@@ -61,7 +59,6 @@ void WebservCgiEvent::set_pid(FileDiscriptor pid)
 
 FileDiscriptor WebservCgiEvent::pid()
 {
-    cout << "pid in No.3" << endl;
     return (this->pid_);
 }
 

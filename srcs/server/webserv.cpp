@@ -5,12 +5,10 @@
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include "cgi.hpp"
 #include "request.hpp"
 #include "response.hpp"
@@ -23,11 +21,6 @@
 #include "connection_exception.hpp"
 #include "event_controller.hpp"
 
-//#include "event.hpp"
-//#include "test_handle_event.hpp"
-
-
-#define NEVENTS 16
 using std::cout;
 using std::endl;
 using std::string;
@@ -39,11 +32,9 @@ Webserv::Webserv(
         EventManager        *event_manager,
         EventController     *event_controller,
         WebservWaiter       &waiter,
-        //WebservReceiver     &receiver,
         WebservMaker        &maker,
         WebservExecuter     &executer,
         WebservIOWorker    &io_worker,
-        //WebservSender       &sender,
         WebservCleaner      &cleaner
         ) :
                      cfg(cfg),
@@ -51,11 +42,9 @@ Webserv::Webserv(
                      event_manager(event_manager),
                      event_controller(event_controller),
                      waiter(waiter),
-                     //receiver(receiver),
                      maker(maker),
                      executer(executer),
                      io_worker(io_worker),
-                     //sender(sender),
                      cleaner(cleaner)
 {
     ;
@@ -63,7 +52,6 @@ Webserv::Webserv(
 
 Webserv::~Webserv()
 {
-    //close_all();
 }
 
 Webserv& Webserv::operator=(const Webserv& socket)
@@ -73,31 +61,8 @@ Webserv& Webserv::operator=(const Webserv& socket)
     return (*this);
 }
 
-#include "test_event.hpp"
-void func(TestEvent *event2)
-{
-    cout << "test func No.1 val:" << event2->test_val << endl;
-}
-
 void Webserv::communication()
 {
-
-    /*
-    //typedef CircleModel = EventModel<Event, OpenGLDrawStrategy>;
-    //typedef OwningEventModel<EventT, HandleStrategy> EventModel;
-    TestEvent *test_event = new TestEvent();
-    void (*test_func)(TestEvent *) = func;
-    //(void)test_func();
-    //(void)test_event;
-    Event event1( test_event,  test_func);
-    handle(event1);
-    handle(event1);
-    handle(event1);
-    handle(event1);
-    
-    //test_func();
-    exit(1);
-    */
 
     bool exit_flag = false;
     DEBUG("Webserv::communication() start");
@@ -116,73 +81,11 @@ void Webserv::communication()
         {
             WebservEvent *event = this->event_manager->pop_first();
             if(event == NULL){
-                //cout << "NULL" << endl;
                 break;
             }
             try
             {
-                //MYINFO("event:" + Utility::to_string(event->which()));
-
                 handle(event);
-                /*
-                switch((event->which()))
-                {
-                    case IO_EVENT:
-                        DEBUG("Webserv::IO Event");
-                        //io_worker.work(event);
-                        handle(event);
-                        break;
-                    case MAKE_EVENT:
-                        DEBUG("Webserv::MAKE_EVENT Event");
-                        handle(event);
-                        break;
-                    case APPLICATION_EVENT:
-                        DEBUG("Webserv::Application Event");
-                        handle(event);
-                        //executer.execute(event);
-                        break;
-                    case CLEAN_EVENT:
-                        DEBUG("Webserv::Clean Event");
-                        handle(event);
-                        //cleaner.clean(event, false);
-
-                        if (cnt >= 10){
-                            cnt = 0;
-                            //delete event;
-                            cout << "end break" << endl;
-                            cout << "end break" << endl;
-                            cout << "end break" << endl;
-                            cout << "end break" << endl;
-                            cout << "end break" << endl;
-                            //delete event;
-                            exit_flag = true;
-                            //return ;
-                            break;
-                        }
-                        cnt++;
-                        break;
-                    //case CGI_EVENT:
-                        //DEBUG("Webserv::CGI_EVENT Event");
-                        //io_worker.work(event);
-                        //break;
-                    case TIMEOUT_EVENT:
-                        DEBUG("Webserv::Timeout Event");
-                        handle(event);
-                        //cleaner.clean_timeout_events(event);
-                        break;
-                    case KEEPA_ALIVE_EVENT:
-                        DEBUG("Webserv::KEEPA_ALIVE_EVENT Event");
-                        //cleaner.clean_timeout_events(event);
-                        break;
-                    case NOTHING_EVENT:
-                        delete event;
-                        continue;
-                        DEBUG("Webserv::Nothing Event");
-                        break;
-                    default:
-                        break;
-                }
-                */
                 event_controller->next_event(event);
                 if(exit_flag){
                     break;

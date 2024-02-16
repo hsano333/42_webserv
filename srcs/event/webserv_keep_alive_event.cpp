@@ -44,10 +44,7 @@ WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, Webser
     (void)event_factory;
     (void)event;
     WARNING("WebservKeepAliveEvent::make_next_event() there is no next event");
-    //
     return (event_factory->make_io_socket_event_as_read(event));
-    //return (NULL);
-    //return (event);
 }
 
 E_EpollEvent WebservKeepAliveEvent::get_next_epoll_event(WebservEvent *event)

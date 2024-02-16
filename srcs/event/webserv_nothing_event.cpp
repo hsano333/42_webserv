@@ -4,15 +4,7 @@
 
 WebservNothingEvent::WebservNothingEvent()
 {
-    //this->fd_ = FileDiscriptor::from_int(0);
 }
-
-/*
-WebservNothingEvent::WebservNothingEvent(FileDiscriptor fd) : timeout_count_(0), fd_(fd)
-{
-    ;
-}
-*/
 
 
 WebservNothingEvent::~WebservNothingEvent()
