@@ -8,7 +8,7 @@
 
 class WebservEntity;
 template<typename EventT>
-void io_work(EventT *event, WebservEntity *entity)
+bool io_work(EventT *event, WebservEntity *entity)
 {
     (void)event;
     //return ;
@@ -49,6 +49,7 @@ void io_work(EventT *event, WebservEntity *entity)
             MYINFO("Write OK::" + Utility::to_string(write_size));
         }
     }
+    return (entity->completed());
 }
 
 #endif

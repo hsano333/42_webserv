@@ -1,6 +1,6 @@
 #ifndef APPLICATION_RESULT_HPP
 #define APPLICATION_RESULT_HPP
-#include "application.hpp"
+//#include "application.hpp"
 #include "process_id.hpp"
 #include "config_location.hpp"
 #include "config.hpp"

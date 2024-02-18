@@ -21,71 +21,58 @@ WebservCleaner::~WebservCleaner()
     ;
 }
 
-// Socket fd is not cleaned
-void WebservCleaner::clean(WebservEvent *event, bool force_close)
+void WebservCleaner::clean_timeout_events()
 {
-    //bool force_close = event->entity()->force_close();
+    std::vector<WebservEvent *> timeout_events;
+
+    this->event_manager->retrieve_timeout_events(timeout_events);
+    for(size_t i=0;i<timeout_events.size();i++){
+        this->clean(timeout_events[i]->entity(), true);
+    }
+}
+
+void WebservCleaner::clean(WebservEntity *entity, bool force_close)
+{
     //WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
-    //EventPointer app_event = event->event();
-    WebservEntity *entity = event->entity();
-    FileDiscriptor const &fd = entity->fd();
-    DEBUG("WebservCleaner::clean:" + fd.to_string());
+    //DEBUG("WebservCleaner::clean:" + event->fd().to_string());
+    //WebservEntity *entity = event->entity();
 
     bool is_close = force_close || entity->force_close();
-    cout << "force_close=" << force_close << endl;
-    //cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
-    cout << "test No.1" << endl;
-    Request *req = entity->request();
-    Response *res = entity->response();
-    (void)res;
-    if (req){
-        std::string const &conect = req->header().find("Connection");
+    if (entity->request()){
+        std::string const &conect = entity->request()->header().find("Connection");
         if (conect == "close"){
             is_close = true;
         }
     }
-    entity->set_force_close(is_close);
+    //delete entity;
+    //entity = NULL;
+    //delete entity->request();
+    //delete entity->response();
+    //app_event->set_null_res_and_req();
 
-    /*
-    if(app_event->src() != req && app_event->src() != res){
-        cout << "delete src" << endl;
-        delete app_event->src();
-    }
-    if(app_event->dst() != req && app_event->dst() != res){
-        cout << "delete dst" << endl;
-        delete app_event->dst();
-    }
-    */
-
-    entity->clean();
-        cout << "delete req" << endl;
-    //delete app_event->req();
-        cout << "delete res" << endl;
-    //delete app_event->res();
-        cout << "delete end" << endl;
-
-
-    //this->io_multi_controller->erase(app_fd);
+    //this->io_multi_controller->erase(app_event->fd());
     //
-    //this->event_manager->erase_event_waiting_epoll(app_fd);
-    //this->event_manager->erase_event_waiting_epoll(app_fd);
+    //this->event_manager->erase_event_waiting_epoll(app_event->fd());
+    //this->event_manager->erase_event_waiting_epoll(app_event->fd());
     if (is_close)
     {
-        MYINFO("close fd:" + fd.to_string());
+        MYINFO("close fd:" + entity->fd().to_string());
         //ヘッダーでcloseするように指定されているので、closeする
-        //this->io_multi_controller->erase(app_fd);
-        this->fd_manager->close_fd(fd);
+        //this->io_multi_controller->erase(app_event->fd());
+        this->fd_manager->close_fd(entity->fd());
     }else{
-        MYINFO("not close fd:" + fd.to_string());
+        MYINFO("not close fd:" + entity->fd().to_string());
         // HTTP1.1はデフォルトでコネクションを切断しない
-        //
-        //this->io_multi_controller->modify(app_fd, EPOLLIN);
-        //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_fd);
-        //this->event_manager->add_event_waiting_epoll(app_fd, new_event);
-        //
+        //this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
+        //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
+        //this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
     }
+    //delete entity;
+    //event->set_completed(true);
+    entity->set_force_close(is_close);
     entity->set_completed(true);
 }
+
 
 void WebservCleaner::close_fd(FileDiscriptor const &fd)
 {

@@ -12,12 +12,14 @@ WebservMakeRequestEvent::~WebservMakeRequestEvent()
 {
 };
 
-void make(WebservMakeRequestEvent *event, WebservEntity *entity)
-{
-    entity->set_completed(false);
-    Request *req = event->make_request(entity);
-    entity->set_request(req);
-    entity->set_completed(true);
+namespace free_func{
+    bool make_request(WebservMakeRequestEvent *event, WebservEntity *entity)
+    {
+        Request *req = event->make_request(entity);
+        entity->set_request(req);
+        entity->set_completed(true);
+        return (true);
+    }
 }
 
 WebservMakeRequestEvent *WebservMakeRequestEvent::singleton = NULL;
@@ -34,7 +36,7 @@ WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src
 {
     DEBUG("WebservMakeRequestEvent::from_event");
     WebservMakeRequestEvent *req_event = WebservMakeRequestEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( req_event, make, event->entity());
+    WebservEvent *new_event =  new WebservEvent( req_event, free_func::make_request, event->entity());
     new_event->entity()->io().set_source(src);
     new_event->entity()->io().set_destination(dst);
 

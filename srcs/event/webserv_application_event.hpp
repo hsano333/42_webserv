@@ -5,7 +5,7 @@
 #include "webserv_entity.hpp"
 
 template<typename EventT>
-void invoke(EventT *event, WebservEntity *entity)
+bool invoke(EventT *event, WebservEntity *entity)
 {
     (void)event;
     DEBUG("WebservExecuter::execute");
@@ -13,11 +13,12 @@ void invoke(EventT *event, WebservEntity *entity)
     Application *app = factory->make_application(entity);
 
     bool is_completed = app->invoke(entity);
-    entity->set_completed(is_completed);
     ApplicationResult *result = app->get_result();
 
     entity->set_result(result);
+    entity->set_completed(is_completed);
     delete app;
+    return (is_completed);
 }
 
 #endif

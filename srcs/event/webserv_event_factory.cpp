@@ -87,13 +87,15 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
         if(this->fd_manager->is_registered(fd) == false)
         {
-            MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
             io_fd = this->socket_controller->accept_request(fd);
+            MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
             this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
             this->io_multi_controller->add(io_fd, EPOLLIN);
 
-            return (WebservNothingEvent::make_nothing_event());
+            return (NULL);
+            //return (WebservNothingEvent::make_nothing_event());
         }else{
+            MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL){
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
@@ -223,6 +225,6 @@ WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool fo
 
 WebservEvent *WebservEventFactory::make_timeout_event()
 {
-    return (WebservTimeoutEvent::make(this->fd_manager, this->event_manager));
+    return (WebservTimeoutEvent::make(this->cleaner));
 }
 

@@ -128,10 +128,12 @@ void WebservEntity::clean()
 
 
 
+/*
 bool WebservEntity::completed()
 {
     return (this->completed_);
 }
+*/
 
 void WebservEntity::set_completed(bool flag)
 {

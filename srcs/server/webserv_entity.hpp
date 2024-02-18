@@ -3,10 +3,9 @@
 
 #include "file_discriptor.hpp"
 #include "application_result.hpp"
-#include "file_discriptor.hpp"
 #include "webserv_io.hpp"
 
-class ApplicationResult;
+//class ApplicationResult;
 class WebservEntity
 {
     public:
@@ -33,7 +32,7 @@ class WebservEntity
 
 
         Config const *config();
-        bool completed();
+        bool completed(){return this->completed_;};
         bool force_close();
     private:
         FileDiscriptor fd_;

@@ -11,42 +11,35 @@ WebservTimeoutEvent::~WebservTimeoutEvent()
     ;
 }
 
-void dummy_func(WebservTimeoutEvent *event, WebservEntity *entity)
-{
-    (void)event;
-    (void)entity;
-}
-
 WebservTimeoutEvent *WebservTimeoutEvent::singleton = NULL;
-WebservTimeoutEvent *WebservTimeoutEvent::get_instance(FDManager *fd_manager, EventManager *event_manager)
+WebservTimeoutEvent *WebservTimeoutEvent::get_instance(WebservCleaner *cleaner)
 {
     if (WebservTimeoutEvent::singleton == NULL){
         singleton = new WebservTimeoutEvent();
-        singleton->fd_manager = fd_manager;
-        singleton->event_manager = event_manager;
+        singleton->cleaner_ = cleaner;
     }
     return (singleton);
 }
 
 
-void clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)
+bool clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)
 {
-    (void)event;
+    (void)entity;
     std::vector<WebservEvent *> timeout_events;
 
-    event->event_manager->retrieve_timeout_events(timeout_events);
-    for(size_t i=0;i<timeout_events.size();i++){
-        //force_clean(timeout_events[i], entity->entity()->fd());
-        event->close_fd(entity->fd());
-    }
+    event->cleaner()->clean_timeout_events();
     entity->set_completed(true);
+    //for(size_t i=0;i<timeout_events.size();i++){
+        //event->clean(timeout_events[i]->entity(), true);
+    //}
+    return (true);
 }
 
 
-WebservEvent *WebservTimeoutEvent::make(FDManager *fd_manager, EventManager *event_manager)
+WebservEvent *WebservTimeoutEvent::make(WebservCleaner *cleaner)
 {
-    WebservTimeoutEvent *timeout_event = WebservTimeoutEvent::get_instance(fd_manager, event_manager);
-    WebservEvent *new_event =  new WebservEvent( timeout_event, clean_timeout_events, NULL);
+    WebservTimeoutEvent *timeout_event = WebservTimeoutEvent::get_instance(cleaner);
+    WebservEvent *new_event = new WebservEvent( timeout_event, clean_timeout_events, NULL);
     return (new_event);
 }
 
@@ -64,7 +57,7 @@ E_EpollEvent WebservTimeoutEvent::get_next_epoll_event(WebservEvent *event)
     return (EPOLL_NONE);
 }
 
-void WebservTimeoutEvent::close_fd(FileDiscriptor const &fd)
+WebservCleaner *WebservTimeoutEvent::cleaner() const
 {
-    this->fd_manager->close_fd(fd);
+    return (this->cleaner_);
 }

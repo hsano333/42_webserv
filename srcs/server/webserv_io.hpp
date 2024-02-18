@@ -19,12 +19,6 @@ class WebservIO
 
         void set_source(File *file);
         void set_destination(File *file);
-        /*
-        void set_source_for_read(File *file);
-        void set_destination_for_read(File *file);
-        void set_source_for_write(File *file);
-        void set_destination_for_write(File *file);
-        */
 
         //for cgi
         void            set_write_io(File *src, File *dst);

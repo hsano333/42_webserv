@@ -1,5 +1,6 @@
 #ifndef DELETE_APPLICATION_HPP
 #define DELETE_APPLICATION_HPP
+#include "webserv_event.hpp"
 #include "application.hpp"
 #include "application_result.hpp"
 #include "cgi.hpp"

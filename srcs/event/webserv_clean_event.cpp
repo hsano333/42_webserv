@@ -2,7 +2,6 @@
 #include "webserv_clean_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
-#include "webserv_cleaner.hpp"
 
 WebservCleanEvent::WebservCleanEvent()
 {
@@ -42,77 +41,11 @@ WebservCleanEvent *WebservCleanEvent::get_instance(WebservCleaner *cleaner)
 {
     if (WebservCleanEvent::singleton == NULL){
         singleton = new WebservCleanEvent();
-        singleton->cleaner = cleaner;
+        singleton->cleaner_ = cleaner;
     }
     return (singleton);
 }
 
-void clean(WebservCleanEvent *event, WebservEntity *entity)
-{
-    (void)event;
-    //bool force_close = event->entity()->force_close();
-    //WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
-    //EventPointer app_event = event->event();
-    //WebservEntity *entity = event->entity();
-    FileDiscriptor const &fd = entity->fd();
-    DEBUG("WebservCleaner::clean:" + fd.to_string());
-
-    bool is_close =  entity->force_close();
-    //cout << "force_close=" << force_close << endl;
-    //cout << "app_event->is_force_close()=" << app_event->is_force_close() << endl;
-    cout << "test No.1" << endl;
-    Request *req = entity->request();
-    Response *res = entity->response();
-    (void)res;
-    if (req){
-        std::string const &conect = req->header().find("Connection");
-        if (conect == "close"){
-            is_close = true;
-        }
-    }
-    entity->set_force_close(is_close);
-
-    /*
-    if(app_event->src() != req && app_event->src() != res){
-        cout << "delete src" << endl;
-        delete app_event->src();
-    }
-    if(app_event->dst() != req && app_event->dst() != res){
-        cout << "delete dst" << endl;
-        delete app_event->dst();
-    }
-    */
-
-        entity->clean();
-        cout << "delete req" << endl;
-    //delete app_event->req();
-        cout << "delete res" << endl;
-    //delete app_event->res();
-        cout << "delete end" << endl;
-
-
-    //this->io_multi_controller->erase(app_fd);
-    //
-    //this->event_manager->erase_event_waiting_epoll(app_fd);
-    //this->event_manager->erase_event_waiting_epoll(app_fd);
-    if (is_close)
-    {
-        MYINFO("close fd:" + fd.to_string());
-        //ヘッダーでcloseするように指定されているので、closeする
-        //this->io_multi_controller->erase(app_fd);
-        event->close_fd(fd);
-        //this->fd_manager->close_fd(fd);
-    }else{
-        MYINFO("not close fd:" + fd.to_string());
-        // HTTP1.1はデフォルトでコネクションを切断しない
-        //
-        //this->io_multi_controller->modify(app_fd, EPOLLIN);
-        //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_fd);
-        //this->event_manager->add_event_waiting_epoll(app_fd, new_event);
-        //
-    }
-    entity->set_completed(true);
-}
 
 
 
@@ -128,18 +61,31 @@ WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool fo
 }
 */
 
+bool clean(WebservCleanEvent *event, WebservEntity *entity)
+{
+    (void)event;
+
+    event->cleaner()->clean(entity, event->force_close());
+    return (true);
+}
+
 WebservEvent *WebservCleanEvent::from_event(WebservEvent *event, WebservCleaner *cleaner, bool force_close)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
     WebservCleanEvent *clean_event = WebservCleanEvent::get_instance(cleaner);
-    WebservEvent *new_event =  new WebservEvent(clean_event, clean, event->entity());
-    new_event->entity()->set_force_close(force_close);
+    clean_event->force_close_ = force_close;
+    WebservEvent *new_event = new WebservEvent(clean_event, clean, event->entity());
+    //new_event->entity()->set_force_close(force_close);
     new_event->entity()->io().set_source(event->entity()->request());
     return (new_event);
 }
 
-
-void WebservCleanEvent::close_fd(FileDiscriptor const &fd)
+bool WebservCleanEvent::force_close()
 {
-    this->cleaner->close_fd(fd);
+    return (this->force_close_);
+}
+
+WebservCleaner *WebservCleanEvent::cleaner() const
+{
+    return (this->cleaner_);
 }

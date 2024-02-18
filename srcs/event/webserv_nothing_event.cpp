@@ -1,5 +1,6 @@
 
 #include "webserv_nothing_event.hpp"
+#include "webserv_event.hpp"
 #include "global.hpp"
 
 WebservNothingEvent::WebservNothingEvent()
@@ -12,16 +13,23 @@ WebservNothingEvent::~WebservNothingEvent()
     ;
 }
 
-void dummy_func(WebservNothingEvent *event, WebservEntity *entity)
+WebservNothingEvent *WebservNothingEvent::singleton = NULL;
+WebservNothingEvent *WebservNothingEvent::get_instance()
 {
-    (void)event;
-    (void)entity;
+    if (WebservNothingEvent::singleton == NULL){
+        singleton = new WebservNothingEvent();
+    }
+    return (singleton);
 }
+
+
+
 
 WebservEvent *WebservNothingEvent::make_nothing_event()
 {
-    WebservNothingEvent *null_event = new WebservNothingEvent();
-    WebservEvent *new_event =  new WebservEvent( null_event, dummy_func, NULL);
+    DEBUG("WebservNothingEvent::make_nothing_event()");
+    WebservNothingEvent *null_event = WebservNothingEvent::get_instance();
+    WebservEvent *new_event =  new WebservEvent( null_event, dummy_func<WebservNothingEvent>, NULL);
     return (new_event);
 }
 

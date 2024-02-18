@@ -1,6 +1,6 @@
 #ifndef WEBSERV_CLEANER_HPP
 #define WEBSERV_CLEANER_HPP
-#include "webserv_event.hpp"
+//#include "webserv_event.hpp"
 #include "io_multiplexing.hpp"
 #include "event_manager.hpp"
 #include "fd_manager.hpp"
@@ -9,7 +9,8 @@
 //#include "webserv_clean_event.hpp"
 
 class EventManager;
-class WebservEvent;
+//class WebservEvent;
+class WebservEntity;
 class WebservCleaner
 {
     public:
@@ -20,8 +21,9 @@ class WebservCleaner
 
                 );
         ~WebservCleaner();
-        void clean(WebservEvent *event, bool force_close);
+        void clean(WebservEntity *entity, bool force_close);
         void close_fd(FileDiscriptor const &fd);
+        void clean_timeout_events();
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;

@@ -6,6 +6,7 @@
 #include "response.hpp"
 #include "webserv_entity.hpp"
 #include "fd_manager.hpp"
+#include "webserv_cleaner.hpp"
 
 class WebservCleanEvent
 {
@@ -16,14 +17,15 @@ class WebservCleanEvent
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
         static WebservEvent *from_event(WebservEvent *event, WebservCleaner *cleaner, bool force_close);
-        void close_fd(FileDiscriptor const &fd);
+        bool force_close();
+        WebservCleaner *cleaner() const;
 
     private:
         WebservCleanEvent();
         static WebservCleanEvent *singleton;
         static WebservCleanEvent *get_instance(WebservCleaner *cleaner);
-        bool force_close;
-        WebservCleaner *cleaner;
+        bool force_close_;
+        WebservCleaner *cleaner_;
         //FDManager *fd_manager;
 };
 

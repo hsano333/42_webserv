@@ -191,7 +191,7 @@ void EventManager::close_all_events_waiting_epoll(WebservCleaner *cleaner)
     }
     DEBUG("EventManager::close_all_events_waiting_epoll size:" + Utility::to_string(tmp.size()));
     for(size_t i=0;i<tmp.size();i++){
-        cleaner->clean(tmp[i], true);
+        cleaner->clean(tmp[i]->entity(), true);
         delete tmp[i];
     }
 }

@@ -1,5 +1,6 @@
 #ifndef GET_APPLICATION_HPP
 #define GET_APPLICATION_HPP
+#include "webserv_event.hpp"
 #include "application.hpp"
 #include "application_result.hpp"
 #include "config_location.hpp"

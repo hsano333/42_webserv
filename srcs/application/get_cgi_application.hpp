@@ -1,5 +1,6 @@
 #ifndef GET_CGI_APPLICATION_HPP
 #define GET_CGI_APPLICATION_HPP
+#include "webserv_event.hpp"
 #include "application.hpp"
 #include "cgi.hpp"
 #include "config_location.hpp"

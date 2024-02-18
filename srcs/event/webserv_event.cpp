@@ -12,3 +12,17 @@ int WebservEvent::timeout_count()
     return (this->timeout_count_);
 }
 
+/*
+bool WebservEvent::completed()
+{
+    return (this->completed_);
+}
+
+void WebservEvent::set_completed(bool flag)
+{
+    this->completed_ = flag;
+}
+*/
+
+
+

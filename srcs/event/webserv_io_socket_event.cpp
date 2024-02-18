@@ -16,11 +16,6 @@ WebservIOSocketEvent::~WebservIOSocketEvent()
     ;
 }
 
-void dummy_func(WebservIOSocketEvent *event, WebservEntity *entity)
-{
-    (void)event;
-    (void)entity;
-}
 
 WebservIOSocketEvent *WebservIOSocketEvent::singleton = NULL;
 WebservIOSocketEvent *WebservIOSocketEvent::get_instance()

@@ -1,15 +1,15 @@
 #ifndef APPLICATION_HPP
 #define APPLICATION_HPP
 
-#include "webserv_event.hpp"
+//#include "webserv_event.hpp"
 #include "response.hpp"
 #include "method.hpp"
 #include "application_result.hpp"
 #include "webserv_entity.hpp"
 
-class WebservEvent;
-class WebservEntity;
-class ApplicationResult;
+//class WebservEvent;
+//class WebservEntity;
+//class ApplicationResult;
 class Application
 {
     public:

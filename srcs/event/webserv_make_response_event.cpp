@@ -87,18 +87,22 @@ Response *WebservMakeResponseEvent::make(WebservEntity *entity)
 {
     ApplicationResult *result = entity->app_result();
     DEBUG("WebservMakeResponseEvent::make()");
+    Response *res;
     if(result->is_cgi()){
-        return (make_response_for_cgi(result, entity));
+        res = make_response_for_cgi(result, entity);
+    }else{
+        res = make_response(result);
     }
-    return (make_response(result));
+    return (res);
 }
 
-namespace FREE
-{
-    void make(WebservMakeResponseEvent *event, WebservEntity *entity)
+namespace free_func{
+    bool make_response(WebservMakeResponseEvent *event, WebservEntity *entity)
     {
         Response *res = event->make(entity);
         entity->set_response(res);
+        //entity->set_completed(res);
+        return (entity->completed());
     }
 }
 
@@ -115,7 +119,7 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *sr
 {
     DEBUG("WebservMakeResponseEvent::from_event");
     WebservMakeResponseEvent *res_event = WebservMakeResponseEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( res_event, FREE::make, event->entity());
+    WebservEvent *new_event =  new WebservEvent( res_event, free_func::make_response, event->entity());
     new_event->entity()->io().set_source(src);
     new_event->entity()->io().set_destination(dst);
 
