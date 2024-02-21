@@ -55,17 +55,17 @@ Webserv& Webserv::operator=(const Webserv& socket)
 
 void Webserv::communication()
 {
-
-    bool exit_flag = false;
     DEBUG("Webserv::communication() start");
-    //int cnt = 0;
+    bool exit_flag = false;
+    int wait_time;
     while(1)
     {
         if(waiter.is_not_busy()){
-            waiter.wait(5);
+            wait_time = 1;
         }else{
-            waiter.wait(0);
+            wait_time = 0;
         }
+        waiter.wait(wait_time);
         waiter.fetch_events();
 
         size_t cur_size = this->event_manager->event_size();
@@ -73,7 +73,7 @@ void Webserv::communication()
         {
             WebservEvent *event = this->event_manager->pop_first();
             if(event == NULL){
-                break;
+                continue;
             }
             try
             {

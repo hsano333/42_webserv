@@ -24,13 +24,13 @@ WebservWaiter::~WebservWaiter()
 
 void WebservWaiter::wait(int sec)
 {
-    try{
+    //try{
         io_multi_controller->wait(sec);
-    }catch(TimeoutException &e){
-        MYINFO("waiter catch epoll timeout");
-        int count = Utility::to_int(e.what());
-        event_manager->count_up_to_all_event(count);
-    }
+    //}catch(TimeoutException &e){
+        //MYINFO("waiter catch epoll timeout");
+        //int count = Utility::to_int(e.what());
+        //event_manager->count_up_to_all_event(count);
+    //}
 }
 
 bool WebservWaiter::is_not_busy()
@@ -91,8 +91,10 @@ void WebservWaiter::fetch_events()
     int executable_event_size = io_multi_controller->executable_event_number();
     MYINFO("WebservWaiter::fetch_event() executable_event_size:" + Utility::to_string(executable_event_size));
     if(executable_event_size > 0){
-        std::vector<t_epoll_event> &io_event = io_multi_controller->take_out_event();
-        for(int i=0;i<executable_event_size;i++){
+        int event_size = io_multi_controller->executable_event_number();
+        t_epoll_event *io_event = io_multi_controller->event_return_wrapper();
+        MYINFO("WebservWaiter::fetch_event() io_event size:" + Utility::to_string(event_size));
+        for(int i=0;i<event_size;i++){
             WebservEvent *event = this->event_factory->from_epoll_event(io_event[i]);
             if(event){
                 event_manager->push(event);
@@ -111,8 +113,6 @@ void WebservWaiter::fetch_events()
 
     if(event_manager->check_timeout()){
         MYINFO("WebservWaiter::fetch_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
-
-        //WebservTimeoutEvent::make();
         WebservEvent *event = event_factory->make_timeout_event();
         event_manager->push(event);
     }

@@ -97,7 +97,11 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-            if(cached_event == NULL){
+            if(cached_event == NULL || cached_event->is_keepalive()){
+                if(cached_event){
+                    delete cached_event;
+                }
+
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
                 WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
                 entity->config()->check();
@@ -109,7 +113,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 return (event);
             }else{
                 cached_event->entity()->io().switching_io(EPOLLIN);
-                cached_event->increase_timeout_count(-cached_event->timeout_count());
+                cached_event->update_time();
                 return (cached_event);
 
             }

@@ -5,6 +5,7 @@
 #include "event_manager.hpp"
 #include "fd_manager.hpp"
 #include "webserv_entity.hpp"
+#include "file_manager.hpp"
 //#include "webserv_timeout_event.hpp"
 //#include "webserv_clean_event.hpp"
 
@@ -17,8 +18,8 @@ class WebservCleaner
         WebservCleaner(
                         IOMultiplexing *io_multi_controller,
                         EventManager *event_manager,
-                        FDManager *fd_manager
-
+                        FDManager *fd_manager,
+                        FileManager *file_manager
                 );
         ~WebservCleaner();
         void clean(WebservEntity *entity, bool force_close);
@@ -28,6 +29,7 @@ class WebservCleaner
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
         FDManager *fd_manager;
+        FileManager *file_manager;
 
 };
 

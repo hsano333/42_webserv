@@ -21,13 +21,19 @@ bool io_work(EventT *event, WebservEntity *entity)
         ERROR("WebservReceiver::recv():  source is NULL");
         throw HttpException("500");
     }
+    DEBUG("WebservIOWorker::work No.1");
     source->open();
+    DEBUG("WebservIOWorker::work No.2");
     destination->open();
+    DEBUG("WebservIOWorker::work No.3");
     entity->set_completed(false);
+    DEBUG("WebservIOWorker::work No.4");
     char buf[MAX_READ_SIZE+1];
     ssize_t read_size_total = 0;
+    DEBUG("WebservIOWorker::work No.5");
     while(1)
     {
+    DEBUG("WebservIOWorker::work No.3");
         char *buf_p = &(buf[0]);
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE);
         MYINFO("MYINFO::read size=" + Utility::to_string(read_size));
@@ -49,6 +55,7 @@ bool io_work(EventT *event, WebservEntity *entity)
             MYINFO("Write OK::" + Utility::to_string(write_size));
         }
     }
+    DEBUG("WebservIOWorker::work No.4");
     return (entity->completed());
 }
 

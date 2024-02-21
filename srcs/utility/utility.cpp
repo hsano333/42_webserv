@@ -111,12 +111,18 @@ string Utility::get_extension(string const &str)
     return (str.substr(pos));
 }
 
+int Utility::tolower(int c){
+    if('A' <= c && c <= 'Z'){
+        c = c - 'A' + 'a';
+    }
+    return (c);
+}
 
 string Utility::to_lower(string str)
 {
     string result = "";
     for (size_t i = 0; i < str.length(); i++) {
-        result += tolower(str[i]);
+        result += Utility::tolower(str[i]);
     }
     return (result);
 }

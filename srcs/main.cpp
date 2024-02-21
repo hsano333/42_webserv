@@ -129,7 +129,6 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
     return (socket_repository );
 }
 
-//boot_time = std::time(NULL);
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <iomanip>
@@ -166,7 +165,6 @@ int main(int argc, char const* argv[])
     //int rval = remove(argv[1]);
     //cout << "rval:"  << rval << endl;
     //return 0;
-    //boot_time = std::time(NULL);
     std::string abc = "abc";
     std::string def = "defghi";
     std::string ghi = "ghia";
@@ -241,7 +239,7 @@ int main(int argc, char const* argv[])
     NormalReader *normal_reader = NormalReader::get_instance();
     //StreamReader *stream_reader = StreamReader::get_instance();
     EventManager *event_manager = new EventManager();
-    WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager);
+    WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
 
     WebservEventFactory *event_factory = new WebservEventFactory(
             cfg,

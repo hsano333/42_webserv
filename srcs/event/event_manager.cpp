@@ -93,6 +93,7 @@ WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor &fd)
     return (event);
 }
 
+/*
 void EventManager::count_up_to_all_event(int time)
 {
     {
@@ -114,14 +115,16 @@ void EventManager::count_up_to_all_event(int time)
         }
     }
 }
+*/
 
 bool EventManager::check_timeout()
 {
+    std::time_t now = std::time(NULL);
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
-            if(ite->second->timeout_count() >= TIMEOUT){
+            if(ite->second->check_timeout(now)){
                 return (true);
             }
             ite++;
@@ -131,7 +134,7 @@ bool EventManager::check_timeout()
         MutantStack<WebservEvent *>::iterator ite;
         MutantStack<WebservEvent *>::iterator end;
         while(ite != end){
-            if((*ite)->timeout_count() >= TIMEOUT){
+            if((*ite)->check_timeout(now)){
                 return (true);
             }
             ite++;
@@ -142,13 +145,14 @@ bool EventManager::check_timeout()
 
 void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_return)
 {
+    std::time_t now = std::time(NULL);
     DEBUG("retrieve_timeout_events()");
     {
         std::vector<FileDiscriptor> tmp_fds;
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
-            if(ite->second->timeout_count() >= TIMEOUT){
+            if(ite->second->check_timeout(now)){
                 tmp_fds.push_back(ite->first);
             }
             ite++;
@@ -167,7 +171,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
         while(events.size() > 0)
         {
             WebservEvent *event = this->pop_first();
-            if(event->timeout_count() >= TIMEOUT){
+            if(event->check_timeout(now)){
                 event_return.push_back(event);
             }else{
                 event_saved.push_back(event);

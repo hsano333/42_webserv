@@ -22,6 +22,7 @@ ApplicationResult::~ApplicationResult()
 
 int ApplicationResult::open()
 {
+    DEBUG("ApplicationResult::open()");
     //this->state = FILE_OPEN;
     if (this->file_){
         DEBUG("Request::open_file() No.2");

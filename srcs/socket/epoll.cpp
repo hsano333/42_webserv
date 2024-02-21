@@ -3,17 +3,14 @@
 #include "utility.hpp"
 #include <sys/epoll.h>
 
-Epoll::Epoll() : allocated_events_space(1)
+Epoll::Epoll()
 {
-    ;
 }
 
 Epoll::Epoll(Epoll const &epoll)
 {
     std::cout << "Epoll Copy Constructor" << std::endl;
     *this = epoll;
-    std::cout << this->allocated_event_size() << std::endl;
-    std::cout << epoll.allocated_event_size() << std::endl;
 }
 
 Epoll::~Epoll()
@@ -29,9 +26,9 @@ Epoll& Epoll::operator=(Epoll const & epoll)
     }
     //std::cout << "operator=" << std::endl;
     this->epfd = epoll.epfd;
-    this->allocated_events_space.resize(epoll.allocated_event_size());
-    for(size_t i=0;i<this->allocated_events_space.size();i++){
-        this->allocated_events_space[i] = epoll.allocated_events_space[i];
+    this->executable_event_number_ = epoll.executable_event_number_;
+    for(int i=0;i<EVENT_MAX_NUMBER;i++){
+        this->event_return_[i] = epoll.event_return_[i];
     }
     return *this;
 }
@@ -69,11 +66,12 @@ FileDiscriptor Epoll::fd()
     return (this->epfd);
 }
 
-t_epoll_event *Epoll::allocated_event_pointer()
+t_epoll_event *Epoll::event_return()
 {
-    return &(this->allocated_events_space[0]);
+    return &(this->event_return_[0]);
 }
 
+/*
 t_epoll_event const* Epoll::event_related_with_fd(FileDiscriptor fd)
 {
     std::vector<t_epoll_event>::const_iterator ite = this->allocated_events_space.begin();
@@ -91,16 +89,11 @@ t_epoll_event const* Epoll::event_related_with_fd(FileDiscriptor fd)
     //return (*ite);
 }
 
-
-size_t Epoll::allocated_event_size() const
-{
-    return (this->allocated_events_space.size());
-}
-
 std::vector<t_epoll_event> &Epoll::get_events()
 {
     return (this->allocated_events_space);
 }
+*/
 
 int Epoll::executable_event_number()
 {
@@ -125,6 +118,7 @@ void Epoll::save_executable_events_number(int size)
     }
 }
 
+/*
 void Epoll::expand_allocated_space()
 {
     DEBUG("Epoll::expand_allocated_space():" + Utility::to_string(this->allocated_events_space.size()));
@@ -137,7 +131,7 @@ void Epoll::expand_allocated_space()
         DEBUG("Epoll post resize fd:" + Utility::to_string(this->allocated_events_space[i].data.fd));
     }
 }
-
+*/
 
 /*
 void Epoll::expand_allocated_space(t_epoll_event tmp)
@@ -147,6 +141,7 @@ void Epoll::expand_allocated_space(t_epoll_event tmp)
 }
 */
 
+/*
 void Epoll::contract_allocated_space()
 {
     DEBUG("Epoll::contract_allocated_space()");
@@ -175,23 +170,4 @@ t_epoll_event *Epoll::event_from_fd(int fd)
 
 
 
-#ifdef UNIT_TEST
-#include "doctest.h"
-TEST_CASE("Epoll Class")
-{
-    Epoll epoll = Epoll();
-    CHECK(epoll.allocated_event_size() == 1);
-    epoll.expand_allocated_space();
-    CHECK(epoll.allocated_event_size() == 2);
-    epoll.expand_allocated_space();
-    CHECK(epoll.allocated_event_size() == 3);
-    epoll.contract_allocated_space();
-    CHECK(epoll.allocated_event_size() == 2);
-    epoll.contract_allocated_space();
-    CHECK_THROWS_AS(epoll.contract_allocated_space(), std::runtime_error);
-
-
-    close(epoll.fd().to_int());
-}
-
-#endif
+*/

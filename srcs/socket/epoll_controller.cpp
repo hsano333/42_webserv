@@ -118,7 +118,7 @@ void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
         cout << "epoll add error=" << err << endl;
         throw std::runtime_error("Epoll add Error");
     }
-    this->epoll.expand_allocated_space();
+    //this->epoll.expand_allocated_space();
     //fd_map.insert(fd, true);
 }
 
@@ -166,7 +166,7 @@ void EpollController::erase(FileDiscriptor fd_obj)
     //delete (ev);
     //this->events.erase(ite_ev);
     //return (true);
-    this->epoll.contract_allocated_space();
+    //this->epoll.contract_allocated_space();
 
 }
 
@@ -182,28 +182,31 @@ size_t EpollController::get_fd_num()
 }
 */
 
-void EpollController::wait(int time_msec)
+void EpollController::wait(int time_sec)
 {
     MYINFO("EpollController::wait() epoll.fd():" + Utility::to_string(epoll.fd()));
     //int time_msec = 5;
 
-    int nfds = epoll_wait(epoll.fd().to_int(), epoll.allocated_event_pointer(), epoll.allocated_event_size(), time_msec * 1000);
+    int nfds = epoll_wait(epoll.fd().to_int(), epoll.event_return(), EVENT_MAX_NUMBER, time_sec * 1000);
     MYINFO("epoll nfds=" + Utility::to_string(nfds));
     if(nfds < 0){
         ERROR("EPOLL WAIT ERROR");
         throw std::runtime_error("EPOLL WAIT ERROR");
     }
     epoll.save_executable_events_number(nfds);
+    /*
     if(nfds == 0){
-        MYINFO("timeout:" + Utility::to_string(time_msec) + "sec");
-        std::string tmp = Utility::to_string(time_msec);
-        throw TimeoutException(tmp);
+        MYINFO("timeout:" + Utility::to_string(time_sec) + "sec");
+        std::string tmp = Utility::to_string(time_sec);
+        //throw TimeoutException(tmp);
+        return;
     }else{
         t_epoll_event *ev = epoll.allocated_event_pointer();
         for(int i=0;i<nfds;i++){
             MYINFO("end waiting fd:" + Utility::to_string(ev[i].data.fd) );
         }
     }
+    */
 }
 
 int EpollController::executable_event_number()
@@ -215,21 +218,11 @@ int EpollController::executable_event_number()
     //return (false);
 }
 
-std::vector<t_epoll_event> & EpollController::take_out_event()
+t_epoll_event *EpollController::event_return_wrapper()
 {
-    /*
-    std::vector<t_epoll_event> io_events = epoll.get_events();
-    size_t io_events_size = epoll.allocated_event_size();
-    for(size_t i=0;i<io_events_size;i++){
-        WebservEvent *event = WebservEvent::from_epoll_event((io_events[i]));
-        (void)event;
-        //events[i];
-    }
-    return (io_events);
-    */
-    epoll.save_executable_events_number(0);
-    return (epoll.get_events());
+    return (this->epoll.event_return());
 }
+
 /*
 EpollController* EpollController::get_instance()
 {

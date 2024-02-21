@@ -56,7 +56,6 @@ int ResponseFile::read(char **buf, size_t size)
     std::cout << "ResponseFile::read No.3" << std::endl;
     *buf = const_cast<char*>(&(this->text[0]));
     std::cout << "ResponseFile::read No.4:" << this->text << std::endl;
-    //Utility::memcpy(*buf, dirr->d_name, Utility::strlen(dirr->d_name));
 
     this->state = FILE_CLOSE;
     return this->text.size();

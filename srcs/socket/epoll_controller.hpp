@@ -21,7 +21,7 @@ class EpollController : public IOMultiplexing
         void modify(FileDiscriptor fd, uint32_t event);
         FileDiscriptor fd();
         int executable_event_number();
-        std::vector<t_epoll_event> &take_out_event();
+        //std::vector<t_epoll_event> &take_out_event();
         void init_epoll();
     private:
         //Epoll *epoll;
@@ -30,6 +30,7 @@ class EpollController : public IOMultiplexing
         SocketController *socket_controller;
         EventManager *event_manager;
         FDManager *fd_manager;
+        t_epoll_event *event_return_wrapper();
         //std::map<int, bool> fd_map;
         //t_epoll_event* get_event(FileDiscriptor fd);
 

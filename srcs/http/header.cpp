@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2024/01/30 02:09:05 by sano             ###   ########.fr       */
+/*   Updated: 2024/02/20 02:35:33 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ Header& Header::operator=(Header const &header)
     std::map<std::string, std::string >::const_iterator end = header._headers.end();
     while(ite != end){
         std::string key = ite->first;
-        std::transform(key.begin(), key.end(), key.begin(), tolower);
+        std::transform(key.begin(), key.end(), key.begin(), Utility::tolower);
         this->_headers.insert(std::make_pair(key, ite->second));
         ite++;
     }

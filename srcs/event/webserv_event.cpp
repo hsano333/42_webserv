@@ -2,27 +2,20 @@
 #include "global.hpp"
 #include "socket_reader.hpp"
 
-void WebservEvent::increase_timeout_count(int count)
+void WebservEvent::update_time()
 {
-    this->timeout_count_ += count;
+    this->updated_time_ = std::time(NULL);
 }
 
-int WebservEvent::timeout_count()
+std::time_t WebservEvent::last_updated_time()
 {
-    return (this->timeout_count_);
+    return (this->updated_time_);
 }
 
-/*
-bool WebservEvent::completed()
+// if time is exceed, return true;
+bool WebservEvent::check_timeout(std::time_t now)
 {
-    return (this->completed_);
+    std::time_t diff = this->updated_time_ - now;
+    return (diff >= TIMEOUT);
 }
-
-void WebservEvent::set_completed(bool flag)
-{
-    this->completed_ = flag;
-}
-*/
-
-
 

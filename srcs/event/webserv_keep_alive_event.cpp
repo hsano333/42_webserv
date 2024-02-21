@@ -24,6 +24,7 @@ WebservKeepAliveEvent *WebservKeepAliveEvent::get_instance()
 
 WebservEvent *WebservKeepAliveEvent::from_event(WebservEvent *event)
 {
+    DEBUG("WebservKeepAliveEvent::from_event");
     WebservKeepAliveEvent *keep_event = WebservKeepAliveEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( keep_event, dummy_func<WebservKeepAliveEvent>, event->entity());
     return (new_event);
@@ -33,7 +34,7 @@ WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, Webser
 {
     (void)event_factory;
     (void)event;
-    WARNING("WebservKeepAliveEvent::make_next_event() there is no next event");
+    //WARNING("WebservKeepAliveEvent::make_next_event() there is no next event");
     return (event_factory->make_io_socket_event_as_read(event));
 }
 

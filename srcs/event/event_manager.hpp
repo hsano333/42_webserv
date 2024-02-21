@@ -22,7 +22,7 @@ class EventManager
         void add_event_waiting_epoll(FileDiscriptor const &fd, WebservEvent* event);
         void erase_event_waiting_epoll(FileDiscriptor const &fd);
         WebservEvent* pop_event_waiting_epoll(FileDiscriptor &fd);
-        void count_up_to_all_event(int time);
+        //void count_up_to_all_event(int time);
         bool check_timeout();
         void close_all_events_waiting_epoll(WebservCleaner *cleaner);
         void close_all_events();

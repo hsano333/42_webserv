@@ -38,6 +38,8 @@ class OwningEventModel : public EventConcept
         //bool is_completed() const {return (true);}
         E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
+        //E_EpollEvent get_next_epoll_event(WebservEvent* event) const;
+        //WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const;
 
     private:
         EventPointer event_;
@@ -49,7 +51,7 @@ class WebservEvent
 {
     public:
         template<typename EventPointer, typename HandleStrategyPointer>
-        WebservEvent( EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : entity_(entity)
+        WebservEvent( EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : entity_(entity), updated_time_(std::time(NULL))
         {
             typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
             pimpl_ = new Model(event, handler, entity);
@@ -61,8 +63,9 @@ class WebservEvent
 
         template<typename EventPointer>
         EventPointer event(){return (this->pimpl_);};
-        int  timeout_count();
-        void increase_timeout_count(int count);
+        void update_time();
+        std::time_t last_updated_time();
+        bool check_timeout(std::time_t now);
 
         E_EpollEvent get_next_epoll_event()
         {
@@ -76,18 +79,17 @@ class WebservEvent
         {
             return (pimpl_->is_keepalive());
         }
-        //void set_completed(bool flag);
-        //bool completed();
 
     private:
         WebservEntity *entity_;
-        int timeout_count_;
+        std::time_t updated_time_;
         //bool completed_;
 
         //template<typename EventPointer, typename HandleStrategyPointer>
         friend void handle(WebservEvent *event)
         {
             event->pimpl_->handle();
+            event->updated_time_ = std::time(NULL);
         }
         EventConcept *pimpl_;
 };

@@ -8,11 +8,13 @@ using std::endl;
 WebservCleaner::WebservCleaner(
                     IOMultiplexing *io_multi_controller,
                     EventManager *event_manager,
-                    FDManager *fd_manager
+                    FDManager *fd_manager,
+                    FileManager *file_manager
                     ):
                     io_multi_controller(io_multi_controller),
                     event_manager(event_manager),
-                    fd_manager(fd_manager)
+                    fd_manager(fd_manager),
+                    file_manager(file_manager)
 {
     ;
 }
@@ -23,6 +25,7 @@ WebservCleaner::~WebservCleaner()
 
 void WebservCleaner::clean_timeout_events()
 {
+    DEBUG("WebservCleaner::clean_timeout_events()");
     std::vector<WebservEvent *> timeout_events;
 
     this->event_manager->retrieve_timeout_events(timeout_events);
@@ -33,9 +36,8 @@ void WebservCleaner::clean_timeout_events()
 
 void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 {
-    //WebservCleanEvent *app_event = static_cast<WebservCleanEvent*>(event);
-    //DEBUG("WebservCleaner::clean:" + event->fd().to_string());
-    //WebservEntity *entity = event->entity();
+    DEBUG("WebservCleaner::clean()");
+    //entityを削除すると、後工程で問題が発生するので、ここでは消さない
 
     bool is_close = force_close || entity->force_close();
     if (entity->request()){
@@ -44,31 +46,18 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
             is_close = true;
         }
     }
-    //delete entity;
-    //entity = NULL;
-    //delete entity->request();
-    //delete entity->response();
-    //app_event->set_null_res_and_req();
 
-    //this->io_multi_controller->erase(app_event->fd());
-    //
-    //this->event_manager->erase_event_waiting_epoll(app_event->fd());
-    //this->event_manager->erase_event_waiting_epoll(app_event->fd());
+    //動的確保したファイルの削除
+    file_manager->erase(entity->fd());
     if (is_close)
     {
         MYINFO("close fd:" + entity->fd().to_string());
         //ヘッダーでcloseするように指定されているので、closeする
-        //this->io_multi_controller->erase(app_event->fd());
         this->fd_manager->close_fd(entity->fd());
     }else{
         MYINFO("not close fd:" + entity->fd().to_string());
         // HTTP1.1はデフォルトでコネクションを切断しない
-        //this->io_multi_controller->modify(app_event->fd(), EPOLLIN);
-        //WebservEvent *new_event = WebservKeepAliveEvent::from_fd(app_event->fd());
-        //this->event_manager->add_event_waiting_epoll(app_event->fd(), new_event);
     }
-    //delete entity;
-    //event->set_completed(true);
     entity->set_force_close(is_close);
     entity->set_completed(true);
 }

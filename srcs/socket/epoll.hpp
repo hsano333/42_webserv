@@ -4,6 +4,7 @@
 #include <vector>
 #include <unistd.h>
 #include "socket.hpp"
+#define EVENT_MAX_NUMBER 250
 
 typedef enum E_EpollEvent
 {
@@ -32,19 +33,19 @@ class Epoll
         Epoll& operator=(Epoll const & epoll);
         void init();
         FileDiscriptor fd();
-        t_epoll_event *allocated_event_pointer();
-        t_epoll_event const *event_related_with_fd(FileDiscriptor fd);
-        size_t allocated_event_size() const;
+        t_epoll_event *event_return();
+        //t_epoll_event const *event_related_with_fd(FileDiscriptor fd);
+        //size_t allocated_event_size() const;
         void save_executable_events_number(int number);
-        void expand_allocated_space();
-        void contract_allocated_space();
-        std::vector<t_epoll_event> &get_events();
+        //void expand_allocated_space();
+        //void contract_allocated_space();
+        //std::vector<t_epoll_event> &get_events();
         int executable_event_number();
-        t_epoll_event *event_from_fd(int fd);
+        //t_epoll_event *event_from_fd(int fd);
     private:
         FileDiscriptor epfd;
         int executable_event_number_;
-        std::vector<t_epoll_event> allocated_events_space;
+        t_epoll_event event_return_[EVENT_MAX_NUMBER];
 };
 
 #endif
