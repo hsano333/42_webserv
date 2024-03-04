@@ -4,11 +4,11 @@
 #include <dirent.h>
 #include <vector>
 #include <string>
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "ireader.hpp"
 #include "status_code.hpp"
 
-class VectorFile : public File
+class VectorFile
 {
     public:
         VectorFile();

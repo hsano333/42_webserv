@@ -15,9 +15,10 @@ DeleteApplication::~DeleteApplication()
 }
 
 
-File *DeleteApplication::get_requested_file()
+WebservFile *DeleteApplication::get_requested_file(FileDiscriptor const &fd)
 {
-    File *file = NULL;
+    WebservFile *file = NULL;
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     try{
         if (this->req->is_not_executable_parent_dir()){
             ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
@@ -25,10 +26,12 @@ File *DeleteApplication::get_requested_file()
         }else if(this->req->is_directory()){
             std::string const &host = this->req->header().get_host();
             std::string const &relative_path= this->req->req_line().uri().path();
-            File *file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
+            //file = DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
+            file =  file_factory->make_directory_file(fd, this->req->requested_path(), relative_path, host);
             return (file);
         }else if (Utility::is_regular_file(this->req->requested_path())){
-            File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::in | std::ios::binary);
+            //file = NormalFile::from_filepath(this->req->requested_path(), std::ios::in | std::ios::binary);
+            file =  file_factory->make_normal_file(fd, this->req->requested_path(), std::ios::in | std::ios::binary);
             return (file);
         }
         ERROR("File does not exist:" + this->req->requested_path());
@@ -82,7 +85,7 @@ bool DeleteApplication::execute(WebservEvent *event)
 {
     (void)event;
     DEBUG("DeleteApplication::execute()");
-    File *file = this->get_requested_file();
+    WebservFile *file = this->get_requested_file(event->entity()->fd());
     
     //ApplicationResult *result = ApplicationResult();
     //ApplicationResult *result = ApplicationResult::from_result();

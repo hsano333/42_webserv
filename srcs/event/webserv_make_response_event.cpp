@@ -2,7 +2,7 @@
 #include "webserv_event.hpp"
 //#include "webserv_io_event.hpp"
 #include "http_exception.hpp"
-#include "opened_socket_file.hpp"
+#include "socket_file.hpp"
 #include "application_result.hpp"
 #include "header_word.hpp"
 #include "normal_reader.hpp"
@@ -46,8 +46,9 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
 
     Split headers_line(data, LF, false, true);
     IReader *reader = NormalReader::get_instance();
-    File *file = OpenedSocketFile::from_fd(reader, result->cgi_out());
 
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *file = file_factory->make_socket_file(result->cgi_out(), NULL, reader );
     Request const *req = entity->request();
     ConfigServer const *server = entity->config()->get_server(req);
     Response *res = Response::from_cgi_header_line(headers_line, file);
@@ -115,7 +116,7 @@ WebservMakeResponseEvent *WebservMakeResponseEvent::get_instance()
     return (singleton);
 }
 
-WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *src, File *dst)
+WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, WebservFile *src, WebservFile *dst)
 {
     DEBUG("WebservMakeResponseEvent::from_event");
     WebservMakeResponseEvent *res_event = WebservMakeResponseEvent::get_instance();
@@ -130,7 +131,10 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, File *sr
 WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
-    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, event->entity()->response()));
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *file = file_factory->make_webserv_file(event->entity()->fd(), event->entity()->response());
+
+    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, file));
     return (new_event);
 }
 

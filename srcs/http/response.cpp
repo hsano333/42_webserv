@@ -25,7 +25,6 @@ Response::Response() :
 
 Response::~Response()
 {
-    delete this->file;
 }
 
 Response::Response(Response const &res)
@@ -38,7 +37,6 @@ Response& Response::operator=(Response const &res)
     if (this == &res){
         return (*this);
     }
-    delete this->file;
 
     this->status_code = res.status_code;
     this->file = res.file;
@@ -49,7 +47,7 @@ Response& Response::operator=(Response const &res)
     return (*this);
 }
 
-Response* Response::from_success_status_code(StatusCode &code, File *file)
+Response* Response::from_success_status_code(StatusCode &code, WebservFile *file)
 {
     Response *res = new Response();
     res->status_code = code;
@@ -58,17 +56,21 @@ Response* Response::from_success_status_code(StatusCode &code, File *file)
     return (res);
 }
 
+/*
 Response* Response::from_error_status_code(StatusCode &code)
 {
     DEBUG("Response::from_error_status_code");
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     Response *res = new Response();
     res->status_code = code;
-    res->file = ErrorFile::from_status_code(code);
+    //res->file = ErrorFile::from_status_code(code);
+    res->file = file_factory->make_error_file( , code);
     //res->exist_body_ = true;
     return (res);
 }
+*/
 
-Response* Response::from_error_file(File *file, StatusCode &code)
+Response* Response::from_error_file(WebservFile *file, StatusCode &code)
 {
     Response *res = new Response();
     res->status_code = code;
@@ -77,7 +79,7 @@ Response* Response::from_error_file(File *file, StatusCode &code)
     return (res);
 }
 
-Response* Response::from_file(File *file)
+Response* Response::from_file(WebservFile *file)
 {
     Response *res = new Response();
     res->file = file;
@@ -96,7 +98,7 @@ void Response::set_header(Split &sp, size_t offset)
 }
 
 //Response* Response::from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location)
-Response* Response::from_cgi_header_line(Split &header_line, File *file)
+Response* Response::from_cgi_header_line(Split &header_line, WebservFile *file)
 {
     //(void)location;
     Response *res = new Response();
@@ -414,7 +416,7 @@ int Response::read(char** data, size_t max_read_size)
 }
 
 
-File *Response::get_file()
+WebservFile *Response::get_file()
 {
     return (this->file);
 

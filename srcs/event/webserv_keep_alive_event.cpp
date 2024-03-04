@@ -26,7 +26,7 @@ WebservEvent *WebservKeepAliveEvent::from_event(WebservEvent *event)
 {
     DEBUG("WebservKeepAliveEvent::from_event");
     WebservKeepAliveEvent *keep_event = WebservKeepAliveEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( keep_event, dummy_func<WebservKeepAliveEvent>, event->entity());
+    WebservEvent *new_event =  new WebservEvent( keep_event, dummy_func<WebservKeepAliveEvent>, event->entity(), KEEPA_ALIVE_EVENT);
     return (new_event);
 }
 

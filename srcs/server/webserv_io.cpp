@@ -1,6 +1,6 @@
 #include "webserv_io.hpp"
 
-WebservIO::WebservIO()
+WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL)
 {
     ;
 }
@@ -11,53 +11,53 @@ WebservIO::~WebservIO()
 }
 
 
-void WebservIO::set_source(File *file)
+void WebservIO::set_source(WebservFile *file)
 {
     this->source_ = file;
 }
 
-void WebservIO::set_destination(File *file)
+void WebservIO::set_destination(WebservFile *file)
 {
     this->destination_ = file;
 }
 
-File *WebservIO::source()
+WebservFile *WebservIO::source()
 {
     return (this->source_);
 }
 
-File *WebservIO::source_for_read()
+WebservFile *WebservIO::source_for_read()
 {
     return (this->read_source_);
 }
 
-File *WebservIO::source_for_write()
+WebservFile *WebservIO::source_for_write()
 {
     return (this->write_source_);
 }
 
-File *WebservIO::destination()
+WebservFile *WebservIO::destination()
 {
     return (this->destination_);
 }
 
-File *WebservIO::destination_for_read()
+WebservFile *WebservIO::destination_for_read()
 {
     return (this->read_destination_);
 }
 
-File *WebservIO::destination_for_write()
+WebservFile *WebservIO::destination_for_write()
 {
     return (this->write_destination_);
 }
 
-void WebservIO::set_write_io(File *src, File *dst)
+void WebservIO::set_write_io(WebservFile *src, WebservFile *dst)
 {
     this->write_source_ = src;
     this->write_destination_ = dst;
 }
 
-void WebservIO::set_read_io(File *src, File *dst)
+void WebservIO::set_read_io(WebservFile *src, WebservFile *dst)
 {
     this->read_source_ = src;
     this->read_destination_ = dst;
@@ -119,3 +119,26 @@ void WebservIO::switching_io(uint32_t epoll_event)
         throw std::runtime_error("neither EPOLLIN nor EPOLLOUT");
     }
 }
+
+
+int WebservIO::save(char *data, size_t size)
+{
+    this->tmp_buf.resize(size);
+    for(size_t i=0;i<size;i++){
+        this->tmp_buf[i] = data[i];
+    }
+    return this->tmp_buf.size();
+}
+
+size_t WebservIO::load(char **data)
+{
+    *data = &(this->tmp_buf[0]);
+    return (this->tmp_buf.size());
+
+}
+
+void WebservIO::clear_tmp_data()
+{
+    this->tmp_buf.clear();
+}
+

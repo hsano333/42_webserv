@@ -5,13 +5,13 @@
 #include "ireader.hpp"
 #include "webserv_entity.hpp"
 
+//class WebservEvent;
 class WebservKeepAliveEvent
 {
     public:
         ~WebservKeepAliveEvent();
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
-
         static WebservEvent *from_event(WebservEvent *event);
 
     private:

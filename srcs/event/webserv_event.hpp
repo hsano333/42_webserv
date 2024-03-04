@@ -6,21 +6,24 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "webserv_event_factory.hpp"
-#include "webserv_keep_alive_event.hpp"
 #include <memory>
 #include <typeinfo>
 
-//class WebservEvent;
-//class WebservEntity;
+typedef enum E_WebservEvent
+{
+    CLEAN_EVENT,
+    KEEPA_ALIVE_EVENT,
+    OTHER_EVENT,
+} EWebservEvent;
+
 class EventConcept
 {
     public:
         virtual ~EventConcept(){};
-        virtual void handle() const = 0;
+        virtual bool handle() const = 0;
         virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
-        virtual bool is_keepalive() const = 0;
-        //virtual bool is_completed() const = 0;
+        virtual EWebservEvent which() const = 0;
 };
 
 class WebservEntity;
@@ -29,22 +32,19 @@ template<typename EventPointer, typename HandleStrategyPointer>
 class OwningEventModel : public EventConcept
 {
     public:
-        OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : event_(event), handler_(handler), entity_(entity){};
+        OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity) : event_(event), handler_(handler), entity_(entity), event_type_(OTHER_EVENT){};
+        OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity, EWebservEvent event_type) : event_(event), handler_(handler), entity_(entity), event_type_(event_type){};
         OwningEventModel(OwningEventModel const &model) : event_(model.event), handler_(model.handler), entity_(model.entity){};
-        void handle() const {handler_(event_, entity_);}
-        void clean() const {handler_(event_, entity_);}
-        bool is_keepalive() const {return (typeid(*event_) == typeid(WebservKeepAliveEvent));}
-        //bool is_completed() const {return (this->entity_->completed());}
-        //bool is_completed() const {return (true);}
+        bool handle() const {return handler_(event_, entity_);}
         E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
-        //E_EpollEvent get_next_epoll_event(WebservEvent* event) const;
-        //WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const;
+        EWebservEvent which() const {return (event_type_);}
 
     private:
         EventPointer event_;
         HandleStrategyPointer handler_;
         WebservEntity *entity_;
+        EWebservEvent event_type_;
 };
 
 class WebservEvent
@@ -56,10 +56,15 @@ class WebservEvent
             typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
             pimpl_ = new Model(event, handler, entity);
         }
+        template<typename EventPointer, typename HandleStrategyPointer>
+        WebservEvent( EventPointer event, HandleStrategyPointer handler, WebservEntity *entity, EWebservEvent event_type) : entity_(entity), updated_time_(std::time(NULL))
+        {
+            typedef OwningEventModel<EventPointer, HandleStrategyPointer> Model;
+            pimpl_ = new Model(event, handler, entity, event_type);
+        }
 
         ~WebservEvent(){delete pimpl_;};
         WebservEntity *entity(){return(this->entity_);}
-        //bool completed(){return(this->entity_->completed());}
 
         template<typename EventPointer>
         EventPointer event(){return (this->pimpl_);};
@@ -75,20 +80,19 @@ class WebservEvent
         {
             return (pimpl_->make_next_event(event, factory));
         }
-        bool is_keepalive()
+        EWebservEvent which()
         {
-            return (pimpl_->is_keepalive());
+            return (pimpl_->which());
         }
 
     private:
         WebservEntity *entity_;
         std::time_t updated_time_;
-        //bool completed_;
 
-        //template<typename EventPointer, typename HandleStrategyPointer>
         friend void handle(WebservEvent *event)
         {
-            event->pimpl_->handle();
+            bool test = event->pimpl_->handle();
+            cout << test << endl;
             event->updated_time_ = std::time(NULL);
         }
         EventConcept *pimpl_;
@@ -99,6 +103,7 @@ bool dummy_func(EventT *event, WebservEntity *entity)
 {
     (void)event;
     (void)entity;
+    entity->set_completed(true);
     return (true);
 }
 

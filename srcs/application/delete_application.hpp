@@ -7,7 +7,7 @@
 #include "config_location.hpp"
 #include "config.hpp"
 #include "request.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 
 class DeleteApplication : public Application
 {
@@ -25,7 +25,7 @@ class DeleteApplication : public Application
 
         const Method &which() const;
     private:
-        File *get_requested_file();
+        WebservFile *get_requested_file(FileDiscriptor const &fd);
         const Config *cfg;
         const ConfigServer *server;
         const ConfigLocation *location;

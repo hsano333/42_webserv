@@ -383,7 +383,7 @@ ssize_t Request::get_data(char** data)
 }
 */
 
-void Request::set_file(File *file)
+void Request::set_file(WebservFile *file)
 {
     this->file = file;
 }

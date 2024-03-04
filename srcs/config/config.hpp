@@ -11,7 +11,7 @@
 #include "config_server.hpp"
 #include "config_location.hpp"
 #include "request.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 
 #include "socket_repository.hpp"
 #include "file_discriptor.hpp"
@@ -54,7 +54,7 @@ class Config : public ConfigObject<ConfigHttp*>
         void check() const;
         void check(SocketRepository *socket_repository);
 
-        File *get_error_file(Request const *req, StatusCode &code) const;
+        //File *get_error_file(Request const *req, StatusCode &code) const;
 
         void print_cfg();
     private:

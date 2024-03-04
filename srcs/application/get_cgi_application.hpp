@@ -6,7 +6,7 @@
 #include "config_location.hpp"
 #include "config.hpp"
 #include "request.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 
 class GetCGIApplication : public Application
 {

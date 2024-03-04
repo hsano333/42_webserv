@@ -15,7 +15,7 @@ class EventController
         ~EventController();
         //void restart_communication(WebservEvent *event);
         void change_write_event(WebservEvent *event);
-        void next_event(WebservEvent *event);
+        WebservEvent *get_next_event(WebservEvent *event);
     private:
         EventManager        *event_manager;
         IOMultiplexing *io_multi_controller;

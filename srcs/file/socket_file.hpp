@@ -1,19 +1,23 @@
 
-#ifndef SOCKET_FILE_HPP
-#define SOCKET_FILE_HPP
+#ifndef OPENED_SOCKET_FILE_HPP
+#define OPENED_SOCKET_FILE_HPP
 #include <dirent.h>
 #include <string>
 #include <vector>
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "ireader.hpp"
+#include "iwriter.hpp"
 #include "status_code.hpp"
+#include "buffer_controller.hpp"
 
-class ObjectFile : public File
+class SocketFile
 {
     public:
-        ObjectFile();
-        ~ObjectFile();
-        static ObjectFile* from_status_code(StatusCode const &status_code);
+        SocketFile(FileDiscriptor const &fd);
+        ~SocketFile();
+        static SocketFile* from_fd(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
+        //static SocketFile* from_fd(IReader* ireader, FileDiscriptor fd);
+        //static SocketFile* from_fd(IWriter* iwriter, FileDiscriptor fd);
         int open();
         int close();
         int read(char **buf, size_t size);
@@ -27,9 +31,10 @@ class ObjectFile : public File
     private:
         FileState   state;
         std::string text;
-        std::vector<char> tmp_buf;
-        std::vector<char> tmp_buf;
-
+        FileDiscriptor const &fd;
+        IReader *reader;
+        IWriter *writer;
+        BufferController buffer;
 };
 
 #endif

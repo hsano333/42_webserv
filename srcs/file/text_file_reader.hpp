@@ -4,7 +4,7 @@
 #include "filepath.hpp"
 #include "global.hpp"
 
-class TextFileReader : IFileReader
+class TextFileReader
 {
     public:
         TextFileReader();

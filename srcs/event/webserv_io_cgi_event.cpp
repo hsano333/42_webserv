@@ -1,6 +1,6 @@
 #include "webserv_io_cgi_event.hpp"
 #include "socket_writer.hpp"
-#include "opened_socket_file.hpp"
+#include "socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
 #include <assert.h>
@@ -26,7 +26,7 @@ WebservIOCGIEvent *WebservIOCGIEvent::get_instance()
 }
 
 
-WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, File *read_src, File *read_dst, File *write_src, File *write_dst, WebservEvent * event)
+WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
 {
     WebservIOCGIEvent *io_event = WebservIOCGIEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOCGIEvent>, event->entity());

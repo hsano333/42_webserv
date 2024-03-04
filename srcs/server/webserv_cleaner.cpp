@@ -47,21 +47,45 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
         }
     }
 
+    /*
     //動的確保したファイルの削除
     file_manager->erase(entity->fd());
     if (is_close)
     {
         MYINFO("close fd:" + entity->fd().to_string());
         //ヘッダーでcloseするように指定されているので、closeする
-        this->fd_manager->close_fd(entity->fd());
+        //this->fd_manager->close_fd(entity->fd());
     }else{
         MYINFO("not close fd:" + entity->fd().to_string());
         // HTTP1.1はデフォルトでコネクションを切断しない
     }
+    */
     entity->set_force_close(is_close);
     entity->set_completed(true);
 }
 
+bool WebservCleaner::clean(WebservEvent *event)
+{
+    bool clean_event = false;
+    DEBUG("WebservCleaner::clean");
+    //動的確保したファイルの削除
+    if(event->which() == CLEAN_EVENT)
+    {
+        clean_event = true;
+        WebservEntity *entity = event->entity();
+        file_manager->erase(entity->fd());
+        MYINFO("WebservCleaner::clean event");
+        if(entity->force_close()){
+            MYINFO("WebservCleaner:: force close");
+            this->fd_manager->close_fd(entity->fd());
+        }
+        if(entity){
+            delete entity;
+        }
+    }
+    delete event;
+    return (clean_event);
+}
 
 void WebservCleaner::close_fd(FileDiscriptor const &fd)
 {

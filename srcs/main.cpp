@@ -14,8 +14,9 @@
 #include "global.hpp"
 #include "endian.hpp"
 #include "log.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "normal_file.hpp"
+//#include "normal_webserv_file.hpp"
 #include "normal_reader.hpp"
 #include "stream_reader.hpp"
 #include "stream_writer.hpp"
@@ -39,6 +40,7 @@
 #include "iwriter.hpp"
 #include "application_factory.hpp"
 #include "cgi.hpp"
+#include "webserv_file_factory.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN 
@@ -87,7 +89,7 @@ void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
 
 Config *create_config(std::string &cfg_file, FDManager* fd_manager)
 {
-    File *file = NormalFile::from_filepath(cfg_file, std::ios::in);
+    NormalFile *file = NormalFile::from_filepath(cfg_file, std::ios::in);
     ConfigRawLoader raw_getter(file);
     ConfigParser<Config, ConfigHttp> parser_config("http");
     ConfigParser<ConfigHttp, ConfigServer> parser_http("server");
@@ -140,40 +142,29 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 #include <stdint.h>
 int main(int argc, char const* argv[])
 {
-    //size_t test = Utility::to_size_t("18446744073709551615");
-    //cout << "test:" << test << endl;
-    //test = Utility::to_size_t("18446744073709551619");
-    //cout << "test:" << test << endl;
-    //size_t test2 = 18446744073709551615;
-    //cout << "test2:" << test2 << endl;
-    //18446744073709551615
-    //cout << SIZE_MAX << endl;
-    //return 0;
-    /*
-    std::string filepath = "/var/www/html/webserv/abc/cannot_delete_dir/d3";
-    Utility::is_regular_file("/var/www/html/webserv/abc/cannot_delete_dir/d3");
-    int rval = open(filepath.c_str(), O_RDONLY);
-    if (rval){
-        close(rval);
+
+    CGI *cgi1 = new CGI();
+    CGI *cgi2 = new CGI();
+    CGI *cgi3 = new CGI();
+    CGI *cgi4 = new CGI();
+    CGI *cgi5 = new CGI();
+
+    std::set<CGI*> cgi_set;
+    cgi_set.insert(cgi1);
+    cgi_set.insert(cgi2);
+    cgi_set.insert(cgi3);
+    cgi_set.insert(cgi4);
+    cgi_set.insert(cgi5);
+
+    std::set<CGI*>::iterator ite = cgi_set.begin();
+    std::set<CGI*>::iterator end = cgi_set.end();
+
+    while(ite != end){
+
+        delete *ite;
+        ite++;
     }
-    cout << "rval:" << rval << endl;
-    */
-
-    //exit(0);
-    //std::exit(0);
-
-    //int rval = remove(argv[1]);
-    //cout << "rval:"  << rval << endl;
-    //return 0;
-    std::string abc = "abc";
-    std::string def = "defghi";
-    std::string ghi = "ghia";
-    cout << std::setfill('1') << std::left << std::setw(12) << abc << def << endl;
-    cout << std::setfill('1') << std::right<< std::setw(12) << abc << def << endl;
-    cout << abc << std::setfill('1') << std::left  << std::setw(12) << def << endl;
-    cout << abc << std::setfill('1') << std::right  << std::setw(12) << def << endl;
-    cout << abc << std::setfill('1') << std::left  << std::setw(12) << ghi << endl;
-    cout << abc << std::setfill('1') << std::right  << std::setw(12) << ghi << endl;
+    cout << "end" << endl;
     //exit(0);
 
     std::string cfg_file = "./webserv.conf";
@@ -193,45 +184,13 @@ int main(int argc, char const* argv[])
         exit(1);
     }
 
-    //cfg->print_cfg();
     SocketRepository *socket_repository = create_sockets(cfg, fd_manager);
-    //Epoll epoll = Epoll::from_sockets(socket_repository);
-    //
     cfg->check(socket_repository);
-
-
-    //std::cout << epoll2.allocated_event_size() << endl;
-    //exit(1);
-    //Epoll *epoll = Epoll::from_socket_size(socket_manager->get_base_sockets_size());
-
-    //Epoll *epoll = new Epoll();
     SocketController* socket_controller = new SocketController();
     EpollController *epoll_controller = new EpollController(Epoll(), socket_repository, socket_controller, fd_manager);
     epoll_controller->init_epoll();
-    //epoll_controller.add_sockets_fd();
     (void)cfg;
 
-
-    //Webserv
-    //WebservDispatcher( wait(), map<Socket),epoll)
-    //WebservReceiver(map<Socket),epoll)
-    //WebservApplication(Socket)
-    //WebservSender(Response,Socket)
-
-    //        Config
-    //        SocketRepository(map<fd,Socket>)
-    //        SocketController(read,write)
-    //        Epoll(epfd, vector<event>
-    //        EpollController(add, modify, delete)
-    //        ResponseRepository(map<fd, Response>)
-    //        RequestRepository(map<fd, Request>)
-    //        RequestReader(Socket)
-    //        RequestParser(RequestReader)
-    //        Request(RequestParser)
-    //        EventManager
-    //
-    //        ResponseFactory(create(Request))
-    //        ResponseSender(Socket)
 
     SocketReader *socket_reader = SocketReader::get_instance();
     NormalWriter *normal_writer = NormalWriter::get_instance();
@@ -240,9 +199,11 @@ int main(int argc, char const* argv[])
     //StreamReader *stream_reader = StreamReader::get_instance();
     EventManager *event_manager = new EventManager();
     WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance(file_manager);
 
     WebservEventFactory *event_factory = new WebservEventFactory(
             cfg,
+            file_factory,
             socket_controller,
             fd_manager,
             file_manager,
@@ -266,25 +227,13 @@ int main(int argc, char const* argv[])
     application_factory->set_cgi(cgi);
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
-    //WebservReceiver reader(epoll_controller, fd_manager, event_manager, socket_reader);
-    //WebservParser parser(epoll_controller, event_manager, event_factory, cfg);
-    //WebservMaker maker(epoll_controller, event_manager, event_factory, cfg);
-    //WebservExecuter app(application_factory, epoll_controller, event_factory, event_manager, fd_manager, cfg, socket_reader);
-    //WebservIOWorker io_worker(epoll_controller, event_manager, socket_writer, socket_reader);
-    //WebservMaker maker(epoll_controller, event_manager, socket_writer, socket_reader);
-    //WebservSender sender(epoll_controller, event_manager, socket_writer);
-    //WebservCleaner cleaner(epoll_controller, event_manager, fd_manager);
-
-    //SocketManager* socket_manager = new SocketManager();
-
-    //Webserv webserv(cfg, event_factory, event_manager, event_controller,waiter,maker,app,io_worker, cleaner);
-    Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter);
+    Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter, cleaner);
     while (1) {
         try{
             server(webserv);
             break;
         }catch(std::bad_alloc &e){
-            WARNING("Webserv BalAlloc:");
+            WARNING("Webserv BadAlloc:");
             WARNING(e.what());
             clean_all(cleaner, event_manager);
         }catch(...){
@@ -306,13 +255,20 @@ int main(int argc, char const* argv[])
     delete (socket_writer);
     delete (normal_reader);
     delete (socket_reader);
+    DEBUG("delete No.1");
     delete socket_repository;
-    delete application_factory;
+    DEBUG("delete No.2");
+    //delete application_factory;
+    DEBUG("delete No.3");
     //delete stream_reader;
     delete cgi;
+    DEBUG("delete No.4");
     Log::delete_instance();
+    DEBUG("delete No.5");
     delete StreamReader::get_instance();
+    DEBUG("delete No.6");
     delete StreamWriter::get_instance();
     DEBUG("end webserv");
+    delete cleaner;
     return 0;
 }

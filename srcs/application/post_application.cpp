@@ -15,7 +15,7 @@ PostApplication::~PostApplication()
 ;
 }
 
-File *PostApplication::get_requested_file()
+WebservFile *PostApplication::get_requested_file(FileDiscriptor const &fd)
 {
     /*
     if (this->event->file()){
@@ -26,6 +26,9 @@ File *PostApplication::get_requested_file()
 
     //File *file = NULL;
         //this->req->print_info();
+        //
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
         if (this->req->is_not_executable_parent_dir()){
             ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
             throw HttpException("403");
@@ -37,7 +40,8 @@ File *PostApplication::get_requested_file()
             ERROR("file already exist :" + this->req->requested_path());
             throw HttpException("403");
         }
-        File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
+        //WebservFile *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
+        WebservFile *file =  file_factory->make_normal_file(fd, this->req->requested_path(), std::ios::out | std::ios::binary);
         //this->event->set_file(file);
         return (file);
 }
@@ -194,8 +198,9 @@ PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent 
     return (app);
 }
 
-Response* PostApplication::make_response()
+Response* PostApplication::make_response(FileDiscriptor const &fd)
 {
+    (void)fd;
     StatusCode code = StatusCode::from_int(200);
     if (this->res){
         return (this->res);

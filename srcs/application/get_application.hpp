@@ -6,8 +6,9 @@
 #include "config_location.hpp"
 #include "config.hpp"
 #include "request.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "status_code.hpp"
+#include "file_discriptor.hpp"
 
 class GetApplication : public Application
 {
@@ -18,7 +19,7 @@ class GetApplication : public Application
         bool invoke(WebservEntity *entity);
         ApplicationResult *get_result();
         static GetApplication* from_location(const Config *cfg, const Request *req);
-        Response* make_response();
+        Response* make_response(FileDiscriptor const &fd);
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
         const Method &which() const;
@@ -28,7 +29,7 @@ class GetApplication : public Application
     private:
 
         string get_index_path(Request *req, bool *is_existed);
-        File *get_requested_file();
+        WebservFile *get_requested_file(FileDiscriptor const &fd);
         const Config *cfg;
         const ConfigServer *server;
         const ConfigLocation *location;

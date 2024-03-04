@@ -47,7 +47,7 @@ size_t EventManager::keep_alive_event_size()
     MutantStack<WebservEvent*>::iterator end = this->events.end();
     while(ite != end){
         WebservEvent *event = *ite;
-        if(event->is_keepalive()){
+        if(event->which() == KEEPA_ALIVE_EVENT){
             cnt++;
         }
         ite++;

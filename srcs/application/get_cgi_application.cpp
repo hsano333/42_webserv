@@ -2,7 +2,7 @@
 #include "http_exception.hpp"
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
-#include "cgi_file.hpp"
+//#include "cgi_file.hpp"
 #include "directory_file.hpp"
 #include "webserv_event.hpp"
 #include <unistd.h>

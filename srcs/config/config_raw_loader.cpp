@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigRawLoader::ConfigRawLoader(File *file)
+ConfigRawLoader::ConfigRawLoader(NormalFile *file)
                                 :
                                 file(file)
 {
@@ -18,11 +18,11 @@ ConfigRawLoader::~ConfigRawLoader()
 std::string ConfigRawLoader::get_raw_data()
 {
     std::string all_data;
-    file->open();
+    this->file->open();
     char buf[MAX_BUF];
     //char *buf = &(tmp_buf[0]);
     char *tmp = &(buf[0]);
-    int size = file->read(&tmp, MAX_BUF);
+    int size = this->file->read(&tmp, MAX_BUF);
 
     while(size > 0){
         buf[size] = '\0';

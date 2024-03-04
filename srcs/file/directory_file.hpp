@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <string>
 #include <vector>
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "ireader.hpp"
 
 #define WRITE_OPEN1 "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\"><title>Index of Directory</title></head><body><h1>Index of "
@@ -15,7 +15,7 @@
 #define WRITE_READING3 "</a>"
 
 
-class DirectoryFile : public File
+class DirectoryFile
 {
     public:
         DirectoryFile();

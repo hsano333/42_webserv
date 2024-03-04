@@ -175,12 +175,12 @@ bool ApplicationResult::is_completed()
 }
 
 
-File *ApplicationResult::file()
+WebservFile *ApplicationResult::file()
 {
     return (this->file_);
 }
 
-void ApplicationResult::set_file(File *file)
+void ApplicationResult::set_file(WebservFile *file)
 {
     this->file_ = file;
 }

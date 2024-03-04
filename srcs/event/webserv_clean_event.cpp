@@ -1,6 +1,7 @@
 
 #include "webserv_clean_event.hpp"
 #include "webserv_nothing_event.hpp"
+#include "webserv_file_factory.hpp"
 #include "global.hpp"
 
 WebservCleanEvent::WebservCleanEvent()
@@ -37,11 +38,10 @@ E_EpollEvent WebservCleanEvent::get_next_epoll_event(WebservEvent *event)
 }
 
 WebservCleanEvent *WebservCleanEvent::singleton = NULL;
-WebservCleanEvent *WebservCleanEvent::get_instance(WebservCleaner *cleaner)
+WebservCleanEvent *WebservCleanEvent::get_instance()
 {
     if (WebservCleanEvent::singleton == NULL){
         singleton = new WebservCleanEvent();
-        singleton->cleaner_ = cleaner;
     }
     return (singleton);
 }
@@ -61,6 +61,7 @@ WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool fo
 }
 */
 
+/*
 bool clean(WebservCleanEvent *event, WebservEntity *entity)
 {
     (void)event;
@@ -68,24 +69,38 @@ bool clean(WebservCleanEvent *event, WebservEntity *entity)
     event->cleaner()->clean(entity, event->force_close());
     return (true);
 }
+*/
 
-WebservEvent *WebservCleanEvent::from_event(WebservEvent *event, WebservCleaner *cleaner, bool force_close)
+
+
+bool prepare_clean(WebservCleanEvent *event, WebservEntity *entity)
+{
+    (void)event;
+    bool is_close = entity->force_close();
+    //bool is_close = event->force_close() || entity->force_close();
+    if (entity->request()){
+        std::string const &conect = entity->request()->header().find("Connection");
+        if (conect == "close"){
+            is_close = true;
+        }
+    }
+
+    entity->set_force_close(is_close);
+    entity->set_completed(true);
+    return (true);
+}
+
+WebservEvent *WebservCleanEvent::from_event(WebservEvent *event, bool force_close)
 {
     DEBUG("WebservCleanEvent::from_webserv_event");
-    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance(cleaner);
-    clean_event->force_close_ = force_close;
-    WebservEvent *new_event = new WebservEvent(clean_event, clean, event->entity());
-    //new_event->entity()->set_force_close(force_close);
-    new_event->entity()->io().set_source(event->entity()->request());
+    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance();
+    WebservEvent *new_event = new WebservEvent(clean_event, prepare_clean, event->entity(), CLEAN_EVENT);
+    event->entity()->set_force_close(force_close || event->entity()->force_close());
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *file = file_factory->make_webserv_file(event->entity()->fd(), event->entity()->request());
+
+    new_event->entity()->io().set_source(file);
     return (new_event);
 }
 
-bool WebservCleanEvent::force_close()
-{
-    return (this->force_close_);
-}
-
-WebservCleaner *WebservCleanEvent::cleaner() const
-{
-    return (this->cleaner_);
-}

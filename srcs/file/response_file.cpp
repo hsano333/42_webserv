@@ -78,6 +78,7 @@ int ResponseFile::save(char *buf, size_t size)
 
 int ResponseFile::close()
 {
+    DEBUG("ResponseFile::close()");
     this->state = FILE_CLOSE;
     return (0);
 }

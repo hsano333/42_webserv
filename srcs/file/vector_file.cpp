@@ -20,6 +20,7 @@ VectorFile::VectorFile(size_t max_buf_size) : max_buf_size(max_buf_size)
 
 VectorFile::~VectorFile()
 {
+    DEBUG("VectorFile() Destructor");
 }
 
 
@@ -107,6 +108,7 @@ int VectorFile::save(char *buf, size_t size)
 
 int VectorFile::close()
 {
+    DEBUG("VectorFile::close()");
     this->state = FILE_CLOSE;
     return (0);
 }

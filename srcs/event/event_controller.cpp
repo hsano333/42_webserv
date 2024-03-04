@@ -76,17 +76,10 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     }
 }
 
-void EventController::next_event(WebservEvent *event)
+WebservEvent *EventController::get_next_event(WebservEvent *event)
 {
-    DEBUG("EventController::next_event");
-    /*
-    if(event->entity() == NULL){
-        delete event;
-        return;
-    }
-    */
+    DEBUG("EventController::get_next_event");
     
-
     WebservEvent *next_event;
     if(event->entity()->completed()){
         next_event = event->make_next_event(event, this->event_factory);
@@ -94,8 +87,6 @@ void EventController::next_event(WebservEvent *event)
         next_event = event;
     }
     set_next_epoll_event(event, next_event);
-    if(event && next_event != event){
-        delete event;
-    }
+    return (next_event);
 }
 

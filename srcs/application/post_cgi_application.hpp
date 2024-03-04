@@ -4,7 +4,7 @@
 #include "cgi.hpp"
 #include "config_location.hpp"
 #include "request.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_application_without_cgi_event.hpp"
 
@@ -25,7 +25,7 @@ class PostCGIApplication : public Application
         const Method &which() const;
     private:
 
-        File *get_requested_file();
+        WebservFile *get_requested_file(FileDiscriptor const &fd);
         WebservEvent *event;
         bool execute_cgi();
         bool execute_not_cgi();

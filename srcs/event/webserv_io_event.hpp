@@ -2,7 +2,7 @@
 #define WEBSERV_IO_EVENT_HPP
 #include "webserv_entity.hpp"
 #include "file_discriptor.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "webserv_io_cgi_event.hpp"
 
 
@@ -15,13 +15,14 @@ bool io_work(EventT *event, WebservEntity *entity)
 
     DEBUG("WebservIOWorker::work");
 
-    File *source = entity->io().source();
-    File *destination = entity->io().destination();
+    WebservFile *source = entity->io().source();
+    WebservFile *destination = entity->io().destination();
     if(source == NULL || destination == NULL){
         ERROR("WebservReceiver::recv():  source is NULL");
         throw HttpException("500");
     }
     DEBUG("WebservIOWorker::work No.1");
+    source->test();
     source->open();
     DEBUG("WebservIOWorker::work No.2");
     destination->open();
@@ -31,6 +32,9 @@ bool io_work(EventT *event, WebservEntity *entity)
     char buf[MAX_READ_SIZE+1];
     ssize_t read_size_total = 0;
     DEBUG("WebservIOWorker::work No.5");
+
+
+
     while(1)
     {
     DEBUG("WebservIOWorker::work No.3");
@@ -49,7 +53,8 @@ bool io_work(EventT *event, WebservEntity *entity)
         if(write_size <= 0){
             MYINFO("MYINFO::write end");
             entity->set_completed(false);
-            source->save(buf_p, read_size);
+            entity->io().save(buf_p, read_size);
+            //source->save(buf_p, read_size);
             break;
         }else{
             MYINFO("Write OK::" + Utility::to_string(write_size));

@@ -1,8 +1,9 @@
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_event.hpp"
-#include "opened_socket_file.hpp"
+#include "socket_file.hpp"
 #include "vector_file.hpp"
 #include "application_factory.hpp"
+#include "webserv_file_factory.hpp"
 
 WebservApplicationWithCgiEvent::WebservApplicationWithCgiEvent()
 {
@@ -33,14 +34,15 @@ WebservEvent *WebservApplicationWithCgiEvent::from_event(WebservEvent *event)
 WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservApplicationWithCgiEvent::make_next_event");
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
 
     Request *req = event->entity()->request();
-    VectorFile *file = VectorFile::from_ref(req->req_line().uri().query());
+    WebservFile *file = file_factory->make_vector_file(event->entity()->fd(), req->req_line().uri().query());
     req->set_file(file);
-    File *write_src = event->entity()->request();
-    File *read_dst = event->entity()->app_result();
+    WebservFile *write_src = file_factory->make_webserv_file(event->entity()->fd(), event->entity()->request());
+    WebservFile *read_dst = file_factory->make_webserv_file(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
-    VectorFile *result_file = VectorFile::from_buf_size(MAX_BUF);
+    WebservFile *result_file = file_factory->make_vector_file(event->entity()->fd(), MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);
 

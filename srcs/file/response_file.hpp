@@ -4,11 +4,11 @@
 #include <dirent.h>
 #include <string>
 #include <vector>
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "ireader.hpp"
 #include "status_code.hpp"
 
-class ResponseFile : public File
+class ResponseFile
 {
     public:
         ResponseFile();

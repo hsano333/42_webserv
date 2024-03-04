@@ -31,13 +31,15 @@ Webserv::Webserv(
         WebservEventFactory *event_factory,
         EventManager        *event_manager,
         EventController     *event_controller,
-        WebservWaiter       &waiter
+        WebservWaiter       &waiter,
+        WebservCleaner      *cleaner
         ) :
                      cfg(cfg),
                      event_factory(event_factory),
                      event_manager(event_manager),
                      event_controller(event_controller),
-                     waiter(waiter)
+                     waiter(waiter),
+                     cleaner(cleaner)
 {
     ;
 }
@@ -58,8 +60,10 @@ void Webserv::communication()
     DEBUG("Webserv::communication() start");
     bool exit_flag = false;
     int wait_time;
+    int count = 0;
     while(1)
     {
+        count++;
         if(waiter.is_not_busy()){
             wait_time = 1;
         }else{
@@ -75,50 +79,54 @@ void Webserv::communication()
             if(event == NULL){
                 continue;
             }
-            try
-            {
+
+            WebservEvent *next_event = NULL;
+            try{
                 handle(event);
-                event_controller->next_event(event);
-                if(exit_flag){
-                    break;
-                }
+                next_event = event_controller->get_next_event(event);
             }catch(ConnectionException &e){
                 ERROR(e.what());
-                WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
+                next_event = this->event_factory->make_clean_event(event, true);
                 this->event_manager->push(next_event);
-                delete event;
                 DEBUG("ConnectionException delete event:" + Utility::to_string(event));
             }catch(HttpException &e){
                 ERROR("HttpException:" + Utility::to_string(e.what()));
-                WebservEvent *next_event = this->event_factory->make_event_from_http_error(event, e.what());
+                next_event = this->event_factory->make_event_from_http_error(event, e.what());
                 this->event_manager->push(next_event);
                 try{
                     this->event_controller->change_write_event(next_event);
                 }catch(std::runtime_error &e){
                     ERROR("IO Error in HttpException: end event");
-                    WebservEvent *next_event = this->event_factory->make_clean_event(event, true);
+                    next_event = this->event_factory->make_clean_event(event, true);
                     this->event_manager->push(next_event);
                 }
-                delete event;
             }catch(std::runtime_error &e){
                 WARNING("Wevserv RuntimeError:");
                 WARNING(e.what());
-                WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
+                next_event = this->event_factory->make_clean_event(event, false);
                 this->event_manager->push(next_event);
-                delete event;
             }catch(std::invalid_argument &e){
                 WARNING("Wevserv InvalidArgument:");
                 WARNING(e.what());
-                WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
+                next_event = this->event_factory->make_clean_event(event, false);
                 event_manager->push(next_event);
-                delete event;
             }catch(std::exception &e){
                 WARNING("Wevserv Exception:");
                 WARNING(e.what());
-                WebservEvent *next_event = this->event_factory->make_clean_event(event, false);
+                next_event = this->event_factory->make_clean_event(event, false);
                 event_manager->push(next_event);
-                delete event;
             }
+
+            if(next_event != event){
+                bool clean_event = this->cleaner->clean(event);
+                if(clean_event){
+                    count++;
+                }
+            }
+        }
+        // for test
+        if(exit_flag || count > 10){
+            break;
         }
     }
 }

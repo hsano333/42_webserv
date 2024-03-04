@@ -9,15 +9,17 @@
 #include "webserv_event_factory.hpp"
 #include "webserv_clean_event.hpp"
 #include "webserv_timeout_event.hpp"
-#include "opened_socket_file.hpp"
+#include "socket_file.hpp"
 #include "vector_file.hpp"
 #include "webserv_io_event.hpp"
 #include "webserv_io_socket_event.hpp"
 #include "webserv_io_cgi_event.hpp"
 #include "error_file.hpp"
+#include "webserv_keep_alive_event.hpp"
 
 WebservEventFactory::WebservEventFactory(
         Config *cfg,
+        WebservFileFactory *file_factory,
         SocketController *socket_controller,
         FDManager *fd_manager,
         FileManager *file_manager,
@@ -30,6 +32,7 @@ WebservEventFactory::WebservEventFactory(
         WebservCleaner *cleaner
         ) :
         cfg(cfg),
+        file_factory(file_factory),
         socket_controller(socket_controller),
         fd_manager(fd_manager),
         file_manager(file_manager),
@@ -49,12 +52,6 @@ WebservEventFactory::~WebservEventFactory()
     DEBUG("WebservEventFactory::~WebservEventFactory Destructor");
 }
 
-void WebservEventFactory::register_file_manager(WebservEvent *event)
-{
-    file_manager->insert(event->entity()->fd(), event->entity()->io().source());
-    file_manager->insert(event->entity()->fd(), event->entity()->io().destination());
-}
-
 void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req)
 {
     (void)req;
@@ -67,8 +64,8 @@ void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, File
 WebservEvent *WebservEventFactory::make_keep_alive_event(WebservEvent *event)
 {
     WebservEvent *new_event = WebservKeepAliveEvent::from_event(event);
-    this->register_file_manager(new_event);
     return (new_event);
+    //return (event);
 }
 
 
@@ -97,7 +94,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-            if(cached_event == NULL || cached_event->is_keepalive()){
+            if(cached_event == NULL || cached_event->which() == KEEPA_ALIVE_EVENT){
                 if(cached_event){
                     delete cached_event;
                 }
@@ -105,8 +102,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
                 WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
                 entity->config()->check();
-                File *socket_io = OpenedSocketFile::from_fd(fd, socket_writer, socket_reader);
-                File *read_dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
+                WebservFile *socket_io = this->file_factory->make_socket_file(fd, socket_writer, socket_reader);
+                WebservFile *read_dst = this->file_factory->make_vector_file(fd, MAX_STATUS_LINE);
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd, socket_io, read_dst, entity);
                 this->cfg->check();
                 event->entity()->config()->check();
@@ -136,28 +133,32 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
     return (NULL);
 }
 
-WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event, File *write_src, File *read_dst, ApplicationResult *result)
+WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result)
 {
     DEBUG("WebservEventFactory::make_io_socket_for_cgi fd=" + event->entity()->fd().to_string());
-    File *write_dst = OpenedSocketFile::from_fd(normal_writer, result->cgi_in());
-    File *read_src = OpenedSocketFile::from_fd(normal_reader, result->cgi_out());
+    WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
     FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-    return (WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event));
+    WebservEvent *new_event = WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
+
+    return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, File *src)
+WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_write fd=" + event->entity()->fd().to_string());
-    File *dst = OpenedSocketFile::from_fd(socket_writer, event->entity()->fd());
-    return (WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, dst));
+    WebservFile *dst = this->file_factory->make_socket_file(event->entity()->fd(), socket_writer, NULL);
+    WebservEvent *new_event = WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, dst);
+    return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
-    File *src = OpenedSocketFile::from_fd(socket_reader, event->entity()->fd());
-    File *dst = VectorFile::from_buf_size(MAX_STATUS_LINE);
-    return (WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity()));
+    WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
+    WebservFile *dst = this->file_factory->make_vector_file(event->entity()->fd(), MAX_STATUS_LINE);
+    WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
+    return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event)
@@ -165,11 +166,10 @@ WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event
     DEBUG("WebservEventFactory::make_making_request_event");
     WebservEvent *new_event = WebservMakeRequestEvent::from_event(event, event->entity()->io().destination(), NULL);
 
-    this->register_file_manager(new_event);
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, File *src)
+WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_making_response_event");
     WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL);
@@ -186,7 +186,6 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
         new_event = WebservApplicationWithoutCgiEvent::from_event(event);
     }
 
-    this->register_file_manager(new_event);
     return (new_event);
 }
 
@@ -206,9 +205,9 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
         code = StatusCode::from_string("500");
     }
 
-    File *dst = OpenedSocketFile::from_fd(socket_writer, event->entity()->fd());
+    WebservFile *dst = this->file_factory->make_socket_file(event->entity()->fd(), socket_writer, NULL);
 
-    File *file = ErrorFile::from_status_code(code);
+    WebservFile *file = this->file_factory->make_error_file(event->entity()->fd(), code);
     if(event->entity()->app_result() != NULL){
         delete event->entity()->app_result();
     }
@@ -216,14 +215,15 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
     result->set_file(file);
     event->entity()->set_result(result);
 
-    return (WebservMakeResponseEvent::from_event(event, result, dst));
+    WebservFile *result_file = this->file_factory->make_webserv_file(event->entity()->fd(), result);
+    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, result_file, dst);
+    return (new_event);
 }
 
 
 WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool force_close)
 {
-    WebservEvent *new_event = WebservCleanEvent::from_event(event, this->cleaner, force_close);
-    this->register_file_manager(new_event);
+    WebservEvent *new_event = WebservCleanEvent::from_event(event, force_close);
     return (new_event);
 }
 

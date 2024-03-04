@@ -5,13 +5,13 @@
 #include "config_location.hpp"
 #include "config.hpp"
 #include "request.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "status_code.hpp"
 #include "buffer_controller.hpp"
 #include "ireader.hpp"
 #include "iwriter.hpp"
 
-class ApplicationResult : public File
+class ApplicationResult
 {
     public:
         ~ApplicationResult();
@@ -32,8 +32,8 @@ class ApplicationResult : public File
         Method const &method() const;
         StatusCode const &status_code() const;
         Header const &header() const;
-        File *file();
-        void set_file(File *file);
+        WebservFile *file();
+        void set_file(WebservFile *file);
 
         bool is_completed();
         //void set_status_code(StatusCode &code);
@@ -54,7 +54,7 @@ class ApplicationResult : public File
         Header         header_;
         Method method_;
         std::string text;
-        File *file_;
+        WebservFile *file_;
         bool completed;
         FileState   state;
         BufferController buffer;

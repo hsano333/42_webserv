@@ -3,7 +3,7 @@
 #include "status_code.hpp"
 #include "header.hpp"
 //#include "error_page.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "http_data.hpp"
 #include "config_server.hpp"
 #include "config_location.hpp"
@@ -21,23 +21,23 @@ enum SEND_STATE{
     CLOSE,
 };
 
-class Response : public File
+class Response
 {
     public:
         Response();
         ~Response();
         Response(Response const &res);
         Response& operator=(Response const &res);
-        static Response* from_success_status_code(StatusCode &code, File *file);
-        static Response* from_error_status_code(StatusCode &code);
-        static Response* from_error_file(File *file, StatusCode &code);
+        static Response* from_success_status_code(StatusCode &code, WebservFile *file);
+        //static Response* from_error_status_code(StatusCode &code);
+        static Response* from_error_file(WebservFile *file, StatusCode &code);
         //static Response* from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location);
-        static Response* from_cgi_header_line(Split &header_line, File *file);
+        static Response* from_cgi_header_line(Split &header_line, WebservFile *file);
         void   set_header(Split &sp, size_t offset);
         //static Response* from_error_page(ErrorPage &page);
 
         static Response* from_redirect(StatusCode &code, std::string const &filepath);
-        static Response* from_file(File *file);
+        static Response* from_file(WebservFile *file);
         void add_header(std::string const &key, std::string const &value);
         //static Response* from_file(std::string const &filepath);
         //static Response* from_directory(std::string const &filepath);
@@ -46,7 +46,7 @@ class Response : public File
         int open_source_file();
         int close_source_file();
         */
-        File *get_file();
+        WebservFile *get_file();
         const Header &header();
         //ssize_t get_data(char** data);
         void print_info();
@@ -73,7 +73,7 @@ class Response : public File
         Header headers;
         char    *buf_body;
         int     buf_body_size;
-        File *file;
+        WebservFile *file;
 
         bool is_redirect;
         SEND_STATE send_state;

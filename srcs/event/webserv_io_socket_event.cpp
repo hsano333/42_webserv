@@ -1,6 +1,6 @@
 #include "webserv_io_socket_event.hpp"
 #include "socket_writer.hpp"
-#include "opened_socket_file.hpp"
+#include "socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
 #include <assert.h>
@@ -27,7 +27,7 @@ WebservIOSocketEvent *WebservIOSocketEvent::get_instance()
 }
 
 
-WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File *src, File *dst, WebservEntity *entity)
+WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, WebservFile *src, WebservFile *dst, WebservEntity *entity)
 {
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, entity);
@@ -38,7 +38,7 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, File 
     return (new_event);
 }
 
-WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor const &write_fd, File *src, File *dst)
+WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst)
 {
     DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();

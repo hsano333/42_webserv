@@ -8,7 +8,7 @@
 #include "ireader.hpp"
 #include "iwriter.hpp"
 #include "file_discriptor.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 
 typedef enum E_RWOption
 {
@@ -26,12 +26,12 @@ typedef enum E_FileState
 }FileState;
 */
 
-class NormalFile : public File
+class NormalFile
 {
     public:
         ~NormalFile();
         //static NormalFile* from_filepath(IReader* iread, std::string &filepath, RWOption option);
-        static NormalFile* from_filepath(std::string const &filepath, std::ios_base::openmode);
+        static NormalFile* from_filepath(std::string const &filepath, std::ios_base::openmode mode);
         int open();
         int close();
         int read(char **buf, size_t size);

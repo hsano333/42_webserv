@@ -10,10 +10,10 @@ class WebservEntity
 {
     public:
         WebservEntity();
+        ~WebservEntity();
         WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg);
         WebservEntity(WebservEntity const &entity);
         WebservEntity& operator=(WebservEntity const &entity);
-        ~WebservEntity();
 
         void clean();
 
@@ -29,7 +29,6 @@ class WebservEntity
         Request     *request();
         Response    *response();
         WebservIO   &io();
-
 
         Config const *config();
         bool completed(){return this->completed_;};

@@ -1,7 +1,7 @@
 #include "webserv_make_request_event.hpp"
 #include "webserv_event.hpp"
 #include "http_exception.hpp"
-#include "opened_socket_file.hpp"
+#include "socket_file.hpp"
 
 WebservMakeRequestEvent::WebservMakeRequestEvent()
 {
@@ -32,7 +32,7 @@ WebservMakeRequestEvent *WebservMakeRequestEvent::get_instance()
 }
 
 
-WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, File *src, File *dst)
+WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, WebservFile *src, WebservFile *dst)
 {
     DEBUG("WebservMakeRequestEvent::from_event");
     WebservMakeRequestEvent *req_event = WebservMakeRequestEvent::get_instance();
@@ -85,7 +85,7 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
 }
 
 
-void WebservMakeRequestEvent::parse_request(Request *req, File *src)
+void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
 {
     DEBUG("WebservMakeRequestEvent::parse_request");
     char *buf_p;

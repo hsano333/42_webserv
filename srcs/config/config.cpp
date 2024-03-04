@@ -568,6 +568,7 @@ void Config::check(SocketRepository *socket_repository)
 
 }
 
+/*
 File *Config::get_error_file(Request const *req, StatusCode &code) const
 {
     DEBUG("Config::get_error_file");
@@ -594,4 +595,5 @@ File *Config::get_error_file(Request const *req, StatusCode &code) const
     }
     return (file);
 }
+*/
 

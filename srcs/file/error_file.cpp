@@ -83,6 +83,8 @@ int ErrorFile::save(char *buf, size_t size)
 
 int ErrorFile::close()
 {
+    DEBUG("ErrorFile::close(");
+
     this->state = FILE_CLOSE;
     return (0);
 }

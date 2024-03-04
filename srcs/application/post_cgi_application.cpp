@@ -16,8 +16,9 @@ PostCGIApplication::~PostCGIApplication()
 ;
 }
 
-File *PostCGIApplication::get_requested_file()
+WebservFile *PostCGIApplication::get_requested_file(FileDiscriptor const &fd)
 {
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     return (NULL);
     /*
     if (this->event->file()){
@@ -38,7 +39,8 @@ File *PostCGIApplication::get_requested_file()
             ERROR("file already exist :" + this->req->requested_path());
             throw HttpException("403");
         }
-        File *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
+        //WebservFile *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
+        WebservFile *file =  file_factory->make_normal_file(fd, this->req->requested_path(), std::ios::out | std::ios::binary);
         //this->event->set_file(file);
         return (file);
 }

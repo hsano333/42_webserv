@@ -11,7 +11,7 @@
 #include "uri.hpp"
 #include "header.hpp"
 #include "method.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -32,7 +32,7 @@ typedef enum E_STATE
 
 } REQUEST_STATE;
 
-class Request : public File
+class Request
 {
     public:
         ~Request();
@@ -95,7 +95,7 @@ class Request : public File
         int remove();
         std::string const &path();
 
-        void set_file(File *file);
+        void set_file(WebservFile *file);
 
         //void set_source_file(File *source);
         //File *get_source_file();
@@ -107,7 +107,7 @@ class Request : public File
         Request();
         Request(FileDiscriptor const &fd);
 
-        File *file;
+        WebservFile *file;
         FileDiscriptor const &fd_;
         //FileDiscriptor sockfd_;
         //char    raw_buf[MAX_BUF];

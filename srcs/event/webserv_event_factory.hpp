@@ -14,6 +14,7 @@
 #include "application_result.hpp"
 #include "webserv_entity.hpp"
 #include "webserv_cleaner.hpp"
+#include "webserv_file_factory.hpp"
 
 class EventManager;
 class WebservEvent;
@@ -24,6 +25,7 @@ class WebservEventFactory
     public:
         WebservEventFactory(
                 Config *cfg,
+                WebservFileFactory *file_factory,
                 SocketController *socket_controller,
                 FDManager *fd_manager,
                 FileManager *file_manager,
@@ -37,13 +39,13 @@ class WebservEventFactory
                 );
         ~WebservEventFactory();
         WebservEvent *from_epoll_event(t_epoll_event const &event);
-        WebservEvent *make_io_socket_event_as_write(WebservEvent *event, File *src);
+        WebservEvent *make_io_socket_event_as_write(WebservEvent *event, WebservFile *src);
         WebservEvent *make_io_socket_event_as_read(WebservEvent *event);
-        WebservEvent *make_io_socket_for_cgi(WebservEvent *event, File *write_src, File *read_dst, ApplicationResult *result);
+        WebservEvent *make_io_socket_for_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result);
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
-        void          register_file_manager(WebservEvent *event);
+        //void          register_file_manager(WebservEvent *event);
         WebservEvent *make_making_request_event(WebservEvent *event);
-        WebservEvent *make_making_response_event(WebservEvent *event, File *src);
+        WebservEvent *make_making_response_event(WebservEvent *event, WebservFile *src);
         WebservEvent *make_application_event(WebservEvent *event);
         void          make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req);
         WebservEvent *make_event_from_http_error(WebservEvent *event, char const *code);
@@ -53,6 +55,7 @@ class WebservEventFactory
         WebservEvent *make_nothing_event(FileDiscriptor fd, FileDiscriptor sock_fd);
     private:
         Config *cfg;
+        WebservFileFactory *file_factory;
         SocketController *socket_controller;
         FDManager *fd_manager;
         FileManager *file_manager;

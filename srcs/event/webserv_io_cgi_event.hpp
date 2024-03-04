@@ -5,7 +5,7 @@
 #include "file_discriptor.hpp"
 #include "iwriter.hpp"
 #include "ireader.hpp"
-#include "file.hpp"
+#include "webserv_file.hpp"
 #include "request.hpp"
 #include "response.hpp"
 #include "webserv_entity.hpp"
@@ -15,10 +15,10 @@ class WebservIOCGIEvent
 {
     public:
         ~WebservIOCGIEvent();
-        static WebservEvent *from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, File *read_src, File *read_dst, File *write_src, File *write_dst, WebservEvent *event);
+        static WebservEvent *from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent *event);
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
-        static WebservIOCGIEvent *from_event(WebservEvent *event, File *io, File *write_src, File *read_dst);
+        static WebservIOCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:
         WebservIOCGIEvent();
         static WebservIOCGIEvent *singleton;

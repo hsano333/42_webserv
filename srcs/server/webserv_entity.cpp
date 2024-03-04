@@ -7,6 +7,13 @@ WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_result_
 ;
 }
 
+WebservEntity::~WebservEntity()
+{
+    //this->clean();
+    //delete app_result_;
+}
+
+
 
 // fd,socket_fdはコピーする
 WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_result_(NULL)
@@ -22,6 +29,8 @@ WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), soc
 
 WebservEntity& WebservEntity::operator=(WebservEntity const &entity)
 {
+    ERROR("Copying of WebservEntity is prohibited");
+    throw std::runtime_error("Copying of WebservEntity is prohibited");
     if(this == &entity){
         return (*this);
     }
@@ -36,17 +45,13 @@ WebservEntity& WebservEntity::operator=(WebservEntity const &entity)
     return (*this);
 }
 
-WebservEntity::~WebservEntity()
-{
-    this->clean();
-}
 
 void WebservEntity::set_result(ApplicationResult *result)
 {
     if(this->app_result_ == result){
         return ;
     }
-    delete this->app_result_;
+    //delete this->app_result_;
     this->app_result_ = result;
 }
 void WebservEntity::set_request(Request *req)
@@ -56,7 +61,7 @@ void WebservEntity::set_request(Request *req)
         return ;
     }
     DEBUG("WebservEntity::set_request No.1");
-    delete this->req_;
+    //delete this->req_;
     DEBUG("WebservEntity::set_request No.2");
     this->req_ = req;
 }
@@ -66,7 +71,7 @@ void WebservEntity::set_response(Response *res)
     if(this->res_ == res){
         return ;
     }
-    delete this->res_;
+    //delete this->res_;
     this->res_ = res;
 }
 

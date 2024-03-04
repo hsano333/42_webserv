@@ -2,20 +2,24 @@
 #define FILE_MANAGER_HPP
 
 #include <map>
-#include <set>
-#include "file.hpp"
+#include <vector>
+#include "webserv_file.hpp"
 #include "file_discriptor.hpp"
+
+
+typedef WebservFile*(* FP_FUNC)();
 
 class FileManager
 {
     public:
         FileManager();
         ~FileManager();
-        void insert(FileDiscriptor fd, File *event);
+        //WebservFile *make( FP_FUNC func);
+        void insert(FileDiscriptor const &fd, WebservFile *event);
         void erase(FileDiscriptor fd);
 
     private:
-        std::map<FileDiscriptor, std::set<File*> > file_list;
+        std::map<FileDiscriptor, std::vector<WebservFile*> > file_list;
 };
 
 #endif
