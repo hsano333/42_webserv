@@ -181,8 +181,9 @@ bool DirectoryFile::is_chunk()
 
 int DirectoryFile::remove()
 {
+    return (std::remove(this->path_.c_str()));
     // This server can't delete directory because of security;
-    return (-1);
+    //return (-1);
 }
 
 std::string const &DirectoryFile::path()

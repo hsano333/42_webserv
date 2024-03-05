@@ -97,7 +97,7 @@ int NormalFile::open()
 int NormalFile::close()
 {
     DEBUG("NormalFile::close() fd:" + Utility::to_string(fd.to_int()));
-    if (this->state == FILE_OPEN){
+    if (this->state != FILE_NOT_OPEN){
         if(this->fd.to_int() > 0){
             return ::close(fd.to_int());
         }
@@ -136,10 +136,6 @@ bool NormalFile::can_read()
 
 size_t NormalFile::size()
 {
-    std::cout << "normal file:" <<  std::endl;
-    std::cout << "normal file:" <<  std::endl;
-    std::cout << "normal file:" <<  std::endl;
-    std::cout << "normal file:" <<  std::endl;
     std::cout << "normal file:" <<  std::endl;
     return (Utility::get_file_size(this->filepath));
 }

@@ -45,11 +45,6 @@ VectorFile* VectorFile::from_buf_size(size_t buf_size)
     return (file);
 }
 
-int VectorFile::open()
-{
-    this->state = FILE_OPEN;
-    return 0;
-}
 
 int VectorFile::read(char **buf, size_t size)
 {
@@ -106,35 +101,18 @@ int VectorFile::save(char *buf, size_t size)
     return (this->buf.size());
 }
 
-int VectorFile::close()
-{
-    DEBUG("VectorFile::close()");
-    this->state = FILE_CLOSE;
-    return (0);
-}
 
-bool VectorFile::can_read()
-{
-    return (true);
-}
 
 size_t VectorFile::size()
 {
     return (this->buf.size());
 }
 
+/*
 bool VectorFile::is_chunk()
 {
     return (false);
 }
+*/
 
-int VectorFile::remove()
-{
-    // error file is not exist
-    return (-1);
-}
 
-std::string const &VectorFile::path()
-{
-    return (path_);
-}

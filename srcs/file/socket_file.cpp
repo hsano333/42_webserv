@@ -21,16 +21,13 @@ SocketFile::~SocketFile()
     DEBUG("SocketFile Destructor");
 }
 
-
 SocketFile* SocketFile::from_fd(FileDiscriptor const &fd, IWriter* writer, IReader* reader)
 {
     DEBUG("SocketFile::from_fd fd:" + fd.to_string());
     SocketFile *file = new SocketFile(fd);
-    //file->fd = fd;
     file->reader = reader;
     file->writer = writer;
     file->state = FILE_NOT_OPEN;
-    DEBUG("SocketFile: file->fd :" + file->fd.to_string());
     return (file);
 }
 
@@ -54,7 +51,6 @@ SocketFile* SocketFile::from_fd(IWriter* iwriter, FileDiscriptor fd)
     file->state = FILE_NOT_OPEN;
     return (file);
 }
-*/
 
 int SocketFile::open()
 {
@@ -62,6 +58,7 @@ int SocketFile::open()
     this->state = FILE_OPEN;
     return 0;
 }
+*/
 
 int SocketFile::read(char **buf, size_t max_size)
 {
@@ -73,17 +70,18 @@ int SocketFile::read(char **buf, size_t max_size)
     }
     */
 
-    if (this->state != FILE_OPEN){
-        return (0);
-    }
+    //if (this->state != FILE_OPEN){
+        //return (0);
+    //}
 
-    this->state = FILE_COMPLETED_READ;
+    //this->state = FILE_COMPLETED_READ;
     return this->reader->read(this->fd, *buf, max_size, NULL);
 }
 
 int SocketFile::write(char **buf, size_t size)
 {
     DEBUG("SocketFile::write() size=" + Utility::to_string(size));
+    /*
     if (!(this->state == FILE_OPEN || this->state == FILE_WRITING)){
         return (0);
     }
@@ -98,10 +96,12 @@ int SocketFile::write(char **buf, size_t size)
     this->state = FILE_WRITING;
     //return this->writer->write(this->fd, *buf, size, NULL);
 
-    int rval = this->writer->write(this->fd, *buf, size, NULL);
+    */
+    //int rval = this->writer->write(this->fd, *buf, size, NULL);
+    return (this->writer->write(this->fd, *buf, size, NULL));
 
-    DEBUG("write rval=" + Utility::to_string(rval));
-    return (rval);
+    //DEBUG("write rval=" + Utility::to_string(rval));
+    //return (rval);
 }
 
 /*
@@ -122,36 +122,25 @@ int SocketFile::save(char **buf, size_t size)
 
 
 
+/*
 int SocketFile::close()
 {
     DEBUG("SocketFile::close(");
     this->state = FILE_CLOSE;
     return (0);
 }
+*/
 
 bool SocketFile::can_read()
 {
     return (true);
 }
 
-size_t SocketFile::size()
-{
-    return (this->text.size());
-}
 
+/*
 bool SocketFile::is_chunk()
 {
     return (false);
 }
+*/
 
-
-int SocketFile::remove()
-{
-    // error file is not exist
-    return (-1);
-}
-
-std::string const &SocketFile::path()
-{
-    return (this->text);
-}

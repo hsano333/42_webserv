@@ -18,19 +18,15 @@ class SocketFile
         static SocketFile* from_fd(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
         //static SocketFile* from_fd(IReader* ireader, FileDiscriptor fd);
         //static SocketFile* from_fd(IWriter* iwriter, FileDiscriptor fd);
-        int open();
-        int close();
+        //int open();
+        //int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         //int save(char *data, size_t size);
         bool can_read();
-        size_t size();
-        bool is_chunk();
-        int remove();
-        std::string const &path();
+        //bool is_chunk();
         FileState   state;
     private:
-        std::string text;
         FileDiscriptor const &fd;
         IReader *reader;
         IWriter *writer;

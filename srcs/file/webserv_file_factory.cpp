@@ -22,28 +22,26 @@ WebservFile *WebservFileFactory::make_normal_file(FileDiscriptor const &fd, std:
 WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader)
 {
     DEBUG("WebservFileFactory::make_socket_file:" + fd.to_string());
-    //SocketReader *socket_reader = SocketReader::get_instance();
-    //SocketWriter *socket_writer = SocketWriter::get_instance();
     SocketFile *socket_file = SocketFile::from_fd(fd, iwriter, ireader);
-    return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, DefaultFunc::read, DefaultFunc::write, DefaultFunc::close, DefaultFunc::remove, DefaultFunc::can_read, DefaultFunc::path));
+    return (this->make_webserv_file(fd, socket_file, ChangingStateFunc::open, ChangingStateFunc::read, ChangingStateFunc::write, ChangingStateFunc::close, DummyFunc::remove, DefaultFunc::can_read, DummyFunc::path));
 }
 
 WebservFile *WebservFileFactory::make_vector_file(FileDiscriptor const &fd, size_t buf_size)
 {
     VectorFile *vector_file = VectorFile::from_buf_size(buf_size);
-    return (this->make_webserv_file(fd, vector_file));
+    return (this->make_webserv_file(fd, vector_file, ChangingStateFunc::open, DefaultFunc::read, DefaultFunc::write, ChangingStateFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path));
 }
 
 WebservFile *WebservFileFactory::make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref)
 {
     VectorFile *vector_file = VectorFile::from_ref(buf_ref);
-    return (this->make_webserv_file(fd, vector_file));
+    return (this->make_webserv_file(fd, vector_file, ChangingStateFunc::open, DefaultFunc::read, DefaultFunc::write, ChangingStateFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path));
 }
 
 WebservFile *WebservFileFactory::make_error_file(FileDiscriptor const &fd, StatusCode const &status_code)
 {
     ErrorFile *error_file = ErrorFile::from_status_code(status_code);
-    return (this->make_webserv_file(fd, error_file));
+    return (this->make_webserv_file(fd, error_file, ChangingStateFunc::open, ChangingStateFunc::read, DummyFunc::write, ChangingStateFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path));
 }
 
 WebservFile *WebservFileFactory::make_directory_file(FileDiscriptor const &fd, std::string const &path, std::string const &relative_path, std::string const &domain)
@@ -54,6 +52,7 @@ WebservFile *WebservFileFactory::make_directory_file(FileDiscriptor const &fd, s
 
 
 WebservFileFactory *WebservFileFactory::singleton = NULL;
+string WebservFileFactory::string_ref = "";
 WebservFileFactory *WebservFileFactory::get_instance()
 {
     if (WebservFileFactory::singleton == NULL){
@@ -71,6 +70,4 @@ WebservFileFactory *WebservFileFactory::get_instance(FileManager *file_manager)
     }
     return (singleton);
 }
-
-
 

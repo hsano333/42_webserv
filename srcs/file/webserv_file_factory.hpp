@@ -61,13 +61,13 @@ class WebservFileFactory
         WebservFile *make_vector_file(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref);
         WebservFile *make_directory_file(FileDiscriptor const &fd, std::string const &path, std::string const &relative_path, std::string const &domain);
+
+        // for dummy_func; not use;
+        static string string_ref;
     private:
         WebservFileFactory();
-        //WebservFileFactory(FileManager *file_manager);
         static WebservFileFactory *singleton;
         FileManager *file_manager;
-        // for dummy_func; not use;
-        static std::string const string_ref;
 };
 
 
@@ -148,7 +148,7 @@ namespace ChangingStateFunc{
         }
 
         file->state = FILE_COMPLETED_READ;
-        return (file->reader->read(file->fd, *data, size, NULL));
+        return (file->read(data, size));
     }
     template <class FileT>
     int write(FileT *file, char **data, size_t size)
@@ -157,37 +157,38 @@ namespace ChangingStateFunc{
             return (0);
         }
         file->state = FILE_WRITING;
-        return (file->writer->write(file->fd, *data, size, NULL));
+        return (file->write(data, size));
     }
 
 }
+
 namespace DummyFunc{
     template <class FileT>
-    int open_dummy(FileT *file){
+    int open(FileT *file){
         (void)file;
         DEBUG("open_dummy()");
         return 0;
     }
     template <class FileT>
-    int close_dummy(FileT *file){
+    int close(FileT *file){
         (void)file;
         DEBUG("close_dummy()");
         return 0;
     }
     template <class FileT>
-    int remove_dummy(FileT *file){
+    int remove(FileT *file){
         (void)file;
         DEBUG("remove_dummy()");
         return 0;
     }
     template <class FileT>
-    bool can_read_dummy(FileT *file){
+    bool can_read(FileT *file){
         (void)file;
         DEBUG("can_read_dummy()");
         return true;
     }
     template <class FileT>
-    int read_dummy(FileT *file, char **data, size_t size){
+    int read(FileT *file, char **data, size_t size){
         (void)file;
         DEBUG("read_dummy()");
         (void)data;
@@ -195,7 +196,7 @@ namespace DummyFunc{
         return 0;
     }
     template <class FileT>
-    int write_dummy(FileT *file, char **data, size_t size){
+    int write(FileT *file, char **data, size_t size){
         (void)file;
         DEBUG("write_dummy()");
         (void)data;
@@ -204,8 +205,8 @@ namespace DummyFunc{
     }
 
     template <class FileT>
-    std::string const &path_dummy(FileT *file){
-        //(void)file;
+    std::string const &path(FileT *file){
+        (void)file;
         DEBUG("path_dummy()");
         return (WebservFileFactory::string_ref);
     }

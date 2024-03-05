@@ -15,21 +15,15 @@ class VectorFile
         ~VectorFile();
         static VectorFile* from_ref(std::string const& buf_ref);
         static VectorFile* from_buf_size(size_t buf_size);
-        int open();
-        int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         int save(char *data, size_t size);
-        bool can_read();
         size_t size();
-        bool is_chunk();
-        int remove();
-        std::string const &path();
+        //bool is_chunk();
+        FileState   state;
 
     private:
         VectorFile(size_t max_buf_size);
-        FileState   state;
-        std::string path_;
         std::vector<char> buf;
         size_t max_buf_size;
         //std::vector<char> tmp_buf;

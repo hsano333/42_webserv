@@ -41,17 +41,11 @@ ErrorFile* ErrorFile::from_status_code(StatusCode const &code)
     return (file);
 }
 
-int ErrorFile::open()
-{
-    DEBUG("ErrorFile::open()");
-    this->state = FILE_OPEN;
-    return 0;
-}
 
 int ErrorFile::read(char **buf, size_t size)
 {
+    /*
     std::cout << "ErrorFile::read No.1" << std::endl;
-    (void)size;
     if (this->state != FILE_OPEN){
         return (0);
         //std::cout << "ErrorFile::read No.2" << std::endl;
@@ -59,20 +53,17 @@ int ErrorFile::read(char **buf, size_t size)
         //throw std::runtime_error("ErrorFile::read() state is  not FILE_OPEN");
     }
     std::cout << "ErrorFile::read No.3" << std::endl;
-    *buf = const_cast<char*>(&(this->text[0]));
-    std::cout << "ErrorFile::read No.4:" << this->text << std::endl;
-
-    this->state = FILE_CLOSE;
-    return this->text.size();
-}
-
-int ErrorFile::write(char **buf, size_t size)
-{
-    (void)buf;
+    */
     (void)size;
-    return (0);
+    std::cout << "ErrorFile::read :" << this->text << std::endl;
+    *buf = const_cast<char*>(&(this->text[0]));
+
+    //this->state = FILE_CLOSE;
+    return (this->text.size());
 }
 
+
+/*
 int ErrorFile::save(char *buf, size_t size)
 {
     for(size_t i=0;i<size;i++){
@@ -81,19 +72,14 @@ int ErrorFile::save(char *buf, size_t size)
     return (this->tmp_buf.size());
 }
 
-int ErrorFile::close()
-{
-    DEBUG("ErrorFile::close(");
-
-    this->state = FILE_CLOSE;
-    return (0);
-}
 
 bool ErrorFile::can_read()
 {
     return (true);
 }
 
+*/
+/*
 size_t ErrorFile::size()
 {
     return (this->text.size());
@@ -110,8 +96,11 @@ int ErrorFile::remove()
     // error file is not exist
     return (-1);
 }
+*/
 
+/*
 std::string const &ErrorFile::path()
 {
     return (this->text);
 }
+*/
