@@ -126,7 +126,7 @@ void Webserv::communication()
         }
         // for test
         if(exit_flag || count > 10){
-            break;
+            //break;
         }
     }
 }

@@ -33,6 +33,25 @@ DirectoryFile* DirectoryFile::from_path(std::string const &path, std::string con
     return (dir);
 }
 
+namespace DirectoryFileFunc{
+    int open(DirectoryFile *file)
+    {
+        return (file->open());
+    }
+    int read(DirectoryFile *file, char **buf, size_t size)
+    {
+        return (file->read(buf, size));
+    }
+    int write(DirectoryFile *file, char **buf, size_t size)
+    {
+        return (file->write(buf, size));
+    }
+    int close(DirectoryFile *file)
+    {
+        return (file->close());
+    }
+}
+
 int DirectoryFile::open()
 {
     DEBUG("DirectoryFile::open()");

@@ -16,7 +16,7 @@ class FileManager
         ~FileManager();
         //WebservFile *make( FP_FUNC func);
         void insert(FileDiscriptor const &fd, WebservFile *event);
-        void erase(FileDiscriptor fd);
+        void erase(FileDiscriptor const &fd);
 
     private:
         std::map<FileDiscriptor, std::vector<WebservFile*> > file_list;

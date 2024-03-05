@@ -42,15 +42,19 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
     bool exist_flag = false;
     while(ite != end)
     {
+        cout << "fd:" << ite->first.to_string() << endl;
         DEBUG("ite->second size=" + Utility::to_string(ite->second.size()));
 
         if(ite->first == fd){
+        DEBUG("ite->second No.1 size=" + Utility::to_string(ite->second.size()));
             ite->second.push_back(file);
+        DEBUG("ite->second No.2 size=" + Utility::to_string(ite->second.size()));
             exist_flag = true;
             break;
         }
         ite++;
     }
+        DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
     if(!exist_flag){
         std::vector<WebservFile *> file_vector;
         this->file_list.insert(std::make_pair(fd, file_vector));
@@ -70,7 +74,7 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
 }
 
 
-void FileManager::erase(FileDiscriptor fd)
+void FileManager::erase(FileDiscriptor const &fd)
 {
     DEBUG("FileManager::erase fd=" + fd.to_string());
     std::map<FileDiscriptor, std::vector<WebservFile*> >::iterator tmp_ite = this->file_list.find(fd);

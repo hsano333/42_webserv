@@ -1,4 +1,5 @@
 #include "webserv_file_factory.hpp"
+#include "global.hpp"
 //#include "socket_reader.hpp"
 //#include "socket_writer.hpp"
 
@@ -71,40 +72,42 @@ WebservFileFactory *WebservFileFactory::get_instance(FileManager *file_manager)
 }
 
 
-std::string string_ref = "";
+
 namespace DummyFunc{
+    std::string string_ref = "";
+
 
     int open_dummy(){
+        DEBUG("open_dummy()");
         return 0;
     }
     int close_dummy(){
+        DEBUG("close_dummy()");
         return 0;
     }
     int remove_dummy(){
+        DEBUG("remove_dummy()");
         return 0;
     }
     bool can_read_dummy(){
+        DEBUG("can_read_dummy()");
         return true;
     }
     int read_dummy(char **data, size_t size){
+        DEBUG("read_dummy()");
         (void)data;
         (void)size;
         return 0;
     }
     int write_dummy(char **data, size_t size){
+        DEBUG("write_dummy()");
         (void)data;
         (void)size;
         return 0;
     }
-    int default_remove(){
-        return 0;
-    }
 
-    bool default_can_read(){
-        return true;
-    }
-    string &path_dummy(){
+    std::string &path_dummy(){
+        DEBUG("path_dummy()");
         return (string_ref);
     }
 }
-

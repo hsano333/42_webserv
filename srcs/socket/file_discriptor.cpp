@@ -44,12 +44,14 @@ FileDiscriptor FileDiscriptor::from_int(int fd)
 
 int FileDiscriptor::to_int() const
 {
+    DEBUG("FileDiscriptor::to_int() const");
     return (this->fd);
 }
 
 int FileDiscriptor::to_int()
 {
-    return (fd);
+    DEBUG("FileDiscriptor::to_int()");
+    return (this->fd);
 }
 
 std::string const FileDiscriptor::to_string() const
@@ -67,7 +69,12 @@ void FileDiscriptor::close() const
 
 bool FileDiscriptor::operator==(const FileDiscriptor &fd) const
 {
-
+    DEBUG("FileDiscriptor::operator==");
+    DEBUG("FileDiscriptor:: this->fd =" + Utility::to_string(this->fd));
+    DEBUG("FileDiscriptor:: fd =" + fd.to_string());
+    DEBUG("FileDiscriptor:: test fd =" + Utility::to_string(1));
+    DEBUG("FileDiscriptor:: test No.2 fd =" + Utility::to_string(1730577014));
+    DEBUG("FileDiscriptor:: fd =" + Utility::to_string(fd.to_int()));
     return (this->fd == fd.to_int());
 }
 

@@ -79,9 +79,6 @@ bool WebservCleaner::clean(WebservEvent *event)
             MYINFO("WebservCleaner:: force close");
             this->fd_manager->close_fd(entity->fd());
         }
-        if(entity){
-            delete entity;
-        }
     }
     delete event;
     return (clean_event);

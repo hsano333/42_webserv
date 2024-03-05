@@ -27,7 +27,7 @@ class FileConcept
         virtual int close() = 0;
         virtual int remove() = 0;
         virtual bool can_read() = 0;
-        virtual std::string &path() = 0;
+        virtual std::string const &path() = 0;
 };
 
 template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer>
@@ -37,16 +37,13 @@ class OwningFileModel : public FileConcept
         OwningFileModel(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, PathStrategyPointer path) : file_(file), open_(open), read_(read), write_(write), close_(close), remove_(remove), can_read_(can_read), path_(path){};
         //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
         //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
-        int open()  {return open_();}
-        int read(char **data, size_t size)  {return read_(data, size);}
-        int write(char **data, size_t size)  {return write_(data, size);}
-        int close()  {return close_();}
-        int remove()  {return remove_();}
-        bool can_read()  {return can_read_();}
-        std::string &path() {return path_();}
-
-
-
+        int open()  {return open_(file_);}
+        int read(char **data, size_t size)  {return read_(file_, data, size);}
+        int write(char **data, size_t size)  {return write_(file_, data, size);}
+        int close()  {return close_(file_);}
+        int remove()  {return remove_(file_);}
+        bool can_read()  {return can_read_(file_);}
+        std::string const &path() {return path_(file_);}
 
     private:
         FilePointer *file_;
@@ -58,9 +55,6 @@ class OwningFileModel : public FileConcept
         CanReadStrategyPointer can_read_;
         PathStrategyPointer path_;
 };
-
-
-
 
 class WebservFile
 {
@@ -100,7 +94,7 @@ class WebservFile
         int close(){return pimpl_->close();};
         int remove(){return pimpl_->remove();};
         bool can_read(){return pimpl_->can_read();};
-        std::string &path(){return pimpl_->path();};
+        std::string const &path(){return pimpl_->path();};
         //int save(char *data, size_t size){return pimpl_->save();}
 
         /*
@@ -142,6 +136,10 @@ class WebservFile
         friend bool can_read(WebservFile *file)
         {
             return file->pimpl_->can_read();
+        }
+        friend std::string const &path(WebservFile *file)
+        {
+            return file->pimpl_->path();
         }
 };
 

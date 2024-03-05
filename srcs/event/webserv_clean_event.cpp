@@ -16,15 +16,13 @@ WebservCleanEvent::~WebservCleanEvent()
 
 WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    MYINFO("WebservCleanEvent::make_next_event");
+    MYINFO("WebservCleanEvent::make_next_event fd:" + event->entity()->fd().to_string());
     if (event->entity()->force_close()){
         MYINFO("WebservCleanEvent::make_next_event() >> NULL");
         return (NULL);
     }else{
         return (event_factory->make_keep_alive_event(event ));
     }
-    (void)event_factory;
-    (void)event;
     return (NULL);
 }
 
