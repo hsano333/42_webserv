@@ -105,12 +105,13 @@ uint32_t WebservIO::in_out()
 
 void WebservIO::switching_io(uint32_t epoll_event)
 {
-    DEBUG("WebservIO::switching_io");
     if(epoll_event == EPOLLIN){
+        DEBUG("WebservIO::switching_io EPOLL_IN");
         this->source_ = this->read_source_;
         this->destination_ = this->read_destination_;
         this->in_out_ = epoll_event;
     }else if(epoll_event == EPOLLOUT){
+        DEBUG("WebservIO::switching_io EPOLL_OUT");
         this->source_ = this->write_source_;
         this->destination_ = this->write_destination_;
         this->in_out_ = epoll_event;

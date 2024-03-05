@@ -9,7 +9,7 @@ class StreamWriter
     public:
         static StreamWriter *get_instance();
         ~StreamWriter();
-        int write(FileDiscriptor fd, char const *buf, size_t size, std::fstream *ofs);
+        int write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ofs);
     private:
         static StreamWriter *singleton;
         StreamWriter();

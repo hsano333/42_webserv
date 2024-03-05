@@ -9,7 +9,7 @@ class StreamReader
     public:
         static StreamReader *get_instance();
         ~StreamReader();
-        int read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs);
+        int read(FileDiscriptor const &fd, char *buf, size_t size, std::fstream *ifs);
     private:
         static StreamReader *singleton;
         StreamReader();

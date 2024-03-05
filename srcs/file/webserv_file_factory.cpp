@@ -16,15 +16,16 @@ WebservFileFactory::~WebservFileFactory()
 WebservFile *WebservFileFactory::make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode)
 {
     NormalFile *normal_file = NormalFile::from_filepath(filepath, mode);
-    return (this->make_webserv_file(fd, normal_file));
+    return (this->make_webserv_file(fd, normal_file, DefaultFunc::open, DefaultFunc::read, DefaultFunc::write, DefaultFunc::close, DefaultFunc::remove, DefaultFunc::can_read, DefaultFunc::path));
 }
 
 WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader)
 {
+    DEBUG("WebservFileFactory::make_socket_file:" + fd.to_string());
     //SocketReader *socket_reader = SocketReader::get_instance();
     //SocketWriter *socket_writer = SocketWriter::get_instance();
     SocketFile *socket_file = SocketFile::from_fd(fd, iwriter, ireader);
-    return (this->make_webserv_file(fd, socket_file));
+    return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, DefaultFunc::read, DefaultFunc::write, DefaultFunc::close, DefaultFunc::remove, DefaultFunc::can_read, DefaultFunc::path));
 }
 
 WebservFile *WebservFileFactory::make_vector_file(FileDiscriptor const &fd, size_t buf_size)
@@ -73,41 +74,3 @@ WebservFileFactory *WebservFileFactory::get_instance(FileManager *file_manager)
 
 
 
-namespace DummyFunc{
-    std::string string_ref = "";
-
-
-    int open_dummy(){
-        DEBUG("open_dummy()");
-        return 0;
-    }
-    int close_dummy(){
-        DEBUG("close_dummy()");
-        return 0;
-    }
-    int remove_dummy(){
-        DEBUG("remove_dummy()");
-        return 0;
-    }
-    bool can_read_dummy(){
-        DEBUG("can_read_dummy()");
-        return true;
-    }
-    int read_dummy(char **data, size_t size){
-        DEBUG("read_dummy()");
-        (void)data;
-        (void)size;
-        return 0;
-    }
-    int write_dummy(char **data, size_t size){
-        DEBUG("write_dummy()");
-        (void)data;
-        (void)size;
-        return 0;
-    }
-
-    std::string &path_dummy(){
-        DEBUG("path_dummy()");
-        return (string_ref);
-    }
-}

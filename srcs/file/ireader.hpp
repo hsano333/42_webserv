@@ -8,7 +8,7 @@ class IReader
     public:
         IReader(){};
         virtual ~IReader(){};
-        virtual int read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs) = 0;
+        virtual int read(FileDiscriptor const &fd, char *buf, size_t size, std::fstream *ifs) = 0;
 };
 
 #endif

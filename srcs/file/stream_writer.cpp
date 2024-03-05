@@ -21,7 +21,7 @@ StreamWriter *StreamWriter::get_instance()
     return (singleton);
 }
 
-int StreamWriter::write(FileDiscriptor fd, char const *buf, size_t size, std::fstream *ifs)
+int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
     DEBUG("StreamWriter::write: size:" + Utility::to_string(size));
     DEBUG("StreamWriter::write: ifs:" + Utility::to_string(ifs));

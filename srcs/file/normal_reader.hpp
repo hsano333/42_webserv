@@ -9,7 +9,7 @@ class NormalReader
     public:
         static NormalReader *get_instance();
         ~NormalReader();
-        int read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs);
+        int read(FileDiscriptor const &fd, char *buf, size_t size, std::fstream *ifs);
     private:
         static NormalReader *singleton;
         NormalReader();

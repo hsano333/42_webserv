@@ -22,7 +22,7 @@ SocketWriter *SocketWriter::get_instance()
     return (singleton);
 }
 
-int SocketWriter::write(FileDiscriptor fd, char const *buf, size_t size, std::fstream *ifs)
+int SocketWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
     (void)ifs;
     std::cout << "socket::write() size:" << size << std::endl;

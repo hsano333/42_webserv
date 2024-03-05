@@ -13,7 +13,7 @@ bool io_work(EventT *event, WebservEntity *entity)
     (void)event;
     //return ;
 
-    DEBUG("WebservIOWorker::work");
+    DEBUG("WebservIOWorker::work fd:" + entity->fd().to_string());
 
     WebservFile *source = entity->io().source();
     WebservFile *destination = entity->io().destination();

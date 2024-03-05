@@ -154,6 +154,7 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 
 Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
 {
+    DEBUG("WebservMakeRequestEvent::make_request()");
     Request *req = Request::from_fd(entity->fd());
     this->parse_request(req, entity->io().source());
 

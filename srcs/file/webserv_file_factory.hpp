@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   webserv_file_factory.hpp                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/05 20:21:21 by hsano             #+#    #+#             */
-/*   Updated: 2024/03/05 21:33:27 by sano             ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef WEBSERV_FILE_FACTORY_HPP
 #define WEBSERV_FILE_FACTORY_HPP
@@ -26,6 +15,10 @@
 #include "socket_file.hpp"
 
 
+
+
+
+/*
 namespace DummyFunc{
 int open_dummy();
 int close_dummy();
@@ -35,13 +28,14 @@ int read_dummy(char **data, size_t size);
 int write_dummy(char **data, size_t size);
 //int remove_dummy();
 bool can_read_dummy();
-string &path_dummy();
+string const &path_dummy();
 };
+*/
 
 typedef int(* FUNC)(void);
 typedef int(* IO_FUNC)(char **data, size_t size);
 typedef bool(* BOOL_FUNC)();
-typedef string&(* STRING_FUNC)();
+typedef const string&(* STRING_FUNC)();
 
 class WebservFileFactory
 {
@@ -54,7 +48,10 @@ class WebservFileFactory
         template <class FileT>
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file);
         template <class FileT>
-        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path);
+        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *));
+        template <class FileT>
+        //WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path);
+        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *));
         //
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
         WebservFile *make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
@@ -69,17 +66,18 @@ class WebservFileFactory
         //WebservFileFactory(FileManager *file_manager);
         static WebservFileFactory *singleton;
         FileManager *file_manager;
+        // for dummy_func; not use;
+        static std::string const string_ref;
 };
 
 
 template <class FileT>
-WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path)
+WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *))
 {
-    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read);
+    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, path);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
-
 
 
 namespace DefaultFunc{
@@ -131,6 +129,88 @@ namespace DefaultFunc{
     }
 }
 
+namespace ChangingStateFunc{
+    template <class FileT>
+    int open(FileT *file){
+        file->state = FILE_OPEN;
+        return 0;
+    }
+    template <class FileT>
+    int close(FileT *file){
+        file->state = FILE_CLOSE;
+        return 0;
+    }
+    template <class FileT>
+    int read(FileT *file, char **data, size_t size)
+    {
+        if (file->state != FILE_OPEN){
+            return (0);
+        }
+
+        file->state = FILE_COMPLETED_READ;
+        return (file->reader->read(file->fd, *data, size, NULL));
+    }
+    template <class FileT>
+    int write(FileT *file, char **data, size_t size)
+    {
+        if (!(file->state == FILE_OPEN || file->state == FILE_WRITING)){
+            return (0);
+        }
+        file->state = FILE_WRITING;
+        return (file->writer->write(file->fd, *data, size, NULL));
+    }
+
+}
+namespace DummyFunc{
+    template <class FileT>
+    int open_dummy(FileT *file){
+        (void)file;
+        DEBUG("open_dummy()");
+        return 0;
+    }
+    template <class FileT>
+    int close_dummy(FileT *file){
+        (void)file;
+        DEBUG("close_dummy()");
+        return 0;
+    }
+    template <class FileT>
+    int remove_dummy(FileT *file){
+        (void)file;
+        DEBUG("remove_dummy()");
+        return 0;
+    }
+    template <class FileT>
+    bool can_read_dummy(FileT *file){
+        (void)file;
+        DEBUG("can_read_dummy()");
+        return true;
+    }
+    template <class FileT>
+    int read_dummy(FileT *file, char **data, size_t size){
+        (void)file;
+        DEBUG("read_dummy()");
+        (void)data;
+        (void)size;
+        return 0;
+    }
+    template <class FileT>
+    int write_dummy(FileT *file, char **data, size_t size){
+        (void)file;
+        DEBUG("write_dummy()");
+        (void)data;
+        (void)size;
+        return 0;
+    }
+
+    template <class FileT>
+    std::string const &path_dummy(FileT *file){
+        //(void)file;
+        DEBUG("path_dummy()");
+        return (WebservFileFactory::string_ref);
+    }
+}
+
 
 template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file)
@@ -140,6 +220,15 @@ WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, Fil
     return (new_file);
 }
 
+template <class FileT>
+WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *))
+{
+    (void)open;
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DefaultFunc::path<FileT>);
+    this->file_manager->insert(fd, new_file);
+    return (new_file);
+
+}
 
 #endif
 

@@ -10,7 +10,7 @@ class RawReader : public IReader
         RawReader();
         ~RawReader();
         int read(Filepath &filepath, char *data, size_t size);
-        int read(FileDiscriptor fd, char *data, size_t size);
+        int read(FileDiscriptor const &fd, char *data, size_t size);
     private:
         FileDiscriptor fd;
         std::string filepath;

@@ -21,7 +21,7 @@ StreamReader *StreamReader::get_instance()
     return (singleton);
 }
 
-int StreamReader::read(FileDiscriptor fd, char *buf, size_t size, std::fstream *ifs)
+int StreamReader::read(FileDiscriptor const &fd, char *buf, size_t size, std::fstream *ifs)
 {
     DEBUG("StreamReader::read: size:" + Utility::to_string(size));
     (void)fd;

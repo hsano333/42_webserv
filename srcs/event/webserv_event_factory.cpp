@@ -102,9 +102,10 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
                 WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
                 entity->config()->check();
-                WebservFile *socket_io = this->file_factory->make_socket_file(fd, socket_writer, socket_reader);
-                WebservFile *read_dst = this->file_factory->make_vector_file(fd, MAX_STATUS_LINE);
-                WebservEvent *event = WebservIOSocketEvent::as_read(fd, socket_io, read_dst, entity);
+                FileDiscriptor const &fd_ref = entity->fd();
+                WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, socket_writer, socket_reader);
+                WebservFile *read_dst = this->file_factory->make_vector_file(fd_ref, MAX_STATUS_LINE);
+                WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
                 this->cfg->check();
                 event->entity()->config()->check();
                 return (event);

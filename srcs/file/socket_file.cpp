@@ -24,12 +24,13 @@ SocketFile::~SocketFile()
 
 SocketFile* SocketFile::from_fd(FileDiscriptor const &fd, IWriter* writer, IReader* reader)
 {
-    DEBUG("SocketFile::from_fd");
+    DEBUG("SocketFile::from_fd fd:" + fd.to_string());
     SocketFile *file = new SocketFile(fd);
     //file->fd = fd;
     file->reader = reader;
     file->writer = writer;
     file->state = FILE_NOT_OPEN;
+    DEBUG("SocketFile: file->fd :" + file->fd.to_string());
     return (file);
 }
 
@@ -65,10 +66,12 @@ int SocketFile::open()
 int SocketFile::read(char **buf, size_t max_size)
 {
     DEBUG("SocketFile::read() size=" + Utility::to_string(max_size));
+    /*
     size_t size = this->buffer.retrieve(buf, max_size);
     if(size > 0){
         return (size);
     }
+    */
 
     if (this->state != FILE_OPEN){
         return (0);
@@ -101,12 +104,12 @@ int SocketFile::write(char **buf, size_t size)
     return (rval);
 }
 
+/*
 int SocketFile::save(char *buf, size_t size)
 {
     return (this->buffer.save(buf, size));
 }
 
-/*
 int SocketFile::save(char **buf, size_t size)
 {
     (void)size;
