@@ -411,6 +411,7 @@ int Request::write(char **data, size_t size)
     return (0);
 }
 
+/*
 int Request::save(char *buf, size_t size)
 {
     for(size_t i=0;i<size;i++){
@@ -443,6 +444,7 @@ std::string const &Request::path()
 {
     throw std::runtime_error("don't use method()");
 }
+*/
 
 
 int Request::read(char** data, size_t max_read_size)

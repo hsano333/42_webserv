@@ -216,7 +216,7 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
     result->set_file(file);
     event->entity()->set_result(result);
 
-    WebservFile *result_file = this->file_factory->make_webserv_file(event->entity()->fd(), result);
+    WebservFile *result_file = this->file_factory->make_webserv_file_regular(event->entity()->fd(), result);
     WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, result_file, dst);
     return (new_event);
 }

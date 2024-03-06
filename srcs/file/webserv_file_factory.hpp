@@ -48,6 +48,8 @@ class WebservFileFactory
         template <class FileT>
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file);
         template <class FileT>
+        WebservFile *make_webserv_file_regular(FileDiscriptor const &fd, FileT *file);
+        template <class FileT>
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *));
         template <class FileT>
         //WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path);
@@ -70,14 +72,6 @@ class WebservFileFactory
         FileManager *file_manager;
 };
 
-
-template <class FileT>
-WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *))
-{
-    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, path);
-    this->file_manager->insert(fd, new_file);
-    return (new_file);
-}
 
 
 namespace DefaultFunc{
@@ -227,13 +221,20 @@ WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, Fil
 }
 
 template <class FileT>
-WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *))
+WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const &fd, FileT *file)
 {
-    (void)open;
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DefaultFunc::path<FileT>);
+    //(void)open;
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::path<FileT>);
     this->file_manager->insert(fd, new_file);
     return (new_file);
+}
 
+template <class FileT>
+WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *))
+{
+    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, path);
+    this->file_manager->insert(fd, new_file);
+    return (new_file);
 }
 
 #endif

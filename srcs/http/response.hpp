@@ -60,12 +60,12 @@ class Response
         int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
-        int save(char *data, size_t size);
-        bool can_read();
-        size_t size();
+        //int save(char *data, size_t size);
+        //bool can_read();
+        //size_t size();
         bool is_chunk();
-        int remove();
-        std::string const &path();
+        //int remove();
+        //std::string const &path();
         void check_body_and_chunk();
 
     private:

@@ -299,6 +299,7 @@ int Response::write(char **data, size_t size)
     return (0);
 }
 
+/*
 int Response::save(char *buf, size_t size)
 {
     for(size_t i=0;i<size;i++){
@@ -329,6 +330,7 @@ std::string const &Response::path()
     //std::string tmp = "";
     return (status_line);
 }
+*/
 
 
 bool Response::is_chunk()

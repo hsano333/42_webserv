@@ -88,12 +88,12 @@ class Request
         int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
-        int save(char *data, size_t size);
-        bool can_read();
-        size_t size();
-        bool is_chunk();
-        int remove();
-        std::string const &path();
+        //int save(char *data, size_t size);
+        //bool can_read();
+        //size_t size();
+        //bool is_chunk();
+        //int remove();
+        //std::string const &path();
 
         void set_file(WebservFile *file);
 

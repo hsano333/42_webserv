@@ -22,12 +22,11 @@ class ApplicationResult
         int open();
         int read(char **data, size_t size);
         int write(char **data, size_t size);
-        int save(char *data, size_t size);
         int close();
 
-        bool can_read();
-        int remove();
-        std::string const &path();
+        //bool can_read();
+        //int remove();
+        //std::string const &path();
 
         Method const &method() const;
         StatusCode const &status_code() const;

@@ -132,7 +132,7 @@ WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, Web
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    WebservFile *file = file_factory->make_webserv_file(event->entity()->fd(), event->entity()->response());
+    WebservFile *file = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->response());
 
     WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, file));
     return (new_event);

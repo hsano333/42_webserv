@@ -65,12 +65,12 @@ int ApplicationResult::write(char **buf, size_t size)
     */
 }
 
+/*
 int ApplicationResult::save(char *buf, size_t size)
 {
     return (this->buffer.save(buf, size));
 }
 
-/*
 int ApplicationResult::save(char **buf, size_t size)
 {
     (void)size;
@@ -88,12 +88,12 @@ int ApplicationResult::close()
     return (0);
 }
 
+/*
 bool ApplicationResult::can_read()
 {
     return (true);
 }
 
-/*
 size_t ApplicationResult::size()
 {
     return (0);
@@ -104,7 +104,6 @@ bool ApplicationResult::is_chunk()
 {
     return (false);
 }
-*/
 
 
 int ApplicationResult::remove()
@@ -112,6 +111,7 @@ int ApplicationResult::remove()
     // error file is not exist
     return (-1);
 }
+*/
 
 /*
 std::string const &ApplicationResult::path()
@@ -185,10 +185,12 @@ void ApplicationResult::set_file(WebservFile *file)
     this->file_ = file;
 }
 
+/*
 std::string const &ApplicationResult::path()
 {
     throw std::runtime_error("don't use method()");
 }
+*/
 
 
 FileDiscriptor &ApplicationResult::cgi_in()
