@@ -13,9 +13,9 @@ bool invoke(EventT *event, WebservEntity *entity)
     Application *app = factory->make_application(entity);
 
     bool is_completed = app->invoke(entity);
-    ApplicationResult *result = app->get_result();
+    //ApplicationResult *result = app->get_result();
 
-    entity->set_result(result);
+    //entity->set_result(result);
     entity->set_completed(is_completed);
     delete app;
     return (is_completed);

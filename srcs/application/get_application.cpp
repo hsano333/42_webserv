@@ -19,6 +19,7 @@ GetApplication::~GetApplication()
 ;
 }
 
+/*
 WebservFile *GetApplication::get_requested_file(FileDiscriptor const &fd)
 {
     DEBUG("GetApplication::get_requested_file()");
@@ -59,6 +60,7 @@ WebservFile *GetApplication::get_requested_file(FileDiscriptor const &fd)
         throw HttpException("404");
     }
 }
+*/
 
 
 bool GetApplication::is_cgi() const
@@ -66,10 +68,12 @@ bool GetApplication::is_cgi() const
     return (false);
 }
 
+/*
 ApplicationResult *GetApplication::get_result()
 {
     return (this->result_);
 }
+*/
 
 
 string GetApplication::check_content(string const &filepath)
@@ -110,10 +114,10 @@ string GetApplication::check_content(string const &filepath)
 }
 
 
-string GetApplication::get_index_path(Request *req, bool *is_existed)
+string GetApplication::get_index_path(Request *req, ConfigLocation const *location, bool *is_existed)
 {
-    for(size_t i=0;i<this->location->indexes().size();i++){
-        string index_path = req->requested_path() + this->location->indexes()[i];
+    for(size_t i=0;i<location->indexes().size();i++){
+        string index_path = req->requested_path() + location->indexes()[i];
         if(Utility::is_regular_file(index_path)){
             if(Utility::is_readable_file(index_path)){
                 *is_existed = true;
@@ -129,9 +133,14 @@ bool GetApplication::invoke(WebservEntity *entity)
 {
     DEBUG("GetApplication::invoke()");
 
+    Request *req = entity->request();
+    Config const *cfg = entity->config();
+    ConfigServer const *server = cfg->get_server(req);
+    ConfigLocation const *location = cfg->get_location(server, req);
+
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     FileDiscriptor const &fd = entity->fd();
-    Request *req = entity->request();
+    //Request *req = entity->request();
     WebservFile *file = NULL;
     string extension = "";
     StatusCode code;
@@ -145,11 +154,11 @@ bool GetApplication::invoke(WebservEntity *entity)
             file = file_factory->make_normal_file(fd, file_path, std::ios::in);
             extension = GetApplication::check_content(file_path);
         }else{
-            code = StatusCode::from_int(403);
+            throw HttpException("403");
         }
     }else if(req->is_directory()){
         bool is_existed = false;
-        string index_path = get_index_path(req, &is_existed);
+        string index_path = get_index_path(req, location, &is_existed);
 
         if(index_path != ""){
             file = file_factory->make_normal_file(fd, index_path, std::ios::in);
@@ -158,7 +167,7 @@ bool GetApplication::invoke(WebservEntity *entity)
         }
         else
         {
-            if(this->location->autoindex())
+            if(location->autoindex())
             {
                 std::string const &host = req->header().get_host();
                 std::string const &relative_path= req->req_line().uri().path();
@@ -170,34 +179,37 @@ bool GetApplication::invoke(WebservEntity *entity)
             else
             {
                 if(is_existed){
-                    code = StatusCode::from_int(403);
+                    throw HttpException("403");
                 }else{
-                    code = StatusCode::from_int(404);
+                    throw HttpException("404");
                 }
             }
         }
     }else{
-        code = StatusCode::from_int(404);
-        file = file_factory->make_error_file(fd, code);
+        throw HttpException("404");
+        //code = StatusCode::from_int(404);
+        //file = file_factory->make_error_file(fd, code);
     }
 
-    this->result_ = ApplicationResult::from_status_code(code);
+    ApplicationResult *result_ = ApplicationResult::from_status_code(code);
     if(extension != ""){
-        this->result_->add_header(CONTENT_TYPE, extension);
+        result_->add_header(CONTENT_TYPE, extension);
     }
     if(file){
         if(is_directory){
-            this->result_->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
+            result_->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
         }else{
             string file_size = Utility::to_string(Utility::get_file_size(file->path()));
-            this->result_->add_header(CONTENT_LENGTH, file_size);
+            result_->add_header(CONTENT_LENGTH, file_size);
         }
     }
-    this->result_->set_file(file);
+    result_->set_file(file);
+    entity->set_result(result_);
     return (true);
 }
 
 
+/*
 bool GetApplication::execute(WebservEvent *event)
 {
     DEBUG("GetApplication::execute()");
@@ -272,7 +284,9 @@ bool GetApplication::execute(WebservEvent *event)
     this->result_->set_file(file);
     return (true);
 }
+*/
 
+/*
 GetApplication* GetApplication::from_location(const Config *cfg, const Request *req)
 {
     GetApplication *app = new GetApplication();
@@ -283,7 +297,9 @@ GetApplication* GetApplication::from_location(const Config *cfg, const Request *
 
     return (app);
 }
+*/
 
+/*
 Response* GetApplication::make_response(FileDiscriptor const &fd)
 {
     DEBUG("GetApplication::make_response()");
@@ -314,6 +330,7 @@ Response* GetApplication::make_response(FileDiscriptor const &fd)
     }
     return (res);
 }
+*/
 
 
 const Method &GetApplication::which() const
@@ -322,3 +339,11 @@ const Method &GetApplication::which() const
 }
 
 
+GetApplication *GetApplication::singleton = NULL;
+GetApplication *GetApplication::get_instance()
+{
+    if (GetApplication::singleton == NULL){
+        singleton = new GetApplication();
+    }
+    return (singleton);
+}

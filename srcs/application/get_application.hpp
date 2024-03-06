@@ -13,33 +13,39 @@
 class GetApplication : public Application
 {
     public:
-        GetApplication();
+        static GetApplication *get_instance();
         ~GetApplication();
-        bool execute(WebservEvent *event);
+        //bool execute(WebservEvent *event);
         bool invoke(WebservEntity *entity);
-        ApplicationResult *get_result();
-        static GetApplication* from_location(const Config *cfg, const Request *req);
-        Response* make_response(FileDiscriptor const &fd);
+        //ApplicationResult *get_result();
+        //static GetApplication* from_location(const Config *cfg, const Request *req);
+        //Response* make_response(FileDiscriptor const &fd);
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
         const Method &which() const;
 
         StatusCode const &code() const;
         std::map<string, string> const &header() const;
-    private:
 
-        string get_index_path(Request *req, bool *is_existed);
-        WebservFile *get_requested_file(FileDiscriptor const &fd);
-        const Config *cfg;
-        const ConfigServer *server;
-        const ConfigLocation *location;
-        const Request *req;
-        std::map<std::string, std::string> tmp_headers;
-        std::string path_info_;
+    private:
+        GetApplication();
+        static GetApplication *singleton;
+        //static WebservCleanEvent *get_instance();
+
+        string get_index_path(Request *req, ConfigLocation const *location, bool *is_existed);
+        //WebservFile *get_requested_file(FileDiscriptor const &fd);
+
+        //const Config *cfg;
+        //const ConfigServer *server;
+        //const ConfigLocation *location;
+        //const Request *req;
+        //std::map<std::string, std::string> tmp_headers;
+        //std::string path_info_;
         Method method;
         string check_content(string const &filepath);
-        std::map<std::string, std::string> header_;
-        ApplicationResult *result_;
+
+        //std::map<std::string, std::string> header_;
+        //ApplicationResult *result_;
 
 };
 #endif

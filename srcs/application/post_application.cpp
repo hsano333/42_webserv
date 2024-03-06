@@ -17,33 +17,23 @@ PostApplication::~PostApplication()
 
 WebservFile *PostApplication::get_requested_file(FileDiscriptor const &fd)
 {
-    /*
-    if (this->event->file()){
-        return (this->event->file());
-    }
-    */
-
-
-    //File *file = NULL;
-        //this->req->print_info();
-        //
 
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-        if (this->req->is_not_executable_parent_dir()){
-            ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
-            throw HttpException("403");
-        }
-        else if(this->req->is_directory()){
-            ERROR("directory already exist :" + this->req->parent_dir_path());
-            throw HttpException("403");
-        }else if (Utility::is_regular_file(this->req->requested_path())){
-            ERROR("file already exist :" + this->req->requested_path());
-            throw HttpException("403");
-        }
-        //WebservFile *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
-        WebservFile *file =  file_factory->make_normal_file(fd, this->req->requested_path(), std::ios::out | std::ios::binary);
-        //this->event->set_file(file);
-        return (file);
+    if (this->req->is_not_executable_parent_dir()){
+        ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
+        throw HttpException("403");
+    }
+    else if(this->req->is_directory()){
+        ERROR("directory already exist :" + this->req->parent_dir_path());
+        throw HttpException("403");
+    }else if (Utility::is_regular_file(this->req->requested_path())){
+        ERROR("file already exist :" + this->req->requested_path());
+        throw HttpException("403");
+    }
+    //WebservFile *file = NormalFile::from_filepath(this->req->requested_path(), std::ios::out | std::ios::binary);
+    WebservFile *file =  file_factory->make_normal_file(fd, this->req->requested_path(), std::ios::out | std::ios::binary);
+    //this->event->set_file(file);
+    return (file);
 }
 
 
@@ -75,9 +65,9 @@ bool PostApplication::invoke(WebservEntity *entity)
 bool PostApplication::execute(WebservEvent *event)
 {
     (void)event;
-    /*
     DEBUG("PostApplication::execute_not_cgi");
 
+    /*
     File *file = this->get_requested_file();
     MYINFO("PostApplication::execute_not_cgi:filez=" + file->path());
 
@@ -93,6 +83,12 @@ bool PostApplication::execute(WebservEvent *event)
     MYINFO("PostApplication::No.1");
 
     try{
+
+        if(req->is_file()){
+            throw HttpException("409");
+        }
+
+
         int open_result = file->open();
         MYINFO("PostApplication::No.3 open:" + Utility::to_string(open_result));
 
@@ -193,7 +189,7 @@ PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent 
     //if(event->res()){
         //app->file = event->res()->get_file();
     //}
-    app->event = event;
+    //app->event = event;
     //app->reader = reader;
     return (app);
 }

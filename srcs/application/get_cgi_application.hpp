@@ -15,7 +15,7 @@ class GetCGIApplication : public Application
         ~GetCGIApplication();
         bool execute(WebservEvent *event);
         bool invoke(WebservEntity *entity);
-        ApplicationResult *get_result();
+        //ApplicationResult *get_result();
         static GetCGIApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
@@ -30,6 +30,6 @@ class GetCGIApplication : public Application
         std::string path_info_;
 
         Method method;
-        ApplicationResult *result_;
+        //ApplicationResult *result_;
 };
 #endif

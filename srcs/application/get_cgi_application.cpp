@@ -25,14 +25,17 @@ bool GetCGIApplication::is_cgi() const
 bool GetCGIApplication::invoke(WebservEntity *entity)
 {
     (void)entity;
-    this->result_ = this->cgi->execute(this->location, this->req);
+    ApplicationResult *result = this->cgi->execute(this->location, this->req);
+    entity->set_result(result);
     return (true);
 }
 
+/*
 ApplicationResult *GetCGIApplication::get_result()
 {
     return (this->result_);
 }
+*/
 
 GetCGIApplication* GetCGIApplication::from_location(const Config *cfg, const Request *req, CGI *cgi)
 {
