@@ -273,7 +273,6 @@ bool GetApplication::execute(WebservEvent *event)
     return (true);
 }
 
-
 GetApplication* GetApplication::from_location(const Config *cfg, const Request *req)
 {
     GetApplication *app = new GetApplication();
@@ -293,7 +292,6 @@ Response* GetApplication::make_response(FileDiscriptor const &fd)
         cout << "file is NULL" << endl;
     }
     Response *res = NULL;
-
 
     if(this->location->is_redirect()){
         res = Response::from_file(file);

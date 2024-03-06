@@ -90,7 +90,9 @@ namespace DefaultFunc{
     template <class FileT>
     int close(FileT *file){
         DEBUG("Default close()");
-        return (file->close());
+        (file->close());
+        DEBUG("Default close() No.1");
+        return 0;
     }
 
     template <class FileT>
@@ -129,20 +131,23 @@ namespace DefaultFunc{
     }
 }
 
-namespace ChangingStateFunc{
+namespace CommonFunc{
     template <class FileT>
     int open(FileT *file){
+        DEBUG("Common open()");
         file->state = FILE_OPEN;
         return 0;
     }
     template <class FileT>
     int close(FileT *file){
+        DEBUG("Common close()");
         file->state = FILE_CLOSE;
         return 0;
     }
     template <class FileT>
     int read(FileT *file, char **data, size_t size)
     {
+        DEBUG("Common read()");
         if (file->state != FILE_OPEN){
             return (0);
         }
@@ -153,13 +158,13 @@ namespace ChangingStateFunc{
     template <class FileT>
     int write(FileT *file, char **data, size_t size)
     {
+        DEBUG("Common write()");
         if (!(file->state == FILE_OPEN || file->state == FILE_WRITING)){
             return (0);
         }
         file->state = FILE_WRITING;
         return (file->write(data, size));
     }
-
 }
 
 namespace DummyFunc{

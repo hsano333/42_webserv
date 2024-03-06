@@ -390,20 +390,17 @@ void Request::set_file(WebservFile *file)
 
 int Request::open()
 {
-    DEBUG("Request::open_file()");
     if (this->file){
-        DEBUG("Request::open_file() No.2");
         return (this->file->open());
     }
-    DEBUG("Request::open_file() No.3");
     return 0;
 }
 
 int Request::close()
 {
-    if (this->file){
-        return (this->file->close());
-    }
+    //if (this->file){
+        //return (this->file->close());
+    //}
     return 0;
 }
 

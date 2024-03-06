@@ -286,9 +286,9 @@ int Response::open()
 
 int Response::close()
 {
-    if (this->file){
-        return (this->file->close());
-    }
+    //if (this->file){
+        //return (this->file->close());
+    //}
     return 0;
 }
 

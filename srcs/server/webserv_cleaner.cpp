@@ -38,7 +38,6 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 {
     DEBUG("WebservCleaner::clean()");
     //entityを削除すると、後工程で問題が発生するので、ここでは消さない
-
     bool is_close = force_close || entity->force_close();
     if (entity->request()){
         std::string const &conect = entity->request()->header().find("Connection");

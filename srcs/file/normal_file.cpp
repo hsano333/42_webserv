@@ -20,10 +20,7 @@ NormalFile::NormalFile(IReader* ireader, std::string const &filepath, std::ios_b
         iwriter(NULL),
         filepath(filepath),
         option(option)
-        //ifs(std::ifstream(filepath.c_str(), std::ios::in))
 {
-    //this->iofs(filepath.c_str());
-    //this->ifs = std::ifstream(filepath.c_str(), std::ios::in);
     this->state = FILE_NOT_OPEN;
 }
 
@@ -33,10 +30,7 @@ NormalFile::NormalFile(IWriter* iwriter, std::string const &filepath, std::ios_b
         iwriter(iwriter),
         filepath(filepath),
         option(option)
-        //ifs(std::ifstream(filepath.c_str(), std::ios::in))
 {
-    //this->iofs(filepath.c_str());
-    //this->ifs = std::ifstream(filepath.c_str(), std::ios::in);
     this->state = FILE_NOT_OPEN;
 }
 
@@ -47,10 +41,8 @@ NormalFile::NormalFile()
 
 NormalFile::~NormalFile()
 {
-    //delete StreamReader::get_instance();
     if (this->state == FILE_OPEN || this->state == FILE_READING){
         if(this->fd.to_int() > 0){
-            //std::cout << "fd:" << this->fd << std::endl;
             ::close(fd.to_int());
         }
     }
@@ -61,7 +53,6 @@ NormalFile* NormalFile::from_filepath(std::string const &filepath, std::ios_base
 {
     StreamReader *ireader = StreamReader::get_instance();
     StreamWriter *iwriter = StreamWriter::get_instance();
-    //if (Utility::is_regular_file(filepath)){
     if((option & std::ios::in) == std::ios::in){
         MYINFO("NormalFile::from_filepath() Reader");
         return (new NormalFile(ireader, filepath, option));
@@ -69,7 +60,6 @@ NormalFile* NormalFile::from_filepath(std::string const &filepath, std::ios_base
         MYINFO("NormalFile::from_filepath() Writer");
         return (new NormalFile(iwriter, filepath, option));
     }
-    //}
     ERROR("NormalFile::from_filepath() can't open file:" + filepath);
     throw std::invalid_argument("NormalFile::from_filepath() can't open file");
 }
@@ -79,7 +69,6 @@ int NormalFile::open()
     DEBUG("NormalFile::open()");
     if (this->state != FILE_NOT_OPEN){
         WARNING("NormalFile::open() state is  not FILE_NOT_OPEN");
-        //throw std::runtime_error("NormalFile::open() state is  not FILE_NOT_OPEN");
     }
 
     this->iofs.open(this->filepath.c_str(), this->option);
@@ -136,7 +125,6 @@ bool NormalFile::can_read()
 
 size_t NormalFile::size()
 {
-    std::cout << "normal file:" <<  std::endl;
     return (Utility::get_file_size(this->filepath));
 }
 
@@ -156,9 +144,3 @@ std::string const &NormalFile::path()
     return (this->filepath);
 }
 
-/*
-std::string NormalFile::to_str()
-{
-    return filepath;
-}
-*/
