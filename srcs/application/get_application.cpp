@@ -338,7 +338,6 @@ const Method &GetApplication::which() const
     return (this->method);
 }
 
-
 GetApplication *GetApplication::singleton = NULL;
 GetApplication *GetApplication::get_instance()
 {

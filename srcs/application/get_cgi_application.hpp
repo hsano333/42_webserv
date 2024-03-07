@@ -11,25 +11,28 @@
 class GetCGIApplication : public Application
 {
     public:
-        GetCGIApplication();
+        static GetCGIApplication *get_instance();
         ~GetCGIApplication();
         bool execute(WebservEvent *event);
         bool invoke(WebservEntity *entity);
         //ApplicationResult *get_result();
-        static GetCGIApplication* from_location(const Config *cfg, const Request *req, CGI *cgi);
+        //static GetCGIApplication* from_location();
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
         const Method &which() const;
-    private:
-        const Config *cfg;
-        const ConfigServer *server;
-        const ConfigLocation *location;
-        const Request *req;
-        CGI *cgi;
-        std::map<std::string, std::string> tmp_headers;
-        std::string path_info_;
 
-        Method method;
+    private:
+        GetCGIApplication();
+        static GetCGIApplication *singleton;
+        //const Config *cfg;
+        //const ConfigServer *server;
+        //const ConfigLocation *location;
+        //const Request *req;
+        CGI *cgi;
+        //std::map<std::string, std::string> tmp_headers;
+        //std::string path_info_;
+
+        const Method method;
         //ApplicationResult *result_;
 };
 #endif

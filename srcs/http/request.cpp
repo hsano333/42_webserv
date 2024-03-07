@@ -452,6 +452,15 @@ int Request::read(char** data, size_t max_read_size)
     return (this->file->read(data, max_read_size));
 }
 
+std::string const &Request::path_info() const
+{
+    return (this->path_info_);
+}
+
+void Request::set_path_info(std::string const &root){
+    this->path_info_ = root + tmp_path_info_;
+}
+
 void Request::print_info() const
 {
     MYINFO("|-- Print Request  --|");

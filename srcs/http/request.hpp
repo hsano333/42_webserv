@@ -70,9 +70,11 @@ class Request
         //
         //
 
+        void        set_path_info(std::string const &path);
         std::string const &requested_filepath() const;
         std::string const &requested_path() const;
         std::string const &tmp_path_info() const;
+        std::string const &path_info() const;
         std::string const &parent_dir_path() const;
         //File    get_target_file(const ConfigLocation *location);
 
@@ -127,6 +129,7 @@ class Request
         RequestLine    req_line_;
         Header         header_;
         std::string    tmp_path_info_;
+        std::string    path_info_;
         bool           read_completed_;
         std::vector<char> tmp_buf;
         bool            is_cgi_;

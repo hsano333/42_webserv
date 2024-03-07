@@ -103,7 +103,7 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
         case GET:
             if (is_cgi){
                 DEBUG("ApplicationFactory::make_application() Get Method with CGI");
-                app = GetCGIApplication::from_location(cfg, req, cgi);
+                app = GetCGIApplication::get_instance();
             }else{
                 DEBUG("ApplicationFactory::make_application() Get Method with not CGI");
                 app = GetApplication::get_instance();
