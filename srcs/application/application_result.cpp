@@ -11,7 +11,7 @@ ApplicationResult::ApplicationResult() : is_cgi_(false)
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode code) : code_(code), is_cgi_(false)
+ApplicationResult::ApplicationResult(StatusCode &code) : code_(code), is_cgi_(false)
 {
     ;
 }

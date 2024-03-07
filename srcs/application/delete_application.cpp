@@ -3,6 +3,7 @@
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 #include "directory_file.hpp"
+#include "header_word.hpp"
 
 DeleteApplication::DeleteApplication() : method(Method::from_string("DELETE"))
 {
@@ -77,8 +78,56 @@ void DeleteApplication::execute_cgi()
 
 bool DeleteApplication::invoke(WebservEntity *entity)
 {
+    DEBUG("DeleteApplication::invoke");
     (void)entity;
-    return (false);
+
+    Request *req = entity->request();
+    Config const *cfg = entity->config();
+    ConfigServer const *server = cfg->get_server(req);
+    ConfigLocation const *location = cfg->get_location(server, req);
+    (void)location;
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    FileDiscriptor const &fd = entity->fd();
+    WebservFile *file = NULL;
+    StatusCode code;
+    DEBUG("DeleteApplication::invoke No.1");
+    if(req->is_file())
+    {
+        const string &file_path = req->requested_path();
+    DEBUG("DeleteApplication::invoke No.2");
+        if(Utility::is_readable_file(file_path)){
+    DEBUG("DeleteApplication::invoke No.3");
+            code = StatusCode::from_int(200);
+    DEBUG("DeleteApplication::invoke No.4");
+            file = file_factory->make_normal_file(fd, file_path, std::ios::in);
+    DEBUG("DeleteApplication::invoke No.5");
+            if(file->remove() < 0){
+    DEBUG("DeleteApplication::invoke No.6");
+                MYINFO("Delete Error: can't remove");
+                throw HttpException("403");
+            }
+    DEBUG("DeleteApplication::invoke No.7");
+        }else{
+            MYINFO("Delete Error: not redable");
+            throw HttpException("403");
+        }
+    }else if(req->is_directory()){
+        MYINFO("Delete Error: not file, it's directory");
+        throw HttpException("403");
+    }else{
+        MYINFO("Delete Error: neither file nor directory");
+        throw HttpException("403");
+    }
+
+    DEBUG("DeleteApplication::invoke No.8");
+    ApplicationResult *result_ = ApplicationResult::from_status_code(code);
+    result_->add_header(CONTENT_LENGTH, "0");
+    result_->set_file(NULL);
+    DEBUG("DeleteApplication::invoke No.9");
+    entity->set_result(result_);
+    DEBUG("DeleteApplication::invoke No.10");
+    return (true);
 }
 
 bool DeleteApplication::execute(WebservEvent *event)
@@ -108,14 +157,17 @@ bool DeleteApplication::execute(WebservEvent *event)
     //return (result);
 }
 
+/*
 ApplicationResult *DeleteApplication::get_result()
 {
     //ApplicationResult *file = ApplicationResult::from_result();
     //return (file);
     return (NULL);
 }
+*/
 
 
+/*
 DeleteApplication* DeleteApplication::from_location(const Config *cfg, const Request *req)
 {
     DeleteApplication *app = new DeleteApplication();
@@ -129,7 +181,9 @@ DeleteApplication* DeleteApplication::from_location(const Config *cfg, const Req
 
     return (app);
 }
+*/
 
+/*
 Response* DeleteApplication::make_response()
 {
     StatusCode code = StatusCode::from_int(200);
@@ -143,6 +197,7 @@ Response* DeleteApplication::make_response()
     }
     return (res);
 }
+*/
 
 const Method &DeleteApplication::which() const
 {
@@ -168,3 +223,12 @@ std::string const &DeleteApplication::path_info() const
 */
 
 
+DeleteApplication *DeleteApplication::singleton = NULL;
+DeleteApplication *DeleteApplication::get_instance()
+{
+    DEBUG("DeleteApplication::get_instance()");
+    if (DeleteApplication::singleton == NULL){
+        singleton = new DeleteApplication();
+    }
+    return (singleton);
+}

@@ -23,14 +23,12 @@ class GetApplication : public Application
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
         const Method &which() const;
-
         StatusCode const &code() const;
         std::map<string, string> const &header() const;
 
     private:
         GetApplication();
         static GetApplication *singleton;
-        //static WebservCleanEvent *get_instance();
 
         string get_index_path(Request *req, ConfigLocation const *location, bool *is_existed);
         //WebservFile *get_requested_file(FileDiscriptor const &fd);

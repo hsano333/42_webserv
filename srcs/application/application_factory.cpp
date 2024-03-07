@@ -124,7 +124,8 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
             break;
         case DELETE:
             DEBUG("ApplicationFactory::make_application() make Delete");
-            app = DeleteApplication::from_location(cfg, req);
+            //app = DeleteApplication::from_location(cfg, req);
+            app = DeleteApplication::get_instance();
             break;
         case PUT:
         case CONNECT:

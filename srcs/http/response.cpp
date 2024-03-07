@@ -386,6 +386,7 @@ int Response::read(char** data, size_t max_read_size)
         DEBUG("Response::read: SENT_STATUS_LINE");
         this->make_header_line();
         *data= const_cast<char*>(&(this->header_line[0]));
+        MYINFO("Response  Header:" + string(*data));
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER && this->has_body){

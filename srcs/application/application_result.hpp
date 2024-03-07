@@ -46,7 +46,7 @@ class ApplicationResult
         ProcessID      &pid();
     private:
         ApplicationResult();
-        ApplicationResult(StatusCode code);
+        ApplicationResult(StatusCode &code);
 
         StatusCode code_;
         //std::map<std::string, std::string> header_;
