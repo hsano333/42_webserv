@@ -140,7 +140,7 @@ bool PostApplication::execute(WebservEvent *event)
         if(result < 0){
             throw std::exception(HttpException("500"));
         }else if(result == 0){
-            WARNING("Connection Error: write return is 0");
+            :cw
             this->event->set_completed(true);
             break;
         }

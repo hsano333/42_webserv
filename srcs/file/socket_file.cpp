@@ -136,7 +136,6 @@ bool SocketFile::can_read()
     return (true);
 }
 
-
 /*
 bool SocketFile::is_chunk()
 {

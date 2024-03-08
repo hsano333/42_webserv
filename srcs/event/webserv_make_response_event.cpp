@@ -80,6 +80,16 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
         res->add_header(ite->first, ite->second);
         ite++;
     }
+    WebservFile *file = res->get_file();
+    if(file){
+        if(file->is_chunk()){
+            MYINFO("Transfer-Encoding: chunked");
+            res->add_header(TRANSFER_ENCODING, CHUNKED);
+        }else{
+            MYINFO("CONTENT_LENGTH: " + Utility::to_string(file->size()));
+            res->add_header(CONTENT_LENGTH, Utility::to_string(file->size()));
+        }
+    }
     res->check_body_and_chunk();
     return (res);
 }

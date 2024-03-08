@@ -16,32 +16,32 @@ WebservFileFactory::~WebservFileFactory()
 WebservFile *WebservFileFactory::make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode)
 {
     NormalFile *normal_file = NormalFile::from_filepath(filepath, mode);
-    return (this->make_webserv_file(fd, normal_file, DefaultFunc::open, DefaultFunc::read, DefaultFunc::write, DefaultFunc::close, DefaultFunc::remove, DefaultFunc::can_read, DefaultFunc::path));
+    return (this->make_webserv_file(fd, normal_file, DefaultFunc::open, DefaultFunc::read, DefaultFunc::write, DefaultFunc::close, DefaultFunc::remove, DefaultFunc::can_read, DefaultFunc::path, DefaultFunc::size, DummyFunc::is_chunk));
 }
 
 WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader)
 {
     DEBUG("WebservFileFactory::make_socket_file:" + fd.to_string());
     SocketFile *socket_file = SocketFile::from_fd(fd, iwriter, ireader);
-    return (this->make_webserv_file(fd, socket_file, CommonFunc::open, CommonFunc::read, CommonFunc::write, CommonFunc::close, DummyFunc::remove, DefaultFunc::can_read, DummyFunc::path));
+    return (this->make_webserv_file(fd, socket_file, CommonFunc::open, CommonFunc::read, CommonFunc::write, CommonFunc::close, DummyFunc::remove, DefaultFunc::can_read, DummyFunc::path, DummyFunc::size, DummyFunc::is_chunk));
 }
 
 WebservFile *WebservFileFactory::make_vector_file(FileDiscriptor const &fd, size_t buf_size)
 {
     VectorFile *vector_file = VectorFile::from_buf_size(buf_size);
-    return (this->make_webserv_file(fd, vector_file, CommonFunc::open, DefaultFunc::read, DefaultFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path));
+    return (this->make_webserv_file(fd, vector_file, CommonFunc::open, DefaultFunc::read, DefaultFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk));
 }
 
 WebservFile *WebservFileFactory::make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref)
 {
     VectorFile *vector_file = VectorFile::from_ref(buf_ref);
-    return (this->make_webserv_file(fd, vector_file, CommonFunc::open, DefaultFunc::read, DefaultFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path));
+    return (this->make_webserv_file(fd, vector_file, CommonFunc::open, DefaultFunc::read, DefaultFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk));
 }
 
 WebservFile *WebservFileFactory::make_error_file(FileDiscriptor const &fd, StatusCode const &status_code)
 {
     ErrorFile *error_file = ErrorFile::from_status_code(status_code);
-    return (this->make_webserv_file(fd, error_file, CommonFunc::open, CommonFunc::read, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path));
+    return (this->make_webserv_file(fd, error_file, CommonFunc::open, CommonFunc::read, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk));
 }
 
 WebservFile *WebservFileFactory::make_directory_file(FileDiscriptor const &fd, std::string const &path, std::string const &relative_path, std::string const &domain)

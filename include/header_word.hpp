@@ -12,4 +12,6 @@
 #define ACCEPT_ENCODING "accept-encoding"
 #define CONNECTION "connection"
 
+#define CHUNKED "chunked"
+
 #endif

@@ -62,6 +62,11 @@ int ErrorFile::read(char **buf, size_t size)
     return (this->text.size());
 }
 
+size_t ErrorFile::size()
+{
+    return (this->text.size());
+}
+
 
 /*
 int ErrorFile::save(char *buf, size_t size)
