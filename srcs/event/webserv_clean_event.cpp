@@ -2,6 +2,7 @@
 #include "webserv_clean_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "webserv_file_factory.hpp"
+#include "header_word.hpp"
 #include "global.hpp"
 
 WebservCleanEvent::WebservCleanEvent()
@@ -77,7 +78,7 @@ bool prepare_clean(WebservCleanEvent *event, WebservEntity *entity)
     bool is_close = entity->force_close();
     //bool is_close = event->force_close() || entity->force_close();
     if (entity->request()){
-        std::string const &conect = entity->request()->header().find("Connection");
+        std::string const &conect = entity->request()->header().find(CONNECTION);
         if (conect == "close"){
             is_close = true;
         }

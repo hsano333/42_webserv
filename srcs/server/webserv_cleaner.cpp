@@ -1,6 +1,7 @@
 #include "webserv_cleaner.hpp"
 #include "webserv_clean_event.hpp"
 #include "webserv_nothing_event.hpp"
+#include "header_word.hpp"
 
 using std::cout;
 using std::endl;
@@ -40,7 +41,7 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     //entityを削除すると、後工程で問題が発生するので、ここでは消さない
     bool is_close = force_close || entity->force_close();
     if (entity->request()){
-        std::string const &conect = entity->request()->header().find("Connection");
+        std::string const &conect = entity->request()->header().find(CONNECTION);
         if (conect == "close"){
             is_close = true;
         }

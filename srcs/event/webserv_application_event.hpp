@@ -21,7 +21,7 @@ bool invoke(EventT *event, WebservEntity *entity)
     //entity->set_result(result);
     entity->set_completed(is_completed);
     DEBUG("WebservExecuter::execute No.4");
-    delete app;
+    //delete app;
     DEBUG("WebservExecuter::execute No.5");
     return (is_completed);
 }

@@ -16,6 +16,7 @@ DeleteApplication::~DeleteApplication()
 }
 
 
+/*
 WebservFile *DeleteApplication::get_requested_file(FileDiscriptor const &fd)
 {
     WebservFile *file = NULL;
@@ -43,6 +44,7 @@ WebservFile *DeleteApplication::get_requested_file(FileDiscriptor const &fd)
         throw HttpException("404");
     }
 }
+*/
 
 
 bool DeleteApplication::is_cgi() const
@@ -130,6 +132,7 @@ bool DeleteApplication::invoke(WebservEntity *entity)
     return (true);
 }
 
+/*
 bool DeleteApplication::execute(WebservEvent *event)
 {
     (void)event;
@@ -156,6 +159,7 @@ bool DeleteApplication::execute(WebservEvent *event)
     //}
     //return (result);
 }
+*/
 
 /*
 ApplicationResult *DeleteApplication::get_result()

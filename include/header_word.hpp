@@ -6,4 +6,10 @@
 #define CONTENT_LENGTH "content-length"
 #define TRANSFER_ENCODING "transfer-encoding"
 #define TRANSFER_ENCODING_CHUNKED "chunked"
+#define HOST "host"
+#define USER_AGENT "user-agent"
+#define ACCEPT "accept"
+#define ACCEPT_ENCODING "accept-encoding"
+#define CONNECTION "connection"
+
 #endif
