@@ -45,7 +45,7 @@ class Request
         //char*   get_raw_buf_begin();
         //int     raw_buf_space();
         char*   get_buf_body(int *size);
-        void    set_buf_body(char *body_p, int size);
+        void    set_buf_body(char const *body_p, int size);
         void    clear_buf_body();
         void    set_request_line(std::string const &str);
         void    set_header(Split &sp, size_t offset);
@@ -98,6 +98,7 @@ class Request
         //std::string const &path();
 
         void set_file(WebservFile *file);
+        void add_read_body_size(size_t size);
 
         //void set_source_file(File *source);
         //File *get_source_file();
@@ -133,6 +134,7 @@ class Request
         bool           read_completed_;
         std::vector<char> tmp_buf;
         bool            is_cgi_;
+        size_t          read_body_size_;
         //File *source;
 
 };

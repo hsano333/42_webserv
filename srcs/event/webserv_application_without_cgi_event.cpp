@@ -1,5 +1,6 @@
 #include "webserv_application_without_cgi_event.hpp"
 #include "webserv_event.hpp"
+#include "method.hpp"
 
 WebservApplicationWithoutCgiEvent::WebservApplicationWithoutCgiEvent()
 {
@@ -31,12 +32,22 @@ WebservEvent *WebservApplicationWithoutCgiEvent::from_event(WebservEvent *event)
 WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservApplicationWithoutCgiEvent::make_next_event");
+    if(event->entity()->app_result()->method() == POST){
+        return (event_factory->make_making_upload_event(event));
+    }
     return (event_factory->make_making_response_event(event, event->entity()->io().destination()));
 }
 
 E_EpollEvent WebservApplicationWithoutCgiEvent::get_next_epoll_event(WebservEvent *event)
 {
     (void)event;
+    if(event->entity()->app_result()->method() == POST){
+        return (EPOLL_READ);
+    }
     return (EPOLL_NONE);
 }
 
+void WebservApplicationWithoutCgiEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

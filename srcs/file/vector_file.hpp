@@ -26,6 +26,7 @@ class VectorFile
         VectorFile(size_t max_buf_size);
         std::vector<char> buf;
         size_t max_buf_size;
+        size_t index;
         //std::vector<char> tmp_buf;
         //char buf_c[MAX_BUF];
 };

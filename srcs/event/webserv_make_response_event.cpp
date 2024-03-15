@@ -38,7 +38,7 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
     }
 
     size_t header_size = body_p - data;
-    if(header_size >= MAX_STATUS_LINE){
+    if(header_size >= MAX_REAUEST_EXCEPT_BODY){
         ERROR("exceed CGI Response Status Line" + Utility::to_string(header_size));
         throw HttpException("exceed CGI Response Status Line:" + Utility::to_string(header_size));
     }
@@ -154,3 +154,7 @@ E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event(WebservEvent *event)
     return (EPOLL_WRITE);
 }
 
+void WebservMakeResponseEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

@@ -7,22 +7,21 @@
 template<typename EventT>
 bool invoke(EventT *event, WebservEntity *entity)
 {
+    DEBUG("WEBSERV_APPLICATION_EVENT:: invoke");
     (void)event;
-    DEBUG("WebservExecuter::execute");
     ApplicationFactory *factory = ApplicationFactory::get_instance();
-    DEBUG("WebservExecuter::execute No.1");
+    bool is_completed;
+
+    //if(entity->app() == NULL){
+        //Application *app = factory->make_application(entity);
+        //is_completed = app->init(entity);
+    //}else{
     Application *app = factory->make_application(entity);
-    DEBUG("WebservExecuter::execute No.2");
+    entity->set_app(app);
+    is_completed = app->execute(entity);
+    //}
 
-    bool is_completed = app->invoke(entity);
-    DEBUG("WebservExecuter::execute No.3");
-    //ApplicationResult *result = app->get_result();
-
-    //entity->set_result(result);
     entity->set_completed(is_completed);
-    DEBUG("WebservExecuter::execute No.4");
-    //delete app;
-    DEBUG("WebservExecuter::execute No.5");
     return (is_completed);
 }
 

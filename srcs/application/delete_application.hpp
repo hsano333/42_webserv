@@ -14,9 +14,9 @@ class DeleteApplication : public Application
     public:
         static DeleteApplication *get_instance();
         ~DeleteApplication();
-        //void init(WebservEvent *event);
-        //bool execute(WebservEvent *event);
-        bool invoke(WebservEntity *entity);
+        //bool init(WebservEntity *event);
+        bool execute(WebservEntity *event);
+        //bool invoke(WebservEntity *entity);
         //ApplicationResult *get_result();
         //static DeleteApplication* from_location(const Config *cfg, const Request *req);
         //Response* make_response();

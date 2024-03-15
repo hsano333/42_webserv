@@ -6,15 +6,21 @@
 #include "application_result.hpp"
 #include <unistd.h>
 
-ApplicationResult::ApplicationResult() : is_cgi_(false)
+ApplicationResult::ApplicationResult() : method_(Method::from_string("NONE")), is_cgi_(false)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code) : code_(code), is_cgi_(false)
+ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : code_(code), method_(method), is_cgi_(false)
 {
     ;
 }
+
+ApplicationResult::ApplicationResult(StatusCode &code, string &method) : code_(code), method_(Method::from_string(method)), is_cgi_(false)
+{
+    ;
+}
+
 ApplicationResult::~ApplicationResult()
 {
 ;
@@ -23,7 +29,6 @@ ApplicationResult::~ApplicationResult()
 int ApplicationResult::open()
 {
     DEBUG("ApplicationResult::open()");
-    //this->state = FILE_OPEN;
     if (this->file_){
         DEBUG("Request::open_file() No.2");
         return (this->file_->open());
@@ -162,9 +167,15 @@ ApplicationResult *ApplicationResult::from_fd(int in, int out, int pid)
     return (result);
 }
 
-ApplicationResult *ApplicationResult::from_status_code(StatusCode &code)
+ApplicationResult *ApplicationResult::from_status_code(StatusCode &code, Method const &method)
 {
-    ApplicationResult *result = new ApplicationResult(code);
+    ApplicationResult *result = new ApplicationResult(code, method);
+    return (result);
+}
+
+ApplicationResult *ApplicationResult::from_status_code(StatusCode &code, string method)
+{
+    ApplicationResult *result = new ApplicationResult(code, method);
     return (result);
 }
 

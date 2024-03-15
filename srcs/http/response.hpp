@@ -64,9 +64,11 @@ class Response
         //bool can_read();
         //size_t size();
         bool is_chunk();
+        bool read_completed();
         //int remove();
         //std::string const &path();
         void check_body_and_chunk();
+        void add_written_body_size(size_t size);
 
     private:
         StatusCode status_code;
@@ -88,6 +90,8 @@ class Response
         bool has_body;
         bool is_chunked;
         std::vector<char> tmp_buf;
+
+        size_t written_body_size;
 };
 
 

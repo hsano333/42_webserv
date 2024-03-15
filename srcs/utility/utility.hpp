@@ -85,7 +85,32 @@ class Utility
     static std::string adjust_filesize(size_t filesize);
 
     static bool is_redable_directory_not_stat(std::string const &filepath);
+
+    template <typename T>
+    static T max(T a, T b);
+    template <typename T>
+    static T min(T a, T b);
 };
+
+
+template <typename T>
+T Utility::max(T a, T b)
+{
+    if(a > b){
+        return a;
+    }
+    return b;
+}
+
+template <typename T>
+T Utility::min(T a, T b)
+{
+    if(a > b){
+        return b;
+    }
+    return a;
+}
+
 
 template <typename T>
 std::string Utility::to_string(T value)

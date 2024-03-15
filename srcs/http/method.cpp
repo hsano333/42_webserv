@@ -31,6 +31,11 @@ bool Method::operator==(Method const &method)
     return (this->method_ == method.method_);
 }
 
+bool Method::operator==(E_METHOD const method) const
+{
+    return (this->method_ == method);
+}
+
 /*
 const std::string& Method::get_name() const
 {
@@ -83,10 +88,13 @@ Method Method::from_string(string const &name)
     }else if (name == "PATCH"){
         object.method_ = PATCH;
         return (object);
+    }else if (name == "NONE"){
+        object.method_ = NONE;
+        return (object);
     }
     throw HttpException("501");
     ERROR("Method::from_string invalid argument:" + name);
-    throw std::invalid_argument("Method::from_string invalid argument");
+    throw HttpException("Method::from_string invalid argument");
 }
 
 std::string Method::to_string() const
@@ -101,7 +109,7 @@ std::string Method::to_string() const
     return ("");
 }
 
-e_method Method::to_enum() const
+E_METHOD Method::to_enum() const
 {
     return (this->method_);
 }
@@ -111,13 +119,13 @@ e_method Method::to_enum() const
 
 TEST_CASE("HTTP_METHOD")
 {
-    CHECK_THROWS_AS(Method::from_string("PUT") ,std::invalid_argument);
-    CHECK_THROWS_AS(Method::from_string("GET1") ,std::invalid_argument);
-    CHECK_THROWS_AS(Method::from_string("get") ,std::invalid_argument);
-    CHECK_THROWS_AS(Method::from_string("SGET") ,std::invalid_argument);
-    CHECK_THROWS_AS(Method::from_string("1.2") ,std::invalid_argument);
+    CHECK_THROWS_AS(Method::from_string("GET1") ,HttpException);
+    CHECK_THROWS_AS(Method::from_string("get") ,HttpException);
+    CHECK_THROWS_AS(Method::from_string("SGET") ,HttpException);
+    CHECK_THROWS_AS(Method::from_string("1.2") ,HttpException);
     CHECK(Method::from_string("GET").to_string() == "GET");
     CHECK(Method::from_string("POST").to_string() == "POST");
     CHECK(Method::from_string("DELETE").to_string() == "DELETE");
+    CHECK(Method::from_string("PUT").to_string() == "");
 }
 #endif

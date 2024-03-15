@@ -8,14 +8,14 @@ using std::endl;
 using std::vector;
 using std::map;
 
-VectorFile::VectorFile(): max_buf_size(MAX_BUF)
+VectorFile::VectorFile(): max_buf_size(MAX_BUF), index(0)
 {
-    ;
+    this->buf.resize(max_buf_size);
 }
 
-VectorFile::VectorFile(size_t max_buf_size) : max_buf_size(max_buf_size)
+VectorFile::VectorFile(size_t max_buf_size) : max_buf_size(max_buf_size), index(0)
 {
-    ;
+    this->buf.resize(max_buf_size);
 }
 
 VectorFile::~VectorFile()
@@ -28,10 +28,11 @@ VectorFile* VectorFile::from_ref(std::string const& buf_ref)
 {
     DEBUG("VectorFile::from_ref()");
     VectorFile *file = new VectorFile(buf_ref.size());
-    file->buf.resize(buf_ref.size());
+    //file->buf.resize(buf_ref.size());
     for(size_t i=0;i<buf_ref.size();i++){
         file->buf[i] = buf_ref[i];
     }
+    file->index = buf_ref.size();
     return (file);
 }
 
@@ -72,20 +73,27 @@ int VectorFile::write(char **buf, size_t size)
 {
     DEBUG("VectorFile::write() size=" + Utility::to_string(size));
     char *p_buf = *buf;
-    for(size_t i=0; i<size;i++){
-        this->buf.push_back(p_buf[i]);
+    size_t rest = this->max_buf_size - this->index - 1;
+    size_t min = Utility::min(size, rest);
+    for(size_t i=0; i<min;i++){
+        DEBUG("VectorFile::write() i=" + Utility::to_string(i));
+        DEBUG("VectorFile::write() this->index=" + Utility::to_string(this->index));
+        this->buf[i+this->index] = p_buf[i];
     }
-    //this->buf.push_back('\0');
+    DEBUG("VectorFile::write()min =" + Utility::to_string(min));
+    DEBUG("VectorFile::write()rest=" + Utility::to_string(rest));
+    return (min);
 
-    if(this->buf.size() > this->max_buf_size){
-        WARNING("buf size=" + Utility::to_string(this->buf.size()));
-        WARNING("max size=" + Utility::to_string(this->max_buf_size));
+    //if(min != size){
+        //return (this->max_buf_size-this->index);
+        //WARNING("buf size=" + Utility::to_string(this->buf.size()));
+        //WARNING("max size=" + Utility::to_string(this->max_buf_size));
         // 指定したサイズを超過した際、-1を返すことで次の処理(パーサー処理)に移行する。
         // ステータスコードの超過なのか、あるいはbodyに入っているかどうかは
         // 次の処理で判定する。
-        return (-1);
-    }
-    return (size);
+        //return (-1);
+    //}
+    //return (size);
 }
 
 int VectorFile::save(char *buf, size_t size)

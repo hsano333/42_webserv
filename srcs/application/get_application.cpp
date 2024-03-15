@@ -129,7 +129,7 @@ string GetApplication::get_index_path(Request *req, ConfigLocation const *locati
 
 }
 
-bool GetApplication::invoke(WebservEntity *entity)
+bool GetApplication::execute(WebservEntity *entity)
 {
     DEBUG("GetApplication::invoke()");
 
@@ -191,7 +191,7 @@ bool GetApplication::invoke(WebservEntity *entity)
         //file = file_factory->make_error_file(fd, code);
     }
 
-    ApplicationResult *result_ = ApplicationResult::from_status_code(code);
+    ApplicationResult *result_ = ApplicationResult::from_status_code(code, this->method);
     if(extension != ""){
         result_->add_header(CONTENT_TYPE, extension);
     }

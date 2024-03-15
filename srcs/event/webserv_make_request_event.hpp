@@ -17,6 +17,7 @@ class WebservMakeRequestEvent
 
         Request *make_request(WebservEntity *entity);
         void    set_file(WebservFile *file);
+        void    check_completed(WebservEntity * entity);
 
     private:
         WebservMakeRequestEvent();

@@ -81,9 +81,17 @@ void Webserv::communication()
             }
 
             WebservEvent *next_event = NULL;
+
             try{
+
                 handle(event);
-                next_event = event_controller->get_next_event(event);
+                if(event->entity()->completed()){
+                    next_event = make_next_event(event, this->event_factory);
+                }else{
+                    next_event = event;
+                }
+                event_controller->set_next_epoll_event(event, next_event);
+
             }catch(ConnectionException &e){
                 ERROR(e.what());
                 next_event = this->event_factory->make_clean_event(event, true);
@@ -124,6 +132,7 @@ void Webserv::communication()
                 }
             }
         }
+
         // for test
         if(exit_flag || count > 10){
             //break;
@@ -133,5 +142,5 @@ void Webserv::communication()
 
 void Webserv::reset()
 {
-;
+    ;
 }

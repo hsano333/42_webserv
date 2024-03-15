@@ -90,17 +90,29 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
     DEBUG("WebservMakeRequestEvent::parse_request");
     char *buf_p;
 
-    size_t buf_size = src->read(&buf_p, MAX_STATUS_LINE);
+    size_t buf_size = src->read(&buf_p, MAX_REAUEST_EXCEPT_BODY);
     (void)buf_size;
-
-    Split sp(buf_p, CRLF);
-    if(sp.size() == 0){
-        ERROR("Invalid Request. Reques doesn't have \"\r\n\"");
+    cout << "buf_size=" << buf_size << endl;
+    buf_p[buf_size] = '\0';
+    cout << "buf_p=[" << buf_p << "]" << endl;
+    if(buf_size == 0){
+        ERROR("Invalid Request. ");
         throw HttpException("400");
     }
+
+    Split sp0(buf_p, CRLF2);
+    cout << "sp0.size=" << sp0.size() << endl;
+    int index = 0;
+    if(sp0.size() > 1){
+        index = 1;
+        req->set_buf_body(sp0[index].c_str(), sp0[index].size());
+        //ERROR("Invalid Request. Reques doesn't have \"\r\n\r\n\"");
+        //throw HttpException("400");
+    }
     try{
-        req->set_request_line(sp[0]);
-        req->set_header(sp, 1);
+        Split sp1(sp0[0], CRLF);
+        req->set_request_line(sp1[0]);
+        req->set_header(sp1, 1);
     }catch (std::invalid_argument &e){
         ERROR("Invalid Request:" + string(e.what()));
         throw HttpException("400");
@@ -168,3 +180,7 @@ Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
     return (req);
 }
 
+void WebservMakeRequestEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

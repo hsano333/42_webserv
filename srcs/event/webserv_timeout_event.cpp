@@ -61,3 +61,8 @@ WebservCleaner *WebservTimeoutEvent::cleaner() const
 {
     return (this->cleaner_);
 }
+
+void WebservTimeoutEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

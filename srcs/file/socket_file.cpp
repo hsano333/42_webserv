@@ -69,7 +69,6 @@ int SocketFile::read(char **buf, size_t max_size)
         return (size);
     }
     */
-
     //if (this->state != FILE_OPEN){
         //return (0);
     //}

@@ -15,8 +15,8 @@ class GetApplication : public Application
     public:
         static GetApplication *get_instance();
         ~GetApplication();
-        //bool execute(WebservEvent *event);
-        bool invoke(WebservEntity *entity);
+        bool execute(WebservEntity *event);
+        //bool invoke(WebservEntity *entity);
         //ApplicationResult *get_result();
         //static GetApplication* from_location(const Config *cfg, const Request *req);
         //Response* make_response(FileDiscriptor const &fd);

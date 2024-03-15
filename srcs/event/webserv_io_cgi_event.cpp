@@ -60,3 +60,7 @@ E_EpollEvent WebservIOCGIEvent::get_next_epoll_event(WebservEvent *event)
     return (EPOLL_NONE);
 }
 
+void WebservIOCGIEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

@@ -2,10 +2,12 @@
 #define WEBSERV_ENTITY_HPP
 
 #include "file_discriptor.hpp"
+#include "application.hpp"
 #include "application_result.hpp"
 #include "webserv_io.hpp"
+#include "body.hpp"
 
-//class ApplicationResult;
+class Application;
 class WebservEntity
 {
     public:
@@ -17,6 +19,7 @@ class WebservEntity
 
         void clean();
 
+        void set_app(Application *app);
         void set_result(ApplicationResult *result);
         void set_request(Request *req);
         void set_response(Response *res);
@@ -25,25 +28,31 @@ class WebservEntity
 
         FileDiscriptor const &fd();
         FileDiscriptor const &socket_fd();
-        ApplicationResult *app_result();
+        Application          *app();
+        ApplicationResult    *app_result();
         Request     *request();
         Response    *response();
+        Body        &body();
         WebservIO   &io();
 
         Config const *config();
         bool completed(){return this->completed_;};
         bool force_close();
+        //Body const &body() const;
+        void set_body(Body &body);
     private:
         FileDiscriptor fd_;
         FileDiscriptor sock_fd_;
         Request *req_;
         Response *res_;
         Config *cfg_;
+        Application       *app_;
         ApplicationResult *app_result_;
         WebservIO   io_;
 
         bool completed_;
         bool force_close_;
+        Body body_;
 
 };
 #endif

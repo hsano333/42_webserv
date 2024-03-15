@@ -122,13 +122,13 @@ void WebservIO::switching_io(uint32_t epoll_event)
 }
 
 
-int WebservIO::save(char *data, size_t size)
+int WebservIO::save(char *data, size_t offset, size_t size)
 {
-    this->tmp_buf.resize(size);
-    for(size_t i=0;i<size;i++){
-        this->tmp_buf[i] = data[i];
+    this->tmp_buf.resize(size-offset);
+    for(size_t i=0;i<size-offset;i++){
+        this->tmp_buf[i] = data[i + offset];
     }
-    return this->tmp_buf.size();
+    return (this->tmp_buf.size());
 }
 
 size_t WebservIO::load(char **data)

@@ -4,6 +4,9 @@
 
 #define STATUS_CODE_CGI "status"
 #define CONTENT_LENGTH "content-length"
+#define CONTENT_TYPE "content-type"
+#define CONTENT_TYPE_BOUNDARY "boundary"
+//: multipart/form-data; "
 #define TRANSFER_ENCODING "transfer-encoding"
 #define TRANSFER_ENCODING_CHUNKED "chunked"
 #define HOST "host"

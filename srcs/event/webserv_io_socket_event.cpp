@@ -1,4 +1,5 @@
 #include "webserv_io_socket_event.hpp"
+#include "http_exception.hpp"
 #include "socket_writer.hpp"
 #include "socket_file.hpp"
 #include "response.hpp"
@@ -55,7 +56,6 @@ WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, Webserv
     if(event->entity()->io().in_out() == EPOLLIN){
         return (event_factory->make_making_request_event(event));
     }
-
     return (event_factory->make_clean_event(event, false));
 }
 
@@ -68,7 +68,41 @@ E_EpollEvent WebservIOSocketEvent::get_next_epoll_event(WebservEvent *event)
         }else{
             return (EPOLL_READ);
         }
+    }else{ 
+        //EPOLLOUT
+        if (event->entity()->completed()){
+            return (EPOLL_NONE);
+        }else{
+            return (EPOLL_WRITE);
+        }
+
     }
     return (EPOLL_NONE);
 }
 
+void WebservIOSocketEvent::check_completed(WebservEntity * entity)
+{
+    DEBUG("WebservIOSocketEvent::check_completed");
+
+    bool flag = false;;
+    if(entity->io().in_out() == EPOLLIN){
+        WebservFile *dst = entity->io().destination();
+        if(dst->size() >= MAX_REAUEST_EXCEPT_BODY){
+            flag = true;
+        }else{
+            char *buf;
+            dst->read(&buf, dst->size());
+            char *pos = Utility::strnstr(buf, "\r\n\r\n", dst->size());
+            if(pos){
+                flag = true;
+            }
+        }
+    }else{
+        //EPOLLOUT 
+        //  src : Response
+        Response *res= entity->response();
+        flag = res->read_completed();
+    }
+
+    entity->set_completed(flag);
+}

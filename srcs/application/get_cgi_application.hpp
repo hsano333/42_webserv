@@ -13,8 +13,7 @@ class GetCGIApplication : public Application
     public:
         static GetCGIApplication *get_instance();
         ~GetCGIApplication();
-        bool execute(WebservEvent *event);
-        bool invoke(WebservEntity *entity);
+        bool execute(WebservEntity *entity);
         //ApplicationResult *get_result();
         //static GetCGIApplication* from_location();
         void set_path_info(std::string const &path_info);

@@ -16,7 +16,8 @@ class ApplicationResult
     public:
         ~ApplicationResult();
 
-        static ApplicationResult* from_status_code(StatusCode &code);
+        static ApplicationResult* from_status_code(StatusCode &code, Method const &method);
+        static ApplicationResult* from_status_code(StatusCode &code, string method);
         static ApplicationResult* from_fd(int in, int out, int pid);
 
         int open();
@@ -46,7 +47,8 @@ class ApplicationResult
         ProcessID      &pid();
     private:
         ApplicationResult();
-        ApplicationResult(StatusCode &code);
+        ApplicationResult(StatusCode &code, Method const &method);
+        ApplicationResult(StatusCode &code, string &method);
 
         StatusCode code_;
         //std::map<std::string, std::string> header_;

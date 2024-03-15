@@ -4,8 +4,10 @@
 #include "normal_file.hpp"
 #include "directory_file.hpp"
 #include "connection_exception.hpp"
+#include "header_word.hpp"
+#include "webserv_io_event.hpp"
 
-PostApplication::PostApplication() : res(NULL), method(Method::from_string("GET"))
+PostApplication::PostApplication() : method(Method::from_string("POST"))
 {
 ;
 }
@@ -15,6 +17,7 @@ PostApplication::~PostApplication()
 ;
 }
 
+/*
 WebservFile *PostApplication::get_requested_file(FileDiscriptor const &fd)
 {
 
@@ -35,17 +38,12 @@ WebservFile *PostApplication::get_requested_file(FileDiscriptor const &fd)
     //this->event->set_file(file);
     return (file);
 }
+*/
 
 
 bool PostApplication::is_cgi() const
 {
     return (false);
-}
-
-ApplicationResult *PostApplication::get_result()
-{
-    //ApplicationResult *file = ApplicationResult::from_result();
-    return (NULL);
 }
 
 bool PostApplication::check_not_cgi_end(size_t received_size)
@@ -56,16 +54,72 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
 }
 
 
-bool PostApplication::invoke(WebservEntity *entity)
+bool PostApplication::execute(WebservEntity *entity)
 {
-    (void)entity;
-    return (false);
+    DEBUG("PostApplication::init");
+    /*
+    //if(entity->app_result() == NULL){
+        ApplicationResult *result = this->init(entity);
+        entity->set_result(result);
+        return (false);
+    }
+    return (this->upload(entity));
+    */
+        DEBUG("PostApplication::init");
+        Header const &header = entity->request()->header();
+        std::string const &content_type = header.find(CONTENT_TYPE);
+
+        //string boundary = 
+        bool is_chunk = header.is_chunked();
+        Body &body = entity->body();;
+            //body.is_chunk = true;
+        //(void)body;
+        //bool is_chunk = true;
+        if(is_chunk){
+            body.is_chunk = true;
+            body.content_length = 0;
+        }else{
+            body.is_chunk = false;
+            std::string const &content_length = header.find(CONTENT_LENGTH);
+            if(content_type == header.not_find() && content_length == header.not_find())
+            {
+                ERROR("Even though it is not chunk, there is neither content-length nor content-type ");
+                HttpException("411");
+            }
+
+            try{
+                if(content_length != header.not_find()){
+                    body.content_length = Utility::to_size_t(content_length);
+                }
+                ssize_t body_size = header.get_content_length();
+                if(body_size < 0){
+                    body.content_length = body_size;
+                }
+            }catch (std::invalid_argument &e){
+                ERROR("body size is invalid:" + content_length);
+                throw HttpException("400");
+            }
+        }
+
+        if(entity->request()->header().get_content_type().find("text/") != std::string::npos){
+            body.is_text= true;
+        }else{
+            body.is_text= false;
+        }
+
+    StatusCode code = StatusCode::from_int(200);
+    ApplicationResult *result = ApplicationResult::from_status_code(code, this->method);
+    entity->set_result(result);
+    return (true);
 }
 
-bool PostApplication::execute(WebservEvent *event)
-{
-    (void)event;
-    DEBUG("PostApplication::execute_not_cgi");
+
+// only upload;
+
+//bool PostApplication::execute(WebservEvent *event)
+//{
+    //(void)event;
+    //DEBUG("PostApplication::execute_not_cgi");
 
     /*
     File *file = this->get_requested_file();
@@ -166,13 +220,14 @@ bool PostApplication::execute(WebservEvent *event)
         throw std::exception(HttpException("400"));
     }
     */
-    return (false);
-}
+    //return (false);
+//}
 
 
 
 
 
+/*
 PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent *event)
 {
     DEBUG("PostApplication::from_location");
@@ -193,15 +248,16 @@ PostApplication* PostApplication::from_location(const Config *cfg, WebservEvent 
     //app->reader = reader;
     return (app);
 }
+*/
 
-Response* PostApplication::make_response(FileDiscriptor const &fd)
-{
-    (void)fd;
-    StatusCode code = StatusCode::from_int(200);
-    if (this->res){
-        return (this->res);
-    }
-    return (Response::from_success_status_code(code, NULL));
+////Response* PostApplication::make_response(FileDiscriptor const &fd)
+//{
+    //(void)fd;
+    //StatusCode code = StatusCode::from_int(200);
+    //if (this->res){
+        //return (this->res);
+    //}
+    //return (Response::from_success_status_code(code, NULL));
     //return (Response::from_success_status_code(code));
 
     /*
@@ -231,7 +287,7 @@ Response* PostApplication::make_response(FileDiscriptor const &fd)
     }
     return (res);
     */
-}
+//}
 
 const Method &PostApplication::which() const
 {
@@ -257,3 +313,12 @@ std::string const &PostApplication::path_info() const
 */
 
 
+PostApplication *PostApplication::singleton = NULL;
+PostApplication *PostApplication::get_instance()
+{
+    DEBUG("PostApplication::get_instance()");
+    if (PostApplication::singleton == NULL){
+        singleton = new PostApplication();
+    }
+    return (singleton);
+}

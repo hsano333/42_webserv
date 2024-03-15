@@ -55,3 +55,7 @@ E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event(WebservEvent *
     return (EPOLL_FOR_CGI);
 }
 
+void WebservApplicationWithCgiEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

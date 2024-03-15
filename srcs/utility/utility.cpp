@@ -296,7 +296,7 @@ unsigned int Utility::to_uint(string const &str)
     return (cvt);
 }
 
-unsigned long Utility::to_size_t(string const &str)
+size_t Utility::to_size_t(string const &str)
 {
     std::string::const_iterator ite = std::find_if(str.begin(), str.end(), is_notdigit);
     if(ite != str.end()){
@@ -308,7 +308,12 @@ unsigned long Utility::to_size_t(string const &str)
     stringstream ss;
     ss << str;
     ss >> cvt;
-
+    if(str.size() < 20){
+        return (cvt);
+    }
+    if(Utility::to_string(cvt) != str){
+        throw std::invalid_argument("Utility::to_size_t() error: overflow:" + str);
+    }
     return (cvt);
 }
 

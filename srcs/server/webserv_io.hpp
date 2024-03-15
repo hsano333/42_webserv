@@ -32,7 +32,7 @@ class WebservIO
         
         void            set_in_out(uint32_t inout);
         uint32_t        in_out();
-        int             save(char *data, size_t size);
+        int             save(char *data, size_t offset, size_t size);
         size_t          load(char **data);
         void            clear_tmp_data();
 

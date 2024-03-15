@@ -13,9 +13,7 @@ class PostCGIApplication : public Application
     public:
         PostCGIApplication();
         ~PostCGIApplication();
-        void init(WebservEvent *event);
-        bool execute(WebservEvent *event);
-        bool invoke(WebservEntity *entity);
+        bool execute(WebservEntity *entity);
         ApplicationResult *get_result();
         void check_permission();
         static PostCGIApplication* from_location(const Config *cfg, WebservEvent *event, CGI *cgi);

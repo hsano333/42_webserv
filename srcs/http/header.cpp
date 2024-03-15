@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2024/02/20 02:35:33 by sano             ###   ########.fr       */
+/*   Updated: 2024/03/14 03:14:31 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,14 @@ Header& Header::operator=(Header const &header)
 
 Header Header::from_splited_data(Split &sp, size_t offset)
 {
+    DEBUG("Header::from_splited_data:" + Utility::to_string(offset));
     Header header;
     for(size_t i=offset;i<sp.size();i++){
         std::string const &line = sp[i];
         Split splited_line(line, ":", false, true);
 
         if (splited_line.size() == 1){
-            ERROR("not find ':' in header line");
+            ERROR("not find ':' in header line:" + line);
             throw HttpException("400");
         }else if (splited_line.size() == 2){
             header._headers.insert(std::make_pair(
@@ -134,11 +135,11 @@ void Header::load_data(char *buf)
 }
 */
 
-bool Header::is_chunked()
+bool Header::is_chunked() const
 {
-    const string trans_enc_str =  "transfer-encoding";
-    string const &trans_enc = this->find(trans_enc_str);
-    if (trans_enc == "chunked"){
+    //const string trans_enc_str =  "transfer-encoding";
+    string const &trans_enc = this->find(TRANSFER_ENCODING);
+    if (trans_enc == TRANSFER_ENCODING_CHUNKED){
         return (true);
     }else{
         return (false);
@@ -163,6 +164,19 @@ string const &Header::get_content_length_str() const
     }
     return (value);
 
+}
+
+std::string Header::get_content_type() const
+{
+    string const &type = this->find(CONTENT_TYPE);
+    if(type == this->not_find()){
+        return (type);
+    }
+    size_t pos = type.find(";");
+    if(pos != std::string::npos){
+        return (type.substr(0,pos));
+    }
+    return (type);
 }
 
 ssize_t Header::get_content_length() const

@@ -15,6 +15,7 @@ class WebservMakeResponseEvent
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent get_next_epoll_event(WebservEvent *event);
         Response  *make(WebservEntity *entity);
+        void        check_completed(WebservEntity * entity);
 
     private:
         WebservMakeResponseEvent();

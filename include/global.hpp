@@ -9,10 +9,10 @@
 #define MAX_FD (200)
 #define MAX_BUF (8192)
 #define MAX_URI (1500)
-#define MAX_STATUS_LINE (MAX_BUF-1)
+#define MAX_REAUEST_EXCEPT_BODY (MAX_BUF-1)
 //#define MAX_READ_SIZE (MAX_BUF-10)
 //1024+512
-#define MAX_READ_SIZE (1518)
+#define MAX_READ_SIZE (MAX_URI + 10)
 //#define MAX_READ (1024)
 #define MAX_CONFIG_SIZE (MAX_READ_SIZE)
 #define LOG_FILE "./webserv.log"
@@ -51,6 +51,9 @@
 #define LF2 "\n\n"
 #define CRLF "\r\n"
 #define CRLF2 "\r\n\r\n"
+
+//32GB
+#define MAX_BODY_SIZE (34359738368ul)
 
 
 #endif

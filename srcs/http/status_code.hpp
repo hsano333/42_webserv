@@ -7,6 +7,8 @@ class StatusCode
 {
     public:
         StatusCode();
+        StatusCode(StatusCode const &code);
+        StatusCode &operator=(StatusCode const &code);
         ~StatusCode();
         static StatusCode from_int(int code);
         static StatusCode from_string(std::string const &code);

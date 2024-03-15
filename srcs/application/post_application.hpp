@@ -11,27 +11,31 @@
 class PostApplication : public Application
 {
     public:
-        PostApplication();
+        static PostApplication *get_instance();
         ~PostApplication();
-        bool execute(WebservEvent *event);
-        bool invoke(WebservEntity *entity);
-        ApplicationResult *get_result();
-        static PostApplication* from_location(const Config *cfg, WebservEvent *event);
-        Response* make_response(FileDiscriptor const &fd);
+        //bool execute(WebservEvent *event);
+        bool execute(WebservEntity *entity);
+        //bool init(WebservEvent *event, WebservEntity *entity);
+        //bool upload(WebservEntity *entity);
+        //ApplicationResult *get_result();
+        //static PostApplication* from_location(const Config *cfg, WebservEvent *event);
+        //Response* make_response(FileDiscriptor const &fd);
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
         const Method &which() const;
 
     private:
-        WebservFile *get_requested_file(FileDiscriptor const &fd);
-        WebservEvent *event;
+        PostApplication();
+        static PostApplication *singleton;
+        //WebservFile *get_requested_file(FileDiscriptor const &fd);
+        //WebservEvent *event;
         bool check_not_cgi_end(size_t sum);
-        const Config *cfg;
-        const ConfigServer *server;
-        const ConfigLocation *location;
-        const Request *req;
-        Response *res;
-        std::map<std::string, std::string> tmp_headers;
+        //const Config *cfg;
+        //const ConfigServer *server;
+        //const ConfigLocation *location;
+        //const Request *req;
+        //Response *res;
+        //std::map<std::string, std::string> tmp_headers;
         Method method;
 };
 #endif

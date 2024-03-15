@@ -103,3 +103,7 @@ WebservEvent *WebservCleanEvent::from_event(WebservEvent *event, bool force_clos
     return (new_event);
 }
 
+void WebservCleanEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}

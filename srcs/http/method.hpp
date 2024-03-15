@@ -14,7 +14,8 @@ typedef enum E_METHOD
     OPTIONS,
     TRACE,
     PATCH,
-} e_method;
+    NONE,
+} E_METHOD;
 
 //class Method;
 
@@ -26,6 +27,8 @@ class Method
         Method(Method const &method);
         Method& operator=(Method const &method);
         bool operator==(Method const &method);
+        bool operator==(E_METHOD const method) const;
+
         //virtual ~Method() {};
         //virtual void parse() = 0;
         //virtual void execute() = 0;
@@ -33,10 +36,10 @@ class Method
         //virtual bool is_need_body() const = 0;
         static Method from_string(std::string const &name);
         std::string to_string() const;
-        e_method to_enum() const;
+        E_METHOD to_enum() const;
         //static Method* make_method(std::string &name);
     private:
-        e_method method_;
+        E_METHOD method_;
 };
 
 #endif

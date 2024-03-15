@@ -78,7 +78,7 @@ void DeleteApplication::execute_cgi()
 }
 */
 
-bool DeleteApplication::invoke(WebservEntity *entity)
+bool DeleteApplication::execute(WebservEntity *entity)
 {
     DEBUG("DeleteApplication::invoke");
     (void)entity;
@@ -123,7 +123,7 @@ bool DeleteApplication::invoke(WebservEntity *entity)
     }
 
     DEBUG("DeleteApplication::invoke No.8");
-    ApplicationResult *result_ = ApplicationResult::from_status_code(code);
+    ApplicationResult *result_ = ApplicationResult::from_status_code(code, this->method);
     result_->add_header(CONTENT_LENGTH, "0");
     result_->set_file(NULL);
     DEBUG("DeleteApplication::invoke No.9");
@@ -131,6 +131,7 @@ bool DeleteApplication::invoke(WebservEntity *entity)
     DEBUG("DeleteApplication::invoke No.10");
     return (true);
 }
+
 
 /*
 bool DeleteApplication::execute(WebservEvent *event)

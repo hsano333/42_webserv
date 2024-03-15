@@ -12,7 +12,7 @@
 typedef enum E_WebservEvent
 {
     CLEAN_EVENT,
-    KEEPA_ALIVE_EVENT,
+    KEEP_ALIVE_EVENT,
     OTHER_EVENT,
 } EWebservEvent;
 
@@ -24,6 +24,7 @@ class EventConcept
         virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
         virtual EWebservEvent which() const = 0;
+        virtual void check_completed() = 0;
 };
 
 class WebservEntity;
@@ -39,6 +40,7 @@ class OwningEventModel : public EventConcept
         E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
         EWebservEvent which() const {return (event_type_);}
+        void check_completed() {return event_->check_completed(this->entity_);}
 
     private:
         EventPointer event_;
@@ -72,6 +74,7 @@ class WebservEvent
         std::time_t last_updated_time();
         bool check_timeout(std::time_t now);
 
+
         E_EpollEvent get_next_epoll_event()
         {
             return (pimpl_->get_next_epoll_event(this));
@@ -84,6 +87,7 @@ class WebservEvent
         {
             return (pimpl_->which());
         }
+        void check_complted(){(pimpl_->check_completed());};
 
     private:
         WebservEntity *entity_;
@@ -91,10 +95,23 @@ class WebservEvent
 
         friend void handle(WebservEvent *event)
         {
-            bool test = event->pimpl_->handle();
-            cout << test << endl;
+            event->pimpl_->handle();
             event->updated_time_ = std::time(NULL);
         }
+
+        friend WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory)
+        {
+            return (event->pimpl_->make_next_event(event, factory));
+        }
+
+        //friend void check_completed(WebservEvent *event, WebservEntity *entity)
+        //{
+            //(void)event;
+            //(void)entity;
+            //bool test = event->pimpl_->handle();
+            //cout << test << endl;
+            //event->updated_time_ = std::time(NULL);
+        //}
         EventConcept *pimpl_;
 };
 

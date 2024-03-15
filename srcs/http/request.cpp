@@ -48,13 +48,15 @@ Request::Request() :
 Request::Request(FileDiscriptor const &fd) :
     file(NULL),
     fd_(fd),
+    buf_body(NULL),
     //raw_buf_pos_(0),
     buf_body_size(0),
     // -1 is for '\0'
     //raw_buf_rest_size_(MAX_BUF-1),
     is_file_(false),
     is_directory_(false),
-    is_not_executable_parent_dir_(false)
+    is_not_executable_parent_dir_(false),
+    read_body_size_(0)
     //source_file(NULL)
     //is_redable_darectory(false)
 {
@@ -63,7 +65,7 @@ Request::Request(FileDiscriptor const &fd) :
 
 Request::~Request()
 {
-    //cout << "~Request()" << endl;
+    delete (this->buf_body);
 }
 
 
@@ -131,10 +133,17 @@ char *Request::get_buf_body(int *size)
     return (this->buf_body);
 }
 
-void Request::set_buf_body(char *body_p, int size)
+void Request::set_buf_body(char const *body_p, int size)
 {
     DEBUG("Request::set_buf_body size:" + Utility::to_string(size));
-    this->buf_body = body_p;
+    if(this->buf_body != NULL){
+        ERROR("buf_body is not NULL. set_buf_body must be used only once");
+        throw std::runtime_error("buf_body is not NULL");
+    }
+    this->buf_body = new char[size];
+    for(int i=0;i<size;i++){
+        this->buf_body[i] = body_p[i];
+    }
     this->buf_body_size = size;
 }
 
@@ -241,7 +250,6 @@ void Request::check_parent_permittion(std::string &path)
             this->is_deletable_parent_dir_ = true;
         }
     }
-
 }
 
 void Request::set_requested_filepath(const ConfigLocation *location)
@@ -459,6 +467,11 @@ std::string const &Request::path_info() const
 
 void Request::set_path_info(std::string const &root){
     this->path_info_ = root + tmp_path_info_;
+}
+
+void Request::add_read_body_size(size_t size)
+{
+    this->read_body_size_ += size;
 }
 
 void Request::print_info() const

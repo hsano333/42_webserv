@@ -15,6 +15,7 @@ class WebservTimeoutEvent
         FDManager *fd_manager;
         EventManager *event_manager;
         WebservCleaner *cleaner() const;
+        void        check_completed(WebservEntity * entity);
 
     private:
         WebservTimeoutEvent();

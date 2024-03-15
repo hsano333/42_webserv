@@ -47,4 +47,8 @@ E_EpollEvent WebservNothingEvent::get_next_epoll_event(WebservEvent *event)
     return (EPOLL_NONE);
 }
 
+void WebservNothingEvent::check_completed(WebservEntity * entity)
+{
+    entity->set_completed(true);
+}
 

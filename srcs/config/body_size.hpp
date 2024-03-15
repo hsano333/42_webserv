@@ -8,13 +8,16 @@ class BodySize
 {
     public:
         BodySize();
+        BodySize(size_t size);
         ~BodySize();
-        static BodySize from_string (std::string const &size);
-        static BodySize from_string (std::string &size);
-        static BodySize from_number (ssize_t size);
+        static BodySize from_string(std::string const &size);
+        static BodySize from_string(std::string &size);
+        static BodySize from_number(ssize_t size);
+        static BodySize from_number_string(std::string &size);
         size_t to_number() const;
     private:
         size_t size;
+        //size_t string_to_number(std::string &string, bool unit);
         //bool check_over(ssize_t value, ssize_t unit);
         //ssize_t get_unit_size(char c);
 

@@ -105,7 +105,7 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
                 DEBUG("ApplicationFactory::make_application() Get Method with CGI");
                 app = GetCGIApplication::get_instance();
             }else{
-                DEBUG("ApplicationFactory::make_application() Get Method with not CGI");
+                DEBUG("ApplicationFactory::make_application() Get Method without CGI");
                 app = GetApplication::get_instance();
             }
             break;
@@ -117,9 +117,8 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
                 //app = PostCGIApplication::from_location(cfg, req, cgi);
                 //app = PostCGIApplication::from_location(cfg, event, cgi);
             }else{
-                app = NULL;
-                DEBUG("ApplicationFactory::make_application() Post Method with not CGI");
-                //app = PostApplication::from_location(cfg, event);
+                DEBUG("ApplicationFactory::make_application() Post Method without CGI");
+                app = PostApplication::get_instance();
             }
             break;
         case DELETE:

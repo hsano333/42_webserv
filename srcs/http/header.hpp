@@ -29,13 +29,13 @@ class Header{
         void erase(std::string const &key);
         //void insert(std::string const &key, std::string const &value);
 
-
         void print_info() const;
         std::string const &not_find() const;
         std::string const &find(const std::string &name) const;
+        std::string get_content_type() const;
         ssize_t get_content_length() const;
         std::string const &get_content_length_str() const;
-        bool is_chunked();
+        bool is_chunked() const;
         std::string const &get_host() const;
         static Header from_splited_data(Split &sp, size_t offset);
 

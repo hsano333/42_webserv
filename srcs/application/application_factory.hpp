@@ -9,6 +9,7 @@
 //#include "webserv_application_with_cgi_event.hpp"
 //#include "webserv_application_without_cgi_event.hpp"
 #include "method.hpp"
+#include "application.hpp"
 #include <string>
 
 class ApplicationFactory

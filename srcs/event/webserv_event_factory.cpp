@@ -3,6 +3,7 @@
 #include "webserv_make_response_event.hpp"
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_application_without_cgi_event.hpp"
+#include "webserv_application_upload_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
 #include "socket_reader.hpp"
@@ -63,6 +64,7 @@ void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, File
 
 WebservEvent *WebservEventFactory::make_keep_alive_event(WebservEvent *event)
 {
+    DEBUG("WebservEventFactory::make_keep_alive_event");
     WebservEvent *new_event = WebservKeepAliveEvent::from_event(event);
     return (new_event);
     //return (event);
@@ -94,7 +96,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-            if(cached_event == NULL || cached_event->which() == KEEPA_ALIVE_EVENT){
+            if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
                     delete cached_event;
                 }
@@ -104,7 +106,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 entity->config()->check();
                 FileDiscriptor const &fd_ref = entity->fd();
                 WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, socket_writer, socket_reader);
-                WebservFile *read_dst = this->file_factory->make_vector_file(fd_ref, MAX_STATUS_LINE);
+                WebservFile *read_dst = this->file_factory->make_vector_file(fd_ref, MAX_REAUEST_EXCEPT_BODY);
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
                 this->cfg->check();
                 event->entity()->config()->check();
@@ -157,7 +159,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
     WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
-    WebservFile *dst = this->file_factory->make_vector_file(event->entity()->fd(), MAX_STATUS_LINE);
+    WebservFile *dst = this->file_factory->make_vector_file(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
     WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
     return (new_event);
 }
@@ -170,6 +172,8 @@ WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event
     return (new_event);
 }
 
+
+
 WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_making_response_event");
@@ -180,6 +184,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 {
+    DEBUG("WebservEventFactory::make_application_event()");
     WebservEvent *new_event;
     if(event->entity()->request()->is_cgi()){
         new_event = WebservApplicationWithCgiEvent::from_event(event);
@@ -189,6 +194,15 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 
     return (new_event);
 }
+
+WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event)
+{
+    DEBUG("WebservEventFactory::make_making_upload_event");
+    WebservEvent *new_event = WebservApplicationUploadEvent::from_event(event);
+
+    return (new_event);
+}
+
 
 WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *event, char const *code_c)
 {
@@ -212,7 +226,7 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
     if(event->entity()->app_result() != NULL){
         delete event->entity()->app_result();
     }
-    ApplicationResult *result = ApplicationResult::from_status_code(code);
+    ApplicationResult *result = ApplicationResult::from_status_code(code, "NONE");
     result->set_file(file);
     event->entity()->set_result(result);
 
@@ -224,12 +238,14 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
 
 WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool force_close)
 {
+    DEBUG("WebservEventFactory::make_clean_event()");
     WebservEvent *new_event = WebservCleanEvent::from_event(event, force_close);
     return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_timeout_event()
 {
+    DEBUG("WebservEventFactory::make_timeout_event()");
     return (WebservTimeoutEvent::make(this->cleaner));
 }
 

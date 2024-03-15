@@ -6,7 +6,7 @@
 #include "connection_exception.hpp"
 #include "application_result.hpp"
 
-PostCGIApplication::PostCGIApplication() : res(NULL), method(Method::from_string("GET"))
+PostCGIApplication::PostCGIApplication() : res(NULL), method(Method::from_string("POST"))
 {
 ;
 }
@@ -58,24 +58,13 @@ bool PostCGIApplication::check_not_cgi_end(size_t received_size)
     return (true);
 }
 
-void PostCGIApplication::init(WebservEvent *event)
-{
-    (void)event;
-}
 
-bool PostCGIApplication::invoke(WebservEntity *entity)
+bool PostCGIApplication::execute(WebservEntity *entity)
 {
     (void)entity;
     return (false);
 }
 
-bool PostCGIApplication::execute(WebservEvent *event)
-{
-    (void)event;
-    //return (true);
-    return (true);
-
-}
 
 ApplicationResult *PostCGIApplication::get_result()
 {

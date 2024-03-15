@@ -22,7 +22,7 @@ bool GetCGIApplication::is_cgi() const
     return (true);
 }
 
-bool GetCGIApplication::invoke(WebservEntity *entity)
+bool GetCGIApplication::execute(WebservEntity *entity)
 {
     (void)entity;
     Request *req = entity->request();
@@ -35,6 +35,7 @@ bool GetCGIApplication::invoke(WebservEntity *entity)
     entity->set_result(result);
     return (true);
 }
+
 
 /*
 ApplicationResult *GetCGIApplication::get_result()

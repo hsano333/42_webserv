@@ -13,6 +13,20 @@ StatusCode::~StatusCode()
     ;
 }
 
+StatusCode::StatusCode(StatusCode const &code)
+{
+    this->code = code.code;
+}
+
+StatusCode &StatusCode::operator=(StatusCode const &code)
+{
+    if(this == &code){
+        return (*this);
+    }
+    this->code = code.code;
+    return (*this);
+}
+
 const char* StatusCode::message() const
 {
     switch (this->code)

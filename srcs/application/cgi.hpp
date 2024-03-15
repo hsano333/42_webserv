@@ -1,7 +1,7 @@
 #ifndef CGI_HPP
 #define CGI_HPP
 #include "request.hpp"
-#include "application.hpp"
+//#include "application.hpp"
 #include "application_result.hpp"
 
 class CGI

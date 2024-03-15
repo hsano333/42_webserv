@@ -16,7 +16,8 @@ Response::Response() :
     is_redirect(false),
     send_state(STILL_NOT_SEND),
     has_body(false),
-    is_chunked(false)
+    is_chunked(false),
+    written_body_size(0)
     //exist_body_(false)
 {
     this->headers.insert("Server", WEBSERV_VERSION);
@@ -366,6 +367,10 @@ void Response::check_body_and_chunk()
     DEBUG("Response::check_body_and_chunk() chunked:" + Utility::to_string(this->is_chunked));
 }
 
+bool Response::read_completed(){
+    return (this->send_state == SENT_BODY);
+}
+
 int Response::read(char** data, size_t max_read_size)
 {
     (void)max_read_size;
@@ -619,4 +624,10 @@ ssize_t Response::get_data(char** data)
     return (0);
 }
 */
+
+
+void Response::add_written_body_size(size_t size)
+{
+    this->written_body_size += size;
+}
 
