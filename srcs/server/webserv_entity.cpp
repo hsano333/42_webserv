@@ -2,7 +2,7 @@
 #include "request.hpp"
 #include "response.hpp"
 
-WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL)
+WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_result_(NULL)
 {
 ;
 }
@@ -45,10 +45,6 @@ WebservEntity& WebservEntity::operator=(WebservEntity const &entity)
     return (*this);
 }
 
-void WebservEntity::set_app(Application *app)
-{
-    this->app_ = app;
-}
 
 void WebservEntity::set_result(ApplicationResult *result)
 {
@@ -90,10 +86,6 @@ FileDiscriptor const &WebservEntity::socket_fd()
     return (this->sock_fd_);
 }
 
-Application *WebservEntity::app()
-{
-    return (this->app_);
-}
 
 ApplicationResult *WebservEntity::app_result()
 {

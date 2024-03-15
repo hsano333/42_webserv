@@ -53,6 +53,16 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
     return (true);
 }
 
+WebservEvent* PostApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
+{
+    return (event_factory->make_making_response_event(event, event->entity()->io().destination()));
+}
+
+E_EpollEvent PostApplication::epoll_event(WebservEntity *entity)
+{
+    (void)entity;
+    return (EPOLL_NONE);
+}
 
 bool PostApplication::execute(WebservEntity *entity)
 {

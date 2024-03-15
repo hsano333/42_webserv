@@ -21,7 +21,7 @@ class EventConcept
     public:
         virtual ~EventConcept(){};
         virtual bool handle() const = 0;
-        virtual E_EpollEvent get_next_epoll_event(WebservEvent* event) const = 0;
+        virtual E_EpollEvent epoll_event(WebservEvent* event) const = 0;
         virtual WebservEvent* make_next_event(WebservEvent *event, WebservEventFactory *factory) const = 0;
         virtual EWebservEvent which() const = 0;
         virtual void check_completed() = 0;
@@ -37,7 +37,7 @@ class OwningEventModel : public EventConcept
         OwningEventModel(EventPointer event, HandleStrategyPointer handler, WebservEntity *entity, EWebservEvent event_type) : event_(event), handler_(handler), entity_(entity), event_type_(event_type){};
         OwningEventModel(OwningEventModel const &model) : event_(model.event), handler_(model.handler), entity_(model.entity){};
         bool handle() const {return handler_(event_, entity_);}
-        E_EpollEvent get_next_epoll_event(WebservEvent* event) const {return (event_->get_next_epoll_event(event));}
+        E_EpollEvent epoll_event(WebservEvent* event) const {return (event_->epoll_event(event));}
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
         EWebservEvent which() const {return (event_type_);}
         void check_completed() {return event_->check_completed(this->entity_);}
@@ -75,9 +75,9 @@ class WebservEvent
         bool check_timeout(std::time_t now);
 
 
-        E_EpollEvent get_next_epoll_event()
+        E_EpollEvent epoll_event()
         {
-            return (pimpl_->get_next_epoll_event(this));
+            return (pimpl_->epoll_event(this));
         }
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory)
         {

@@ -46,7 +46,11 @@ void EventController::change_write_event(WebservEvent *event)
 
 void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *next_event)
 {
-    E_EpollEvent next_epoll_event = event->get_next_epoll_event();
+    if(next_event == NULL){
+        return;
+    }
+
+    E_EpollEvent next_epoll_event = next_event->epoll_event();
     MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
     if (next_epoll_event == EPOLL_READ){

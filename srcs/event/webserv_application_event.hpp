@@ -17,7 +17,7 @@ bool invoke(EventT *event, WebservEntity *entity)
         //is_completed = app->init(entity);
     //}else{
     Application *app = factory->make_application(entity);
-    entity->set_app(app);
+    //entity->set_app(app);
     is_completed = app->execute(entity);
     //}
 

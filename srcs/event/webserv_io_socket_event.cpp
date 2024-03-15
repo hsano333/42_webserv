@@ -59,9 +59,17 @@ WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, Webserv
     return (event_factory->make_clean_event(event, false));
 }
 
-E_EpollEvent WebservIOSocketEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
 {
-    DEBUG("WebservIOSocketEvent::get_next_epoll_event()");
+    DEBUG("WebservIOSocketEvent::epoll_event()");
+    if(event->entity()->io().in_out() == EPOLLIN){
+        return (EPOLL_READ);
+    }else{ 
+        //EPOLLOUT
+        return (EPOLL_WRITE);
+
+    }
+    /*
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
             return (EPOLL_NONE);
@@ -77,6 +85,7 @@ E_EpollEvent WebservIOSocketEvent::get_next_epoll_event(WebservEvent *event)
         }
 
     }
+    */
     return (EPOLL_NONE);
 }
 

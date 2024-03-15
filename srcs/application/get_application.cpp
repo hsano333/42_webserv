@@ -129,6 +129,18 @@ string GetApplication::get_index_path(Request *req, ConfigLocation const *locati
 
 }
 
+
+WebservEvent* GetApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
+{
+    return (event_factory->make_making_upload_event(event));
+}
+
+E_EpollEvent GetApplication::epoll_event(WebservEntity *entity)
+{
+    (void)entity;
+    return (EPOLL_FOR_CGI);
+}
+
 bool GetApplication::execute(WebservEntity *entity)
 {
     DEBUG("GetApplication::invoke()");

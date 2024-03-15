@@ -59,6 +59,17 @@ bool PostCGIApplication::check_not_cgi_end(size_t received_size)
 }
 
 
+WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
+{
+    return (event_factory->make_making_upload_event(event));
+}
+
+E_EpollEvent PostCGIApplication::epoll_event(WebservEntity *entity)
+{
+    (void)entity;
+    return (EPOLL_NONE);
+}
+
 bool PostCGIApplication::execute(WebservEntity *entity)
 {
     (void)entity;

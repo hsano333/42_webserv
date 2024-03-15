@@ -13,6 +13,8 @@ class PostCGIApplication : public Application
     public:
         PostCGIApplication();
         ~PostCGIApplication();
+        WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
+        E_EpollEvent epoll_event(WebservEntity *event);
         bool execute(WebservEntity *entity);
         ApplicationResult *get_result();
         void check_permission();

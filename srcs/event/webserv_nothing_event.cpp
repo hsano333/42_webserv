@@ -41,7 +41,7 @@ WebservEvent* WebservNothingEvent::make_next_event(WebservEvent* event, WebservE
     return (NULL);
 }
 
-E_EpollEvent WebservNothingEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservNothingEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     return (EPOLL_NONE);

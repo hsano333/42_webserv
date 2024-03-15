@@ -14,7 +14,7 @@ class WebservApplicationWithCgiEvent
         ~WebservApplicationWithCgiEvent();
         static WebservEvent *from_event(WebservEvent *event);
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event(WebservEvent *event);
+        E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
 
     private:

@@ -14,6 +14,8 @@ class PostApplication : public Application
         static PostApplication *get_instance();
         ~PostApplication();
         //bool execute(WebservEvent *event);
+        WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
+        E_EpollEvent epoll_event(WebservEntity *event);
         bool execute(WebservEntity *entity);
         //bool init(WebservEvent *event, WebservEntity *entity);
         //bool upload(WebservEntity *entity);

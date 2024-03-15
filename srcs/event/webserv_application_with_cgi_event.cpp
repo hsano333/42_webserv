@@ -49,7 +49,7 @@ WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* even
     return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
 }
 
-E_EpollEvent WebservApplicationWithCgiEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservApplicationWithCgiEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     return (EPOLL_FOR_CGI);

@@ -48,7 +48,7 @@ WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, Webs
     return (event_factory->make_application_event(event));
 }
 
-E_EpollEvent WebservMakeRequestEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservMakeRequestEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     return (EPOLL_NONE);

@@ -27,8 +27,9 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
     return (NULL);
 }
 
-E_EpollEvent WebservCleanEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservCleanEvent::epoll_event(WebservEvent *event)
 {
+    return (EPOLL_NONE);
     if (event->entity()->force_close()){
         return (EPOLL_CLOSE);
     }else{

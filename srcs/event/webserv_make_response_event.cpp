@@ -148,10 +148,11 @@ WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, Web
     return (new_event);
 }
 
-E_EpollEvent WebservMakeResponseEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservMakeResponseEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    return (EPOLL_WRITE);
+    //return (EPOLL_WRITE);
+    return (EPOLL_NONE);
 }
 
 void WebservMakeResponseEvent::check_completed(WebservEntity * entity)

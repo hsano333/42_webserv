@@ -21,7 +21,7 @@ class WebservIOSocketEvent
         static WebservEvent *as_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst);
 
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
-        E_EpollEvent get_next_epoll_event(WebservEvent *event);
+        E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
         int write(char *buf, size_t size);
         int read(char *buf, size_t size);

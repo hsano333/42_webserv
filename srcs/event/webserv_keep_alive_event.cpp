@@ -38,7 +38,7 @@ WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, Webser
     return (event_factory->make_io_socket_event_as_read(event));
 }
 
-E_EpollEvent WebservKeepAliveEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservKeepAliveEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     return (EPOLL_READ);

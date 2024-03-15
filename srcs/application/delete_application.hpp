@@ -15,6 +15,8 @@ class DeleteApplication : public Application
         static DeleteApplication *get_instance();
         ~DeleteApplication();
         //bool init(WebservEntity *event);
+        WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
+        E_EpollEvent epoll_event(WebservEntity *event);
         bool execute(WebservEntity *event);
         //bool invoke(WebservEntity *entity);
         //ApplicationResult *get_result();

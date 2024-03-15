@@ -47,9 +47,9 @@ WebservEvent* WebservIOCGIEvent::make_next_event(WebservEvent* event, WebservEve
     return (event);
 }
 
-E_EpollEvent WebservIOCGIEvent::get_next_epoll_event(WebservEvent *event)
+E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
 {
-    DEBUG("WebservIOCGIEvent::get_next_epoll_event()");
+    DEBUG("WebservIOCGIEvent::epoll_event()");
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
             return (EPOLL_NONE);

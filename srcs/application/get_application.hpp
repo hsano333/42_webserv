@@ -15,6 +15,8 @@ class GetApplication : public Application
     public:
         static GetApplication *get_instance();
         ~GetApplication();
+        WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
+        E_EpollEvent epoll_event(WebservEntity *event);
         bool execute(WebservEntity *event);
         //bool invoke(WebservEntity *entity);
         //ApplicationResult *get_result();
