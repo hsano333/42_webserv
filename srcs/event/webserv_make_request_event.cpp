@@ -45,6 +45,7 @@ WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, WebservFi
 
 WebservEvent* WebservMakeRequestEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
+    DEBUG("WebservMakeRequestEvent::make_next_event");
     return (event_factory->make_application_event(event));
 }
 

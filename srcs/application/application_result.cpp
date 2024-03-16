@@ -6,17 +6,17 @@
 #include "application_result.hpp"
 #include <unistd.h>
 
-ApplicationResult::ApplicationResult() : method_(Method::from_string("NONE")), is_cgi_(false)
+ApplicationResult::ApplicationResult() : app_(NULL), method_(Method::from_string("NONE")), is_cgi_(false)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : code_(code), method_(method), is_cgi_(false)
+ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : app_(NULL), code_(code), method_(method), is_cgi_(false)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code, string &method) : code_(code), method_(Method::from_string(method)), is_cgi_(false)
+ApplicationResult::ApplicationResult(StatusCode &code, string &method) : app_(NULL), code_(code), method_(Method::from_string(method)), is_cgi_(false)
 {
     ;
 }
@@ -186,10 +186,28 @@ bool ApplicationResult::is_completed()
 }
 
 
+/*
+Application *ApplicationResult::app()
+{
+    return (this->app_);
+}
+*/
+
 WebservFile *ApplicationResult::file()
 {
     return (this->file_);
 }
+
+
+/*
+void ApplicationResult::set_app(Application *app)
+{
+    if(this->app_ == app){
+        return ;
+    }
+    this->app_ = app;
+}
+*/
 
 void ApplicationResult::set_file(WebservFile *file)
 {

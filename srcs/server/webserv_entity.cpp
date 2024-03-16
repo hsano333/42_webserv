@@ -2,7 +2,7 @@
 #include "request.hpp"
 #include "response.hpp"
 
-WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_result_(NULL)
+WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL)
 {
 ;
 }
@@ -16,12 +16,12 @@ WebservEntity::~WebservEntity()
 
 
 // fd,socket_fdはコピーする
-WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_result_(NULL)
+WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_(NULL), app_result_(NULL)
 {
     DEBUG("WebservEntity::WebservEntity");
 }
 
-WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_result_(entity.app_result_)
+WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_(entity.app_), app_result_(entity.app_result_)
 {
     ;
 }
@@ -41,10 +41,18 @@ WebservEntity& WebservEntity::operator=(WebservEntity const &entity)
     this->cfg_ = entity.cfg_;
     //this->source_ = entity.source_;
     //this->destination_ = entity.destination_;
+    this->app_ = entity.app_;
     this->app_result_ = entity.app_result_;
     return (*this);
 }
 
+void WebservEntity::set_app(Application *app)
+{
+    if(this->app_ == app){
+        return ;
+    }
+    this->app_ = app;
+}
 
 void WebservEntity::set_result(ApplicationResult *result)
 {
@@ -54,6 +62,7 @@ void WebservEntity::set_result(ApplicationResult *result)
     //delete this->app_result_;
     this->app_result_ = result;
 }
+
 void WebservEntity::set_request(Request *req)
 {
     DEBUG("WebservEntity::set_request");
@@ -86,6 +95,10 @@ FileDiscriptor const &WebservEntity::socket_fd()
     return (this->sock_fd_);
 }
 
+Application *WebservEntity::app()
+{
+    return (this->app_);
+}
 
 ApplicationResult *WebservEntity::app_result()
 {

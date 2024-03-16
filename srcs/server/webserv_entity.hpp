@@ -7,7 +7,7 @@
 #include "webserv_io.hpp"
 #include "body.hpp"
 
-//class Application;
+class Application;
 class WebservEntity
 {
     public:
@@ -19,7 +19,7 @@ class WebservEntity
 
         void clean();
 
-        //void set_app(Application *app);
+        void set_app(Application *app);
         void set_result(ApplicationResult *result);
         void set_request(Request *req);
         void set_response(Response *res);
@@ -28,7 +28,7 @@ class WebservEntity
 
         FileDiscriptor const &fd();
         FileDiscriptor const &socket_fd();
-        //Application          *app();
+        Application          *app();
         ApplicationResult    *app_result();
         Request     *request();
         Response    *response();
@@ -46,7 +46,7 @@ class WebservEntity
         Request *req_;
         Response *res_;
         Config *cfg_;
-        //Application       *app_;
+        Application       *app_;
         ApplicationResult *app_result_;
         WebservIO   io_;
 

@@ -11,6 +11,7 @@
 #include "ireader.hpp"
 #include "iwriter.hpp"
 
+class Application;
 class ApplicationResult
 {
     public:
@@ -33,6 +34,7 @@ class ApplicationResult
         StatusCode const &status_code() const;
         Header const &header() const;
         WebservFile *file();
+        //void set_app(Application *app);
         void set_file(WebservFile *file);
 
         bool is_completed();
@@ -42,6 +44,7 @@ class ApplicationResult
         void set_is_cgi(bool flag);
         bool is_cgi();
 
+        //Application    *app();
         FileDiscriptor &cgi_in();
         FileDiscriptor &cgi_out();
         ProcessID      &pid();
@@ -50,6 +53,7 @@ class ApplicationResult
         ApplicationResult(StatusCode &code, Method const &method);
         ApplicationResult(StatusCode &code, string &method);
 
+        char *app_;
         StatusCode code_;
         //std::map<std::string, std::string> header_;
         Header         header_;

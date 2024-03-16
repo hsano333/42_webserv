@@ -1,17 +1,17 @@
 #ifndef WEBSERV_CLEANER_HPP
 #define WEBSERV_CLEANER_HPP
 #include "webserv_event.hpp"
+#include "webserv_entity.hpp"
 #include "io_multiplexing.hpp"
 #include "event_manager.hpp"
 #include "fd_manager.hpp"
-#include "webserv_entity.hpp"
 #include "file_manager.hpp"
 //#include "webserv_timeout_event.hpp"
 //#include "webserv_clean_event.hpp"
 
 class EventManager;
-class WebservEvent;
 class WebservEntity;
+class WebservEvent;
 class WebservCleaner
 {
     public:
