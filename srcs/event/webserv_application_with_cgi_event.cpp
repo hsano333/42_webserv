@@ -52,7 +52,7 @@ WebservEvent* WebservApplicationWithCgiEvent::make_next_event(WebservEvent* even
 E_EpollEvent WebservApplicationWithCgiEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    return (EPOLL_FOR_CGI);
+    return (EPOLL_NONE);
 }
 
 void WebservApplicationWithCgiEvent::check_completed(WebservEntity * entity)
