@@ -47,10 +47,11 @@ void EventController::change_write_event(WebservEvent *event)
 void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *next_event)
 {
     if(next_event == NULL){
+        MYINFO("EventController::next_epoll_event is NULL");
         return;
     }
 
-    E_EpollEvent next_epoll_event = next_event->epoll_event();
+    E_EpollEvent next_epoll_event = event->epoll_event();
     MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
     if (next_epoll_event == EPOLL_READ){
@@ -71,9 +72,9 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         this->io_multi_controller->add(next_event->entity()->io().get_read_fd(), EPOLLIN | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_read_fd(), next_event);
         this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_read_fd(), socket_fd);
-    }else if (next_epoll_event == EPOLL_CLOSE){
-        MYINFO("EventController::next is epoll closed");
-        this->fd_manager->close_fd(event->entity()->fd());
+    //}else if (next_epoll_event == EPOLL_CLOSE){
+        //MYINFO("EventController::next is epoll closed");
+        //this->fd_manager->close_fd(event->entity()->fd());
     }else if(next_event){
         MYINFO("EventController::next is not epoll");
         this->event_manager->push(next_event);

@@ -54,7 +54,7 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
         }
         ite++;
     }
-        DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
+    DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
     if(!exist_flag){
         std::vector<WebservFile *> file_vector;
         this->file_list.insert(std::make_pair(fd, file_vector));

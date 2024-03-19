@@ -2,7 +2,7 @@
 #include "request.hpp"
 #include "response.hpp"
 
-WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL)
+WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL), completed_(false), force_close_(false)
 {
 ;
 }
@@ -16,12 +16,12 @@ WebservEntity::~WebservEntity()
 
 
 // fd,socket_fdはコピーする
-WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_(NULL), app_result_(NULL)
+WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_(NULL), app_result_(NULL), completed_(false), force_close_(false)
 {
     DEBUG("WebservEntity::WebservEntity");
 }
 
-WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_(entity.app_), app_result_(entity.app_result_)
+WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_(entity.app_), app_result_(entity.app_result_), completed_(entity.completed_), force_close_(entity.force_close_)
 {
     ;
 }
@@ -43,6 +43,8 @@ WebservEntity& WebservEntity::operator=(WebservEntity const &entity)
     //this->destination_ = entity.destination_;
     this->app_ = entity.app_;
     this->app_result_ = entity.app_result_;
+    this->completed_ = entity.completed_;
+    this->force_close_ = entity.force_close_;
     return (*this);
 }
 

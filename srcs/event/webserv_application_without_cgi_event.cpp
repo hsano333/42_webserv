@@ -42,9 +42,9 @@ WebservEvent* WebservApplicationWithoutCgiEvent::make_next_event(WebservEvent* e
 E_EpollEvent WebservApplicationWithoutCgiEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    //if(event->entity()->app_result()->method() == POST){
-        //return (EPOLL_READ);
-    //}
+    if(event->entity()->app_result()->method() == POST){
+        return (EPOLL_READ);
+    }
     return (EPOLL_NONE);
 }
 

@@ -1,8 +1,9 @@
 #include "webserv_event.hpp"
 #include "webserv_make_request_event.hpp"
 #include "webserv_make_response_event.hpp"
-#include "webserv_application_with_cgi_event.hpp"
-#include "webserv_application_without_cgi_event.hpp"
+#include "webserv_application_event.hpp"
+//#include "webserv_application_with_cgi_event.hpp"
+//#include "webserv_application_without_cgi_event.hpp"
 #include "webserv_application_upload_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
@@ -186,11 +187,14 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_application_event()");
     WebservEvent *new_event;
+    new_event = WebservApplicationEvent::from_event(event);
+    /*
     if(event->entity()->request()->is_cgi()){
         new_event = WebservApplicationWithCgiEvent::from_event(event);
     }else{
         new_event = WebservApplicationWithoutCgiEvent::from_event(event);
     }
+    */
 
     return (new_event);
 }

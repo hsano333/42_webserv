@@ -126,10 +126,8 @@ void Webserv::communication()
             }
 
             if(next_event != event){
-                bool clean_event = this->cleaner->clean(event);
-                if(clean_event){
-                    count++;
-                }
+                this->cleaner->delete_event(event);
+                count++;
             }
         }
 

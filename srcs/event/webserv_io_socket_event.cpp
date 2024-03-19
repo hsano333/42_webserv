@@ -52,24 +52,17 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
 
 WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservIOSocketEvent::make_next_event()");
     if(event->entity()->io().in_out() == EPOLLIN){
+        DEBUG("WebservIOSocketEvent::make_next_event() EPOLLIN");
         return (event_factory->make_making_request_event(event));
     }
+    DEBUG("WebservIOSocketEvent::make_next_event() EPOLLOUT");
     return (event_factory->make_clean_event(event, false));
 }
 
 E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
 {
     DEBUG("WebservIOSocketEvent::epoll_event()");
-    if(event->entity()->io().in_out() == EPOLLIN){
-        return (EPOLL_READ);
-    }else{ 
-        //EPOLLOUT
-        return (EPOLL_WRITE);
-
-    }
-    /*
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
             return (EPOLL_NONE);
@@ -85,16 +78,15 @@ E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
         }
 
     }
-    */
     return (EPOLL_NONE);
 }
 
 void WebservIOSocketEvent::check_completed(WebservEntity * entity)
 {
-    DEBUG("WebservIOSocketEvent::check_completed");
 
     bool flag = false;;
     if(entity->io().in_out() == EPOLLIN){
+        DEBUG("WebservIOSocketEvent::check_completed EPOLLIN");
         WebservFile *dst = entity->io().destination();
         if(dst->size() >= MAX_REAUEST_EXCEPT_BODY){
             flag = true;
@@ -107,10 +99,12 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
             }
         }
     }else{
+        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
         //EPOLLOUT 
         //  src : Response
         Response *res= entity->response();
         flag = res->read_completed();
+        flag= true;
     }
 
     entity->set_completed(flag);

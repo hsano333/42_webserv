@@ -50,19 +50,25 @@ VectorFile* VectorFile::from_buf_size(size_t buf_size)
 int VectorFile::read(char **buf, size_t size)
 {
     DEBUG("VectorFile::read() buf_size=" + Utility::to_string(this->buf.size()));
+        DEBUG("vector file test No.1");
     if(this->state == FILE_COMPLETED_READ){
+        DEBUG("vector file test No.2");
         return (-1);
     }
+        DEBUG("vector file test No.3");
     // sizeは無視する(ポインタを渡すのでサイズの大小に関係がない)
     (void)size;
     this->buf.push_back('\0');
+        DEBUG("vector file test No.4");
 
     //this->buf.push_back('\0');
     *buf = &(this->buf[0]);
+        DEBUG("vector file test No.5");
     for(size_t i=0;i<this->buf.size();i++){
         printf("%c", this->buf[i]);
     }
 
+        DEBUG("vector file test No.6");
     this->state = FILE_COMPLETED_READ;
     printf("vector file buffer=%s\n", *buf);
 

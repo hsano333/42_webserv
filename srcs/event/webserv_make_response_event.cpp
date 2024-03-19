@@ -69,10 +69,12 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
 {
     DEBUG("WebservMakeResponseEvent::make_response()");
     StatusCode code = result->status_code();
+    DEBUG("WebservMakeResponseEvent::make_response() No.1");
     Response *res = Response::from_success_status_code(
             code,
             result->file()
     );
+    DEBUG("WebservMakeResponseEvent::make_response() No.2");
 
     std::map<std::string, std::string>::const_iterator ite = result->header().cbegin();
     std::map<std::string, std::string>::const_iterator end = result->header().cend();
@@ -80,8 +82,12 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
         res->add_header(ite->first, ite->second);
         ite++;
     }
+    DEBUG("WebservMakeResponseEvent::make_response() No.3");
     WebservFile *file = res->get_file();
+    DEBUG("WebservMakeResponseEvent::make_response() No.4");
     if(file){
+    DEBUG("WebservMakeResponseEvent::make_response() No.5");
+    printf("file=%p", file);
         if(file->is_chunk()){
             MYINFO("Transfer-Encoding: chunked");
             res->add_header(TRANSFER_ENCODING, CHUNKED);
@@ -90,7 +96,9 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
             res->add_header(CONTENT_LENGTH, Utility::to_string(file->size()));
         }
     }
+    DEBUG("WebservMakeResponseEvent::make_response() No.5-1");
     res->check_body_and_chunk();
+    DEBUG("WebservMakeResponseEvent::make_response() No.6");
     return (res);
 }
 
@@ -151,8 +159,7 @@ WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, Web
 E_EpollEvent WebservMakeResponseEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    //return (EPOLL_WRITE);
-    return (EPOLL_NONE);
+    return (EPOLL_WRITE);
 }
 
 void WebservMakeResponseEvent::check_completed(WebservEntity * entity)

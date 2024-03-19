@@ -96,6 +96,8 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
     cout << "buf_size=" << buf_size << endl;
     buf_p[buf_size] = '\0';
     cout << "buf_p=[" << buf_p << "]" << endl;
+
+
     if(buf_size == 0){
         ERROR("Invalid Request. ");
         throw HttpException("400");
@@ -109,11 +111,21 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         req->set_buf_body(sp0[index].c_str(), sp0[index].size());
         //ERROR("Invalid Request. Reques doesn't have \"\r\n\r\n\"");
         //throw HttpException("400");
+
     }
+    else if(sp0.size() == 0){
+        ERROR("Invalid Request. size=0");
+        throw HttpException("400");
+
+    }
+    cout << "test No.1" << endl;
     try{
         Split sp1(sp0[0], CRLF);
+    cout << "test No.2" << endl;
         req->set_request_line(sp1[0]);
+    cout << "test No.3" << endl;
         req->set_header(sp1, 1);
+    cout << "test No.4" << endl;
     }catch (std::invalid_argument &e){
         ERROR("Invalid Request:" + string(e.what()));
         throw HttpException("400");

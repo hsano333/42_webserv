@@ -64,6 +64,12 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     entity->set_completed(true);
 }
 
+void WebservCleaner::delete_event(WebservEvent *event)
+{
+    delete event;
+}
+
+/*
 bool WebservCleaner::clean(WebservEvent *event)
 {
     bool clean_event = false;
@@ -83,6 +89,7 @@ bool WebservCleaner::clean(WebservEvent *event)
     delete event;
     return (clean_event);
 }
+*/
 
 void WebservCleaner::close_fd(FileDiscriptor const &fd)
 {

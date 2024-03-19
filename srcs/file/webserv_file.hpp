@@ -2,6 +2,7 @@
 #define MYFILE_HPP
 #include <unistd.h>
 #include <string>
+#include <iostream>
 
 
 typedef enum E_FileState
@@ -101,7 +102,11 @@ class WebservFile
         bool can_read(){return pimpl_->can_read();};
         std::string const &path(){return pimpl_->path();};
         size_t size(){return pimpl_->size();};
-        size_t is_chunk(){return pimpl_->is_chunk();};
+        size_t is_chunk(){
+            std::cout << "is_chunk test" << std::endl;
+
+            return pimpl_->is_chunk();
+        };
         //int save(char *data, size_t size){return pimpl_->save();}
 
         /*
