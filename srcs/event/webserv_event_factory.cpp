@@ -199,10 +199,20 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event)
+WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_making_upload_event");
-    WebservEvent *new_event = WebservApplicationUploadEvent::from_event(event);
+    std::string const &filepath = event->entity()->request()->requested_filepath();
+    Body &body = event->entity()->body();
+
+    std::ios_base::openmode mode;
+    if(body.is_text){
+        mode = std::ios::out;
+    }else{
+        mode = std::ios::out | std::ios::binary;
+    }
+    WebservFile *dst = this->file_factory->make_normal_file(event->entity()->fd(), filepath, mode);
+    WebservEvent *new_event = WebservApplicationUploadEvent::from_event(event, src, dst);
 
     return (new_event);
 }

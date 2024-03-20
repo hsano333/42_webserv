@@ -2,6 +2,7 @@
 #include "utility.hpp"
 #include "split.hpp"
 #include "global.hpp"
+#include <cmath>
 #include <algorithm>
 #include <cstdlib>
 #include <dirent.h>
@@ -198,6 +199,7 @@ unsigned char char_to_hex(char c)
     return (0);
 }
 
+// less than 255(FF)
 char Utility::hex_string_to_int(const std::string& hex_string)
 {
     if (hex_string.size () > 2){
@@ -271,6 +273,20 @@ std::string Utility::to_hexstr(size_t i)
     return (ss.str());
 }
 
+size_t Utility::hex_string_to_number(const std::string &str)
+{
+    size_t size = str.size();
+    if(size > 16){
+        throw std::invalid_argument("Utility::hex_string_to_number:too large str=" + str);
+    }
+    size_t sum = 0;
+    for(size_t i=0;i<str.size();i++){
+        unsigned char tmp = char_to_hex(str[i]);
+        size_t pow = std::pow(16, size-i-1);
+        sum += tmp * pow;
+    }
+    return (sum);
+}
 
 static bool is_notdigit(const char &c)
 {
@@ -692,6 +708,17 @@ TEST_CASE("hex_string_to_size_t")
     CHECK_THROWS_AS(Utility::to_size_t("18446744073709551616") ,std::invalid_argument);
     CHECK_THROWS_AS(Utility::to_size_t("-1") ,std::invalid_argument);
     CHECK_THROWS_AS(Utility::to_size_t("1111a11111") ,std::invalid_argument);
+}
+
+TEST_CASE("hex_string_to_number")
+{
+    CHECK(Utility::hex_string_to_number("0") == 0);
+    CHECK(Utility::hex_string_to_number("FF") == 255);
+    CHECK(Utility::hex_string_to_number("7FFFFFFFFFFFFFFF") == 9223372036854775807ul);
+    CHECK(Utility::hex_string_to_number("FFFFFFFFFFFFFFFF") == 18446744073709551615ul);
+    CHECK_THROWS_AS(Utility::to_size_t("FFFFFFFFFFFFFFFF") ,std::invalid_argument);
+    CHECK_THROWS_AS(Utility::to_size_t("g11") ,std::invalid_argument);
+    CHECK_THROWS_AS(Utility::to_size_t("1g11") ,std::invalid_argument);
 }
 
 #endif

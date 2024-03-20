@@ -39,7 +39,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         }
         read_size_total += read_size;
         buf_p[read_size] = '\0';
-        printf("buf_p=[%s]\n", buf_p);
+        printf("\n\nread buf=[%s]\n", buf);
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("MYINFO::write end");

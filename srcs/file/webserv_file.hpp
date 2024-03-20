@@ -30,14 +30,15 @@ class FileConcept
         virtual bool can_read() = 0;
         virtual size_t size() = 0;
         virtual bool is_chunk() = 0;
+        virtual void set_chunk(bool flag) = 0;
         virtual std::string const &path() = 0;
 };
 
-template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer, typename SizeStrategyPointer, typename IsChunkStrategyPointer>
+template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer, typename SizeStrategyPointer, typename IsChunkStrategyPointer, typename SetChunkStrategyPointer>
 class OwningFileModel : public FileConcept
 {
     public:
-        OwningFileModel(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk) : file_(file), open_(open), read_(read), write_(write), close_(close), remove_(remove), can_read_(can_read), path_(path), size_(size), is_chunk_(is_chunk){};
+        OwningFileModel(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk, SetChunkStrategyPointer set_chunk) : file_(file), open_(open), read_(read), write_(write), close_(close), remove_(remove), can_read_(can_read), path_(path), size_(size), is_chunk_(is_chunk), set_chunk_(set_chunk){};
         //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
         //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
         int open()  {return open_(file_);}
@@ -49,6 +50,7 @@ class OwningFileModel : public FileConcept
         std::string const &path() {return path_(file_);}
         size_t size()  {return size_(file_);}
         bool is_chunk()  {return is_chunk_(file_);}
+        void set_chunk(bool flag)  {set_chunk_(file_, flag);}
 
     private:
         FilePointer *file_;
@@ -61,23 +63,24 @@ class OwningFileModel : public FileConcept
         PathStrategyPointer path_;
         SizeStrategyPointer size_;
         IsChunkStrategyPointer is_chunk_;
+        SetChunkStrategyPointer set_chunk_;
 };
 
 class WebservFile
 {
     public:
-        template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer, typename SizeStrategyPointer, typename IsChunkStrategyPointer>
-        WebservFile(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk)
+        template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer, typename SizeStrategyPointer, typename IsChunkStrategyPointer, typename SetChunkStrategyPointer>
+        WebservFile(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk, SetChunkStrategyPointer set_chunk)
         {
-            typedef OwningFileModel<FilePointer, OpenStrategyPointer, ReadStrategyPointer, WriteStrategyPointer, CloseStrategyPointer, RemoveStrategyPointer, CanReadStrategyPointer, PathStrategyPointer, SizeStrategyPointer, IsChunkStrategyPointer > Model;
-            pimpl_ = new Model(file, open, read, write, close, remove, can_read, path, size, is_chunk);
+            typedef OwningFileModel<FilePointer, OpenStrategyPointer, ReadStrategyPointer, WriteStrategyPointer, CloseStrategyPointer, RemoveStrategyPointer, CanReadStrategyPointer, PathStrategyPointer, SizeStrategyPointer, IsChunkStrategyPointer, SetChunkStrategyPointer > Model;
+            pimpl_ = new Model(file, open, read, write, close, remove, can_read, path, size, is_chunk, set_chunk);
         }
 
 
-        template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer, typename SizeStrategyPointer, typename IsChunkStrategyPointer >
+        template<typename FilePointer, typename OpenStrategyPointer, typename ReadStrategyPointer, typename WriteStrategyPointer, typename CloseStrategyPointer, typename RemoveStrategyPointer, typename CanReadStrategyPointer, typename PathStrategyPointer, typename SizeStrategyPointer, typename IsChunkStrategyPointer, typename SetChunkStrategyPointer >
         WebservFile(FilePointer *file)
         {
-            typedef OwningFileModel<FilePointer, OpenStrategyPointer, ReadStrategyPointer, WriteStrategyPointer, CloseStrategyPointer, RemoveStrategyPointer, CanReadStrategyPointer, PathStrategyPointer, SizeStrategyPointer, IsChunkStrategyPointer > Model;
+            typedef OwningFileModel<FilePointer, OpenStrategyPointer, ReadStrategyPointer, WriteStrategyPointer, CloseStrategyPointer, RemoveStrategyPointer, CanReadStrategyPointer, PathStrategyPointer, SizeStrategyPointer, IsChunkStrategyPointer, SetChunkStrategyPointer > Model;
             pimpl_ = new Model(file);
         }
 
@@ -102,6 +105,9 @@ class WebservFile
         bool can_read(){return pimpl_->can_read();};
         std::string const &path(){return pimpl_->path();};
         size_t size(){return pimpl_->size();};
+        void set_chunk(bool flag){
+            return pimpl_->set_chunk(flag);
+        };
         size_t is_chunk(){
             std::cout << "is_chunk test" << std::endl;
 

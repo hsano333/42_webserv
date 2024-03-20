@@ -91,7 +91,6 @@ void Webserv::communication()
                     next_event = event;
                 }
                 event_controller->set_next_epoll_event(event, next_event);
-
             }catch(ConnectionException &e){
                 ERROR(e.what());
                 next_event = this->event_factory->make_clean_event(event, true);
@@ -131,9 +130,7 @@ void Webserv::communication()
             }
         }
 
-        // for test
-        if(exit_flag || count > 10){
-            //break;
+        if(exit_flag || count > 100){
         }
     }
 }

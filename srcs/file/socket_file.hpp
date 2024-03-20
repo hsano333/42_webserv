@@ -26,11 +26,19 @@ class SocketFile
         bool can_read();
         //bool is_chunk();
         FileState   state;
+
+        size_t chunked_size();
+        void set_chunked_size(size_t size);
+        bool is_chunked();
+        void set_is_chunked(bool chunked);
     private:
         FileDiscriptor const &fd;
         IReader *reader;
         IWriter *writer;
         BufferController buffer;
+        size_t chunked_size_;
+        bool   is_chunked_;
+        //std::vector<char> tmp_buf;
 };
 
 #endif

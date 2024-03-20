@@ -11,7 +11,9 @@ using std::map;
 SocketFile::SocketFile(FileDiscriptor const &fd) :
                             fd(fd),
                             reader(NULL),
-                            writer(NULL)
+                            writer(NULL),
+                            chunked_size_(0),
+                            is_chunked_(false)
 {
     ;
 }
@@ -63,17 +65,6 @@ int SocketFile::open()
 int SocketFile::read(char **buf, size_t max_size)
 {
     DEBUG("SocketFile::read() size=" + Utility::to_string(max_size));
-    /*
-    size_t size = this->buffer.retrieve(buf, max_size);
-    if(size > 0){
-        return (size);
-    }
-    */
-    //if (this->state != FILE_OPEN){
-        //return (0);
-    //}
-
-    //this->state = FILE_COMPLETED_READ;
     return this->reader->read(this->fd, *buf, max_size, NULL);
 }
 
@@ -133,6 +124,26 @@ int SocketFile::close()
 bool SocketFile::can_read()
 {
     return (true);
+}
+
+size_t SocketFile::chunked_size()
+{
+    return (this->chunked_size_);
+}
+
+void SocketFile::set_chunked_size(size_t size)
+{
+    this->chunked_size_ = size;
+}
+
+bool SocketFile::is_chunked()
+{
+    return (this->is_chunked_);
+}
+
+void SocketFile::set_is_chunked(bool flag)
+{
+    this->is_chunked_ = flag;
 }
 
 /*

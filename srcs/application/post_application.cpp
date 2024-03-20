@@ -55,13 +55,15 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
 
 WebservEvent* PostApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
 {
-    return (event_factory->make_making_response_event(event, event->entity()->io().destination()));
+    WebservFile *file = event->entity()->io().source();
+    file->set_chunk(event->entity()->body().is_chunk);
+    return (event_factory->make_making_upload_event(event, event->entity()->io().source()));
 }
 
 E_EpollEvent PostApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
-    return (EPOLL_NONE);
+    return (EPOLL_READ);
 }
 
 bool PostApplication::execute(WebservEntity *entity)
@@ -79,12 +81,17 @@ bool PostApplication::execute(WebservEntity *entity)
         Header const &header = entity->request()->header();
         std::string const &content_type = header.find(CONTENT_TYPE);
 
-        //string boundary = 
         bool is_chunk = header.is_chunked();
-        Body &body = entity->body();;
-            //body.is_chunk = true;
-        //(void)body;
-        //bool is_chunk = true;
+        Body &body = entity->body();
+
+        size_t pos = content_type.find("boundary=");
+        if(pos != std::string::npos){
+            // 9 is [boundary=] size
+            pos += 9;
+            body.boundary = &(content_type[pos]);
+            MYINFO("boundary=" + Utility::to_string(body.boundary));
+        }
+
         if(is_chunk){
             body.is_chunk = true;
             body.content_length = 0;
