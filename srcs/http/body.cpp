@@ -1,6 +1,6 @@
 #include "body.hpp"
 
-Body::Body() : is_text(false), is_chunk(false), content_length(0), boundary_(NULL)
+Body::Body() : is_text(false), is_chunk(false), content_length(0), boundary_("")
 {
     ;
 }

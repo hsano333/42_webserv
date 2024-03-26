@@ -105,9 +105,22 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                     delete cached_event;
                 }
 
-            MYINFO("test No.4");
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
-                WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
+                WebservEntity *entity;
+            MYINFO("test No.4 fd=" + fd.to_string());
+            MYINFO("test No.4 sockfd=" + sockfd.to_string());
+            if(this->cfg){
+                MYINFO("test No.4 cfg= notNULL");
+            }else{
+                MYINFO("test No.4 cfg= NULL");
+
+            }
+                try{
+                    entity = new WebservEntity(fd, sockfd, this->cfg);
+                }catch(...){
+            MYINFO("test error No.4");
+
+                }
             MYINFO("test No.5");
                 //WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
                 //WebservEntity *entity = new WebservEntity();

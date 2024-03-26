@@ -70,6 +70,7 @@ void server(Webserv& webserv)
     try {
         webserv.communication();
     } catch (std::exception& e) {
+        DEBUG("server error:" + string(e.what()));
         webserv.reset();
     }
 }
@@ -82,6 +83,7 @@ void server(Webserv& webserv)
 
 void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
 {
+    DEBUG("clean_all()");
     event_manager->close_all_events_waiting_epoll(cleaner);
     //event_manager->close_all_events_waiting_writing(cleaner);
     event_manager->close_all_events();
