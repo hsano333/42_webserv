@@ -84,11 +84,14 @@ E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
 void WebservIOSocketEvent::check_completed(WebservEntity * entity)
 {
 
+    //todo
+    entity->set_completed(true);
+    return;
     bool flag = false;;
     if(entity->io().in_out() == EPOLLIN){
         DEBUG("WebservIOSocketEvent::check_completed EPOLLIN");
         WebservFile *dst = entity->io().destination();
-        if(dst->size() >= MAX_REAUEST_EXCEPT_BODY){
+        if(dst->size() >= MAX_REAUEST_EXCEPT_BODY ){
             flag = true;
         }else{
             char *buf;

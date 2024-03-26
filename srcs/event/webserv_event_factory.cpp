@@ -97,20 +97,35 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+            MYINFO("test No.1");
             if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
+            MYINFO("test No.2");
                 if(cached_event){
+            MYINFO("test No.3");
                     delete cached_event;
                 }
 
+            MYINFO("test No.4");
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
                 WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
+            MYINFO("test No.5");
+                //WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
+                //WebservEntity *entity = new WebservEntity();
+            MYINFO("test No.6");
                 entity->config()->check();
+            MYINFO("test No.7");
                 FileDiscriptor const &fd_ref = entity->fd();
+            MYINFO("test No.8");
                 WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, socket_writer, socket_reader);
+            MYINFO("test No.9");
                 WebservFile *read_dst = this->file_factory->make_vector_file(fd_ref, MAX_REAUEST_EXCEPT_BODY);
+            MYINFO("test No.10");
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
+            MYINFO("test No.11");
                 this->cfg->check();
+            MYINFO("test No.12");
                 event->entity()->config()->check();
+            MYINFO("test No.13");
                 return (event);
             }else{
                 cached_event->entity()->io().switching_io(EPOLLIN);
@@ -165,6 +180,15 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
     return (new_event);
 }
 
+WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *event, WebservFile *src)
+{
+    DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
+    //WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
+    WebservFile *dst = this->file_factory->make_vector_file(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
+    WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
+    return (new_event);
+}
+
 WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_making_request_event");
@@ -203,15 +227,19 @@ WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event,
 {
     DEBUG("WebservEventFactory::make_making_upload_event");
     std::string const &filepath = event->entity()->request()->requested_filepath();
-    Body &body = event->entity()->body();
+    std::string const &boundary = event->entity()->body().boundary();
+    //Body &body = event->entity()->body();
 
+    /*
     std::ios_base::openmode mode;
     if(body.is_text){
-        mode = std::ios::out;
+        mode = std::ios::in;
     }else{
-        mode = std::ios::out | std::ios::binary;
+        mode = std::ios::in | std::ios::binary;
     }
-    WebservFile *dst = this->file_factory->make_normal_file(event->entity()->fd(), filepath, mode);
+    */
+
+    WebservFile *dst = this->file_factory->make_multi_normal_file(filepath, boundary, event->entity()->fd());
     WebservEvent *new_event = WebservApplicationUploadEvent::from_event(event, src, dst);
 
     return (new_event);

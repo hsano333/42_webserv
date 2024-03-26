@@ -6,6 +6,7 @@
 #include "connection_exception.hpp"
 #include "header_word.hpp"
 #include "webserv_io_event.hpp"
+#include "socket_chunk_file.hpp"
 
 PostApplication::PostApplication() : method(Method::from_string("POST"))
 {
@@ -55,19 +56,54 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
 
 WebservEvent* PostApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
 {
-    WebservFile *file = event->entity()->io().source();
-    file->set_chunk(event->entity()->body().is_chunk);
-    return (event_factory->make_making_upload_event(event, event->entity()->io().source()));
+    DEBUG("PostApplication::next_event");
+    WebservFile *file = this->file_factory->make_socket_chunk_file(event->entity()->fd(), event->entity()->io().source());
+
+    //WebservFile *src = event->entity()->io().source();
+    //src->change_reader();
+    WebservEvent *new_event = (event_factory->make_making_upload_event(event, file));
+
+    size_t size = 0;
+    char *buf = event->entity()->request()->get_buf_body(&size);
+
+    MYINFO("size=" + Utility::to_string(size));
+    MYINFO("buf=" + Utility::to_string(buf));
+
+    if(size >0){
+        printf("No.0 size=%zu", size);
+        MYINFO("No.0 size=" + Utility::to_string(size));
+        file->open();
+        file->write(&buf, size);
+    }
+    //buf[size] = '\0';
+    //cout << "post application buf=" << buf << endl << endl;
+    //printf("post application buf=[%s]\n\n", buf);
+    /*
+    new_event->entity()->io().save(buf[0].c_str(), 0, buf[0].size());
+    for(size_t i=0;i<buf.size();i++){
+        new_event->entity()->io().save(CRLF2, 0, 2);
+        new_event->entity()->io().save(buf[i].c_str(), 0, buf[i].size());
+    }
+    */
+
+    return (new_event);
 }
 
 E_EpollEvent PostApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
-    return (EPOLL_READ);
+    if(entity->io().is_read_completed()){
+        DEBUG("PostApplication::epoll_event: EPOLL_NONE");
+        return (EPOLL_NONE);
+    }else{
+        DEBUG("PostApplication::epoll_event: EPOLL_READ");
+        return (EPOLL_READ);
+    }
 }
 
 bool PostApplication::execute(WebservEntity *entity)
 {
+    entity->io().set_read_completed(true);
     DEBUG("PostApplication::init");
     /*
     //if(entity->app_result() == NULL){
@@ -77,7 +113,6 @@ bool PostApplication::execute(WebservEntity *entity)
     }
     return (this->upload(entity));
     */
-        DEBUG("PostApplication::init");
         Header const &header = entity->request()->header();
         std::string const &content_type = header.find(CONTENT_TYPE);
 
@@ -88,14 +123,22 @@ bool PostApplication::execute(WebservEntity *entity)
         if(pos != std::string::npos){
             // 9 is [boundary=] size
             pos += 9;
-            body.boundary = &(content_type[pos]);
-            MYINFO("boundary=" + Utility::to_string(body.boundary));
+            body.set_boundary(&(content_type[pos]));
+            MYINFO("boundary=" + Utility::to_string(body.boundary()));
         }
 
         if(is_chunk){
+            MYINFO("Upload Data is Chunked");
             body.is_chunk = true;
             body.content_length = 0;
+
+            // chunked情報を削除し-> 別の場所でやる
+            //WebservFile *destination = entity->io().destination();
+            //char *buf_p;
+            //size_t loaded_size = entity->io().load(&buf_p);
+
         }else{
+            MYINFO("Upload Data is not Chunked");
             body.is_chunk = false;
             std::string const &content_length = header.find(CONTENT_LENGTH);
             if(content_type == header.not_find() && content_length == header.not_find())
@@ -112,6 +155,10 @@ bool PostApplication::execute(WebservEntity *entity)
                 if(body_size < 0){
                     body.content_length = body_size;
                 }
+
+                MYINFO("body_size = " + Utility::to_string(body_size));
+                MYINFO("body.content_length = " + Utility::to_string(body.content_length));
+
             }catch (std::invalid_argument &e){
                 ERROR("body size is invalid:" + content_length);
                 throw HttpException("400");
@@ -336,6 +383,20 @@ PostApplication *PostApplication::get_instance()
     DEBUG("PostApplication::get_instance()");
     if (PostApplication::singleton == NULL){
         singleton = new PostApplication();
+    }
+    if(singleton->file_factory == NULL){
+        ERROR("Not Init");
+        throw std::runtime_error("Post Application does't set file_factory");
+    }
+    return (singleton);
+}
+
+PostApplication *PostApplication::get_instance(WebservFileFactory *file_factory)
+{
+    DEBUG("PostApplication::get_instance()");
+    if (PostApplication::singleton == NULL){
+        singleton = new PostApplication();
+        singleton->file_factory = file_factory;
     }
     return (singleton);
 }

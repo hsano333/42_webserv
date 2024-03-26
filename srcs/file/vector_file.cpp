@@ -8,14 +8,14 @@ using std::endl;
 using std::vector;
 using std::map;
 
-VectorFile::VectorFile(): max_buf_size(MAX_BUF), index(0)
+VectorFile::VectorFile(): max_buf_size(MAX_BUF)
 {
-    this->buf.resize(max_buf_size);
+    //this->buf.resize(max_buf_size);
 }
 
-VectorFile::VectorFile(size_t max_buf_size) : max_buf_size(max_buf_size), index(0)
+VectorFile::VectorFile(size_t max_buf_size) : max_buf_size(max_buf_size)
 {
-    this->buf.resize(max_buf_size);
+    //this->buf.resize(max_buf_size);
 }
 
 VectorFile::~VectorFile()
@@ -23,6 +23,17 @@ VectorFile::~VectorFile()
     DEBUG("VectorFile() Destructor");
 }
 
+VectorFile* VectorFile::from_buf(char *buf, size_t size)
+{
+    DEBUG("VectorFile::from_buf()");
+    VectorFile *file = new VectorFile(size);
+    file->buf.resize(size);
+    for(size_t i=0;i<size;i++){
+        file->buf[i] = buf[i];
+    }
+    //file->index = size;
+    return (file);
+}
 
 VectorFile* VectorFile::from_ref(std::string const& buf_ref)
 {
@@ -32,7 +43,7 @@ VectorFile* VectorFile::from_ref(std::string const& buf_ref)
     for(size_t i=0;i<buf_ref.size();i++){
         file->buf[i] = buf_ref[i];
     }
-    file->index = buf_ref.size();
+    //file->index = buf_ref.size();
     return (file);
 }
 
@@ -49,12 +60,15 @@ VectorFile* VectorFile::from_buf_size(size_t buf_size)
 
 int VectorFile::read(char **buf, size_t size)
 {
-    DEBUG("VectorFile::read() buf_size=" + Utility::to_string(this->buf.size()));
-        DEBUG("vector file test No.1");
+
+    DEBUG("vector file test No.1");
     if(this->state == FILE_COMPLETED_READ){
         DEBUG("vector file test No.2");
         return (-1);
     }
+    //return (this->reader(buf, size));
+
+    DEBUG("VectorFile::read() buf_size=" + Utility::to_string(this->buf.size()));
         DEBUG("vector file test No.3");
     // sizeは無視する(ポインタを渡すのでサイズの大小に関係がない)
     (void)size;
@@ -78,17 +92,20 @@ int VectorFile::read(char **buf, size_t size)
 int VectorFile::write(char **buf, size_t size)
 {
     DEBUG("VectorFile::write() size=" + Utility::to_string(size));
+    size_t buf_size = this->buf.size();
+    this->buf.resize(buf_size + size);
     char *p_buf = *buf;
-    size_t rest = this->max_buf_size - this->index - 1;
-    size_t min = Utility::min(size, rest);
-    for(size_t i=0; i<min;i++){
-        DEBUG("VectorFile::write() i=" + Utility::to_string(i));
-        DEBUG("VectorFile::write() this->index=" + Utility::to_string(this->index));
-        this->buf[i+this->index] = p_buf[i];
+    //size_t 
+    //size_t rest = this->max_buf_size - this->index - 1;
+    //size_t min = Utility::min(size, rest);
+    for(size_t i=0; i<size;i++){
+        //DEBUG("VectorFile::write() i=" + Utility::to_string(i));
+        //DEBUG("VectorFile::write() this->index=" + Utility::to_string(this->index));
+        this->buf[buf_size + i] = p_buf[i];
     }
-    DEBUG("VectorFile::write()min =" + Utility::to_string(min));
-    DEBUG("VectorFile::write()rest=" + Utility::to_string(rest));
-    return (min);
+    //DEBUG("VectorFile::write()min =" + Utility::to_string(min));
+    //DEBUG("VectorFile::write()rest=" + Utility::to_string(rest));
+    return (size);
 
     //if(min != size){
         //return (this->max_buf_size-this->index);
@@ -121,6 +138,13 @@ size_t VectorFile::size()
 {
     return (this->buf.size());
 }
+
+/*
+size_t VectorFile::change_reader(IReader *reader)
+{
+    this->reader = reader;
+}
+*/
 
 /*
 bool VectorFile::is_chunk()

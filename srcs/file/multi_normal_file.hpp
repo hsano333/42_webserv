@@ -13,7 +13,8 @@ class MultiNormalFile
 {
     public:
         ~MultiNormalFile();
-        static MultiNormalFile* from_directory_path(std::string const &directory_path, std::ios_base::openmode mode);
+        static MultiNormalFile* from_directory_path(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
+        //static MultiNormalFile* from_fd(std::string const &directory_path, FileDiscriptor const &fd);
         int open();
         int close();
         int read(char **buf, size_t size);
@@ -28,16 +29,23 @@ class MultiNormalFile
         size_t size();
         int remove();
         std::string const &path();
+        FileState   const &state();
+        std::string const &content_type_boundary();
+        std::string const &directory_path();
+        void set_content_type_boundary(std::string &boundary);
     private:
-        MultiNormalFile(IReader* ireader, std::string const &directory_path, std::ios_base::openmode mode);
-        FileDiscriptor fd_;
+        //MultiNormalFile(IReader* ireader, std::string const &directory_path, std::ios_base::openmode mode);
+        MultiNormalFile(std::string const &directory_path,std::string const &boundary, FileDiscriptor const &fd);
+        FileDiscriptor const &fd_;
         IReader *ireader;
         //IWriter *writer;
-        std::string const &directory_path;
-        std::ios_base::openmode option;
-        FileState   state;
+        std::string const &directory_path_;
+        std::string const &boundary_;
+        //std::ios_base::openmode option;
+        FileState   state_;
         std::fstream iofs;
         bool is_chunked_;
+        WebservFile *file;
         //std::ios_base::openmode mode;
 
 };

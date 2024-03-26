@@ -275,6 +275,7 @@ std::string Utility::to_hexstr(size_t i)
 
 size_t Utility::hex_string_to_number(const std::string &str)
 {
+    DEBUG("Utility::hex_string_to_number str=" + str);
     size_t size = str.size();
     if(size > 16){
         throw std::invalid_argument("Utility::hex_string_to_number:too large str=" + str);

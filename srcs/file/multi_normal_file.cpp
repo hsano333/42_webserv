@@ -4,15 +4,34 @@
 #include "stream_reader.hpp"
 
 
-MultiNormalFile::MultiNormalFile(IReader* ireader, std::string const &directory_path, std::ios_base::openmode option) :
-    ireader(ireader),
-    directory_path(directory_path),
-    option(option)
+MultiNormalFile::MultiNormalFile(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd) :
+    fd_(fd),
+    directory_path_(directory_path),
+    boundary_(boundary),
+    file(NULL)
+    //option(option)
 {
-    this->state = FILE_NOT_OPEN;
+    this->state_ = FILE_NOT_OPEN;
+}
+
+MultiNormalFile* MultiNormalFile::from_directory_path(std::string const &directory_path,std::string const &boundary, FileDiscriptor const &fd)
+{
+    return (new MultiNormalFile(directory_path, boundary, fd));
 }
 
 
+std::string const &MultiNormalFile::content_type_boundary()
+{
+    return (this->boundary_);
+}
+
+std::string const &MultiNormalFile::directory_path()
+{
+    return (this->directory_path_);
+}
+
+
+/*
 MultiNormalFile* MultiNormalFile::from_directory_path(std::string const &directory_path, std::ios_base::openmode mode)
 {
     StreamReader *ireader = StreamReader::get_instance();
@@ -23,10 +42,18 @@ MultiNormalFile* MultiNormalFile::from_directory_path(std::string const &directo
     ERROR("MultiNormalFile::from_filepath() can't use as write file");
     throw std::invalid_argument("MultiNormalFile::from_filepath() can't use as write file");
 }
+*/
+
+FileState const &MultiNormalFile::state()
+{
+    return (this->state_);
+}
 
 int MultiNormalFile::open()
 {
     DEBUG("MultiNormalFile::open()");
+    return (true);
+    /*
     if (this->state != FILE_NOT_OPEN){
         WARNING("MultiNormalFile::open() state is  not FILE_NOT_OPEN");
     }
@@ -40,13 +67,14 @@ int MultiNormalFile::open()
         this->state = FILE_ERROR;
         throw std::runtime_error("can't open file");
     }
+    */
     return (-1);
 }
 
 int MultiNormalFile::close()
 {
     //DEBUG("MultiNormalFile::close() fd:" + Utility::to_string(fd.to_int()));
-    if (this->state != FILE_NOT_OPEN){
+    if (this->state_ != FILE_NOT_OPEN){
         if(this->fd().to_int() > 0){
             return ::close(this->fd().to_int());
         }
@@ -61,18 +89,15 @@ int MultiNormalFile::read(char **buf, size_t size)
 
 int MultiNormalFile::write(char **buf, size_t size)
 {
-    (void)buf;
-    (void)size;
-    ERROR("can't use write in MultiNormalFile");
-    throw std::invalid_argument("can't use write in MultiNormalFile");
-    //return (this->iwriter->write(this->fd, *buf, size, &(this->iofs)));
-    return 0;
+    if(file){
+        return (file->write(buf, size));
+    }
+    return (-1);
 }
 
 std::string const &MultiNormalFile::path()
 {
-    return (this->directory_path);
-
+    return (this->directory_path_);
 }
 
 FileDiscriptor const &MultiNormalFile::fd()

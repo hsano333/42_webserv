@@ -7,11 +7,13 @@
 #include "webserv_file.hpp"
 #include "webserv_application_with_cgi_event.hpp"
 #include "webserv_application_without_cgi_event.hpp"
+#include "webserv_file_factory.hpp"
 
 class PostApplication : public Application
 {
     public:
         static PostApplication *get_instance();
+        static PostApplication *get_instance(WebservFileFactory *file_factory);
         ~PostApplication();
         //bool execute(WebservEvent *event);
         WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
@@ -39,5 +41,6 @@ class PostApplication : public Application
         //Response *res;
         //std::map<std::string, std::string> tmp_headers;
         Method method;
+        WebservFileFactory *file_factory;
 };
 #endif

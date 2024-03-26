@@ -33,8 +33,14 @@ class WebservIO
         void            set_in_out(uint32_t inout);
         uint32_t        in_out();
         int             save(char *data, size_t offset, size_t size);
+        int             save(char const *data, size_t offset, size_t size);
         size_t          load(char **data);
         void            clear_tmp_data();
+
+        bool            is_read_completed();
+        void            set_read_completed(bool flag);
+        bool            is_write_completed();
+        void            set_write_completed(bool flag);
 
         void switching_io(uint32_t epoll_event);
 
@@ -52,6 +58,9 @@ class WebservIO
 
         uint32_t in_out_;
         std::vector<char> tmp_buf;
+
+        bool is_read_completed_;
+        bool is_write_completed_;
 };
 
 #endif

@@ -174,6 +174,7 @@ int get_fd_tmp()
 #include <stdio.h>
 int RequestCGI::read_result(char** buf, int size)
 {
+    DEBUG("RequestCGI::read_result()");
     exit(1);
     //cout << "read_result: fd" << _fd << ", _file_fd:" << _file_fd << endl;
     return (Utility::read_body_and_copy(_fd, buf, BUF_MAX));

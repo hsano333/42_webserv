@@ -5,8 +5,9 @@
 #include "webserv_file.hpp"
 #include "webserv_io_cgi_event.hpp"
 
-
 class WebservEntity;
+bool write_buffer_data(WebservEntity *entity, char *buf_p);
+
 template<typename EventT>
 bool io_work(EventT *event, WebservEntity *entity)
 {
@@ -25,8 +26,10 @@ bool io_work(EventT *event, WebservEntity *entity)
     destination->open();
     entity->set_completed(false);
     char buf[MAX_READ_SIZE+1];
+    //char *buf_init = &(buf[0]);
     ssize_t read_size_total = 0;
 
+    //bool write_enable = write_buffer_data(entity, buf_init);
     while(1)
     {
         DEBUG("WebservIOWorker::work No.3");
@@ -39,13 +42,15 @@ bool io_work(EventT *event, WebservEntity *entity)
         }
         read_size_total += read_size;
         buf_p[read_size] = '\0';
-        printf("\n\nread buf=[%s]\n", buf);
+        printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("MYINFO::write end");
             entity->io().save(buf_p, 0, read_size);
             break;
         }else if(read_size > write_size){
+            MYINFO("read_size=" + Utility::to_string(read_size));
+            MYINFO("write_size=" + Utility::to_string(write_size));
             entity->io().save(buf_p, write_size, read_size);
             break;
         }else{

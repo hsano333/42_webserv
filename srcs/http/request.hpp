@@ -44,8 +44,9 @@ class Request
         //char*   get_raw_buf_pointer();
         //char*   get_raw_buf_begin();
         //int     raw_buf_space();
-        char*   get_buf_body(int *size);
-        void    set_buf_body(char const *body_p, int size);
+        int      get_buf_body_size();
+        char    *get_buf_body(size_t *size);
+        void    set_buf_body(char *body_p, size_t size);
         void    clear_buf_body();
         void    set_request_line(std::string const &str);
         void    set_header(Split &sp, size_t offset);
@@ -118,6 +119,7 @@ class Request
         //int     raw_buf_point;
         //size_t  raw_buf_pos_;
         char    *buf_body;
+        //vector<string> buf_body;
         int     buf_body_size;
         bool    is_file_;
         bool    is_directory_;

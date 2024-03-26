@@ -37,13 +37,14 @@
 #include "socket_reader.hpp"
 #include "normal_writer.hpp"
 #include "socket_writer.hpp"
+#include "post_application.hpp"
 #include "iwriter.hpp"
 #include "application_factory.hpp"
 #include "cgi.hpp"
 #include "webserv_file_factory.hpp"
 
 #ifdef UNIT_TEST
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN 
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #endif
 
@@ -143,6 +144,7 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 int main(int argc, char const* argv[])
 {
 
+
   string str1 = "abc def ghi";
   string str2 = "abc:def:ghi";
   str1[3] = 32;
@@ -151,8 +153,6 @@ int main(int argc, char const* argv[])
   Split sp2(str2, CRLF);
   cout << "sp1.size()=" << sp1.size() << endl;
   cout << "sp2.size()=" << sp2.size() << endl;
-  //exit(1);
-  //exit(0);
 
     CGI *cgi1 = new CGI();
     CGI *cgi2 = new CGI();
@@ -176,7 +176,6 @@ int main(int argc, char const* argv[])
         ite++;
     }
     cout << "end" << endl;
-    //exit(0);
 
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){
@@ -211,6 +210,8 @@ int main(int argc, char const* argv[])
     EventManager *event_manager = new EventManager();
     WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
     WebservFileFactory *file_factory = WebservFileFactory::get_instance(file_manager);
+
+    PostApplication::get_instance(file_factory);
 
     WebservEventFactory *event_factory = new WebservEventFactory(
             cfg,

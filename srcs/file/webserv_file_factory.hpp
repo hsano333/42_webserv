@@ -59,14 +59,16 @@ class WebservFileFactory
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag));
         //
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
-        WebservFile *make_multi_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
+        WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
         WebservFile *make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
+        WebservFile *make_socket_chunk_file(FileDiscriptor const &fd, WebservFile *file);
         //WebservFile *make_socket_file_as_write(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader, bool is_chunked);
         WebservFile *make_error_file(FileDiscriptor const &fd, StatusCode const &status_code);
         //WebservFile *make_socket_file(FileDiscriptor &fd, IWriter* iwriter, IReader* ireader);
         //WebservFile *make_socket_file(FileDiscriptor &fd, IWriter* iwriter, IReader* ireader);
         WebservFile *make_vector_file(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref);
+        WebservFile *make_vector_file(FileDiscriptor const &fd, char *buf, size_t size);
         WebservFile *make_directory_file(FileDiscriptor const &fd, std::string const &path, std::string const &relative_path, std::string const &domain);
 
         // for dummy_func; not use;
@@ -181,51 +183,88 @@ namespace CommonFunc{
         return (file->write(data, size));
     }
 }
+
+namespace MultiFileFunc{
+    template <class FileT>
+    int write(FileT *file, char **data, size_t size)
+    {
+        (void)size;
+        (void)data;
+        DEBUG("MultiFileFunc write()");
+        MYINFO("size=" + Utility::to_string(size));
+        if (!(file->state() == FILE_OPEN)){
+            ERROR(" not open: ");
+            throw std::runtime_error("not open");
+            return (0);
+        }
+
+        std::string const &directory = file->content_type_boundary();
+        std::string const &boundary = file->directory_path();
+
+        DEBUG("MultiFileFunc write() directory:" + directory);
+        DEBUG("MultiFileFunc write() boundary:" + boundary);
+        char *pos = Utility::strnstr(*data, CRLF, size);
+        (void)pos;
+
+        return (size);
+    }
+}
 namespace ChunkedFunc{
 
 
     template <class FileT>
-    size_t get_chunked_size(FileT *file, char **buf)
+    size_t get_chunked_size(char **buf, size_t size, size_t *chunked_str_size)
     {
-        char tmp_buf[21] = {0};
-        char *tmp_pbuf = tmp_buf;
-        ssize_t read_size = file->read(&tmp_pbuf, 20);
-        //ssize_t read_size = ::recv(fd.to_int(), tmp_buf, size, 20);
-        char *pos = Utility::strnstr(tmp_buf, CRLF, read_size);
-        int exceed_str_size = 20 - (pos - &(tmp_buf[0])+2);
-        if(pos){
-            pos[0] = '\0';
-        }else{
+        MYINFO("MYINFO::get_chunked_size size=" + Utility::to_string(size));
+
+        char *pos = Utility::strnstr(*buf, CRLF, size);
+        *chunked_str_size = (pos - &((*buf)[0]) );
+        if(pos == NULL){
             ERROR(" not chunked format");
             throw HttpException("400");
         }
-        pos += 2;
-        Utility::memcpy(*buf, pos, exceed_str_size);
-        *buf += exceed_str_size;
-
-        return (Utility::hex_string_to_number(pos));
-        //if(chunked_size == 0){
-            //return (0);
-        //}
+        pos[0] = '\0';
+        size_t chunked_size = Utility::hex_string_to_number(*buf);
+        //pos += 2;
+        //*buf = pos;
+        return (chunked_size);
     }
 
     template <class FileT>
     int read(FileT *file, char **data, size_t size)
     {
         DEBUG("Chunked read()");
-
-        if(file->is_chunked() == false){
-            return (DefaultFunc::read(file, data, size));
-        }
-
         if (file->state != FILE_OPEN){
             return (0);
         }
 
-        size_t chunked_size = file->chunked_size();
-        if(chunked_size == 0){
-            chunked_size = get_chunked_size(file, data);
+        size_t buf_size = file->buf_size();
+        if(buf_size > 0){
+            buf_size = file->buf_size();
+            *data = &((file->buf())[0]);
+        }else{
+            buf_size = (DefaultFunc::read(file, data, size));
         }
+        if(buf_size <= 0){
+            return (buf_size);
+        }
+
+        size_t chunked_size = file->chunked_size();
+        size_t chunked_str_size;
+        if(chunked_size == 0){
+            chunked_size = get_chunked_size<FileT>(data, buf_size, &chunked_str_size);
+            // +2 is \r\n
+            *data = &((*data)[chunked_str_size+2]);
+        }
+        file->set_buf(&((*data)[chunked_size]), buf_size-chunked_size);
+        file->set_chunked_size(chunked_size);
+
+        //char *buf_test = &((*data)[chunked_size]);
+        //size_t chunked_size = 0;
+        return (chunked_size);
+        /*
+
+
         MYINFO("SocketReaderChunked::chunked_size = " + Utility::to_string(chunked_size));
         ssize_t read_size;
         if(chunked_size > size){
@@ -239,16 +278,36 @@ namespace ChunkedFunc{
         file->set_chunked_size(chunked_size);
 
         return (read_size);
+        */
     }
+
+
     template <class FileT>
     int write(FileT *file, char **data, size_t size)
     {
-        DEBUG("Chunked write()");
-        if (!(file->state == FILE_OPEN || file->state == FILE_WRITING)){
+        (void)size;
+        DEBUG("Chunked write_buf()");
+        MYINFO("size=" + Utility::to_string(size));
+        if (!(file->state == FILE_OPEN)){
+            ERROR(" not open: ");
+            throw std::runtime_error("not open");
             return (0);
         }
-        file->state = FILE_WRITING;
-        return (file->write(data, size));
+
+        size_t chunked_size = file->chunked_size();
+        // ひとつのチャンクがすべて消化されるまで、書き込み禁止
+        if(chunked_size > 0){
+            ERROR("chunked size is not zero: ");
+            throw std::runtime_error("chunked size is not zero");
+        }
+        //size_t chunked_str_size;
+        MYINFO("No.2 size=" + Utility::to_string(size));
+        //chunked_size = get_chunked_size<FileT>(data, size, &chunked_str_size);
+        //*data = &((*data)[chunked_str_size+2]);
+
+        //file->set_buf(*data, chunked_size);
+        file->set_buf(*data, size);
+        return (size);
     }
 }
 

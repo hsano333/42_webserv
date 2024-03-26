@@ -55,11 +55,11 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     MYINFO("EventController::next_epoll_event:" + Utility::to_string(next_epoll_event));
 
     if (next_epoll_event == EPOLL_READ){
-        MYINFO("EventController::next is epoll read");
+        MYINFO("EventController::next is epoll read fd=" + next_event->entity()->fd().to_string());
         this->io_multi_controller->modify(next_event->entity()->fd(), EPOLLIN | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
     }else if (next_epoll_event == EPOLL_WRITE){
-        MYINFO("EventController::next is epoll write");
+        MYINFO("EventController::next is epoll write fd=" + next_event->entity()->fd().to_string());
         this->io_multi_controller->modify(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
     }else if (next_epoll_event == EPOLL_ADD_WRITE){

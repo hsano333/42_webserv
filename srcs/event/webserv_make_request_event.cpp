@@ -70,8 +70,11 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
         throw HttpException("400");
     }
 
-    int cur_body_size = 0;
+    size_t cur_body_size = 0;
     req->get_buf_body(&cur_body_size);
+    //for(size_t i=0;i<bodys.size();i++){
+        //cur_body_size += bodys[i].size();
+    //}
     bool is_chunk = header.is_chunked();
 
     if(!is_chunk){
@@ -94,36 +97,50 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
     DEBUG("WebservMakeRequestEvent::parse_request");
     char *buf_p;
 
-    size_t buf_size = src->read(&buf_p, MAX_REAUEST_EXCEPT_BODY);
+    ssize_t buf_size = src->read(&buf_p, MAX_REAUEST_EXCEPT_BODY);
     (void)buf_size;
     cout << "requert buf_size=" << buf_size << endl;
     buf_p[buf_size] = '\0';
     cout << "buf_p=[" << buf_p << "]" << endl;
 
 
-    if(buf_size == 0){
+    if(buf_size <= 0){
         ERROR("Invalid Request. ");
         throw HttpException("400");
     }
 
-    Split sp0(buf_p, CRLF2);
-    cout << "sp0.size=" << sp0.size() << endl;
-    int index = 0;
-    if(sp0.size() > 1){
-        index = 1;
-        req->set_buf_body(sp0[index].c_str(), sp0[index].size());
-        //ERROR("Invalid Request. Reques doesn't have \"\r\n\r\n\"");
-        //throw HttpException("400");
+    //Split sp0(buf_p, CRLF2);
+    char *body_start = Utility::strnstr(buf_p, CRLF2, buf_size);
+    //cout << "sp0.size=" << sp0.size() << endl;
+    //int len = sp0.size();
+    //int i = 1;
 
+    if(body_start){
+        body_start[0] = '\0';
+        // +4 is \r\n\r\n
+        body_start += 4;
+        MYINFO("buf_size =" + Utility::to_string(buf_size ));
+        MYINFO("buf_size - (body_start - buf_p) =" + Utility::to_string(buf_size - (body_start - buf_p)));
+        req->set_buf_body(body_start, buf_size - (body_start - buf_p));
     }
-    else if(sp0.size() == 0){
+    /*
+    while(len > i){
+        req->set_buf_body(sp0[i]);
+        i++;
+    }
+    */
+    //if(sp0.size() > 1){
+        //index = 1;
+        //req->set_buf_body(sp0[index].c_str(), sp0[index].size());
+    //}
+    if(buf_size == 0){
         ERROR("Invalid Request. size=0");
         throw HttpException("400");
 
     }
     cout << "test No.1" << endl;
     try{
-        Split sp1(sp0[0], CRLF);
+        Split sp1(buf_p, CRLF);
     cout << "test No.2" << endl;
         req->set_request_line(sp1[0]);
     cout << "test No.3" << endl;

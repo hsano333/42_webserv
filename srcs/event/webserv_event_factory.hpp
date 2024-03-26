@@ -41,6 +41,7 @@ class WebservEventFactory
         WebservEvent *from_epoll_event(t_epoll_event const &event);
         WebservEvent *make_io_socket_event_as_write(WebservEvent *event, WebservFile *src);
         WebservEvent *make_io_socket_event_as_read(WebservEvent *event);
+        WebservEvent *make_io_socket_event_as_read(WebservEvent *event, WebservFile *src);
         WebservEvent *make_io_socket_for_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result);
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
         //void          register_file_manager(WebservEvent *event);

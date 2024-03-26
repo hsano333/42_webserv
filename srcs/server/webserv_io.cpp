@@ -1,6 +1,6 @@
 #include "webserv_io.hpp"
 
-WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL)
+WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false)
 {
     ;
 }
@@ -131,6 +131,15 @@ int WebservIO::save(char *data, size_t offset, size_t size)
     return (this->tmp_buf.size());
 }
 
+int WebservIO::save(char const *data, size_t offset, size_t size)
+{
+    this->tmp_buf.resize(size-offset);
+    for(size_t i=0;i<size-offset;i++){
+        this->tmp_buf[i] = data[i + offset];
+    }
+    return (this->tmp_buf.size());
+}
+
 size_t WebservIO::load(char **data)
 {
     *data = &(this->tmp_buf[0]);
@@ -143,3 +152,22 @@ void WebservIO::clear_tmp_data()
     this->tmp_buf.clear();
 }
 
+bool WebservIO::is_read_completed()
+{
+    return (this->is_read_completed_);
+}
+
+void WebservIO::set_read_completed(bool flag)
+{
+    this->is_read_completed_ = flag;
+}
+
+bool WebservIO::is_write_completed()
+{
+    return (this->is_write_completed_);
+}
+
+void WebservIO::set_write_completed(bool flag)
+{
+    this->is_write_completed_ = flag;
+}

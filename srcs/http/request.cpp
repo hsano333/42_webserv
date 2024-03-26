@@ -126,31 +126,35 @@ void Request::clear_raw_buf()
 */
 
 
-char *Request::get_buf_body(int *size)
+char *Request::get_buf_body(size_t *size)
 {
     *size = this->buf_body_size;
     DEBUG("Request::get_buf_body size:" + Utility::to_string(this->buf_body_size));
     return (this->buf_body);
 }
 
-void Request::set_buf_body(char const *body_p, int size)
+void Request::set_buf_body(char *body, size_t size)
 {
+    //this->buf_body.push_back(str);
     DEBUG("Request::set_buf_body size:" + Utility::to_string(size));
-    if(this->buf_body != NULL){
-        ERROR("buf_body is not NULL. set_buf_body must be used only once");
-        throw std::runtime_error("buf_body is not NULL");
+    //if(this->buf_body != ""){
+        //ERROR("buf_body is not NULL. set_buf_body must be used only once");
+        //throw std::runtime_error("buf_body is not NULL");
+    //}
+    this->buf_body = new char[size+1];
+    for(size_t i=0;i<size;i++){
+        this->buf_body[i] = body[i];
     }
-    this->buf_body = new char[size];
-    for(int i=0;i<size;i++){
-        this->buf_body[i] = body_p[i];
-    }
+    this->buf_body[size] = '\0';
     this->buf_body_size = size;
 }
 
 void Request::clear_buf_body()
 {
     this->buf_body_size = 0;
+    delete (this->buf_body);
     this->buf_body = NULL;
+    //this->buf_body.clear();
 }
 
 /*
