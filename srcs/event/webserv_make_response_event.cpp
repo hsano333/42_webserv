@@ -120,7 +120,7 @@ namespace free_func{
     {
         Response *res = event->make(entity);
         entity->set_response(res);
-        //entity->set_completed(res);
+        entity->set_completed(true);
         return (entity->completed());
     }
 }

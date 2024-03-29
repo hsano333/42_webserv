@@ -16,5 +16,6 @@
 #define CONNECTION "connection"
 
 #define CHUNKED "chunked"
+#define CONTENT_DISPOSITION "content-disposition"
 
 #endif

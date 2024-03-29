@@ -66,6 +66,7 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
 void WebservCleaner::delete_event(WebservEvent *event)
 {
+    DEBUG("WebservCleaner::delete_event");
     delete event;
 }
 

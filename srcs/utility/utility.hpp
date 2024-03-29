@@ -32,6 +32,7 @@ class Utility
     static std::string get_extension(std::string const &str);
     static std::string to_lower(std::string str);
     static std::string trim_white_space(std::string const &str);
+    static std::string trim_char(std::string const &str, char c);
 
     static std::string remove_obstruction_in_uri(std::string const &str);
     static std::string delete_duplicated_slash(std::string str);

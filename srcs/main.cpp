@@ -147,14 +147,6 @@ int main(int argc, char const* argv[])
 {
 
 
-  string str1 = "abc def ghi";
-  string str2 = "abc:def:ghi";
-  str1[3] = 32;
-  str1[7] = 32;
-  Split sp1(str1, CRLF);
-  Split sp2(str2, CRLF);
-  cout << "sp1.size()=" << sp1.size() << endl;
-  cout << "sp2.size()=" << sp2.size() << endl;
 
     CGI *cgi1 = new CGI();
     CGI *cgi2 = new CGI();

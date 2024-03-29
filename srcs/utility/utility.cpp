@@ -133,6 +133,17 @@ string Utility::remove_obstruction_in_uri(string const &str)
     return Utility::delete_duplicated_slash(Utility::trim_white_space(str));
 }
 
+
+string Utility::trim_char(string const &str, char c)
+{
+    std::string::size_type left = str.find_first_not_of(c);
+    if (left != std::string::npos) {
+        std::string::size_type right = str.find_last_not_of(c);
+        return str.substr(left, right - left + 1);
+    } else
+        return "";
+}
+
 string Utility::trim_white_space(string const &str)
 {
     std::string::size_type left = str.find_first_not_of("\t\n\v\f\r ");

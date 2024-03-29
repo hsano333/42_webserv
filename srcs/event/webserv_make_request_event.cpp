@@ -79,7 +79,7 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
 
     if(!is_chunk){
         if(content_len < 0 && cur_body_size > 0){
-            ERROR("Invalid Request. Content-Length is not set but body exist. body size:" + Utility::to_string(max_body_size));
+            ERROR("Invalid Request. Content-Length is not set but body exist. body size:" + Utility::to_string(cur_body_size));
             throw HttpException("411");
         }
         if(content_len > max_body_size){
@@ -98,7 +98,6 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
     char *buf_p;
 
     ssize_t buf_size = src->read(&buf_p, MAX_REAUEST_EXCEPT_BODY);
-    (void)buf_size;
     cout << "requert buf_size=" << buf_size << endl;
     buf_p[buf_size] = '\0';
     cout << "buf_p=[" << buf_p << "]" << endl;
@@ -121,7 +120,7 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         body_start += 4;
         MYINFO("buf_size =" + Utility::to_string(buf_size ));
         MYINFO("buf_size - (body_start - buf_p) =" + Utility::to_string(buf_size - (body_start - buf_p)));
-        req->set_buf_body(body_start, buf_size - (body_start - buf_p));
+        req->set_buf_body(body_start, buf_size - (body_start - buf_p+1));
     }
     /*
     while(len > i){

@@ -42,15 +42,14 @@ NormalFile::NormalFile()
 NormalFile::~NormalFile()
 {
     if (this->state == FILE_OPEN || this->state == FILE_READING){
-        if(this->fd.to_int() > 0){
-            ::close(fd.to_int());
-        }
+        ::close(fd.to_int());
     }
 }
 
 
 NormalFile* NormalFile::from_filepath(std::string const &filepath, std::ios_base::openmode option)
 {
+    DEBUG("NormalFile filepath=" + filepath);
     StreamReader *ireader = StreamReader::get_instance();
     StreamWriter *iwriter = StreamWriter::get_instance();
     if((option & std::ios::in) == std::ios::in){
@@ -85,11 +84,11 @@ int NormalFile::open()
 
 int NormalFile::close()
 {
-    DEBUG("NormalFile::close() fd:" + Utility::to_string(fd.to_int()));
+    DEBUG("NormalFile::close() ");
     if (this->state != FILE_NOT_OPEN){
-        if(this->fd.to_int() > 0){
-            return ::close(fd.to_int());
-        }
+        (this->iofs.close());
+        this->state = FILE_NOT_OPEN;
+        return (0);
     }
     return (-1);
 }
@@ -101,6 +100,7 @@ int NormalFile::read(char **buf, size_t size)
 
 int NormalFile::write(char **buf, size_t size)
 {
+    DEBUG("NormalFile::write size=" + Utility::to_string(size));
     return (this->iwriter->write(this->fd, *buf, size, &(this->iofs)));
 }
 

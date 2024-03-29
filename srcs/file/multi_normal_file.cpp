@@ -8,7 +8,8 @@ MultiNormalFile::MultiNormalFile(std::string const &directory_path, std::string 
     fd_(fd),
     directory_path_(directory_path),
     boundary_(boundary),
-    file(NULL)
+    file(NULL),
+    completed_(false)
     //option(option)
 {
     this->state_ = FILE_NOT_OPEN;
@@ -52,6 +53,7 @@ FileState const &MultiNormalFile::state()
 int MultiNormalFile::open()
 {
     DEBUG("MultiNormalFile::open()");
+    //this->state = FILE_OPEN;
     return (true);
     /*
     if (this->state != FILE_NOT_OPEN){
@@ -114,3 +116,50 @@ void MultiNormalFile::set_chunk(bool flag)
 {
     this->is_chunked_ = flag;
 }
+
+void MultiNormalFile::set_file(WebservFile *file)
+{
+    this->file = file;
+}
+
+bool MultiNormalFile::exist_file()
+{
+    if(this->file){
+        return (true);
+    }
+    return (false);
+}
+
+
+void MultiNormalFile::clear_buf()
+{
+    this->buf.clear();
+}
+
+void MultiNormalFile::set_buf(const char *buf, size_t size)
+{
+    this->buf.resize(size);
+    for(size_t i=0;i<size;i++){
+        this->buf[i] = buf[i];
+    }
+}
+
+void MultiNormalFile::add_buf(const char *buf, size_t size)
+{
+    size_t cur_size = this->buf.size();
+    this->buf.resize(cur_size+size);
+    for(size_t i=0;i<size;i++){
+        this->buf[i+cur_size] = buf[i];
+    }
+}
+
+void MultiNormalFile::set_completed(bool flag)
+{
+    this->completed_ = flag;
+}
+
+bool MultiNormalFile::completed()
+{
+    return (this->completed_);
+}
+

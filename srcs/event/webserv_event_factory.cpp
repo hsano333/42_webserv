@@ -239,8 +239,13 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_making_upload_event");
-    std::string const &filepath = event->entity()->request()->requested_filepath();
+    //event->entity()->request()->print_info();
+    std::string const &filepath = event->entity()->request()->requested_path();
     std::string const &boundary = event->entity()->body().boundary();
+    if(event->entity()->request()->is_directory() == false){
+        ERROR("speciied path is not directory: " + filepath);
+        throw HttpException("404");
+    }
     //Body &body = event->entity()->body();
 
     /*

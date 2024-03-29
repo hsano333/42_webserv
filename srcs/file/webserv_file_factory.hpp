@@ -5,6 +5,7 @@
 #include "webserv_file.hpp"
 #include "file_manager.hpp"
 #include "global.hpp"
+#include "header_word.hpp"
 #include "iwriter.hpp"
 #include "ireader.hpp"
 #include "status_code.hpp"
@@ -14,6 +15,11 @@
 #include "directory_file.hpp"
 #include "socket_file.hpp"
 #include "http_exception.hpp"
+#include "utility.hpp"
+#include "split.hpp"
+#include "header.hpp"
+#include <cstdio>
+#include <stdlib.h>
 
 
 
@@ -56,7 +62,7 @@ class WebservFileFactory
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *));
         template <class FileT>
         //WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path);
-        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag));
+        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *));
         //
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
         WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
@@ -91,9 +97,7 @@ namespace DefaultFunc{
     template <class FileT>
     int close(FileT *file){
         DEBUG("Default close()");
-        (file->close());
-        DEBUG("Default close() No.1");
-        return 0;
+        return (file->close());
     }
 
     template <class FileT>
@@ -184,132 +188,6 @@ namespace CommonFunc{
     }
 }
 
-namespace MultiFileFunc{
-    template <class FileT>
-    int write(FileT *file, char **data, size_t size)
-    {
-        (void)size;
-        (void)data;
-        DEBUG("MultiFileFunc write()");
-        MYINFO("size=" + Utility::to_string(size));
-        if (!(file->state() == FILE_OPEN)){
-            ERROR(" not open: ");
-            throw std::runtime_error("not open");
-            return (0);
-        }
-
-        std::string const &directory = file->content_type_boundary();
-        std::string const &boundary = file->directory_path();
-
-        DEBUG("MultiFileFunc write() directory:" + directory);
-        DEBUG("MultiFileFunc write() boundary:" + boundary);
-        char *pos = Utility::strnstr(*data, CRLF, size);
-        (void)pos;
-
-        return (size);
-    }
-}
-namespace ChunkedFunc{
-
-
-    template <class FileT>
-    size_t get_chunked_size(char **buf, size_t size, size_t *chunked_str_size)
-    {
-        MYINFO("MYINFO::get_chunked_size size=" + Utility::to_string(size));
-
-        char *pos = Utility::strnstr(*buf, CRLF, size);
-        *chunked_str_size = (pos - &((*buf)[0]) );
-        if(pos == NULL){
-            ERROR(" not chunked format");
-            throw HttpException("400");
-        }
-        pos[0] = '\0';
-        size_t chunked_size = Utility::hex_string_to_number(*buf);
-        //pos += 2;
-        //*buf = pos;
-        return (chunked_size);
-    }
-
-    template <class FileT>
-    int read(FileT *file, char **data, size_t size)
-    {
-        DEBUG("Chunked read()");
-        if (file->state != FILE_OPEN){
-            return (0);
-        }
-
-        size_t buf_size = file->buf_size();
-        if(buf_size > 0){
-            buf_size = file->buf_size();
-            *data = &((file->buf())[0]);
-        }else{
-            buf_size = (DefaultFunc::read(file, data, size));
-        }
-        if(buf_size <= 0){
-            return (buf_size);
-        }
-
-        size_t chunked_size = file->chunked_size();
-        size_t chunked_str_size;
-        if(chunked_size == 0){
-            chunked_size = get_chunked_size<FileT>(data, buf_size, &chunked_str_size);
-            // +2 is \r\n
-            *data = &((*data)[chunked_str_size+2]);
-        }
-        file->set_buf(&((*data)[chunked_size]), buf_size-chunked_size);
-        file->set_chunked_size(chunked_size);
-
-        //char *buf_test = &((*data)[chunked_size]);
-        //size_t chunked_size = 0;
-        return (chunked_size);
-        /*
-
-
-        MYINFO("SocketReaderChunked::chunked_size = " + Utility::to_string(chunked_size));
-        ssize_t read_size;
-        if(chunked_size > size){
-            read_size = file->read(data, size);
-        }else{
-            read_size = file->read(data, chunked_size);
-        }
-        if(read_size > 0){
-            chunked_size -= read_size;
-        }
-        file->set_chunked_size(chunked_size);
-
-        return (read_size);
-        */
-    }
-
-
-    template <class FileT>
-    int write(FileT *file, char **data, size_t size)
-    {
-        (void)size;
-        DEBUG("Chunked write_buf()");
-        MYINFO("size=" + Utility::to_string(size));
-        if (!(file->state == FILE_OPEN)){
-            ERROR(" not open: ");
-            throw std::runtime_error("not open");
-            return (0);
-        }
-
-        size_t chunked_size = file->chunked_size();
-        // ひとつのチャンクがすべて消化されるまで、書き込み禁止
-        if(chunked_size > 0){
-            ERROR("chunked size is not zero: ");
-            throw std::runtime_error("chunked size is not zero");
-        }
-        //size_t chunked_str_size;
-        MYINFO("No.2 size=" + Utility::to_string(size));
-        //chunked_size = get_chunked_size<FileT>(data, size, &chunked_str_size);
-        //*data = &((*data)[chunked_str_size+2]);
-
-        //file->set_buf(*data, chunked_size);
-        file->set_buf(*data, size);
-        return (size);
-    }
-}
 
 namespace DummyFunc{
     template <class FileT>
@@ -377,13 +255,19 @@ namespace DummyFunc{
         (void)file;
         (void)flag;
     }
+    template <class FileT>
+    bool completed(FileT *file){
+        (void)file;
+        DEBUG("completed()");
+        return (false);
+    }
 }
 
 
 template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file)
 {
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT> );
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT> );
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
@@ -400,7 +284,7 @@ template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const &fd, FileT *file)
 {
     //(void)open;
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>);
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT>);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
@@ -410,9 +294,9 @@ WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const 
 
 template <class FileT>
 //WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag))
-WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag) )
+WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *) )
 {
-    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, path, size, is_chunk, set_chunk);
+    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, path, size, is_chunk, set_chunk, completed);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }

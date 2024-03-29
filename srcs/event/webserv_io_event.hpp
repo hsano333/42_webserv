@@ -57,8 +57,8 @@ bool io_work(EventT *event, WebservEntity *entity)
             MYINFO("Write OK::" + Utility::to_string(write_size));
         }
     }
+    DEBUG("WebservIOWorker::check completed");
     event->check_completed(entity);
-    DEBUG("WebservIOWorker::work No.4");
     return (entity->completed());
 }
 

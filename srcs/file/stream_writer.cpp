@@ -25,9 +25,9 @@ int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, 
 {
     DEBUG("StreamWriter::write: size:" + Utility::to_string(size));
     DEBUG("StreamWriter::write: ifs:" + Utility::to_string(ifs));
+    DEBUG("buf=" + Utility::to_string(buf));
     (void)fd;
     (void)buf;
-    std::string tmp = "abcdefg";
     size_t before = ifs->tellp();
     ifs->write(buf, size);
     if (ifs->fail() && !ifs->eof()){
@@ -36,6 +36,7 @@ int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, 
     }
     DEBUG("StreamWriter::write:before:" + Utility::to_string(before));
     size_t after = ifs->tellp();
+    //ifs->close();
     DEBUG("StreamWriter::write:after:" + Utility::to_string(after));
     return (after - before);
 }

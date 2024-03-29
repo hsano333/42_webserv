@@ -7,7 +7,7 @@ Body::Body() : is_text(false), is_chunk(false), content_length(0), boundary_("")
 
 void Body::set_boundary(const char *boundary)
 {
-    this->boundary_ = boundary;
+    this->boundary_ = "--" + std::string(boundary);
 }
 
 std::string &Body::boundary()

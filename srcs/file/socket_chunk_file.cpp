@@ -13,8 +13,10 @@ SocketChunkFile::SocketChunkFile(FileDiscriptor const &fd, WebservFile *file) :
                             reader(NULL),
                             writer(NULL),
                             chunked_size_(0),
+                            buf_p_(0),
                             is_chunked_(false),
-                            file_(file)
+                            file_(file),
+                            completed_(false)
 {
     ;
 }
@@ -62,20 +64,36 @@ int SocketChunkFile::open()
     return 0;
 }
 
-void SocketChunkFile::clear_buf_size()
-{
-    this->buf_size_ = 0;
-}
 */
+void SocketChunkFile::clear_buf()
+{
+    this->buf_.clear();
+}
 
 void SocketChunkFile::set_buf(char *data, size_t size)
 {
-    this->buf_.resize(size);
+    this->buf_.resize(size+1);
     for(size_t i=0;i<size;i++){
         this->buf_[i] = data[i];
     }
+    //　念のため
+    this->buf_[size] = '\0';
+    this->buf_p_ = 0;
 }
 
+void SocketChunkFile::add_buf(char *data, size_t size)
+{
+    size_t cur_size = this->buf_.size();
+    this->buf_.resize(cur_size+size);
+    for(size_t i=0;i<size;i++){
+        this->buf_[i+cur_size] = data[i];
+    }
+}
+
+void SocketChunkFile::set_buf_p(size_t pos)
+{
+    this->buf_p_ = pos;
+}
 /*
 void append_buf(char *data, size_t size){
     size_t buf_size = this->buf_.size();
@@ -93,12 +111,14 @@ size_t SocketChunkFile::buf_p()
 
 size_t SocketChunkFile::buf_size()
 {
-    return (this->buf_.size());
+    DEBUG("SocketChunkFile::buf_size buf_size=" + Utility::to_string(this->buf_.size()));
+    DEBUG("SocketChunkFile::buf_size this->buf_p_=" + Utility::to_string(buf_p_));
+    return (this->buf_.size() - this->buf_p_);
 }
 
-std::vector<char> &SocketChunkFile::buf()
+char *SocketChunkFile::buf()
 {
-    return (this->buf_);
+    return &(this->buf_[buf_p_]);
 }
 
 int SocketChunkFile::read(char **buf, size_t max_size)
@@ -132,6 +152,7 @@ int SocketChunkFile::write(char **buf, size_t size)
     //DEBUG("write rval=" + Utility::to_string(rval));
     //return (rval);
 }
+
 
 /*
 int SocketChunkFile::save(char *buf, size_t size)
@@ -183,6 +204,16 @@ bool SocketChunkFile::is_chunked()
 void SocketChunkFile::set_is_chunked(bool flag)
 {
     this->is_chunked_ = flag;
+}
+
+void SocketChunkFile::set_completed(bool flag)
+{
+    this->completed_ = flag;
+}
+
+bool SocketChunkFile::completed()
+{
+    return (this->completed_);
 }
 
 /*
