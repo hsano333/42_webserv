@@ -13,11 +13,13 @@ WebservIO::~WebservIO()
 
 void WebservIO::set_source(WebservFile *file)
 {
+    DEBUG("WebservIO::set_source");
     this->source_ = file;
 }
 
 void WebservIO::set_destination(WebservFile *file)
 {
+    DEBUG("WebservIO::set_destination");
     this->destination_ = file;
 }
 

@@ -150,6 +150,11 @@ namespace DefaultFunc{
         DEBUG("Default is_chunk()");
         return (file->set_chunk(flag));
     }
+    template <class FileT>
+    bool completed(FileT *file){
+        DEBUG("Default completed()");
+        return (file->completed());
+    }
 }
 
 namespace CommonFunc{

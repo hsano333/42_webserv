@@ -101,6 +101,12 @@ int NormalFile::read(char **buf, size_t size)
 int NormalFile::write(char **buf, size_t size)
 {
     DEBUG("NormalFile::write size=" + Utility::to_string(size));
+    printf("normal write=[");
+    for(size_t i=0;i<size;i++){
+        printf("%c", (*buf)[i]);
+
+    }
+    printf("]\n");
     return (this->iwriter->write(this->fd, *buf, size, &(this->iofs)));
 }
 

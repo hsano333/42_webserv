@@ -25,7 +25,7 @@ WebservFile *WebservFileFactory::make_normal_file(FileDiscriptor const &fd, std:
 WebservFile *WebservFileFactory::make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd)
 {
     MultiNormalFile *multi_normal_file = MultiNormalFile::from_directory_path(directory_path, boundary, fd);
-    return (this->make_webserv_file(fd, multi_normal_file, DummyFunc::open, DefaultFunc::read, MultiFileFunc::write, DefaultFunc::close, DummyFunc::remove, DummyFunc::can_read, DefaultFunc::path, DummyFunc::size, DefaultFunc::is_chunk, DefaultFunc::set_chunk, DummyFunc::completed));
+    return (this->make_webserv_file(fd, multi_normal_file, DummyFunc::open, DefaultFunc::read, MultiFileFunc::write, DefaultFunc::close, DummyFunc::remove, DummyFunc::can_read, DefaultFunc::path, DummyFunc::size, DefaultFunc::is_chunk, DefaultFunc::set_chunk, DefaultFunc::completed));
 }
 
 

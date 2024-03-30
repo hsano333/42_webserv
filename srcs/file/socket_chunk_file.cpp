@@ -72,6 +72,10 @@ void SocketChunkFile::clear_buf()
 
 void SocketChunkFile::set_buf(char *data, size_t size)
 {
+    if(size > MAX_BUF){
+        ERROR("memory size is exceed");
+        throw std::runtime_error("memory size is exceed");
+    }
     this->buf_.resize(size+1);
     for(size_t i=0;i<size;i++){
         this->buf_[i] = data[i];
@@ -84,6 +88,10 @@ void SocketChunkFile::set_buf(char *data, size_t size)
 void SocketChunkFile::add_buf(char *data, size_t size)
 {
     size_t cur_size = this->buf_.size();
+    if(cur_size+size > MAX_BUF){
+        ERROR("memory size is exceed");
+        throw std::runtime_error("memory size is exceed");
+    }
     this->buf_.resize(cur_size+size);
     for(size_t i=0;i<size;i++){
         this->buf_[i+cur_size] = data[i];
@@ -213,6 +221,7 @@ void SocketChunkFile::set_completed(bool flag)
 
 bool SocketChunkFile::completed()
 {
+    DEBUG("SocketChunkFile::completed():" + Utility::to_string(this->completed_));
     return (this->completed_);
 }
 

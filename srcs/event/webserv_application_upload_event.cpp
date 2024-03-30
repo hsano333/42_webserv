@@ -49,6 +49,9 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
 {
     DEBUG("WebservApplicationUploadEvent::make_next_event");
 
+    //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    return event_factory->make_making_response_event(event, );
+    /*
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     SocketReader *socket_reader = SocketReader::get_instance();
     WebservFile *src;
@@ -61,18 +64,19 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
         src = file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
     }
     return (event_factory->make_io_socket_event_as_read(event, src));
+    */
 }
 
 E_EpollEvent WebservApplicationUploadEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    return (EPOLL_READ);
+    return (EPOLL_NONE);
 }
 
 void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
 {
-    DEBUG("WebservApplicationUploadEvent::check_completed");
     WebservFile *file = entity->io().destination();
+    DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(file->completed()));
     entity->set_completed(file->completed());
 }
 

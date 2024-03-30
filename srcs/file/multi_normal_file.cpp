@@ -53,7 +53,7 @@ FileState const &MultiNormalFile::state()
 int MultiNormalFile::open()
 {
     DEBUG("MultiNormalFile::open()");
-    //this->state = FILE_OPEN;
+    this->state_ = FILE_OPEN;
     return (true);
     /*
     if (this->state != FILE_NOT_OPEN){
@@ -75,11 +75,10 @@ int MultiNormalFile::open()
 
 int MultiNormalFile::close()
 {
-    //DEBUG("MultiNormalFile::close() fd:" + Utility::to_string(fd.to_int()));
-    if (this->state_ != FILE_NOT_OPEN){
-        if(this->fd().to_int() > 0){
-            return ::close(this->fd().to_int());
-        }
+    DEBUG("MultiNormalFile::close() ");
+    if (this->file){
+        DEBUG("MultiNormalFile::close():close ");
+        this->file->close();
     }
     return (-1);
 }
@@ -99,7 +98,11 @@ int MultiNormalFile::write(char **buf, size_t size)
 
 std::string const &MultiNormalFile::path()
 {
+    if(this->file){
+        this->file->path();
+    }
     return (this->directory_path_);
+    //return (this->file);
 }
 
 FileDiscriptor const &MultiNormalFile::fd()
@@ -138,6 +141,11 @@ void MultiNormalFile::clear_buf()
 
 void MultiNormalFile::set_buf(const char *buf, size_t size)
 {
+    if(size > MAX_BUF){
+        ERROR("memory size is exceed");
+        throw std::runtime_error("memory size is exceed");
+    }
+
     this->buf.resize(size);
     for(size_t i=0;i<size;i++){
         this->buf[i] = buf[i];
@@ -147,6 +155,11 @@ void MultiNormalFile::set_buf(const char *buf, size_t size)
 void MultiNormalFile::add_buf(const char *buf, size_t size)
 {
     size_t cur_size = this->buf.size();
+    if(cur_size+size > MAX_BUF){
+        ERROR("memory size is exceed");
+        throw std::runtime_error("memory size is exceed");
+    }
+
     this->buf.resize(cur_size+size);
     for(size_t i=0;i<size;i++){
         this->buf[i+cur_size] = buf[i];
@@ -155,11 +168,13 @@ void MultiNormalFile::add_buf(const char *buf, size_t size)
 
 void MultiNormalFile::set_completed(bool flag)
 {
+    DEBUG("MultiNormalFile::set_completed:" + Utility::to_string(flag));
     this->completed_ = flag;
 }
 
 bool MultiNormalFile::completed()
 {
+    DEBUG("MultiNormalFile::completed():" + Utility::to_string(this->completed_));
     return (this->completed_);
 }
 
