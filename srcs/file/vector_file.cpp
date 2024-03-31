@@ -72,10 +72,11 @@ int VectorFile::read(char **buf, size_t size)
         DEBUG("vector file test No.3");
     // sizeは無視する(ポインタを渡すのでサイズの大小に関係がない)
     (void)size;
-    this->buf.push_back('\0');
+    //this->buf.push_back('\0');
         DEBUG("vector file test No.4");
 
     //this->buf.push_back('\0');
+    //this->buf[this->buf.size()] = '\0';
     *buf = &(this->buf[0]);
         DEBUG("vector file test No.5");
     for(size_t i=0;i<this->buf.size();i++){

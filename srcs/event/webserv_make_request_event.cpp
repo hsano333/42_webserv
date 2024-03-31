@@ -98,8 +98,8 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
     char *buf_p;
 
     ssize_t buf_size = src->read(&buf_p, MAX_REAUEST_EXCEPT_BODY);
+    DEBUG("WebservMakeRequestEvent::buf_size=" + Utility::to_string(buf_size));
     cout << "requert buf_size=" << buf_size << endl;
-    buf_p[buf_size] = '\0';
     cout << "buf_p=[" << buf_p << "]" << endl;
 
 
@@ -107,6 +107,7 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         ERROR("Invalid Request. ");
         throw HttpException("400");
     }
+    buf_p[buf_size] = '\0';
 
     //Split sp0(buf_p, CRLF2);
     char *body_start = Utility::strnstr(buf_p, CRLF2, buf_size);
@@ -119,8 +120,9 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         // +4 is \r\n\r\n
         body_start += 4;
         MYINFO("buf_size =" + Utility::to_string(buf_size ));
+        MYINFO("body_start - buf_p =" + Utility::to_string(body_start - buf_p ));
         MYINFO("buf_size - (body_start - buf_p) =" + Utility::to_string(buf_size - (body_start - buf_p)));
-        req->set_buf_body(body_start, buf_size - (body_start - buf_p+1));
+        req->set_buf_body(body_start, buf_size - (body_start - buf_p));
     }
     /*
     while(len > i){

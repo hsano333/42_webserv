@@ -394,30 +394,37 @@ int Response::read(char** data, size_t max_read_size)
         MYINFO("Response  Header:" + string(*data));
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
-    }else if (this->send_state == SENT_HEADER && this->has_body){
-        DEBUG("Response::read: SENT_HEADER");
-        int size=0;
-        DEBUG("Response::read chunked No.1:");
-        if (this->is_chunked){
-            size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
-        DEBUG("Response::read chunked No.11:");
-            if (size <= 5){
-                this->send_state = SENT_BODY;
-                //size = 1;
-                //(*data)[0] = '\0';
-                //(*data)[1] = '\0';
+    }else if (this->send_state == SENT_HEADER){
+        if(this->has_body){
+            DEBUG("Response::read: SENT_HEADER");
+            int size=0;
+            DEBUG("Response::read chunked No.1:");
+            if (this->is_chunked){
+                size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
+            DEBUG("Response::read chunked No.11:");
+                if (size <= 5){
+                    this->send_state = SENT_BODY;
+                    //size = 1;
+                    //(*data)[0] = '\0';
+                    //(*data)[1] = '\0';
+                }
+            }else{
+                cout << " not chunk" << endl;
+            DEBUG("Response::read chunked No.12:");
+                size = this->read_body_and_copy(data, max_read_size);
+                if (size <= 0){
+            DEBUG("Response::read chunked No.13:");
+                    this->send_state = SENT_BODY;
+                }
             }
+            DEBUG("Response::read chunked No.13:");
+            return (size);
         }else{
-            cout << " not chunk" << endl;
-        DEBUG("Response::read chunked No.12:");
-            size = this->read_body_and_copy(data, max_read_size);
-            if (size <= 0){
-        DEBUG("Response::read chunked No.13:");
-                this->send_state = SENT_BODY;
-            }
+            this->send_state = SENT_BODY;
+            (*data)[0] = '\r';
+            (*data)[1] = '\n';
+            return (0);
         }
-        DEBUG("Response::read chunked No.13:");
-        return (size);
     }
     DEBUG("Response::read: 0");
     return (0);

@@ -50,7 +50,7 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
     DEBUG("WebservApplicationUploadEvent::make_next_event");
 
     //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    return event_factory->make_making_response_event(event, );
+    return event_factory->make_making_response_event(event, NULL);
     /*
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     SocketReader *socket_reader = SocketReader::get_instance();

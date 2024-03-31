@@ -63,12 +63,12 @@ class ApplicationResult
         bool completed;
         FileState   state;
         BufferController buffer;
+        bool           is_cgi_;
         IReader *reader;
         IWriter *writer;
         FileDiscriptor cgi_in_;
         FileDiscriptor cgi_out_;
         ProcessID      pid_;
-        bool           is_cgi_;
 
 };
 #endif

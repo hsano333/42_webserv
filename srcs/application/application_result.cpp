@@ -6,17 +6,17 @@
 #include "application_result.hpp"
 #include <unistd.h>
 
-ApplicationResult::ApplicationResult() : app_(NULL), method_(Method::from_string("NONE")), is_cgi_(false)
+ApplicationResult::ApplicationResult() : app_(NULL), method_(Method::from_string("NONE")), file_(NULL), completed(false), is_cgi_(false), reader(NULL), writer(NULL)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : app_(NULL), code_(code), method_(method), is_cgi_(false)
+ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : app_(NULL), code_(code), method_(method), file_(NULL), completed(false), is_cgi_(false), reader(NULL), writer(NULL)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code, string &method) : app_(NULL), code_(code), method_(Method::from_string(method)), is_cgi_(false)
+ApplicationResult::ApplicationResult(StatusCode &code, string &method) : app_(NULL), code_(code), method_(Method::from_string(method)), file_(NULL), completed(false), is_cgi_(false), reader(NULL), writer(NULL)
 {
     ;
 }
