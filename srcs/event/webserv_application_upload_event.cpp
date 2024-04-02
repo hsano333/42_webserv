@@ -42,6 +42,7 @@ WebservEvent *WebservApplicationUploadEvent::from_event(WebservEvent *event, Web
     new_event->entity()->io().set_read_io(src, dst);
     new_event->entity()->io().set_read_fd(event->entity()->fd());
     new_event->entity()->io().switching_io(EPOLLIN);
+    new_event->entity()->io().set_total_write_size(0);
     return (new_event);
 }
 

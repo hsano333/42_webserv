@@ -91,7 +91,7 @@ namespace MultiFileFunc{
         char *pos = Utility::strnstr(*data, boundary.c_str(), size);
         //char *buf_begin = &((*data)[total]);
         if(pos){
-        MYINFO("MultiFileFunc write_file() No.2 size=" + Utility::to_string(size));
+            MYINFO("MultiFileFunc write_file() No.2 size=" + Utility::to_string(size));
             write_size = (pos - *data);
             //MYINFO("MultiFileFunc write_file() No.2 write_size=" + Utility::to_string(write_size));
             if(write_size <= 2){
@@ -150,8 +150,8 @@ namespace MultiFileFunc{
             //　boundaryの文字で途切れているならその部分だけをbufferに保存する。
             char *check_pos = NULL;
             write_size = size;
-            if(size > (boundary_size+4)){
-                check_pos = *data + (size -  (boundary_size+4));
+            if(size > (boundary_size+2)){
+                check_pos = *data + (size -  (boundary_size+2));
                 pos = Utility::strnstr(check_pos, CRLF, size);
                 if(pos){
                     write_size = pos - *data;
@@ -212,7 +212,7 @@ namespace MultiFileFunc{
 
         size_t tmp = (pos + boundary_size) - *data;
         //MYINFO("MultiFileFunc search_file() No.1 tmp=" + Utility::to_string(tmp));
-        if(tmp+4 >= size){
+        if(tmp+2 > size){
             // 改行部分が途切れてしまうので、何もしないで終了
             MYINFO("not found \\r\\n");
             return (-1);
@@ -297,7 +297,7 @@ namespace MultiFileFunc{
         size_t size_bk = size;
         int write_size;
         // +4 is CRLF and "--"
-        while(size >= boundary_size + 4){
+        while(size >= boundary_size + 2){
             MYINFO("MultiFileFunc write() No.1 size=" + Utility::to_string(size));
             if(file->exist_file()){
                 write_size = write_file(file, data, size, boundary);
