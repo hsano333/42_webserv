@@ -24,8 +24,6 @@ StreamWriter *StreamWriter::get_instance()
 int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
     DEBUG("StreamWriter::write: size:" + Utility::to_string(size));
-    DEBUG("StreamWriter::write: ifs:" + Utility::to_string(ifs));
-    DEBUG("buf=" + Utility::to_string(buf));
     (void)fd;
     (void)buf;
     size_t before = ifs->tellp();
@@ -34,9 +32,7 @@ int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, 
         ifs->close();
         return -1;
     }
-    DEBUG("StreamWriter::write:before:" + Utility::to_string(before));
     size_t after = ifs->tellp();
     //ifs->close();
-    DEBUG("StreamWriter::write:after:" + Utility::to_string(after));
     return (after - before);
 }

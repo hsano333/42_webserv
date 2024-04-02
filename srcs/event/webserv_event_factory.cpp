@@ -97,41 +97,24 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         }else{
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-            MYINFO("test No.1");
             if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
-            MYINFO("test No.2");
                 if(cached_event){
-            MYINFO("test No.3");
                     delete cached_event;
                 }
 
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
                 WebservEntity *entity;
-            MYINFO("test No.4 fd=" + fd.to_string());
-            MYINFO("test No.4 sockfd=" + sockfd.to_string());
-            if(this->cfg){
-                MYINFO("test No.4 cfg= notNULL");
-            }else{
-                MYINFO("test No.4 cfg= NULL");
-
-            }
                 try{
                     entity = new WebservEntity(fd, sockfd, this->cfg);
                 }catch(...){
             MYINFO("test error No.4");
 
                 }
-            MYINFO("test No.5");
-                //WebservEntity *entity = new WebservEntity(fd, sockfd, this->cfg);
-                //WebservEntity *entity = new WebservEntity();
-            MYINFO("test No.6");
                 entity->config()->check();
-            MYINFO("test No.7");
                 FileDiscriptor const &fd_ref = entity->fd();
-            MYINFO("test No.8");
                 WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, socket_writer, socket_reader);
             MYINFO("test No.9");
-                WebservFile *read_dst = this->file_factory->make_vector_file(fd_ref, MAX_REAUEST_EXCEPT_BODY);
+                WebservFile *read_dst = this->file_factory->make_vector_file_for_socket(fd_ref, MAX_REAUEST_EXCEPT_BODY);
             MYINFO("test No.10");
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
             MYINFO("test No.11");
@@ -188,7 +171,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
     WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
-    WebservFile *dst = this->file_factory->make_vector_file(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
+    WebservFile *dst = this->file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
     WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
     return (new_event);
 }
@@ -197,7 +180,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
     //WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
-    WebservFile *dst = this->file_factory->make_vector_file(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
+    WebservFile *dst = this->file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
     WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
     return (new_event);
 }

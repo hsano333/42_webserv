@@ -70,7 +70,10 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
 E_EpollEvent WebservApplicationUploadEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    return (EPOLL_NONE);
+    if(event->entity()->completed()){
+        return (EPOLL_NONE);
+    }
+    return (EPOLL_READ);
 }
 
 void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)

@@ -15,28 +15,30 @@ EventManager::~EventManager()
 
 void EventManager::push(WebservEvent *event)
 {
-    DEBUG("EventManager::push()");
-    this->events.push(event);
+    this->events.push_back(event);
+    DEBUG("EventManager::push() event_size:" + Utility::to_string(this->events.size()));
 }
 
 void EventManager::pop()
 {
-    DEBUG("EventManager::pop()");
-    this->events.pop();
+    this->events.pop_front();
+    DEBUG("EventManager::pop() event_size:" + Utility::to_string(this->events.size()));
 }
 
 WebservEvent *EventManager::pop_first()
 {
-    DEBUG("EventManager::pop_first()");
-    WebservEvent *top = this->events.top();
+    //WebservEvent *top = this->events.top();
+    WebservEvent *top = this->events.front();
     if(this->events.size() > 0){
-        this->events.pop();
+        this->events.pop_front();
     }
+    DEBUG("EventManager::pop_first() event_size:" + Utility::to_string(this->events.size()));
     return (top);
 }
 
 size_t EventManager::event_size()
 {
+    DEBUG("EventManager::event_size() :" + Utility::to_string(this->events.size()));
     return (this->events.size());
 }
 
@@ -52,6 +54,7 @@ size_t EventManager::keep_alive_event_size()
         }
         ite++;
     }
+    DEBUG("EventManager::keep_alive_event_size() :" + Utility::to_string(cnt));
     return (cnt);
 }
 
@@ -74,12 +77,14 @@ void EventManager::add_event_waiting_epoll(FileDiscriptor const &fd, WebservEven
 {
     DEBUG("add_event_waiting_epoll() fd:" + fd.to_string());
     this->events_waiting_epoll.insert(std::make_pair(fd, event));
+    DEBUG("EventManager::events_waiting_epoll size:" + Utility::to_string(events_waiting_epoll.size()));
 }
 
 void EventManager::erase_event_waiting_epoll(FileDiscriptor const &fd)
 {
     DEBUG("erase_event_waiting_epoll() fd:" + fd.to_string());
     this->events_waiting_epoll.erase(fd);
+    DEBUG("EventManager::erase_event_waiting_epoll size:" + Utility::to_string(events_waiting_epoll.size()));
 }
 
 WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor &fd)
@@ -90,6 +95,7 @@ WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor &fd)
     }
     WebservEvent *event = (this->events_waiting_epoll[fd]);
     this->events_waiting_epoll.erase(fd);
+    DEBUG("EventManager::pop_event_waiting_epoll size:" + Utility::to_string(events_waiting_epoll.size()));
     return (event);
 }
 
@@ -163,7 +169,6 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
                 event_return.push_back(event);
             }
         }
-
     }
     {
 
@@ -178,7 +183,7 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
             }
         }
         for(int i=event_saved.size()-1;i>=0;i--){
-            this->events.push(event_saved[i]);
+            this->events.push_back(event_saved[i]);
         }
     }
 }

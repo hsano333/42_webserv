@@ -32,7 +32,7 @@ class Epoll
         ~Epoll();
         Epoll& operator=(Epoll const & epoll);
         void init();
-        FileDiscriptor fd();
+        FileDiscriptor const &fd();
         t_epoll_event *event_return();
         //t_epoll_event const *event_related_with_fd(FileDiscriptor fd);
         //size_t allocated_event_size() const;

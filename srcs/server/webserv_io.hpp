@@ -43,6 +43,9 @@ class WebservIO
         void            set_write_completed(bool flag);
 
         void switching_io(uint32_t epoll_event);
+        size_t          total_write_size();
+        void            set_total_write_size(size_t size);
+        void            add_total_write_size(size_t size);
 
     private:
         WebservFile *source_;
@@ -61,6 +64,8 @@ class WebservIO
 
         bool is_read_completed_;
         bool is_write_completed_;
+
+        size_t total_write_size_;
 };
 
 #endif

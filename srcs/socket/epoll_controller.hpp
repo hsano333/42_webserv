@@ -16,10 +16,10 @@ class EpollController : public IOMultiplexing
         EpollController(Epoll epoll, SocketRepository *socket_repository, SocketController *socket_controller, FDManager *fd_manager);
         ~EpollController();
         void wait(int msec);
-        void add(FileDiscriptor fd, uint32_t event);
-        void erase(FileDiscriptor fd);
-        void modify(FileDiscriptor fd, uint32_t event);
-        FileDiscriptor fd();
+        void add(FileDiscriptor const &fd, uint32_t event);
+        void erase(FileDiscriptor const &fd);
+        void modify(FileDiscriptor const &fd, uint32_t event);
+        FileDiscriptor const &fd();
         int executable_event_number();
         //std::vector<t_epoll_event> &take_out_event();
         void init_epoll();

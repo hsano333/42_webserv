@@ -84,19 +84,19 @@ namespace MultiFileFunc{
         //char *buf_begin = &((*data)[total]);
         if(pos){
             write_size = (pos - *data);
-            MYINFO("MultiFileFunc write_file() No.2 write_size=" + Utility::to_string(write_size));
+            //MYINFO("MultiFileFunc write_file() No.2 write_size=" + Utility::to_string(write_size));
             if(write_size <= 2){
                 return -1;
             }
             // -2 is CRLF
             write_size -= 2;
             int tmp_size = (file->write(data, write_size));
-            MYINFO("MultiFileFunc write_file() No.2 tmp_size=" + Utility::to_string(tmp_size));
+            //MYINFO("MultiFileFunc write_file() No.2 tmp_size=" + Utility::to_string(tmp_size));
             if(tmp_size <= 0){
                 ERROR("Failure to write file:" + file->path());
                 throw HttpException("500");
             }
-            MYINFO("MultiFileFunc write_file() No.3 close file");
+            //MYINFO("MultiFileFunc write_file() No.3 close file");
             file->close();
             file->set_file(NULL);
             file->clear_buf();
@@ -128,7 +128,7 @@ namespace MultiFileFunc{
             }
             */
         }else{
-            MYINFO("MultiFileFunc write_file() No.4");
+            //MYINFO("MultiFileFunc write_file() No.4");
             //bounaryがないので全部(boundary_size分だけ残して)書き込み、
             //再度read処理を実行するため、returnする
 
@@ -138,14 +138,14 @@ namespace MultiFileFunc{
             }
             // -2 is CRLF
             write_size -= 2;
-            MYINFO("MultiFileFunc write_file() No.5 write_size=" + Utility::to_string(write_size));
+            //MYINFO("MultiFileFunc write_file() No.5 write_size=" + Utility::to_string(write_size));
             int tmp_size = (file->write(data, write_size));
             if(tmp_size <= 0){
                 ERROR("Failure to write file:" + file->path());
                 throw HttpException("500");
             }
             *data += write_size;
-            MYINFO("MultiFileFunc write_file() No.6 write_size=" + Utility::to_string(write_size));
+            //MYINFO("MultiFileFunc write_file() No.6 write_size=" + Utility::to_string(write_size));
             return (tmp_size);
         }
     }
@@ -153,9 +153,10 @@ namespace MultiFileFunc{
     template <class FileT>
     int search_file(FileT *file, char **data, size_t &size, std::string const &directory, std::string const &boundary)
     {
+        DEBUG("search_file() boundary:" + boundary);
         size_t boundary_size = boundary.size();
         size_t size_bk = size;
-        MYINFO("MultiFileFunc search_file() size=" + Utility::to_string(size));
+        //MYINFO("MultiFileFunc search_file() size=" + Utility::to_string(size));
         char *pos = Utility::strnstr(*data, boundary.c_str(), size);
         if(pos == NULL){
             MYINFO("not found \\r\\n");
@@ -164,21 +165,21 @@ namespace MultiFileFunc{
         }
 
         size_t tmp = (pos + boundary_size) - *data;
-        MYINFO("MultiFileFunc search_file() No.1 tmp=" + Utility::to_string(tmp));
+        //MYINFO("MultiFileFunc search_file() No.1 tmp=" + Utility::to_string(tmp));
         if(tmp+2 >= size){
             // 改行部分が途切れてしまうので、何もしないで終了
             MYINFO("not found \\r\\n");
             return (-1);
         }
         if(pos[boundary_size] == '-' && pos[boundary_size+1] == '-'){
-            MYINFO("MultiFileFunc search_file() completed");
+            //MYINFO("MultiFileFunc search_file() completed");
             file->set_completed(true);
             return (size);
         }
 
         pos += boundary_size+2;
         size_t rest_size = size - (pos - *data);
-        MYINFO("MultiFileFunc search_file() No.2 rest_size=" + Utility::to_string(rest_size));
+        //MYINFO("MultiFileFunc search_file() No.2 rest_size=" + Utility::to_string(rest_size));
         char *pos2 = Utility::strnstr(pos, CRLF2, rest_size);
         if(pos2 == NULL){
             MYINFO("not found \\r\\n\\r\\n");
@@ -225,6 +226,7 @@ namespace MultiFileFunc{
         file->set_file(normal_file);
         size_t read_size = pos2-*data;
         *data = pos2;
+        DEBUG("search_file() read_size:" + Utility::to_string(read_size));
         return ((int)read_size);
     }
 
@@ -239,10 +241,10 @@ namespace MultiFileFunc{
         std::string const &directory = file->directory_path();
         std::string const &boundary = file->content_type_boundary();
         size_t boundary_size = boundary.size();
-        MYINFO("MultiFileFunc write() directory:" + directory);
-        MYINFO("MultiFileFunc write() boundary:" + boundary);
+        //MYINFO("MultiFileFunc write() directory:" + directory);
+        //MYINFO("MultiFileFunc write() boundary:" + boundary);
 
-        MYINFO("MultiFileFunc write() No.1");
+        //MYINFO("MultiFileFunc write() No.1");
         //size_t total = 0;
         //int tmp_size = 0;
 
@@ -250,7 +252,7 @@ namespace MultiFileFunc{
         int write_size;
         // +2 is CRLF or "--"
         while(size >= boundary_size + 2){
-            MYINFO("MultiFileFunc write() No.1 size=" + Utility::to_string(size));
+            //MYINFO("MultiFileFunc write() No.1 size=" + Utility::to_string(size));
             if(file->exist_file()){
                 write_size = write_file(file, data, size, boundary);
             }else{

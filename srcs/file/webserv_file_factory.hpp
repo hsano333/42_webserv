@@ -18,6 +18,7 @@
 #include "utility.hpp"
 #include "split.hpp"
 #include "header.hpp"
+#include "request.hpp"
 #include <cstdio>
 #include <stdlib.h>
 
@@ -67,15 +68,15 @@ class WebservFileFactory
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
         WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
         WebservFile *make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
+        WebservFile *make_socket_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_chunk_file(FileDiscriptor const &fd, WebservFile *file);
-        //WebservFile *make_socket_file_as_write(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader, bool is_chunked);
         WebservFile *make_error_file(FileDiscriptor const &fd, StatusCode const &status_code);
-        //WebservFile *make_socket_file(FileDiscriptor &fd, IWriter* iwriter, IReader* ireader);
-        //WebservFile *make_socket_file(FileDiscriptor &fd, IWriter* iwriter, IReader* ireader);
-        WebservFile *make_vector_file(FileDiscriptor const &fd, size_t buf_size);
+        WebservFile *make_vector_file_for_socket(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref);
         WebservFile *make_vector_file(FileDiscriptor const &fd, char *buf, size_t size);
         WebservFile *make_directory_file(FileDiscriptor const &fd, std::string const &path, std::string const &relative_path, std::string const &domain);
+        WebservFile *make_request_file(FileDiscriptor const &fd, Request *req);
+        WebservFile *make_request_file_read_buf(FileDiscriptor const &fd, Request *req);
 
         // for dummy_func; not use;
         static string string_ref;
@@ -84,8 +85,6 @@ class WebservFileFactory
         static WebservFileFactory *singleton;
         FileManager *file_manager;
 };
-
-
 
 namespace DefaultFunc{
     template <class FileT>
@@ -140,6 +139,7 @@ namespace DefaultFunc{
         DEBUG("Default size()");
         return (file->size());
     }
+
     template <class FileT>
     bool is_chunk(FileT *file){
         DEBUG("Default is_chunk()");
@@ -263,7 +263,7 @@ namespace DummyFunc{
     template <class FileT>
     bool completed(FileT *file){
         (void)file;
-        DEBUG("completed()");
+        DEBUG("Dummy completed()");
         return (false);
     }
 }

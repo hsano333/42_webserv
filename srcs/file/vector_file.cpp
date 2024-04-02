@@ -140,6 +140,11 @@ size_t VectorFile::size()
     return (this->buf.size());
 }
 
+void VectorFile::clear_read()
+{
+    this->state = FILE_OPEN;
+}
+
 /*
 size_t VectorFile::change_reader(IReader *reader)
 {

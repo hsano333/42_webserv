@@ -8,12 +8,14 @@ using std::endl;
 using std::vector;
 using std::map;
 
-SocketFile::SocketFile(FileDiscriptor const &fd) :
+SocketFile::SocketFile(FileDiscriptor const &fd, WebservFile *file) :
                             fd(fd),
+                            file_(file),
                             reader(NULL),
                             writer(NULL),
                             chunked_size_(0),
-                            is_chunked_(false)
+                            is_chunked_(false),
+                            total_write_size(0)
 {
     ;
 }
@@ -26,7 +28,17 @@ SocketFile::~SocketFile()
 SocketFile* SocketFile::from_fd(FileDiscriptor const &fd, IWriter* writer, IReader* reader)
 {
     DEBUG("SocketFile::from_fd fd:" + fd.to_string());
-    SocketFile *file = new SocketFile(fd);
+    SocketFile *file = new SocketFile(fd, NULL);
+    file->reader = reader;
+    file->writer = writer;
+    file->state = FILE_NOT_OPEN;
+    return (file);
+}
+
+SocketFile* SocketFile::from_file(FileDiscriptor const &fd, WebservFile *buf_file,  IWriter* writer, IReader* reader)
+{
+    DEBUG("SocketFile::from_fd fd:" + fd.to_string());
+    SocketFile *file = new SocketFile(fd, buf_file);
     file->reader = reader;
     file->writer = writer;
     file->state = FILE_NOT_OPEN;
@@ -62,10 +74,12 @@ int SocketFile::open()
 }
 */
 
+
+
 int SocketFile::read(char **buf, size_t max_size)
 {
-    DEBUG("SocketFile::read() size=" + Utility::to_string(max_size));
-    return this->reader->read(this->fd, *buf, max_size, NULL);
+    DEBUG("SocketFile::read() max_read_size=" + Utility::to_string(max_size));
+    return (this->reader->read(this->fd, *buf, max_size, NULL));
 }
 
 int SocketFile::write(char **buf, size_t size)
@@ -88,8 +102,11 @@ int SocketFile::write(char **buf, size_t size)
 
     */
     //int rval = this->writer->write(this->fd, *buf, size, NULL);
-    return (this->writer->write(this->fd, *buf, size, NULL));
-
+    int result = (this->writer->write(this->fd, *buf, size, NULL));
+    if(result > 0){
+        total_write_size += result;
+    }
+    return (result);
     //DEBUG("write rval=" + Utility::to_string(rval));
     //return (rval);
 }
@@ -144,6 +161,21 @@ bool SocketFile::is_chunked()
 void SocketFile::set_is_chunked(bool flag)
 {
     this->is_chunked_ = flag;
+}
+
+size_t SocketFile::size()
+{
+    return (this->total_write_size);
+}
+
+WebservFile *SocketFile::file()
+{
+    return (this->file_);
+}
+
+void SocketFile::clear_file()
+{
+    this->file_ = NULL;
 }
 
 /*

@@ -8,6 +8,7 @@
 #include "ireader.hpp"
 #include "iwriter.hpp"
 #include "status_code.hpp"
+#include "global.hpp"
 
 class VectorFile
 {
@@ -23,6 +24,7 @@ class VectorFile
         size_t size();
         //bool is_chunk();
         FileState   state;
+        void        clear_read();
 
     private:
         VectorFile(size_t max_buf_size);
@@ -35,5 +37,26 @@ class VectorFile
         //std::vector<char> tmp_buf;
         //char buf_c[MAX_BUF];
 };
+
+
+namespace CheckSocketReadEndFunc{
+    template <class FileT>
+    bool completed(FileT *file){
+        DEBUG("CheckSocketReadEndFunc::completed()");
+        bool flag = false;
+        if(file->size() >= MAX_REAUEST_EXCEPT_BODY ){
+            flag = true;
+        }else{
+            char *buf;
+            size_t read_size = file->read(&buf, file->size());
+            char *pos = Utility::strnstr(buf, CRLF2, read_size);
+            if(pos){
+                flag = true;
+            }
+        }
+        file->clear_read();
+        return (flag);
+    }
+}
 
 #endif

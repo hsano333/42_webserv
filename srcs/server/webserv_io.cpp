@@ -1,6 +1,6 @@
 #include "webserv_io.hpp"
 
-WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false)
+WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false), total_write_size_(0)
 {
     ;
 }
@@ -173,3 +173,24 @@ void WebservIO::set_write_completed(bool flag)
 {
     this->is_write_completed_ = flag;
 }
+
+size_t WebservIO::total_write_size()
+{
+    return (this->total_write_size_);
+}
+
+void WebservIO::set_total_write_size(size_t size)
+{
+    this->total_write_size_ = size;
+}
+
+void WebservIO::add_total_write_size(size_t size)
+{
+
+    if(this->total_write_size_ >= this->total_write_size_ + size){
+        ERROR("exceed total write buffer size");
+        throw std::runtime_error("exceed total write buffer size");
+    }
+    this->total_write_size_ += size;
+}
+

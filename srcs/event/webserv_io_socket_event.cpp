@@ -83,24 +83,17 @@ E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
 
 void WebservIOSocketEvent::check_completed(WebservEntity * entity)
 {
+    size_t total_size = entity->io().destination()->size();
+    DEBUG("WebservIOSocketEvent::check_completed size=" + Utility::to_string(total_size));
 
     //todo
-    entity->set_completed(true);
-    return;
-    bool flag = false;;
+    //entity->set_completed(true);
+    //return;
+    bool flag = false;
     if(entity->io().in_out() == EPOLLIN){
         DEBUG("WebservIOSocketEvent::check_completed EPOLLIN");
         WebservFile *dst = entity->io().destination();
-        if(dst->size() >= MAX_REAUEST_EXCEPT_BODY ){
-            flag = true;
-        }else{
-            char *buf;
-            dst->read(&buf, dst->size());
-            char *pos = Utility::strnstr(buf, "\r\n\r\n", dst->size());
-            if(pos){
-                flag = true;
-            }
-        }
+        flag = dst->completed();
     }else{
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
         //EPOLLOUT 
@@ -110,5 +103,6 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
         flag= true;
     }
 
+    DEBUG("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));
     entity->set_completed(flag);
 }

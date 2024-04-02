@@ -67,7 +67,7 @@ class Response
         bool read_completed();
         //int remove();
         //std::string const &path();
-        void check_body_and_chunk();
+        bool check_body_and_chunk();
         void add_written_body_size(size_t size);
 
     private:

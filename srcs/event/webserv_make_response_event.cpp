@@ -97,7 +97,11 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
         }
     }
     DEBUG("WebservMakeResponseEvent::make_response() No.5-1");
-    res->check_body_and_chunk();
+    if(!res->check_body_and_chunk()){
+        res->add_header(CONTENT_LENGTH, "0");
+    }
+
+
     DEBUG("WebservMakeResponseEvent::make_response() No.6");
     return (res);
 }

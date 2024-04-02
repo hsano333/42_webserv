@@ -16,7 +16,8 @@ SocketChunkFile::SocketChunkFile(FileDiscriptor const &fd, WebservFile *file) :
                             buf_p_(0),
                             is_chunked_(false),
                             file_(file),
-                            completed_(false)
+                            completed_(false),
+                            total_write_size(0)
 {
     ;
 }
@@ -30,8 +31,6 @@ SocketChunkFile* SocketChunkFile::from_file(FileDiscriptor const &fd, WebservFil
 {
     DEBUG("SocketChunkFile::from_fd fd:" + fd.to_string());
     SocketChunkFile *new_file = new SocketChunkFile(fd, file);
-    //file->reader = reader;
-    //file->writer = writer;
     new_file->state = FILE_NOT_OPEN;
     return (new_file);
 }
@@ -129,9 +128,15 @@ char *SocketChunkFile::buf()
     return &(this->buf_[buf_p_]);
 }
 
+
+WebservFile *SocketChunkFile::file()
+{
+    return (this->file_);
+}
+
 int SocketChunkFile::read(char **buf, size_t max_size)
 {
-    DEBUG("SocketChunkFile::read() size=" + Utility::to_string(max_size));
+    DEBUG("SocketChunkFile::read() max_size=" + Utility::to_string(max_size));
     return (this->file_->read(buf, max_size));
 }
 
@@ -155,7 +160,11 @@ int SocketChunkFile::write(char **buf, size_t size)
 
     */
     //int rval = this->writer->write(this->fd, *buf, size, NULL);
-    return (this->writer->write(this->fd, *buf, size, NULL));
+    size_t result = (this->writer->write(this->fd, *buf, size, NULL));
+    if(result > 0){
+        total_write_size += result;
+    }
+    return (result);
 
     //DEBUG("write rval=" + Utility::to_string(rval));
     //return (rval);
@@ -219,10 +228,23 @@ void SocketChunkFile::set_completed(bool flag)
     this->completed_ = flag;
 }
 
+
 bool SocketChunkFile::completed()
 {
     DEBUG("SocketChunkFile::completed():" + Utility::to_string(this->completed_));
     return (this->completed_);
+}
+
+size_t SocketChunkFile::size()
+{
+    return (this->total_write_size);
+}
+
+void SocketChunkFile::clear_read()
+{
+    if(this->file_){
+        //this->file_->clear_read();
+    }
 }
 
 /*

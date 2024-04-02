@@ -102,7 +102,7 @@ void EpollController::erase_event(t_epoll_event* ev)
 }
 */
 
-void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
+void EpollController::add(FileDiscriptor const &fd_obj, uint32_t event)
 {
     MYINFO("EpollController::add() fd:" + Utility::to_string(fd_obj.to_int())) ;
     //if (check_error() == false){
@@ -122,7 +122,7 @@ void EpollController::add(FileDiscriptor fd_obj, uint32_t event)
     //fd_map.insert(fd, true);
 }
 
-void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
+void EpollController::modify(FileDiscriptor const &fd_obj, uint32_t event)
 {
     MYINFO("EpollController::modify() fd:" + Utility::to_string(fd_obj.to_int()) + ", event:" + Utility::to_string(event));
 
@@ -137,7 +137,7 @@ void EpollController::modify(FileDiscriptor fd_obj, uint32_t event)
     }
 }
 
-void EpollController::erase(FileDiscriptor fd_obj)
+void EpollController::erase(FileDiscriptor const &fd_obj)
 {
     MYINFO("EpollController::erase() fd:" + Utility::to_string(fd_obj.to_int()));
     //if (check_error() == false){
@@ -170,7 +170,7 @@ void EpollController::erase(FileDiscriptor fd_obj)
 
 }
 
-FileDiscriptor EpollController::fd()
+FileDiscriptor const &EpollController::fd()
 {
     return (this->epoll.fd());
 }

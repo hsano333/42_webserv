@@ -100,7 +100,6 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
     ssize_t buf_size = src->read(&buf_p, MAX_REAUEST_EXCEPT_BODY);
     DEBUG("WebservMakeRequestEvent::buf_size=" + Utility::to_string(buf_size));
     cout << "requert buf_size=" << buf_size << endl;
-    cout << "buf_p=[" << buf_p << "]" << endl;
 
 
     if(buf_size <= 0){
@@ -108,9 +107,11 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         throw HttpException("400");
     }
     buf_p[buf_size] = '\0';
+    cout << "buf_p=[" << buf_p << "]" << endl;
 
     //Split sp0(buf_p, CRLF2);
     char *body_start = Utility::strnstr(buf_p, CRLF2, buf_size);
+    MYINFO("buf_size =" + Utility::to_string(buf_size ));
     //cout << "sp0.size=" << sp0.size() << endl;
     //int len = sp0.size();
     //int i = 1;
@@ -119,10 +120,13 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         body_start[0] = '\0';
         // +4 is \r\n\r\n
         body_start += 4;
-        MYINFO("buf_size =" + Utility::to_string(buf_size ));
         MYINFO("body_start - buf_p =" + Utility::to_string(body_start - buf_p ));
         MYINFO("buf_size - (body_start - buf_p) =" + Utility::to_string(buf_size - (body_start - buf_p)));
         req->set_buf_body(body_start, buf_size - (body_start - buf_p));
+    }else{
+        ERROR("not found CRLF2");
+        throw HttpException("400");
+
     }
     /*
     while(len > i){

@@ -346,7 +346,7 @@ bool Response::is_chunk()
     return (false);
 }
 
-void Response::check_body_and_chunk()
+bool Response::check_body_and_chunk()
 {
     this->has_body = false;
     this->is_chunked = false;
@@ -364,7 +364,13 @@ void Response::check_body_and_chunk()
             this->has_body = true;
         }
     }
+
     DEBUG("Response::check_body_and_chunk() chunked:" + Utility::to_string(this->is_chunked));
+    if(this->is_chunked == false && this->has_body == false){
+        return (false);
+    }
+    return (true);
+
 }
 
 bool Response::read_completed(){

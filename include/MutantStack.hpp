@@ -29,7 +29,6 @@ class MutantStack : public Inherit
         typedef typename Iter::reverse_iterator reverse_iterator;
         typedef typename Iter::const_reverse_iterator const_reverse_iterator;
 
-
         template < template <typename, typename, typename> class Container>
         typename Iter::iterator getBeginIte(Container<T, std::deque<T>, std::stack<T> > &obj);
 

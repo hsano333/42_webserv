@@ -7,6 +7,8 @@
 #include "header_word.hpp"
 #include "webserv_io_event.hpp"
 #include "socket_chunk_file.hpp"
+#include "socket_reader.hpp"
+#include "socket_writer.hpp"
 
 PostApplication::PostApplication() : method(Method::from_string("POST"))
 {
@@ -57,12 +59,19 @@ bool PostApplication::check_not_cgi_end(size_t received_size)
 WebservEvent* PostApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
 {
     DEBUG("PostApplication::next_event");
-    WebservFile *file = this->file_factory->make_socket_chunk_file(event->entity()->fd(), event->entity()->io().source());
+    WebservFile *file;
 
-    //WebservFile *src = event->entity()->io().source();
-    //src->change_reader();
+    Request *req = event->entity()->request();
+    WebservFile *req_file = this->file_factory->make_request_file_read_buf(event->entity()->fd(), req);
+    file = this->file_factory->make_socket_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
+
+    if(event->entity()->request()->header().is_chunked()){
+        file = this->file_factory->make_socket_chunk_file(event->entity()->fd(), file);
+    }
+
     WebservEvent *new_event = (event_factory->make_making_upload_event(event, file));
 
+    /*
     size_t size = 0;
     char *buf = event->entity()->request()->get_buf_body(&size);
 
@@ -75,6 +84,7 @@ WebservEvent* PostApplication::next_event(WebservEvent *event, WebservEventFacto
         file->open();
         file->write(&buf, size);
     }
+    */
     //buf[size] = '\0';
     //cout << "post application buf=" << buf << endl << endl;
     //printf("post application buf=[%s]\n\n", buf);

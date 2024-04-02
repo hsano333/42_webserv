@@ -14,8 +14,15 @@ bool write_buffer_data(WebservEntity *entity, char *buf_p)
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
-    printf("write buffer test buf=[%s]\n\n", buf_p);
-    printf("buffer size =[%zu]\n\n", loaded_size);
+    printf("write buffer test buf=[");
+    size_t tmp_size = loaded_size;
+    int i=0;
+    while(tmp_size > 0){
+        printf("%c", (buf_p)[i]);
+        i++;
+        tmp_size--;
+    }
+    printf("]\nbuffer size =[%zu]\n\n", loaded_size);
     if(loaded_size != 0){
         ssize_t write_size = destination->write(&buf_p, loaded_size);
         if(write_size < 0){

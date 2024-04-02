@@ -61,7 +61,7 @@ void Epoll::init()
     */
 }
 
-FileDiscriptor Epoll::fd()
+FileDiscriptor const &Epoll::fd()
 {
     return (this->epfd);
 }
@@ -97,6 +97,7 @@ std::vector<t_epoll_event> &Epoll::get_events()
 
 int Epoll::executable_event_number()
 {
+    DEBUG("executable_event_number: " + Utility::to_string(this->executable_event_number_));
     return (this->executable_event_number_);
 }
 

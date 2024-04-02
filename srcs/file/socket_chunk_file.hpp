@@ -23,6 +23,7 @@ class SocketChunkFile
         //static SocketChunkFile* from_fd(IWriter* iwriter, FileDiscriptor fd);
         //int open();
         //int close();
+        WebservFile *file();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         //int save(char *data, size_t size);
@@ -44,6 +45,8 @@ class SocketChunkFile
         void              set_completed(bool flag);
         bool              completed();
         //void              append_buf(char *data, size_t size);
+        size_t            size();
+        void              clear_read();
 
     private:
         SocketChunkFile(FileDiscriptor const &fd, WebservFile *file);
@@ -57,6 +60,7 @@ class SocketChunkFile
         WebservFile *file_;
         std::vector<char> buf_;
         bool completed_;
+        size_t total_write_size;
         //size_t buf_size_;
         //std::vector<char> buf;
         //size_t            chunked_size;
@@ -102,9 +106,12 @@ namespace ChunkedFunc{
             buf_size = file->buf_size();
             *data = file->buf();
         }else if(buf_size > 0){
-            char tmp[20];
+            // buf_size <= 20;
+            char tmp[21];
             char *tmp_p = tmp;
             int tmp_size = (DefaultFunc::read(file, &(tmp_p), 20 - buf_size));
+            //int tmp_size = file->file()->read(&(tmp_p), 20 - buf_size);
+
             if(tmp_size > 0){
                 file->add_buf(tmp, tmp_size);
             }
@@ -112,16 +119,17 @@ namespace ChunkedFunc{
             *data = file->buf();
         }else{
             buf_size = (DefaultFunc::read(file, data, size));
+            //buf_size = file->file()->read(data, size);
         }
         if(buf_size <= 0){
             return (-1);
         }
-        //MYINFO("Chunked read() buf_siz No.2 buf_size=" + Utility::to_string(buf_size));
-        //printf("test No.1 chuned read=[");
-        //for(size_t i=0;i<buf_size;i++){
-            //printf("%c", (*data)[i]);
-        //}
-        //printf("chuned read=]end read chunked\n");
+        MYINFO("Chunked read() buf_siz No.2 buf_size=" + Utility::to_string(buf_size));
+        printf("test No.1 chuned read=[");
+        for(int i=0;i<buf_size;i++){
+            printf("%c", (*data)[i]);
+        }
+        printf("]end read chunked\n");
 
         ssize_t chunked_size = file->chunked_size();
         ssize_t chunked_str_size;
@@ -149,6 +157,7 @@ namespace ChunkedFunc{
                 char tmp[5];
                 char *tmp_p = tmp;
                 buf_size = (DefaultFunc::read(file, &tmp_p, 5));
+                //buf_size = file->file()->read(&tmp_p, 5);
                 if(buf_size > 0){
                     file->add_buf(tmp, buf_size);
                     *data = file->buf();
@@ -218,6 +227,22 @@ namespace ChunkedFunc{
         //file->set_buf(*data, chunked_size);
         file->set_buf(*data, size);
         return (size);
+    }
+}
+
+namespace ExistCRLF2{
+    template <class FileT>
+    bool completed(FileT *file)
+    {
+        char *buf;
+        bool flag = false;
+        size_t read_size = file->read(&buf, file->size());
+        char *pos = Utility::strnstr(buf, CRLF2, read_size);
+        if(pos){
+            flag = true;
+        }
+        file->clear_read();
+        return (flag);
     }
 }
 

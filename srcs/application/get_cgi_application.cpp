@@ -31,10 +31,10 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     Request *req = event->entity()->request();
     WebservFile *file = file_factory->make_vector_file(event->entity()->fd(), req->req_line().uri().query());
     req->set_file(file);
-    WebservFile *write_src = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->request());
+    WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
     WebservFile *read_dst = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
-    WebservFile *result_file = file_factory->make_vector_file(event->entity()->fd(), MAX_BUF);
+    WebservFile *result_file = file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);
 

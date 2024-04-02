@@ -399,6 +399,7 @@ void Request::set_file(WebservFile *file)
 {
     this->file = file;
 }
+/*
 
 int Request::open()
 {
@@ -420,6 +421,12 @@ int Request::write(char **data, size_t size)
 {
     (void)data;
     (void)size;
+    return (0);
+}
+*/
+
+size_t Request::size()
+{
     return (0);
 }
 
@@ -461,6 +468,7 @@ std::string const &Request::path()
 
 int Request::read(char** data, size_t max_read_size)
 {
+    DEBUG("Request::read() max_size=" + Utility::to_string(max_read_size));
     return (this->file->read(data, max_read_size));
 }
 
