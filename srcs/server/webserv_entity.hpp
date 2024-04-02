@@ -48,7 +48,7 @@ class WebservEntity
         Config *cfg_;
         Application       *app_;
         ApplicationResult *app_result_;
-        WebservIO   io_;
+        WebservIO io_;
 
         bool completed_;
         bool force_close_;

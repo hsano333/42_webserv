@@ -30,7 +30,7 @@ class EventManager
         bool find(FileDiscriptor &fd);
     private:
         MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::deque<WebservEvent*> > events;
-        MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::deque<WebservEvent*> > instant_events;
+        //MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::deque<WebservEvent*> > instant_events;
         std::map<FileDiscriptor, WebservEvent*> events_waiting_epoll;
 };
 

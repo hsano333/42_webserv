@@ -12,6 +12,7 @@ template<typename EventT>
 bool io_work(EventT *event, WebservEntity *entity)
 {
     (void)event;
+    entity->io().total_write_size();
 
     DEBUG("WebservIOWorker::work fd:" + entity->fd().to_string());
 
@@ -34,6 +35,7 @@ bool io_work(EventT *event, WebservEntity *entity)
     
     while(1)
     {
+        entity->io().total_write_size();
         //DEBUG("WebservIOWorker::work No.3");
         buf_p = &(buf[load_size]);
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
@@ -69,17 +71,23 @@ bool io_work(EventT *event, WebservEntity *entity)
         }else if(read_size > write_size){
             MYINFO("read_size=" + Utility::to_string(read_size));
             MYINFO("write_size=" + Utility::to_string(write_size));
-            entity->io().save(buf_p, write_size, read_size);
+            printf("read_size=%s\n" , Utility::to_string(read_size).c_str());
+            printf("write_size=%s\n" , Utility::to_string(write_size).c_str());
+            //entity->io().save(*buf, write_size, read_size);
+            size_t diff = read_size - write_size;
+            Utility::memcpy(buf, &(buf[write_size]), diff);
             entity->io().add_total_write_size(write_size);
+            load_size = read_size - write_size;
             break;
         }else{
             MYINFO("Write OK::" + Utility::to_string(write_size));
             entity->io().add_total_write_size(write_size);
+            load_size = 0;
         }
-        load_size = 0;
     }
     DEBUG("WebservIOWorker::check completed");
     event->check_completed(entity);
+    entity->io().total_write_size();
     return (entity->completed());
 }
 

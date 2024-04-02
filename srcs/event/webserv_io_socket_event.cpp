@@ -83,6 +83,7 @@ E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
 
 void WebservIOSocketEvent::check_completed(WebservEntity * entity)
 {
+    DEBUG("WebservIOSocketEvent::check_completed");
     size_t total_size = entity->io().destination()->size();
     DEBUG("WebservIOSocketEvent::check_completed size=" + Utility::to_string(total_size));
 

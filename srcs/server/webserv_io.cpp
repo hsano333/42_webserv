@@ -2,12 +2,12 @@
 
 WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false), total_write_size_(0)
 {
-    ;
+    DEBUG("WebservIO() Constructor");
 }
 
 WebservIO::~WebservIO()
 {
-    ;
+    DEBUG("WebservIO() Destructor");
 }
 
 
@@ -176,21 +176,28 @@ void WebservIO::set_write_completed(bool flag)
 
 size_t WebservIO::total_write_size()
 {
+
+    DEBUG("WebservIO::total_write_size:" + Utility::to_string(this->total_write_size_));
+    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(&this->total_write_size_));
+    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(this));
     return (this->total_write_size_);
 }
 
 void WebservIO::set_total_write_size(size_t size)
 {
+    DEBUG("WebservIO::set_total_write_size:" + Utility::to_string(size));
     this->total_write_size_ = size;
 }
 
 void WebservIO::add_total_write_size(size_t size)
 {
 
+    DEBUG("WebservIO::size:" + Utility::to_string(size));
     if(this->total_write_size_ >= this->total_write_size_ + size){
         ERROR("exceed total write buffer size");
         throw std::runtime_error("exceed total write buffer size");
     }
     this->total_write_size_ += size;
+    DEBUG("WebservIO::total_write_size_:" + Utility::to_string(this->total_write_size_));
 }
 
