@@ -381,18 +381,20 @@ bool Response::read_completed(){
 int Response::read(char** data, size_t max_read_size)
 {
     char *tmp;
+    DEBUG("Response::read()");
 
-    int read_size = read_data(&tmp, max_read_size);
+    int read_size = read_data(&tmp, data,  max_read_size);
     if(read_size <= 0){
         return read_size;
     }
+    DEBUG("Response::read() No.2 read_size=" + Utility::to_string(read_size));
     for(int i=0; i<read_size; i++){
         (*data)[i] = tmp[i];
     }
     return (read_size);
 }
 
-int Response::read_data(char** data, size_t max_read_size)
+int Response::read_data(char** data, char **ref, size_t max_read_size)
 {
     (void)max_read_size;
     DEBUG("Response::read:");
@@ -421,7 +423,7 @@ int Response::read_data(char** data, size_t max_read_size)
             int size=0;
             DEBUG("Response::read chunked No.1:");
             if (this->is_chunked){
-                size = this->read_body_and_copy_chunk(data, MAX_READ_SIZE);
+                size = this->read_body_and_copy_chunk(ref, MAX_READ_SIZE);
             DEBUG("Response::read chunked No.11:");
                 if (size <= 5){
                     this->send_state = SENT_BODY;
@@ -432,7 +434,7 @@ int Response::read_data(char** data, size_t max_read_size)
             }else{
                 cout << " not chunk" << endl;
             DEBUG("Response::read chunked No.12:");
-                size = this->read_body_and_copy(data, max_read_size);
+                size = this->read_body_and_copy(ref, max_read_size);
                 if (size <= 0){
             DEBUG("Response::read chunked No.13:");
                     this->send_state = SENT_BODY;

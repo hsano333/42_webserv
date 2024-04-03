@@ -24,8 +24,8 @@ SocketWriter *SocketWriter::get_instance()
 
 int SocketWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
+    DEBUG("SocketWriter::write fd:" + fd.to_string());
     (void)ifs;
-    std::cout << "socket::write() size:" << size << std::endl;
     ssize_t read_size = ::send(fd.to_int(), buf, size, MSG_DONTWAIT | MSG_NOSIGNAL);
     if(read_size == 0){
         ERROR("Client Write Close");

@@ -145,7 +145,9 @@ namespace RequestBufferFunc{
     template <class FileT>
     int read(FileT *file, char **data, size_t size)
     {
+        DEBUG("RequestBufferFunc::read()");
         char *tmp = file->get_buf_body(&size);
+        DEBUG("RequestBufferFunc::read size:" + Utility::to_string(size));
         if(size <= 0){
             return (size);
         }
@@ -155,7 +157,6 @@ namespace RequestBufferFunc{
         }
         return (size);
     }
-
 }
 
 #endif

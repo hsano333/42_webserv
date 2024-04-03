@@ -46,6 +46,7 @@ void EventController::change_write_event(WebservEvent *event)
 
 void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *next_event)
 {
+    DEBUG("EventController::set_next_epoll_event");
     if(next_event == NULL){
         MYINFO("EventController::next_epoll_event is NULL");
         return;

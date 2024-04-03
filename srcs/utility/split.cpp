@@ -5,6 +5,7 @@
 #include <climits>
 #include <map>
 #include <stdio.h>
+#include "global.hpp"
 
 using std::cout;
 using std::endl;
@@ -13,12 +14,10 @@ using std::vector;
 
 Split::Split()
 {
-    ;
 }
 
 Split::~Split()
 {
-    ;
 }
 
 Split::Split(Split const &sp)
@@ -81,7 +80,7 @@ void split_delimiters(std::string const& str, std::string delimiters, vector<str
     //cout << "splitted_strs" << splitted_strs.size() << endl;
 }
 
-static void split(std::string const& str, std::string delimiter, vector<string> &vec)
+static void split(std::string const &str, std::string const &delimiter, vector<string> &vec)
 {
     vector<string> &splitted_strs = vec;
 
@@ -109,16 +108,16 @@ static void split(std::string const& str, std::string delimiter, vector<string> 
 
 void Split::set_word(std::string &str, std::string const &delimiter)
 {
-    string tmp = string(str);
+    //string tmp = string(str);
     size_t del_len = delimiter.size();
     if (del_len == 0) {
-        this->_splitted_string.push_back(tmp);
+        this->_splitted_string.push_back(str);
         return;
     }
-    split(tmp, delimiter, this->_splitted_string);
+    split(str, delimiter, this->_splitted_string);
 }
 
-void Split::split_not_delete_delimiter(std::string const& str, std::string delimiter)
+void Split::split_not_delete_delimiter(std::string const &str, std::string const &delimiter)
 {
     size_t del_len = delimiter.size();
     std::string::size_type offset = std::string::size_type(0);
@@ -139,7 +138,7 @@ void Split::split_not_delete_delimiter(std::string const& str, std::string delim
 }
 
 
-Split::Split(char *str, std::string delimiter)
+Split::Split(char *str, std::string const &delimiter)
 {
     string tmp = string(str);
     size_t del_len = delimiter.size();
@@ -150,7 +149,7 @@ Split::Split(char *str, std::string delimiter)
     split(tmp, delimiter, this->_splitted_string);
 }
 
-Split::Split(std::string const& str, std::string delimiter)
+Split::Split(std::string const& str, std::string const &delimiter)
 {
     size_t del_len = delimiter.size();
     if (del_len == 0) {
@@ -160,7 +159,7 @@ Split::Split(std::string const& str, std::string delimiter)
     split(str, delimiter, this->_splitted_string);
 }
 
-Split::Split(std::string const& str, std::string delimiter, bool multi_delimiter)
+Split::Split(std::string const& str, std::string const &delimiter, bool multi_delimiter)
 {
     size_t del_len = delimiter.size();
     if (del_len == 0) {
@@ -180,7 +179,7 @@ bool compare_lower(std::map<char, int>::iterator &a, std::map<char, int>::iterat
     return (a->second > b->second);
 }
 
-static std::string find_used_delimiter(std::string const &str, std::string delimiter)
+static std::string find_used_delimiter(std::string const &str, std::string const &delimiter)
 {
     vector<int>ascii(128,0);
     std::string replace_delimiter = "";
@@ -214,7 +213,7 @@ static std::string find_used_delimiter(std::string const &str, std::string delim
     return replace_delimiter;
 }
 
-Split::Split(std::string const& raw_str, std::string delimiter, bool multi_delimiter, bool d_quote)
+Split::Split(std::string const& raw_str, std::string const &delimiter, bool multi_delimiter, bool d_quote)
 {
     std::vector<std::string> backup;
     size_t replace_cnt = 0;

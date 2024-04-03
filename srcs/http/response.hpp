@@ -58,7 +58,7 @@ class Response
         // File Interface
         int open();
         int close();
-        int read_data(char **buf, size_t size);
+        int read_data(char **data, char **ref, size_t size);
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         //int save(char *data, size_t size);

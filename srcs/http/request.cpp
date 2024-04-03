@@ -137,11 +137,21 @@ void Request::set_buf_body(char *body, size_t size)
 {
     //this->buf_body.push_back(str);
     DEBUG("Request::set_buf_body size:" + Utility::to_string(size));
+    if(size <= 0){
+    DEBUG("Request::set_buf_body No.1 size:" + Utility::to_string(size));
+        this->buf_body_size = 0;
+    DEBUG("Request::set_buf_body No.2 size:" + Utility::to_string(size));
+        this->buf_body = NULL;
+    DEBUG("Request::set_buf_body No.3 size:" + Utility::to_string(size));
+        return ;
+    }
     //if(this->buf_body != ""){
         //ERROR("buf_body is not NULL. set_buf_body must be used only once");
         //throw std::runtime_error("buf_body is not NULL");
     //}
+    DEBUG("Request::set_buf_body No.4 size:" + Utility::to_string(size));
     this->buf_body = new char[size+1];
+    DEBUG("Request::set_buf_body No.5 size:" + Utility::to_string(size));
     for(size_t i=0;i<size;i++){
         this->buf_body[i] = body[i];
     }
@@ -227,6 +237,7 @@ void Request::set_request_line(std::string const &str)
 
 void Request::set_header(Split &sp, size_t offset)
 {
+    DEBUG("Request::set_header()");
     this->header_ = Header::from_splited_data(sp, offset);
 }
 

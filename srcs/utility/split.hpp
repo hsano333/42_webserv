@@ -11,10 +11,10 @@ class Split
     Split(Split const &sp);
     Split& operator=(Split const &sp);
     ~Split();
-    Split(char *str, std::string delimiter);
-    Split(std::string const& str, std::string delimiter);
-    Split(std::string const& str, std::string delimiter, bool multi_delimiter);
-    Split(std::string const& str, std::string delimiter, bool multi_delimiter, bool d_quote);
+    Split(char *str, std::string const &delimiter);
+    Split(std::string const& str, std::string const &delimiter);
+    Split(std::string const& str, std::string const &delimiter, bool multi_delimiter);
+    Split(std::string const& str, std::string const &delimiter, bool multi_delimiter, bool d_quote);
     //Split(std::string const& str, std::string delimiter, bool rest_delimiter);
     static void split_cp(std::string const& str, std::string delimiter, std::vector<std::string>& dst, bool multi_delimiter);
     typedef std::vector<std::string>::iterator iterator;
@@ -32,7 +32,7 @@ class Split
     //bool d_quote;
     std::vector<std::string> _splitted_string;
     //void split(std::string const& str, std::string delimiter, std::vector<std::string> &vec );
-    void split_not_delete_delimiter(std::string const& str, std::string delimiter);
+    void split_not_delete_delimiter(std::string const& str, std::string const &delimiter);
 };
 
 #endif /* SPLITTED_STRING_H */

@@ -146,8 +146,6 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 int main(int argc, char const* argv[])
 {
 
-
-
     CGI *cgi1 = new CGI();
     CGI *cgi2 = new CGI();
     CGI *cgi3 = new CGI();

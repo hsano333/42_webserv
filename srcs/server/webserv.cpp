@@ -84,13 +84,19 @@ void Webserv::communication()
 
             try{
 
+                DEBUG("start handle()");
                 handle(event);
+                DEBUG("end handle()");
                 if(event->entity()->completed()){
+                    DEBUG("make_next_event");
                     next_event = make_next_event(event, this->event_factory);
                 }else{
+                    DEBUG("next is current event");
                     next_event = event;
                 }
+                    DEBUG("set_next_epoll_event No.1");
                 event_controller->set_next_epoll_event(event, next_event);
+                    DEBUG("set_next_epoll_event No.2");
             }catch(ConnectionException &e){
                 ERROR(e.what());
                 next_event = this->event_factory->make_clean_event(event, true);

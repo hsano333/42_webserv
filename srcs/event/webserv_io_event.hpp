@@ -12,7 +12,7 @@ template<typename EventT>
 bool io_work(EventT *event, WebservEntity *entity)
 {
     (void)event;
-    entity->io().total_write_size();
+    //entity->io().total_write_size();
 
     DEBUG("WebservIOWorker::work fd:" + entity->fd().to_string());
 
@@ -35,8 +35,8 @@ bool io_work(EventT *event, WebservEntity *entity)
     
     while(1)
     {
-        entity->io().total_write_size();
-        //DEBUG("WebservIOWorker::work No.3");
+        //entity->io().total_write_size();
+        DEBUG("load_size=" + Utility::to_string(load_size));
         buf_p = &(buf[load_size]);
         MYINFO("No.0 MYINFO::read size=" + Utility::to_string(MAX_READ_SIZE - load_size));
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
@@ -89,9 +89,10 @@ bool io_work(EventT *event, WebservEntity *entity)
             load_size = 0;
         }
     }
+
     DEBUG("WebservIOWorker::check completed");
     event->check_completed(entity);
-    entity->io().total_write_size();
+    //entity->io().total_write_size();
     return (entity->completed());
 }
 

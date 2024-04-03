@@ -2,6 +2,7 @@
 #include "webserv_event.hpp"
 #include "http_exception.hpp"
 #include "socket_file.hpp"
+#include "global.hpp"
 
 WebservMakeRequestEvent::WebservMakeRequestEvent()
 {
@@ -143,11 +144,24 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         throw HttpException("400");
 
     }
+    DEBUG("make request No.1");
     cout << "test No.1" << endl;
+    //return;
     try{
+    DEBUG("make request No.2");
+    cout << "buf_p=[" << buf_p << "]" << endl;
         Split sp1(buf_p, CRLF);
+    DEBUG("make request No.3");
+    DEBUG("make request No.3");
+    DEBUG("make request No.3");
+    DEBUG("make request No.3");
+        if(sp1.size() == 0){
+            ERROR("not found statue line");
+            throw HttpException("400");
+        }
     cout << "test No.2" << endl;
         req->set_request_line(sp1[0]);
+    DEBUG("make request No.4");
     cout << "test No.3" << endl;
         req->set_header(sp1, 1);
     cout << "test No.4" << endl;
@@ -155,6 +169,7 @@ void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
         ERROR("Invalid Request:" + string(e.what()));
         throw HttpException("400");
     }
+    DEBUG("make request No.5");
 }
 
 bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation *location) const
