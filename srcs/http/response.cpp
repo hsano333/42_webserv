@@ -377,7 +377,22 @@ bool Response::read_completed(){
     return (this->send_state == SENT_BODY);
 }
 
+
 int Response::read(char** data, size_t max_read_size)
+{
+    char *tmp;
+
+    int read_size = read_data(&tmp, max_read_size);
+    if(read_size <= 0){
+        return read_size;
+    }
+    for(int i=0; i<read_size; i++){
+        (*data)[i] = tmp[i];
+    }
+    return (read_size);
+}
+
+int Response::read_data(char** data, size_t max_read_size)
 {
     (void)max_read_size;
     DEBUG("Response::read:");

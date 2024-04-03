@@ -35,6 +35,7 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, Webse
     new_event->entity()->io().set_read_io(src, dst);
     new_event->entity()->io().set_read_fd(read_fd);
     new_event->entity()->io().switching_io(EPOLLIN);
+    new_event->entity()->io().set_total_write_size(0);
 
     return (new_event);
 }

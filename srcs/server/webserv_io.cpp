@@ -1,4 +1,5 @@
 #include "webserv_io.hpp"
+#include "http_exception.hpp"
 
 WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false), total_write_size_(0)
 {
@@ -126,6 +127,12 @@ void WebservIO::switching_io(uint32_t epoll_event)
 
 int WebservIO::save(char *data, size_t offset, size_t size)
 {
+
+    if(offset > size || size - offset > MAX_BUF){
+        ERROR("offset > size=" + Utility::to_string(size) + ",offset=" + Utility::to_string(offset));
+        throw HttpException("500");
+    }
+
     this->tmp_buf.resize(size-offset);
     for(size_t i=0;i<size-offset;i++){
         this->tmp_buf[i] = data[i + offset];

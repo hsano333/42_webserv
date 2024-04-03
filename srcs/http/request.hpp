@@ -145,7 +145,14 @@ namespace RequestBufferFunc{
     template <class FileT>
     int read(FileT *file, char **data, size_t size)
     {
-        *data= file->get_buf_body(&size);
+        char *tmp = file->get_buf_body(&size);
+        if(size <= 0){
+            return (size);
+        }
+
+        for(size_t i=0;i<size;i++){
+            (*data)[i] = tmp[i];
+        }
         return (size);
     }
 
