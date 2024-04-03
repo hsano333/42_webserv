@@ -152,7 +152,7 @@ namespace MultiFileFunc{
             write_size = size;
             if(size > (boundary_size+2)){
                 check_pos = *data + (size -  (boundary_size+2));
-                pos = Utility::strnstr(check_pos, CRLF, size);
+                pos = Utility::strnstr(check_pos, CRLF, boundary_size+2);
                 if(pos){
                     write_size = pos - *data;
                 }else if((*data)[write_size] == '\r'){
@@ -189,7 +189,7 @@ namespace MultiFileFunc{
 
         MYINFO("MultiFileFunc write_file() No.8 size=" + Utility::to_string(size));
             }
-        MYINFO("MultiFileFunc write_file() No.9 size=" + Utility::to_string(size));
+        MYINFO("MultiFileFunc write_file() No.9 rval_size=" + Utility::to_string(rval_size));
             //*data += write_size;
             //MYINFO("MultiFileFunc write_file() No.6 write_size=" + Utility::to_string(write_size));
             return (rval_size);
@@ -307,6 +307,10 @@ namespace MultiFileFunc{
             MYINFO("MultiFileFunc write() No.2 write_size=" + Utility::to_string(write_size));
             if(write_size <= 0){
                 break;
+            }
+            if((int)size != write_size){
+                MYINFO("MultiFileFunc write() No.30 read and write diff=" + Utility::to_string(size));
+
             }
             //if(size < size - write_size){
                 //ERROR("overflow");

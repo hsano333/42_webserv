@@ -7,6 +7,7 @@ bool write_buffer_data(WebservEntity *entity, char *buf_p)
     //char *buf_p = &(buf[0]);
     WebservFile *destination = entity->io().destination();
     size_t loaded_size = entity->io().load(&buf_p);
+    /*
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
@@ -23,6 +24,7 @@ bool write_buffer_data(WebservEntity *entity, char *buf_p)
         tmp_size--;
     }
     printf("]\nbuffer size =[%zu]\n\n", loaded_size);
+    */
     if(loaded_size != 0){
         ssize_t write_size = destination->write(&buf_p, loaded_size);
         if(write_size < 0){

@@ -38,15 +38,19 @@ bool io_work(EventT *event, WebservEntity *entity)
         entity->io().total_write_size();
         //DEBUG("WebservIOWorker::work No.3");
         buf_p = &(buf[load_size]);
+        MYINFO("No.0 MYINFO::read size=" + Utility::to_string(MAX_READ_SIZE - load_size));
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
-        MYINFO("MYINFO::read size=" + Utility::to_string(read_size));
+        MYINFO("No.1 MYINFO::read size=" + Utility::to_string(read_size));
         if(read_size <= 0){
             MYINFO("MYINFO::read end");
             break;
         }
         read_size_total += read_size;
         buf_p[read_size] = '\0';
+        buf_p = &(buf[0]);
+        read_size += load_size;
         //printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);
+        /*
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
@@ -60,6 +64,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         tmp_size--;
     }
     printf("]\nbuffer size =[%zu]\n\n", read_size);
+    */
 
 
         MYINFO("io_event ");
@@ -69,16 +74,17 @@ bool io_work(EventT *event, WebservEntity *entity)
             entity->io().save(buf_p, 0, read_size);
             break;
         }else if(read_size > write_size){
+            MYINFO("read_size > write_size:");
             MYINFO("read_size=" + Utility::to_string(read_size));
             MYINFO("write_size=" + Utility::to_string(write_size));
             printf("read_size=%s\n" , Utility::to_string(read_size).c_str());
             printf("write_size=%s\n" , Utility::to_string(write_size).c_str());
             //entity->io().save(*buf, write_size, read_size);
             size_t diff = read_size - write_size;
-            Utility::memcpy(buf, &(buf[write_size]), diff);
+            Utility::memcpy(buf, buf_p, diff);
             entity->io().add_total_write_size(write_size);
             load_size = read_size - write_size;
-            break;
+            //break;
         }else{
             MYINFO("Write OK::" + Utility::to_string(write_size));
             entity->io().add_total_write_size(write_size);
