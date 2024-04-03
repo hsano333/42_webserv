@@ -383,18 +383,21 @@ int Response::read(char** data, size_t max_read_size)
     char *tmp;
     DEBUG("Response::read()");
 
-    int read_size = read_data(&tmp, data,  max_read_size);
+    bool ref = true;
+    int read_size = read_data(&tmp, data,  max_read_size , ref);
     if(read_size <= 0){
         return read_size;
     }
     DEBUG("Response::read() No.2 read_size=" + Utility::to_string(read_size));
-    for(int i=0; i<read_size; i++){
-        (*data)[i] = tmp[i];
+    if(ref){
+        for(int i=0; i<read_size; i++){
+            (*data)[i] = tmp[i];
+        }
     }
     return (read_size);
 }
 
-int Response::read_data(char** data, char **ref, size_t max_read_size)
+int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_flag)
 {
     (void)max_read_size;
     DEBUG("Response::read:");
@@ -405,7 +408,7 @@ int Response::read_data(char** data, char **ref, size_t max_read_size)
     }else if (this->send_state == STILL_NOT_SEND) {
         DEBUG("Response::read: STILL_NOT_SEND");
         this->make_status_line();
-        *data= const_cast<char*>(&(this->status_line[0]));
+        *ref = const_cast<char*>(&(this->status_line[0]));
         this->send_state = SENT_STATUS_LINE;
 
         MYINFO("\nResponse Status Line:" + this->status_line);
@@ -413,17 +416,18 @@ int Response::read_data(char** data, char **ref, size_t max_read_size)
     }else if (this->send_state == SENT_STATUS_LINE){
         DEBUG("Response::read: SENT_STATUS_LINE");
         this->make_header_line();
-        *data= const_cast<char*>(&(this->header_line[0]));
-        MYINFO("Response  Header:" + string(*data));
+        *ref = const_cast<char*>(&(this->header_line[0]));
+        MYINFO("Response  Header:" + string(*ref));
         this->send_state = SENT_HEADER;
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER){
+        ref_flag = false;
         if(this->has_body){
             DEBUG("Response::read: SENT_HEADER");
             int size=0;
             DEBUG("Response::read chunked No.1:");
             if (this->is_chunked){
-                size = this->read_body_and_copy_chunk(ref, MAX_READ_SIZE);
+                size = this->read_body_and_copy_chunk(cp, MAX_READ_SIZE);
             DEBUG("Response::read chunked No.11:");
                 if (size <= 5){
                     this->send_state = SENT_BODY;
@@ -434,7 +438,7 @@ int Response::read_data(char** data, char **ref, size_t max_read_size)
             }else{
                 cout << " not chunk" << endl;
             DEBUG("Response::read chunked No.12:");
-                size = this->read_body_and_copy(ref, max_read_size);
+                size = this->read_body_and_copy(cp, max_read_size);
                 if (size <= 0){
             DEBUG("Response::read chunked No.13:");
                     this->send_state = SENT_BODY;
@@ -443,9 +447,10 @@ int Response::read_data(char** data, char **ref, size_t max_read_size)
             DEBUG("Response::read chunked No.13:");
             return (size);
         }else{
+            ref_flag = false;
             this->send_state = SENT_BODY;
-            (*data)[0] = '\r';
-            (*data)[1] = '\n';
+            (*cp)[0] = '\r';
+            (*cp)[1] = '\n';
             return (0);
         }
     }

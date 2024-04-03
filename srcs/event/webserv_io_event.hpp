@@ -50,6 +50,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         buf_p = &(buf[0]);
         read_size += load_size;
         //printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);
+        /*
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
@@ -63,6 +64,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         tmp_size--;
     }
     printf("]\nbuffer size =[%zu]\n\n", read_size);
+    */
 
 
         MYINFO("io_event ");
