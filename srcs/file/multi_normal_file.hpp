@@ -267,7 +267,14 @@ namespace MultiFileFunc{
 
         WebservFileFactory *file_factory = WebservFileFactory::get_instance();
         WebservFile *normal_file = file_factory->make_normal_file(file->fd(), filepath, mode);
-        normal_file->open();
+        if(!normal_file->can_read()){
+            throw HttpException("500");
+        }
+        try{
+            normal_file->open();
+        }catch(std::runtime_error &e){
+
+        }
         file->set_file(normal_file);
         size_t read_size = pos2-*data;
         *data = pos2;

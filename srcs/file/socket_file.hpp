@@ -21,7 +21,7 @@ class SocketFile
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         WebservFile *file();
-        bool can_read();
+        //bool can_read();
         FileState   state;
 
         size_t chunked_size();

@@ -34,5 +34,6 @@ int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, 
     }
     size_t after = ifs->tellp();
     //ifs->close();
+    DEBUG("StreamWriter:: written size:" + Utility::to_string(after - before));
     return (after - before);
 }

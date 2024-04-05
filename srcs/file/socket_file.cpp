@@ -136,12 +136,12 @@ int SocketFile::close()
     this->state = FILE_CLOSE;
     return (0);
 }
-*/
 
 bool SocketFile::can_read()
 {
     return (true);
 }
+*/
 
 size_t SocketFile::chunked_size()
 {

@@ -63,7 +63,7 @@ class WebservFileFactory
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *));
         template <class FileT>
         //WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path);
-        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *));
+        WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), bool(*  can_write)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *));
         //
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
         WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
@@ -109,6 +109,11 @@ namespace DefaultFunc{
     bool can_read(FileT *file){
         DEBUG("Default can_read()");
         return (file->can_read());
+    }
+    template <class FileT>
+    bool can_write(FileT *file){
+        DEBUG("Default can_write()");
+        return (file->can_write());
     }
 
     template <class FileT>
@@ -220,6 +225,13 @@ namespace DummyFunc{
         return true;
     }
     template <class FileT>
+    bool can_write(FileT *file){
+        (void)file;
+        DEBUG("can_write_dummy()");
+        return true;
+    }
+
+    template <class FileT>
     int read(FileT *file, char **data, size_t size){
         (void)file;
         DEBUG("read_dummy()");
@@ -272,7 +284,7 @@ namespace DummyFunc{
 template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file)
 {
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT> );
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT> );
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
@@ -280,7 +292,7 @@ WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, Fil
 template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_directory_file(FileDiscriptor const &fd, FileT *file)
 {
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>);
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
@@ -289,7 +301,7 @@ template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const &fd, FileT *file)
 {
     //(void)open;
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT>);
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT>);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
@@ -299,9 +311,9 @@ WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const 
 
 template <class FileT>
 //WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag))
-WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *) )
+WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), bool(*  can_write)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *) )
 {
-    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, path, size, is_chunk, set_chunk, completed);
+    WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, can_write, path, size, is_chunk, set_chunk, completed);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }
