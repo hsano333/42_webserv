@@ -94,29 +94,33 @@ namespace ChunkedFunc{
 
         ssize_t buf_size = file->buf_size();
         ssize_t chunked_size = file->chunked_size();
-        char tmp_data[21];
+        const int TMP_READ_SIZE = 20;
+        char tmp_data[TMP_READ_SIZE+1];
         char *p_data = tmp_data;
         int tmp_size = buf_size;
         Utility::memcpy(tmp_data, file->buf(), buf_size);
         p_data += buf_size;
-        if(buf_size < 20){
+        size_t exceed_size = 0;
+        if(buf_size < TMP_READ_SIZE){
             DEBUG("read_chunked_size buf_size=" + Utility::to_string(buf_size));
 
             //bufferサイズは16未満
             //Utility::memcpy(tmp_data, file->buf(), buf_size);
             //p_data += buf_size;
             // 64bitの16進数は16桁まで + CRLFの2を足して18
-            tmp_size = (DefaultFunc::read(file, &p_data, 20-buf_size));
+            tmp_size = (DefaultFunc::read(file, &p_data, TMP_READ_SIZE-buf_size));
             DEBUG("read_chunked_size tmp_size=" + Utility::to_string(tmp_size));
             if(tmp_size <= 0){
                 return (tmp_size);
             }
             tmp_size += buf_size;
+
         }
         DEBUG("read_chunked_size tmp_size=" + Utility::to_string(tmp_size));
         tmp_data[tmp_size] = '\0';
         ssize_t chunked_str_size;
         chunked_size = get_chunked_size<FileT>(&p_data, tmp_size, &chunked_str_size);
+        exceed_size = TMP_READ_SIZE - (chunked_str_size + 2);
         MYINFO("chunked_size = " + Utility::to_string(chunked_size));
         MYINFO("chunked_size_str = " + Utility::to_string(chunked_str_size));
         if(chunked_size < 0 || chunked_str_size > 16){
@@ -126,10 +130,10 @@ namespace ChunkedFunc{
         }
 
         DEBUG(" test No.1");
-        file->set_chunked_size(chunked_size);
         DEBUG(" test No.2");
         if(chunked_size == 0 && tmp_data[chunked_str_size] == '\r' && tmp_data[chunked_str_size+1] == '\n')
         {
+            file->set_chunked_size(0);
         DEBUG(" test No.3");
             if(tmp_size < chunked_str_size + 4){
         DEBUG(" test No.4");
@@ -143,13 +147,23 @@ namespace ChunkedFunc{
             // 読み込みデータはないので-1を返す
             return (-1);
         }
+
+        printf("p_data test=[[[[[[[");
+        for(size_t i=0;i<exceed_size;i++){
+            (*data)[i] = p_data[chunked_str_size+i+2];
+            //printf("%c", p_data[chunked_str_size+i-4]);
+        }
+        printf("]]]]]]]]]]]]]]]]]]]\n\n");
+        *data += exceed_size;
         //MYINFO("chunked_size = " + Utility::to_string(chunked_size));
         //MYINFO("chunked_size_str = " + Utility::to_string(chunked_str_size));
         DEBUG(" test No.6 tmp_size=" + Utility::to_string(tmp_size));
-        *data += tmp_size;
+        DEBUG(" test No.7 exceed_size=" + Utility::to_string(exceed_size));
+        //*data += tmp_size;
+        file->set_chunked_size(chunked_size - exceed_size);
         file->clear_buf();
         DEBUG(" test No.7");
-        return (tmp_size);
+        return (exceed_size);
     }
 
     template <class FileT>
@@ -159,14 +173,15 @@ namespace ChunkedFunc{
         ssize_t chunked_size = file->chunked_size();
         ssize_t read_size;
         if((ssize_t)size > chunked_size ){
-            size -= chunked_size;
+            size = chunked_size;
         }
         DEBUG("read_data test No.2");
         read_size = (DefaultFunc::read(file, data, size));
         if(read_size < 0){
             return (-1);
         }
-        DEBUG("read_data test No.3");
+        DEBUG("read_data test No.3 chunked_size=" + Utility::to_string(chunked_size));
+        DEBUG("read_data test No.3 read_size=" + Utility::to_string(read_size));
         file->set_chunked_size(chunked_size - read_size);
         DEBUG("read_data test No.4");
         return (read_size);
@@ -201,10 +216,18 @@ namespace ChunkedFunc{
             }
         }
 
+        DEBUG("No.2-0 size=" + Utility::to_string(size));
         size -= read_size;
         DEBUG("No.2 size=" + Utility::to_string(size));
         DEBUG("read end");
-        return (read_data(file, data, size));
+        int tmp_read_size = (read_data(file, data, size));
+        if(tmp_read_size <= 0){
+            return (tmp_read_size);
+        }
+        DEBUG("size=" + Utility::to_string(size));
+        DEBUG("tmp_read_size=" + Utility::to_string(tmp_read_size));
+        DEBUG("read_size=" + Utility::to_string(read_size));
+        return (tmp_read_size + read_size);
 
 
         MYINFO("Chunked read() buf_siz No.2 buf_size=" + Utility::to_string(buf_size));

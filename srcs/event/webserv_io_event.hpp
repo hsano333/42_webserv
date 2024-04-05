@@ -31,6 +31,7 @@ bool io_work(EventT *event, WebservEntity *entity)
     ssize_t read_size_total = 0;
 
     char *buf_p = (buf);
+    // read_fileのbufferに保存するので削除
     //size_t load_size = entity->io().load(&buf_p);
     size_t load_size = 0;
     
@@ -51,21 +52,26 @@ bool io_work(EventT *event, WebservEntity *entity)
         buf_p = &(buf[0]);
         read_size += load_size;
         //printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);
-        /*
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("-----------------------------------------\n");
     printf("\nwrite buffer test buf=[");
     size_t tmp_size = read_size;
-    int i=0;
-    while(tmp_size > 0){
-        printf("%c", (buf_p)[i]);
-        i++;
-        tmp_size--;
+    //int i=0;
+    //while(tmp_size > 0){
+    for(size_t i=0;i<tmp_size;i++){
+        if((buf_p)[i] == '\r'){
+            printf("R");
+        }else if((buf_p)[i] == '\n'){
+            printf("N");
+        }else{
+            printf("%c", (buf_p)[i]);
+        }
+        //i++;
+        //tmp_size--;
     }
     printf("]\nbuffer size =[%zu]\n\n", read_size);
-    */
 
 
         MYINFO("io_event ");

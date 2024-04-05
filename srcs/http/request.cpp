@@ -48,9 +48,10 @@ Request::Request() :
 Request::Request(FileDiscriptor const &fd) :
     file(NULL),
     fd_(fd),
-    buf_body(NULL),
+    //buf_body(NULL),
     //raw_buf_pos_(0),
     buf_body_size(0),
+    buf_body_p(0),
     // -1 is for '\0'
     //raw_buf_rest_size_(MAX_BUF-1),
     is_file_(false),
@@ -65,7 +66,7 @@ Request::Request(FileDiscriptor const &fd) :
 
 Request::~Request()
 {
-    delete (this->buf_body);
+    //delete (this->buf_body);
 }
 
 
@@ -125,12 +126,19 @@ void Request::clear_raw_buf()
 }
 */
 
+void Request::add_buf_body_p(size_t size)
+{
+    this->buf_body_p += size;
+}
 
 char *Request::get_buf_body(size_t *size)
 {
-    *size = this->buf_body_size;
+    *size = this->buf_body_size - this->buf_body_p;
+    if(*size == 0){
+        return NULL;
+    }
     DEBUG("Request::get_buf_body size:" + Utility::to_string(this->buf_body_size));
-    return (this->buf_body);
+    return &(this->buf_body[this->buf_body_p]);
 }
 
 void Request::set_buf_body(char *body, size_t size)
@@ -141,7 +149,7 @@ void Request::set_buf_body(char *body, size_t size)
     DEBUG("Request::set_buf_body No.1 size:" + Utility::to_string(size));
         this->buf_body_size = 0;
     DEBUG("Request::set_buf_body No.2 size:" + Utility::to_string(size));
-        this->buf_body = NULL;
+        this->buf_body.clear();
     DEBUG("Request::set_buf_body No.3 size:" + Utility::to_string(size));
         return ;
     }
@@ -149,8 +157,10 @@ void Request::set_buf_body(char *body, size_t size)
         //ERROR("buf_body is not NULL. set_buf_body must be used only once");
         //throw std::runtime_error("buf_body is not NULL");
     //}
+    this->buf_body.resize(size);
+
     DEBUG("Request::set_buf_body No.4 size:" + Utility::to_string(size));
-    this->buf_body = new char[size+1];
+    //this->buf_body = new char[size+1];
     DEBUG("Request::set_buf_body No.5 size:" + Utility::to_string(size));
     for(size_t i=0;i<size;i++){
         this->buf_body[i] = body[i];
@@ -162,8 +172,9 @@ void Request::set_buf_body(char *body, size_t size)
 void Request::clear_buf_body()
 {
     this->buf_body_size = 0;
-    delete (this->buf_body);
-    this->buf_body = NULL;
+    this->buf_body.clear();
+    //delete (this->buf_body);
+    //this->buf_body = NULL;
     //this->buf_body.clear();
 }
 

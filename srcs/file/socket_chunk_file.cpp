@@ -223,6 +223,7 @@ size_t SocketChunkFile::chunked_size()
 
 void SocketChunkFile::set_chunked_size(size_t size)
 {
+    DEBUG("SocketChunkFile::set_chunked_size size:" + Utility::to_string(size));
     this->chunked_size_ = size;
 }
 

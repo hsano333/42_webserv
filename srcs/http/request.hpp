@@ -46,6 +46,7 @@ class Request
         //int     raw_buf_space();
         int      get_buf_body_size();
         char    *get_buf_body(size_t *size);
+        void    add_buf_body_p(size_t size);
         void    set_buf_body(char *body_p, size_t size);
         void    clear_buf_body();
         void    set_request_line(std::string const &str);
@@ -118,9 +119,10 @@ class Request
         //char    raw_buf[200];
         //int     raw_buf_point;
         //size_t  raw_buf_pos_;
-        char    *buf_body;
+        std::vector<char> buf_body;
         //vector<string> buf_body;
         int     buf_body_size;
+        size_t  buf_body_p;
         bool    is_file_;
         bool    is_directory_;
         bool    is_not_executable_parent_dir_;
@@ -146,15 +148,29 @@ namespace RequestBufferFunc{
     int read(FileT *file, char **data, size_t size)
     {
         DEBUG("RequestBufferFunc::read()");
-        char *tmp = file->get_buf_body(&size);
+        size_t buf_size;
+        char *tmp = file->get_buf_body(&buf_size);
         DEBUG("RequestBufferFunc::read size:" + Utility::to_string(size));
-        if(size <= 0){
-            return (size);
+        if(buf_size <= 0 || tmp == NULL){
+            return (buf_size);
         }
+        if(size > buf_size){
+            size = buf_size;
+        }
+        printf("Request read buf data test=*****[");
+        for(size_t i=0;i<buf_size;i++){
+            //(*data)[i] = tmp[i];
+            printf("%c", (tmp)[i]);
+        }
+        printf("]******Request read end size=%zu\n", size);
 
+        printf("Request read test=[[[[[");
         for(size_t i=0;i<size;i++){
             (*data)[i] = tmp[i];
+            printf("%c", (*data)[i]);
         }
+        printf("]]]]Request read end size=%zu\n", size);
+        file->add_buf_body_p(size);
         return (size);
     }
 }
