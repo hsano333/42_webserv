@@ -31,7 +31,8 @@ bool io_work(EventT *event, WebservEntity *entity)
     ssize_t read_size_total = 0;
 
     char *buf_p = (buf);
-    size_t load_size = entity->io().load(&buf_p);
+    //size_t load_size = entity->io().load(&buf_p);
+    size_t load_size = 0;
     
     while(1)
     {
@@ -46,7 +47,7 @@ bool io_work(EventT *event, WebservEntity *entity)
             break;
         }
         read_size_total += read_size;
-        buf_p[read_size] = '\0';
+        //buf_p[read_size] = '\0';
         buf_p = &(buf[0]);
         read_size += load_size;
         //printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);

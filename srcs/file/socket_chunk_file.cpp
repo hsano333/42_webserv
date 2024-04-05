@@ -128,6 +128,19 @@ char *SocketChunkFile::buf()
     return &(this->buf_[buf_p_]);
 }
 
+size_t SocketChunkFile::copy_buf(char *data, size_t size)
+{
+    size_t buf_size = this->buf_size();
+    if(buf_size <= size){
+        size = buf_size;
+    }
+    for(size_t i=0;i<size;i++){
+        data[i] = this->buf_[buf_p_ + i];
+    }
+    buf_p_ += size;
+    return (size);
+}
+
 
 WebservFile *SocketChunkFile::file()
 {

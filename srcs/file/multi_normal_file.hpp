@@ -218,7 +218,6 @@ namespace MultiFileFunc{
             return (-1);
         }
         if(pos[boundary_size] == '-' && pos[boundary_size+1] == '-'){
-            //MYINFO("MultiFileFunc search_file() completed");
             file->set_completed(true);
             return (size);
         }
