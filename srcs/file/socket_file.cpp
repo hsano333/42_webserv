@@ -153,12 +153,12 @@ void SocketFile::set_chunked_size(size_t size)
     this->chunked_size_ = size;
 }
 
-bool SocketFile::is_chunked()
+bool SocketFile::is_chunk()
 {
     return (this->is_chunked_);
 }
 
-void SocketFile::set_is_chunked(bool flag)
+void SocketFile::set_is_chunk(bool flag)
 {
     this->is_chunked_ = flag;
 }

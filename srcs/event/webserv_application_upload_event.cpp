@@ -4,6 +4,8 @@
 #include "webserv_io_event.hpp"
 #include "socket_reader.hpp"
 #include "global.hpp"
+#include "application_result.hpp"
+#include "webserv_file_factory.hpp"
 
 WebservApplicationUploadEvent::WebservApplicationUploadEvent()
 {
@@ -50,22 +52,20 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
 {
     DEBUG("WebservApplicationUploadEvent::make_next_event");
 
-    //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    return event_factory->make_making_response_event(event, NULL);
-    /*
-    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    SocketReader *socket_reader = SocketReader::get_instance();
-    WebservFile *src;
-    if(event->entity()->io().is_read_completed()){
-        char *buf_p;
-        size_t loaded_size = event->entity()->io().load(&buf_p);
-        src = file_factory->make_vector_file(event->entity()->fd(), buf_p, loaded_size);
-        //src = file_factory->make_vector_file(event->entity()->fd(), );
+    if(event->entity()->app_result()->status_code() == 200){
+        DEBUG("WebservApplicationUploadEvent:: 200 OK");
+        return event_factory->make_making_response_event(event, NULL);
     }else{
-        src = file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
+        DEBUG("WebservApplicationUploadEvent:: 207 Multi Response");
+       WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+        ApplicationResult *result = event->entity()->app_result();
+        result->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
+        WebservFile *multi_file = event->entity()->io().destination();
+        WebservFile *chunk_file = file_factory->make_socket_chunk_file_for_write(event->entity()->fd(), multi_file);
+        chunk_file->set_chunk(true);
+        result->set_file(chunk_file);
+        return event_factory->make_making_response_event(event, chunk_file);
     }
-    return (event_factory->make_io_socket_event_as_read(event, src));
-    */
 }
 
 E_EpollEvent WebservApplicationUploadEvent::epoll_event(WebservEvent *event)
@@ -80,7 +80,16 @@ E_EpollEvent WebservApplicationUploadEvent::epoll_event(WebservEvent *event)
 void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
 {
     WebservFile *file = entity->io().destination();
-    DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(file->completed()));
-    entity->set_completed(file->completed());
+    bool is_completed = file->completed();
+    DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(is_completed));
+    entity->set_completed(is_completed);
+
+    if(is_completed){
+        char *tmp = NULL;
+            // 一度目だけステータスコードを読み取れる。
+            // ２回目以降は読み取れなくなる
+        int status_code = file->read(&tmp, 0);
+        entity->app_result()->set_status_code(status_code);
+    }
 }
 

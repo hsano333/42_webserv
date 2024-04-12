@@ -4,6 +4,7 @@
 #include "file_discriptor.hpp"
 #include "ireader.hpp"
 #include "webserv_file.hpp"
+#include "status_code.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -12,20 +13,18 @@
 #include "http_exception.hpp"
 #include "webserv_file_factory.hpp"
 #include "global.hpp"
+#include "http_version.hpp"
 
 class MultiNormalFile
 {
     public:
         ~MultiNormalFile();
         static MultiNormalFile* from_directory_path(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
-        //static MultiNormalFile* from_fd(std::string const &directory_path, FileDiscriptor const &fd);
         int open();
         int close();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         int save(char *data, size_t size);
-        //bool can_read();
-        //bool can_write();
 
         FileDiscriptor const &fd();
         bool is_chunk();
@@ -44,6 +43,13 @@ class MultiNormalFile
         void set_buf(const char *buf, size_t size);
         void add_buf(const char *buf, size_t size);
         void clear_buf();
+        void register_file(WebservFile *file, int status_code);
+        bool register_file_flag();
+        std::map<WebservFile *, StatusCode> &uploaded_files();
+        void set_register_file_flag(bool flag);
+        size_t uploaded_number_of_files();
+        void set_uploaded_number_of_files(size_t size);
+        bool can_write_file();
     private:
         //MultiNormalFile(IReader* ireader, std::string const &directory_path, std::ios_base::openmode mode);
         MultiNormalFile(std::string const &directory_path,std::string const &boundary, FileDiscriptor const &fd);
@@ -59,6 +65,10 @@ class MultiNormalFile
         WebservFile *file;
         std::vector<char> buf;
         bool    completed_;
+        bool    register_file_flag_;
+        size_t  uploaded_number_of_files_;
+        std::map<WebservFile *, StatusCode> uploaded_files_;
+
         //std::ios_base::openmode mode;
 
 };
@@ -72,42 +82,50 @@ class MultiNormalFile
 
 namespace MultiFileFunc{
 
+    template <class FileT>
+    bool is_ok(FileT *file)
+    {
+        std::map<WebservFile *, StatusCode>::iterator ite = file->uploaded_files().begin();
+        std::map<WebservFile *, StatusCode>::iterator end = file->uploaded_files().end();
+        while(ite != end)
+        {
+            if(ite->second.to_int() >= 400){
+                return (false);
+            }
+            ite++;
+        }
+        return (true);
+    }
 
     template <class FileT>
     int write_file(FileT *file, char **data, size_t &size, std::string const &boundary)
     {
         MYINFO("MultiFileFunc write_file() size=" + Utility::to_string(size));
-        MYINFO("MultiFileFunc write_file() No.1 size=" + Utility::to_string(size));
-        if( (*data) == NULL){
-
-        MYINFO("MultiFileFunc write_file() No.1111111 size=" + Utility::to_string(size));
-        MYINFO("MultiFileFunc write_file() No.1111111 size=" + Utility::to_string(size));
-        MYINFO("MultiFileFunc write_file() No.1111111 size=" + Utility::to_string(size));
-        MYINFO("MultiFileFunc write_file() No.1111111 size=" + Utility::to_string(size));
-        }
         size_t boundary_size = boundary.size();
-        //size_t rest_size = size - total;
         size_t write_size;
         char *pos = Utility::strnstr(*data, boundary.c_str(), size);
-        //char *buf_begin = &((*data)[total]);
         if(pos){
             MYINFO("MultiFileFunc write_file() No.2 size=" + Utility::to_string(size));
             write_size = (pos - *data);
-            //MYINFO("MultiFileFunc write_file() No.2 write_size=" + Utility::to_string(write_size));
             if(write_size <= 2){
                 return -1;
             }
             // -2 is CRLF
             write_size -= 2;
-            int tmp_size = (file->write(data, write_size));
-            //MYINFO("MultiFileFunc write_file() No.2 tmp_size=" + Utility::to_string(tmp_size));
-        MYINFO("MultiFileFunc write_file() No.3 size=" + Utility::to_string(size));
+            int tmp_size;
+            if(file->can_write_file()){
+                tmp_size = (file->write(data, write_size));
+            }else{
+                tmp_size = write_size;
+            }
             if(tmp_size <= 0){
                 ERROR("Failure to write file:" + file->path());
                 throw HttpException("500");
             }
-        MYINFO("MultiFileFunc write_file() No.4 size=" + Utility::to_string(size));
             //MYINFO("MultiFileFunc write_file() No.3 close file");
+            //
+            //bool is_ok = is_ok(file);
+
             file->close();
             file->set_file(NULL);
             file->clear_buf();
@@ -267,13 +285,15 @@ namespace MultiFileFunc{
 
         WebservFileFactory *file_factory = WebservFileFactory::get_instance();
         WebservFile *normal_file = file_factory->make_normal_file(file->fd(), filepath, mode);
-        if(!normal_file->can_read()){
-            throw HttpException("500");
-        }
-        try{
-            normal_file->open();
-        }catch(std::runtime_error &e){
-
+        if(normal_file->can_read()){
+            try{
+                normal_file->open();
+                file->register_file(normal_file, 200);
+            }catch(std::runtime_error &e){
+                file->register_file(normal_file, 500);
+            }
+        }else{
+            file->register_file(normal_file, 500);
         }
         file->set_file(normal_file);
         size_t read_size = pos2-*data;
@@ -326,6 +346,103 @@ namespace MultiFileFunc{
         }
         //*data = &((*data)[write_size]);
         return (size_bk - size);
+    }
+
+    template <class FileT>
+    int read_file_data(FileT *file, char **data, size_t size, size_t written_size)
+    {
+        DEBUG("MultiFileFunc::read_file_data");
+        //HttpVersion version(HTTP_VERSION);
+        const string xml_str1 = "\t<D:response>\r\n\t\t<D:href>";
+        const string xml_str2 = "<D:href>\r\n\t\t<D:status>" + string(HTTP_VERSION) + " ";
+        const string xml_str3 = "</D:status>\r\n\t</D:response>\r\n";
+        const string xml_str_last = "</D:multistatus>";
+        //const size_t xlm_str_size = xml_str1.size() + xml_str2.size() + xml_str3.size() + xml_str_last.size();
+        //size_t write_size;
+       
+        // referring to https://datatracker.ietf.org/doc/html/rfc4918#section-9.10.9
+        std::map<WebservFile *, StatusCode>::iterator ite = file->uploaded_files().begin();
+        std::map<WebservFile *, StatusCode>::iterator end = file->uploaded_files().end();
+        bool end_flag = true;
+        while(ite != end){
+
+            WebservFile *file = ite->first;
+            StatusCode &code = ite->second;
+            const char* message = code.message();
+            std::string code_str = code.to_string();
+            std::string write_data = xml_str1 + file->path() + xml_str2 + code_str + " " + string(message) + xml_str3;
+            DEBUG("MultiFileFunc::read_file_data No.1 write_data:" + write_data);
+            DEBUG("MultiFileFunc::read_file_data No.1 write_data size1:" + Utility::to_string(write_data.size()));
+            DEBUG("MultiFileFunc::read_file_data No.1 write_data size2:" + Utility::to_string(write_data.size() + xml_str_last.size()));
+            DEBUG("MultiFileFunc::read_file_data No.1 size:" + Utility::to_string(size));
+            if(write_data.size() + xml_str_last.size() >=size){
+            DEBUG("MultiFileFunc::read_file_data No.1-0 break size:" + Utility::to_string(size));
+                end_flag = false;
+                break;
+            }
+            DEBUG("MultiFileFunc::read_file_data No.1-1 written_size:" + Utility::to_string(written_size));
+            for(size_t i=0;i<write_data.size();i++){
+                (*data)[written_size+i] = write_data[i];
+            }
+            written_size += write_data.size();
+            (*data)[written_size] = '\0';
+            DEBUG("MultiFileFunc::read_file_data No.1-2 written_size:" + Utility::to_string(written_size));
+            //printf("data=[%s]\n", *data);
+            //file->uploaded_files.erase(*ite);
+
+            ite++;
+        }
+            DEBUG("MultiFileFunc::read_file_data No.2");
+        if(end_flag){
+            DEBUG("MultiFileFunc::read_file_data No.3");
+            for(size_t i=0;i<xml_str_last.size();i++){
+                (*data)[written_size+i] = xml_str_last[i];
+            }
+            file->uploaded_files().clear();
+        }else{
+            DEBUG("MultiFileFunc::read_file_data No.4");
+            file->uploaded_files().erase(file->uploaded_files().begin(), ite);
+        }
+        written_size += xml_str_last.size();
+            DEBUG("MultiFileFunc::read_file_data No.5");
+        return (written_size);
+    }
+
+    template <class FileT>
+    int read_result(FileT *file, char **data, size_t size)
+    {
+        DEBUG("MultiFileFunc::read_result");
+        size_t written_size = 0;
+        //初回の一度だけステータスコードを返す
+        if(file->register_file_flag() == false){
+            file->set_register_file_flag(true);
+            if(is_ok(file)){
+                return (200);
+            }
+            return (207);
+        }
+        size_t file_size = file->uploaded_files().size();
+        DEBUG("MultiFileFunc::read_result No.1");
+        if(file_size > 0){
+        DEBUG("MultiFileFunc::read_result No.2");
+            if(file_size == file->uploaded_number_of_files()){
+        DEBUG("MultiFileFunc::read_result No.3");
+                const string start_xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\r\n<D:multistatus xmlns:D=\"DAV:\">\r\n";
+                if(start_xml.size() > size){
+        DEBUG("MultiFileFunc::read_result No.4");
+                    return -1;
+                }
+        DEBUG("MultiFileFunc::read_result No.5");
+                for(size_t i=0;i<start_xml.size();i++){
+                    (*data)[i] = start_xml[i];
+                }
+                size -= start_xml.size();
+                written_size = start_xml.size();
+            }
+        DEBUG("MultiFileFunc::read_result No.6");
+            return (read_file_data(file, data, size, written_size));
+        }
+        return 0;
     }
 }
 

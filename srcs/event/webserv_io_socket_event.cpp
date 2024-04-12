@@ -51,6 +51,17 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
     return (new_event);
 }
 
+WebservEvent *WebservIOSocketEvent::as_chunked_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst)
+{
+    DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
+    WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
+    new_event->entity()->io().set_write_io(src, dst);
+    new_event->entity()->io().set_write_fd(write_fd);
+    new_event->entity()->io().switching_io(EPOLLOUT);
+    return (new_event);
+}
+
 WebservEvent* WebservIOSocketEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     if(event->entity()->io().in_out() == EPOLLIN){

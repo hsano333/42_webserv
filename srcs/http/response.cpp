@@ -232,6 +232,11 @@ int Response::read_body_and_copy(char** dst, size_t size)
         return (tmp);
     }
     DEBUG("read_body_and_copy:" + Utility::to_string(size));
+    if(file){
+        DEBUG("file is exist");
+    }else{
+        DEBUG("file is not exist:NULL");
+    }
     return (this->file->read(dst, size));
 }
 
@@ -426,6 +431,7 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
             DEBUG("Response::read: SENT_HEADER");
             int size=0;
             DEBUG("Response::read chunked No.1:");
+            /*
             if (this->is_chunked){
                 size = this->read_body_and_copy_chunk(cp, MAX_READ_SIZE);
             DEBUG("Response::read chunked No.11:");
@@ -444,6 +450,14 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
                     this->send_state = SENT_BODY;
                 }
             }
+            */
+            DEBUG("Response::read chunked No.12:");
+            size = this->read_body_and_copy(cp, max_read_size);
+            if (size <= 0){
+                DEBUG("Response::read chunked No.13:");
+                this->send_state = SENT_BODY;
+            }
+
             DEBUG("Response::read chunked No.13:");
             return (size);
         }else{

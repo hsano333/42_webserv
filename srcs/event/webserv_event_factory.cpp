@@ -163,8 +163,14 @@ WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event, W
 WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_write fd=" + event->entity()->fd().to_string());
-    WebservFile *dst = this->file_factory->make_socket_file(event->entity()->fd(), socket_writer, NULL);
-    WebservEvent *new_event = WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, dst);
+    WebservFile *file = this->file_factory->make_socket_file(event->entity()->fd(), socket_writer, NULL);
+    if(src->is_chunk()){
+        DEBUG("WebservEventFactory:: Chunked");
+        //file = this->file_factory->make_socket_chunk_file(event->entity()->fd(), file);
+        WebservEvent *new_event = WebservIOSocketEvent::as_chunked_write(event, event->entity()->fd(), src, file);
+        return (new_event);
+    }
+    WebservEvent *new_event = WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, file);
     return (new_event);
 }
 
@@ -243,6 +249,8 @@ WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event,
 
     WebservFile *dst = this->file_factory->make_multi_normal_file(filepath, boundary, event->entity()->fd());
     WebservEvent *new_event = WebservApplicationUploadEvent::from_event(event, src, dst);
+    ApplicationResult *result = event->entity()->app_result();
+    result->set_file(dst);
 
     return (new_event);
 }

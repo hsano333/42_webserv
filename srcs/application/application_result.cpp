@@ -136,12 +136,10 @@ StatusCode const &ApplicationResult::status_code() const
     return (this->code_);
 }
 
-/*
-void ApplicationResult::set_status_code(StatusCode &code)
+void ApplicationResult::set_status_code(int status_code)
 {
-    this->code_ = code;
+    this->code_ = StatusCode::from_int(status_code);
 }
-*/
 
 Header const &ApplicationResult::header() const
 {
@@ -245,4 +243,12 @@ void ApplicationResult::set_is_cgi(bool flag)
 bool ApplicationResult::is_cgi()
 {
     return (this->is_cgi_);
+}
+
+bool ApplicationResult::is_chunk()
+{
+    if(this->file_){
+        return (this->file_->is_chunk());
+    }
+    return (false);
 }

@@ -16,15 +16,6 @@ typedef enum E_RWOption
     WRITE_ONLY,
 }RWOption;
 
-/*
-typedef enum E_FileState
-{
-    FILE_NOT_OPEN,
-    FILE_OPEN,
-    FILE_CLOSE,
-    FILE_ERROR,
-}FileState;
-*/
 
 class NormalFile
 {

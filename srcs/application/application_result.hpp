@@ -38,7 +38,7 @@ class ApplicationResult
         void set_file(WebservFile *file);
 
         bool is_completed();
-        //void set_status_code(StatusCode &code);
+        void set_status_code(int status_code);
         void set_completed(bool flag);
         void add_header(std::string const &key, std::string const &value) ;
         void set_is_cgi(bool flag);
@@ -48,6 +48,7 @@ class ApplicationResult
         FileDiscriptor &cgi_in();
         FileDiscriptor &cgi_out();
         ProcessID      &pid();
+        bool            is_chunk();
     private:
         ApplicationResult();
         ApplicationResult(StatusCode &code, Method const &method);

@@ -101,7 +101,10 @@ int NormalFile::read(char **buf, size_t size)
 int NormalFile::write(char **buf, size_t size)
 {
     DEBUG("NormalFile::write size=" + Utility::to_string(size));
-    return (this->iwriter->write(this->fd, *buf, size, &(this->iofs)));
+    if(this->state == FILE_OPEN){
+        return (this->iwriter->write(this->fd, *buf, size, &(this->iofs)));
+    }
+    return (-1);
 }
 
 int NormalFile::save(char *buf, size_t size)

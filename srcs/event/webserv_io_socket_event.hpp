@@ -19,6 +19,7 @@ class WebservIOSocketEvent
         static WebservIOSocketEvent *for_cgi(WebservFile *src, WebservFile *read_dst);
         static WebservEvent *as_read(FileDiscriptor const &read_fd, WebservFile *src, WebservFile *dst, WebservEntity *entity);
         static WebservEvent *as_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst);
+        static WebservEvent *as_chunked_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst);
 
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEvent *event);

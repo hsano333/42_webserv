@@ -26,8 +26,8 @@ class SocketFile
 
         size_t chunked_size();
         void set_chunked_size(size_t size);
-        bool is_chunked();
-        void set_is_chunked(bool chunked);
+        bool is_chunk();
+        void set_is_chunk(bool chunked);
         size_t size();
         void clear_file();
     private:

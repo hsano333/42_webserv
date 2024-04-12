@@ -146,6 +146,24 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 int main(int argc, char const* argv[])
 {
 
+    std::map<int, std::string> map;
+    map.insert(std::make_pair(0, "12345"));
+    map.insert(std::make_pair(1, "12346"));
+    map.insert(std::make_pair(2, "12347"));
+    map.insert(std::make_pair(3, "12348"));
+    map.insert(std::make_pair(0, "abc"));
+    map.insert(std::make_pair(1, "abcde"));
+    map.insert(std::make_pair(2, "defg"));
+    map[3] = "defd";
+    std::map<int, string>::iterator ite2a = map.begin();
+    std::map<int, string>::iterator end2a = map.end();
+    while(ite2a != end2a){
+        cout << "ite:" << ite2a->first << ", value=" << ite2a->second << endl;
+        ite2a++;
+
+    }
+    
+
     CGI *cgi1 = new CGI();
     CGI *cgi2 = new CGI();
     CGI *cgi3 = new CGI();

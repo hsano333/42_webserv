@@ -25,6 +25,7 @@
 #define MESSAGE200 ("OK")
 #define MESSAGE204 ("No Content")
 #define MESSAGE206 ("Partial Content")
+#define MESSAGE207 ("Multi-Status")
 #define MESSAGE301 ("Moved Permanently")
 #define MESSAGE302 ("Found")
 #define MESSAGE303 ("See Other")
@@ -54,6 +55,8 @@
 
 //32GB
 #define MAX_BODY_SIZE (34359738368ul)
+
+#define HTTP_VERSION "HTTP/1.1"
 
 
 #endif

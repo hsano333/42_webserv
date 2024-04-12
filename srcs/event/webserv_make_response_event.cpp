@@ -98,9 +98,9 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
     }
     DEBUG("WebservMakeResponseEvent::make_response() No.5-1");
     if(!res->check_body_and_chunk()){
+    DEBUG("WebservMakeResponseEvent::make_response() No.5-2");
         res->add_header(CONTENT_LENGTH, "0");
     }
-
 
     DEBUG("WebservMakeResponseEvent::make_response() No.6");
     return (res);
@@ -142,7 +142,7 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, WebservF
 {
     DEBUG("WebservMakeResponseEvent::from_event");
     WebservMakeResponseEvent *res_event = WebservMakeResponseEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( res_event, free_func::make_response, event->entity());
+    WebservEvent *new_event = new WebservEvent( res_event, free_func::make_response, event->entity());
     new_event->entity()->io().set_source(src);
     new_event->entity()->io().set_destination(dst);
 

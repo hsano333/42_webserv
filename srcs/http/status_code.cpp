@@ -37,6 +37,8 @@ const char* StatusCode::message() const
             return MESSAGE204;
         case 206:
             return MESSAGE206;
+        case 207:
+            return MESSAGE207;
         case 301:
             return MESSAGE301;
         case 302:

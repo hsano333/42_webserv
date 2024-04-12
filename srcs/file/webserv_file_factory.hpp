@@ -70,6 +70,7 @@ class WebservFileFactory
         WebservFile *make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_chunk_file(FileDiscriptor const &fd, WebservFile *file);
+        WebservFile *make_socket_chunk_file_for_write(FileDiscriptor const &fd, WebservFile *file);
         WebservFile *make_error_file(FileDiscriptor const &fd, StatusCode const &status_code);
         WebservFile *make_vector_file_for_socket(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref);
@@ -301,7 +302,7 @@ template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const &fd, FileT *file)
 {
     //(void)open;
-    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT>);
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DefaultFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, DummyFunc::completed<FileT>);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }

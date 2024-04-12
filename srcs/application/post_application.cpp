@@ -183,6 +183,7 @@ bool PostApplication::execute(WebservEntity *entity)
 
     StatusCode code = StatusCode::from_int(200);
     ApplicationResult *result = ApplicationResult::from_status_code(code, this->method);
+    //result_->set_file(file);
     entity->set_result(result);
     return (true);
 }

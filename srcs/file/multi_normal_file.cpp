@@ -9,7 +9,9 @@ MultiNormalFile::MultiNormalFile(std::string const &directory_path, std::string 
     directory_path_(directory_path),
     boundary_(boundary),
     file(NULL),
-    completed_(false)
+    completed_(false),
+    register_file_flag_(false),
+    uploaded_number_of_files_(0)
     //option(option)
 {
     this->state_ = FILE_NOT_OPEN;
@@ -120,8 +122,33 @@ void MultiNormalFile::set_chunk(bool flag)
     this->is_chunked_ = flag;
 }
 
+
+void MultiNormalFile::register_file(WebservFile *file, int code)
+{
+    if(this->uploaded_files_.find(file) == this->uploaded_files_.end()){
+        this->uploaded_files_.insert(std::make_pair(file, StatusCode::from_int(code)));
+    }else{
+        this->uploaded_files_[file] = StatusCode::from_int(code);
+    }
+}
+
+bool MultiNormalFile::can_write_file()
+{
+    if(this->file == NULL){
+        return (false);
+    }
+    StatusCode &status = this->uploaded_files_[this->file];
+    if(status.to_int() == 200){
+        return (true);
+    }
+    return (false);
+}
+
 void MultiNormalFile::set_file(WebservFile *file)
 {
+    //if(!this->file){
+        //this->register_file(file, 200);
+    //}
     this->file = file;
 }
 
@@ -170,6 +197,7 @@ void MultiNormalFile::set_completed(bool flag)
 {
     DEBUG("MultiNormalFile::set_completed:" + Utility::to_string(flag));
     this->completed_ = flag;
+    this->uploaded_number_of_files_ = this->uploaded_files_.size();
 }
 
 bool MultiNormalFile::completed()
@@ -178,3 +206,30 @@ bool MultiNormalFile::completed()
     return (this->completed_);
 }
 
+std::map<WebservFile *, StatusCode> &MultiNormalFile::uploaded_files(){
+    return (this->uploaded_files_);
+
+}
+
+bool MultiNormalFile::register_file_flag(){
+    return (this->register_file_flag_);
+}
+
+void MultiNormalFile::set_register_file_flag(bool flag){
+    this->register_file_flag_ = flag;
+}
+
+size_t MultiNormalFile::uploaded_number_of_files(){
+    return (this->uploaded_number_of_files_);
+}
+
+void MultiNormalFile::set_uploaded_number_of_files(size_t size){
+    this->uploaded_number_of_files_ = size;
+}
+
+/*
+std::string &MultiNormalFile::path()
+{
+    this->file->path();
+}
+*/

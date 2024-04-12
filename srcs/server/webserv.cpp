@@ -84,6 +84,7 @@ void Webserv::communication()
             try{
 
                 handle(event);
+                DEBUG("end handle()");
                 if(event->entity()->completed()){
                     DEBUG("make_next_event");
                     next_event = make_next_event(event, this->event_factory);
