@@ -64,10 +64,9 @@ void Webserv::communication()
     while(1)
     {
         count++;
+        wait_time = 0;
         if(waiter.is_not_busy()){
             wait_time = 1;
-        }else{
-            wait_time = 0;
         }
         waiter.wait(wait_time);
         waiter.fetch_events();
@@ -82,7 +81,6 @@ void Webserv::communication()
 
             WebservEvent *next_event = NULL;
             try{
-
                 handle(event);
                 DEBUG("end handle()");
                 if(event->entity()->completed()){
@@ -92,6 +90,7 @@ void Webserv::communication()
                     DEBUG("next is current event");
                     next_event = event;
                 }
+                DEBUG("set epoll event");
                 event_controller->set_next_epoll_event(event, next_event);
             }catch(ConnectionException &e){
                 ERROR(e.what());

@@ -97,11 +97,15 @@ void WebservWaiter::fetch_events()
         for(int i=0;i<event_size;i++){
             WebservEvent *event = this->event_factory->from_epoll_event(io_event[i]);
             if(event){
+                event->update_time();
                 event_manager->push(event);
             }
         }
     }
     MYINFO("No.1 WebservWaiter::fetch_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
+
+
+    /*
     if(event_manager->event_size() > 0){
         //WebservEvent *returned_event = event_manager->pop_first();
         //MYINFO("No.2 WebservWaiter::fetch_event() event_manager->event_size():" + Utility::to_string(event_manager->event_size()));
@@ -110,13 +114,17 @@ void WebservWaiter::fetch_events()
         //return (events);
         return ;
     }
+    */
 
-    if(event_manager->check_timeout()){
+    std::vector<WebservEvent *> timeout_events;
+    this->event_manager->retrieve_timeout_events(timeout_events);
+    for(size_t i=0;i<timeout_events.size();i++){
+    //if(timeout_events->size() > 0){
         MYINFO("WebservWaiter::fetch_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
-        WebservEvent *event = event_factory->make_timeout_event();
+        WebservEvent *event = event_factory->make_timeout_event(timeout_events[i]);
         event_manager->push(event);
     }
-    MYINFO("WebservWaiter::fetch_event() return new WebservNothingEvent():");
+    //MYINFO("WebservWaiter::fetch_event() return new WebservNothingEvent():");
     //return (new WebservNothingEvent);
     //return (NULL);
     return ;

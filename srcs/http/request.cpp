@@ -435,6 +435,7 @@ int Request::write(char **data, size_t size)
 }
 */
 
+// body以外のステータスライン、ヘッダーのサイズを返す
 size_t Request::size()
 {
     return (0);

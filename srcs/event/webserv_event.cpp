@@ -15,7 +15,8 @@ std::time_t WebservEvent::last_updated_time()
 // if time is exceed, return true;
 bool WebservEvent::check_timeout(std::time_t now)
 {
-    std::time_t diff = this->updated_time_ - now;
+    DEBUG("WebservEvent::check_timeout diff=" + Utility::to_string(now - this->updated_time_));
+    std::time_t diff = now - this->updated_time_;
     return (diff >= TIMEOUT);
 }
 

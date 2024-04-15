@@ -9,18 +9,18 @@ class WebservTimeoutEvent
 {
     public:
         ~WebservTimeoutEvent();
-        static WebservEvent *make(WebservCleaner *cleaner_);
+        static WebservEvent *make(WebservEvent *event);
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEvent *event);
         FDManager *fd_manager;
         EventManager *event_manager;
-        WebservCleaner *cleaner() const;
+        //WebservCleaner *cleaner() const;
         void        check_completed(WebservEntity * entity);
 
     private:
         WebservTimeoutEvent();
         static WebservTimeoutEvent *singleton;
-        static WebservTimeoutEvent *get_instance(WebservCleaner *cleaner);
-        WebservCleaner *cleaner_;
+        static WebservTimeoutEvent *get_instance();
+        //WebservCleaner *cleaner_;
 };
 #endif

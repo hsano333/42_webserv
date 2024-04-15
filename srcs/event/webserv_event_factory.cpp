@@ -84,6 +84,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         this->make_clean_event(cached_event, true);
     }else if(event_epoll.events & EPOLLIN){
+        //cached_event->update_time();
+
         DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
         if(this->fd_manager->is_registered(fd) == false)
         {
@@ -134,7 +136,10 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
     }else if(event_epoll.events & EPOLLOUT){
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-        cached_event->entity()->io().switching_io(EPOLLOUT);
+        if(cached_event){
+            cached_event->entity()->io().switching_io(EPOLLOUT);
+            cached_event->update_time();
+        }
         return (cached_event);
     }else if(event_epoll.events & EPOLLERR){
         WARNING("Epoll event type is EPOLLERR");
@@ -295,9 +300,9 @@ WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool fo
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_timeout_event()
+WebservEvent *WebservEventFactory::make_timeout_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_timeout_event()");
-    return (WebservTimeoutEvent::make(this->cleaner));
+    return (WebservTimeoutEvent::make(event));
 }
 

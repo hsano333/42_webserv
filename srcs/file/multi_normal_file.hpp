@@ -336,7 +336,6 @@ namespace MultiFileFunc{
             }
             if((int)size != write_size){
                 MYINFO("MultiFileFunc write() No.30 read and write diff=" + Utility::to_string(size));
-
             }
             //if(size < size - write_size){
                 //ERROR("overflow");

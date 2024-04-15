@@ -12,16 +12,16 @@ WebservTimeoutEvent::~WebservTimeoutEvent()
 }
 
 WebservTimeoutEvent *WebservTimeoutEvent::singleton = NULL;
-WebservTimeoutEvent *WebservTimeoutEvent::get_instance(WebservCleaner *cleaner)
+WebservTimeoutEvent *WebservTimeoutEvent::get_instance()
 {
     if (WebservTimeoutEvent::singleton == NULL){
         singleton = new WebservTimeoutEvent();
-        singleton->cleaner_ = cleaner;
     }
     return (singleton);
 }
 
 
+/*
 bool clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)
 {
     (void)entity;
@@ -34,12 +34,23 @@ bool clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)
     //}
     return (true);
 }
+*/
 
-
-WebservEvent *WebservTimeoutEvent::make(WebservCleaner *cleaner)
+bool none(WebservTimeoutEvent *event, WebservEntity *entity)
 {
-    WebservTimeoutEvent *timeout_event = WebservTimeoutEvent::get_instance(cleaner);
-    WebservEvent *new_event = new WebservEvent( timeout_event, clean_timeout_events, NULL);
+    (void)event;
+    (void)entity;
+    return (true);
+}
+
+
+WebservEvent *WebservTimeoutEvent::make(WebservEvent *event)
+{
+    DEBUG("WebservTimeoutEvent::make()");
+    event->entity()->set_completed(true);
+    WebservTimeoutEvent *timeout_event = WebservTimeoutEvent::get_instance();
+    //WebservEvent *new_event = new WebservEvent( timeout_event, clean_timeout_events, NULL);
+    WebservEvent *new_event = new WebservEvent( timeout_event, none, event->entity());
     return (new_event);
 }
 
@@ -47,19 +58,13 @@ WebservEvent* WebservTimeoutEvent::make_next_event(WebservEvent* event, WebservE
 {
     (void)event_factory;
     (void)event;
-    WARNING("WebservTimeoutEvent::make_next_event() there is no next event");
-    return (NULL);
+    return (event_factory->make_clean_event(event, true));
 }
 
 E_EpollEvent WebservTimeoutEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     return (EPOLL_NONE);
-}
-
-WebservCleaner *WebservTimeoutEvent::cleaner() const
-{
-    return (this->cleaner_);
 }
 
 void WebservTimeoutEvent::check_completed(WebservEntity * entity)

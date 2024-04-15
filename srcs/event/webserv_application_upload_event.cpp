@@ -80,8 +80,17 @@ E_EpollEvent WebservApplicationUploadEvent::epoll_event(WebservEvent *event)
 void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
 {
     WebservFile *file = entity->io().destination();
+
+    size_t total_size = entity->io().total_write_size();
+    size_t content_length = entity->request()->header().get_content_length();
     bool is_completed = file->completed();
+    if(content_length == total_size && is_completed){
+        is_completed = true;
+    }else{
+        is_completed = false;
+    }
     DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(is_completed));
+    DEBUG("WebservApplicationUploadEvent::total_size :" + Utility::to_string(total_size));
     entity->set_completed(is_completed);
 
     if(is_completed){

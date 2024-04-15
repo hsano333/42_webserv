@@ -47,7 +47,7 @@
 #define ERROR(STR)  (Log::write(__FILE__, __LINE__,  "[ERROR]", STR, LOG_LEVEL_ERROR))
 
 //unit is second
-#define TIMEOUT 30
+#define TIMEOUT 5
 #define LF "\n"
 #define LF2 "\n\n"
 #define CRLF "\r\n"

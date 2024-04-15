@@ -33,6 +33,7 @@ WebservEvent *EventManager::pop_first()
         this->events.pop_front();
     }
     DEBUG("EventManager::pop_first() event_size:" + Utility::to_string(this->events.size()));
+    DEBUG("EventManager::pop_first() which:" + Utility::to_string((top->which())));
     return (top);
 }
 
@@ -125,12 +126,14 @@ void EventManager::count_up_to_all_event(int time)
 
 bool EventManager::check_timeout()
 {
+    DEBUG("EventManager::check_timeout");
     std::time_t now = std::time(NULL);
     {
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
             if(ite->second->check_timeout(now)){
+                DEBUG("EventManager::check_timeout true epoll");
                 return (true);
             }
             ite++;
@@ -141,6 +144,7 @@ bool EventManager::check_timeout()
         MutantStack<WebservEvent *>::iterator end;
         while(ite != end){
             if((*ite)->check_timeout(now)){
+                DEBUG("EventManager::check_timeout true Event");
                 return (true);
             }
             ite++;
