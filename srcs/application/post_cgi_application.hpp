@@ -11,7 +11,8 @@
 class PostCGIApplication : public Application
 {
     public:
-        PostCGIApplication();
+        static PostCGIApplication *get_instance();
+        //PostCGIApplication();
         ~PostCGIApplication();
         WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEntity *event);
@@ -24,7 +25,8 @@ class PostCGIApplication : public Application
         bool is_cgi() const;
         const Method &which() const;
     private:
-
+        PostCGIApplication();
+        static PostCGIApplication *singleton;
         WebservFile *get_requested_file(FileDiscriptor const &fd);
         WebservEvent *event;
         bool execute_cgi();
@@ -38,6 +40,6 @@ class PostCGIApplication : public Application
         CGI *cgi;
         std::map<std::string, std::string> tmp_headers;
         std::string path_info_;
-        Method method;
+        Method const method;
 };
 #endif

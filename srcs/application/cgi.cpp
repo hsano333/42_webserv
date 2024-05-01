@@ -30,10 +30,10 @@ int CGI::make_thread(int* fd_in, int* fd_out)
         cout << "children :close1:" << stdin_fd[1] << ", close2:" << stdout_fd[0] << endl;
         close(stdin_fd[1]);
         close(stdout_fd[0]);
-        close(0);
         dup2(stdin_fd[0], 0);
-        close(1);
+        close(stdin_fd[0]);
         dup2(stdout_fd[1], 1);
+        close(stdout_fd[1]);
 
     } else {
         cout << "parent:close1:" << stdin_fd[0] << ", close2:" << stdout_fd[1] << endl;

@@ -40,7 +40,7 @@ class PostApplication : public Application
         //const Request *req;
         //Response *res;
         //std::map<std::string, std::string> tmp_headers;
-        Method method;
+        Method const method;
         WebservFileFactory *file_factory;
 };
 #endif

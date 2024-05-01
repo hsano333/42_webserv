@@ -113,9 +113,7 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
             //todo
             if (is_cgi){
                 DEBUG("ApplicationFactory::make_application() Post Method with CGI");
-                app = NULL;
-                //app = PostCGIApplication::from_location(cfg, req, cgi);
-                //app = PostCGIApplication::from_location(cfg, event, cgi);
+                app = PostCGIApplication::get_instance();
             }else{
                 DEBUG("ApplicationFactory::make_application() Post Method without CGI");
                 app = PostApplication::get_instance();

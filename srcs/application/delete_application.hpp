@@ -35,6 +35,6 @@ class DeleteApplication : public Application
         //const ConfigLocation *location;
         //const Request *req;
         //std::map<std::string, std::string> tmp_headers;
-        Method method;
+        Method const method;
 };
 #endif

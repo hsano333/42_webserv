@@ -113,7 +113,7 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
         //  src : Response
         Response *res= entity->response();
         flag = res->read_completed();
-        flag= true;
+        //flag= true;
     }
 
     DEBUG("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));

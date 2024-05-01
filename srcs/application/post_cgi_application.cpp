@@ -150,6 +150,15 @@ const Method &PostCGIApplication::which() const
     return (this->method);
 }
 
+PostCGIApplication *PostCGIApplication::singleton = NULL;
+PostCGIApplication *PostCGIApplication::get_instance()
+{
+    if (PostCGIApplication::singleton == NULL){
+        singleton = new PostCGIApplication();
+    }
+    return (singleton);
+}
+
 
 /*
 void PostCGIApplication::set_path_info(std::string const &path_info)

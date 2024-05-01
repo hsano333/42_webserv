@@ -16,8 +16,6 @@ class GetCGIApplication : public Application
         WebservEvent* next_event(WebservEvent *event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEntity *event);
         bool execute(WebservEntity *entity);
-        //ApplicationResult *get_result();
-        //static GetCGIApplication* from_location();
         void set_path_info(std::string const &path_info);
         bool is_cgi() const;
         const Method &which() const;
@@ -25,15 +23,8 @@ class GetCGIApplication : public Application
     private:
         GetCGIApplication();
         static GetCGIApplication *singleton;
-        //const Config *cfg;
-        //const ConfigServer *server;
-        //const ConfigLocation *location;
-        //const Request *req;
         CGI *cgi;
-        //std::map<std::string, std::string> tmp_headers;
-        //std::string path_info_;
 
-        const Method method;
-        //ApplicationResult *result_;
+        Method const method;
 };
 #endif

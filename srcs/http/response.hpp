@@ -74,7 +74,8 @@ class Response
     private:
         StatusCode status_code;
         Header headers;
-        char    *buf_body;
+        //char    *buf_body;
+        std::vector<char> buf_body;
         int     buf_body_size;
         WebservFile *file;
 

@@ -79,7 +79,10 @@ int SocketFile::open()
 int SocketFile::read(char **buf, size_t max_size)
 {
     DEBUG("SocketFile::read() max_read_size=" + Utility::to_string(max_size));
-    return (this->reader->read(this->fd, *buf, max_size, NULL));
+    //return (this->reader->read(this->fd, *buf, max_size, NULL));
+    int tmp =  (this->reader->read(this->fd, *buf, max_size, NULL));
+    DEBUG("SocketFile::read() read size=" + Utility::to_string(tmp));
+    return (tmp);
 }
 
 int SocketFile::write(char **buf, size_t size)
@@ -109,6 +112,23 @@ int SocketFile::write(char **buf, size_t size)
     return (result);
     //DEBUG("write rval=" + Utility::to_string(rval));
     //return (rval);
+}
+
+/*
+int SocketFile::open()
+{
+    DEBUG("SocketFile::open()");
+    this->state = FILE_OPEN;
+    return 0;
+}
+
+*/
+int SocketFile::close()
+{
+    DEBUG("SocketFile::close(");
+    this->state = FILE_CLOSE;
+    this->fd.close();
+    return (0);
 }
 
 /*

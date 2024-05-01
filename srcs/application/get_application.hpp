@@ -41,7 +41,7 @@ class GetApplication : public Application
         //const Request *req;
         //std::map<std::string, std::string> tmp_headers;
         //std::string path_info_;
-        const Method method;
+        Method const method;
         string check_content(string const &filepath);
 
         //std::map<std::string, std::string> header_;

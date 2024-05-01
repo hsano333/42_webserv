@@ -20,6 +20,8 @@ class SocketFile
         static SocketFile* from_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
+        int open();
+        int close();
         WebservFile *file();
         //bool can_read();
         FileState   state;

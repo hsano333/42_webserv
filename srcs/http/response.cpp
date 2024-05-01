@@ -10,7 +10,7 @@
 #include "header_word.hpp"
 
 Response::Response() :
-    buf_body(NULL),
+    //buf_body(NULL),
     buf_body_size(0),
     file(NULL),
     is_redirect(false),
@@ -20,6 +20,7 @@ Response::Response() :
     written_body_size(0)
     //exist_body_(false)
 {
+    DEBUG("Response Constructor");
     this->headers.insert("Server", WEBSERV_VERSION);
     this->headers.insert("Date", Utility::time_to_string());
 }
@@ -157,17 +158,21 @@ bool Response::check_body_size(ConfigServer const *server)
 char* Response::get_buf_body(int *size)
 {
     *size = this->buf_body_size;
-    return (this->buf_body);
+    return &(this->buf_body[0]);
 
 }
 
 void Response::set_buf_body(char *body_p, int size)
 {
     DEBUG("Response::set_buf_body size:" + Utility::to_string(size));
-    this->buf_body = body_p;
+    //this->buf_body = body_p;
     this->buf_body_size = size;
+    this->buf_body.resize(size);
     if(size > 0){
         this->has_body = true;
+        for(int i=0;i<size;i++){
+            this->buf_body[i] = body_p[i];
+        }
     }
 }
 
@@ -226,9 +231,17 @@ int Response::read_body_and_copy(char** dst, size_t size)
     DEBUG("Response::read_body_and_copy");
     if(this->buf_body_size > 0){
         DEBUG("Response::read_body_and_copy buf_body_size:" + Utility::to_string(this->buf_body_size));
+        cout << "Response body.size()= " << this->buf_body.size() << endl;
+        cout << "Response body_p[i] Test:[" ;
+        for(int i=0;i<this->buf_body_size;i++){
+            printf("%c", this->buf_body[i]);
+
+            (*dst)[i] = (this->buf_body[i]);
+            //cout << this->buf_body[i];
+        }
+    cout << "]" << endl;
         int tmp = this->buf_body_size;
         this->buf_body_size = 0;
-        *dst = this->buf_body;
         return (tmp);
     }
     DEBUG("read_body_and_copy:" + Utility::to_string(size));
@@ -431,32 +444,50 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
             DEBUG("Response::read: SENT_HEADER");
             int size=0;
             DEBUG("Response::read chunked No.1:");
-            /*
             if (this->is_chunked){
-                size = this->read_body_and_copy_chunk(cp, MAX_READ_SIZE);
-            DEBUG("Response::read chunked No.11:");
-                if (size <= 5){
+                size = this->read_body_and_copy(cp, max_read_size);
+                DEBUG("Response::read chunked No.12 size:" + Utility::to_string(size));
+                if (size <= 0){
+                    DEBUG("Response::read chunked No.13:");
                     this->send_state = SENT_BODY;
-                    //size = 1;
-                    //(*data)[0] = '\0';
-                    //(*data)[1] = '\0';
                 }
             }else{
-                cout << " not chunk" << endl;
-            DEBUG("Response::read chunked No.12:");
+                ssize_t content_length = this->headers.get_content_length();
+                //cout << " not chunk" << endl;
+            //DEBUG("Response::read chunked No.12:");
+            //todo 
+            // compare readed size and file size;
+                //size_t file_size = this->file->size();
                 size = this->read_body_and_copy(cp, max_read_size);
+                if(size > 0){
+                    this->add_written_body_size((size_t)size);
+                }
+
+                DEBUG("Response:: content_length:" + Utility::to_string(content_length));
+                DEBUG("Response:: written_body_size:" + Utility::to_string(this->written_body_size));
+                if(this->written_body_size >= (size_t)content_length){
+                    DEBUG("Response:: change to SENT_BODY ");
+                    this->send_state = SENT_BODY;
+                }
+
+
+
+                /*
                 if (size <= 0){
             DEBUG("Response::read chunked No.13:");
                     this->send_state = SENT_BODY;
                 }
+                */
+
             }
-            */
-            DEBUG("Response::read chunked No.12:");
+            /*
             size = this->read_body_and_copy(cp, max_read_size);
+            DEBUG("Response::read chunked No.12 size:" + Utility::to_string(size));
             if (size <= 0){
                 DEBUG("Response::read chunked No.13:");
                 this->send_state = SENT_BODY;
             }
+            */
 
             DEBUG("Response::read chunked No.13:");
             return (size);
