@@ -51,6 +51,7 @@ Response& Response::operator=(Response const &res)
 
 Response* Response::from_success_status_code(StatusCode &code, WebservFile *file)
 {
+    DEBUG("Response::from_success_status_code");
     Response *res = new Response();
     res->status_code = code;
     res->file = file;
@@ -74,6 +75,7 @@ Response* Response::from_error_status_code(StatusCode &code)
 
 Response* Response::from_error_file(WebservFile *file, StatusCode &code)
 {
+    DEBUG("Response::from_error_file");
     Response *res = new Response();
     res->status_code = code;
     res->file = file;
@@ -83,6 +85,7 @@ Response* Response::from_error_file(WebservFile *file, StatusCode &code)
 
 Response* Response::from_file(WebservFile *file)
 {
+    DEBUG("Response::from_file");
     Response *res = new Response();
     res->file = file;
     if (file->can_read()){

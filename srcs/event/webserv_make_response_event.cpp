@@ -180,5 +180,6 @@ E_EpollEvent WebservMakeResponseEvent::epoll_event(WebservEvent *event)
 
 void WebservMakeResponseEvent::check_completed(WebservEntity * entity)
 {
+    DEBUG("WebservMakeResponseEvent::check_completed");
     entity->set_completed(true);
 }

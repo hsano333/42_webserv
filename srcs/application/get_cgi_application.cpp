@@ -25,12 +25,16 @@ bool GetCGIApplication::is_cgi() const
 
 WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservApplicationWithCgiEvent::make_next_event");
+    DEBUG("WebservApplicationWithCgiEvent::make_next_event No.1");
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
 
     Request *req = event->entity()->request();
+    DEBUG("WebservApplicationWithCgiEvent::make_next_event No.2 query:" + req->req_line().uri().query());
     WebservFile *file = file_factory->make_vector_file(event->entity()->fd(), req->req_line().uri().query());
+    DEBUG("WebservApplicationWithCgiEvent::make_next_event No.3");
     req->set_file(file);
+
+    //todo 
     WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
     WebservFile *read_dst = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
@@ -49,6 +53,7 @@ E_EpollEvent GetCGIApplication::epoll_event(WebservEntity *entity)
 
 bool GetCGIApplication::execute(WebservEntity *entity)
 {
+    DEBUG("GetCGIApplication::execute");
     (void)entity;
     Request *req = entity->request();
     Config const *cfg = entity->config();

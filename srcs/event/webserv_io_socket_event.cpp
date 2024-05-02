@@ -30,6 +30,7 @@ WebservIOSocketEvent *WebservIOSocketEvent::get_instance()
 
 WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, WebservFile *src, WebservFile *dst, WebservEntity *entity)
 {
+    DEBUG("WebservIOSocketEvent::as_read fd:" + read_fd.to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, entity);
     new_event->entity()->io().set_read_io(src, dst);
@@ -42,7 +43,7 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, Webse
 
 WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst)
 {
-    DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
+    DEBUG("WebservIOSocketEvent::as_write fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
@@ -77,19 +78,24 @@ E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
     DEBUG("WebservIOSocketEvent::epoll_event()");
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
+            DEBUG("WebservIOSocketEvent::epoll_event() No.1");
             return (EPOLL_NONE);
         }else{
+            DEBUG("WebservIOSocketEvent::epoll_event() No.2");
             return (EPOLL_READ);
         }
     }else{ 
         //EPOLLOUT
         if (event->entity()->completed()){
+            DEBUG("WebservIOSocketEvent::epoll_event() No.3");
             return (EPOLL_NONE);
         }else{
+            DEBUG("WebservIOSocketEvent::epoll_event() No.4");
             return (EPOLL_WRITE);
         }
 
     }
+            DEBUG("WebservIOSocketEvent::epoll_event() No.5");
     return (EPOLL_NONE);
 }
 
@@ -113,7 +119,6 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
         //  src : Response
         Response *res= entity->response();
         flag = res->read_completed();
-        //flag= true;
     }
 
     DEBUG("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));

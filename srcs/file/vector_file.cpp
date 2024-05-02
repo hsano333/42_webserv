@@ -37,12 +37,14 @@ VectorFile* VectorFile::from_buf(char *buf, size_t size)
 
 VectorFile* VectorFile::from_ref(std::string const& buf_ref)
 {
-    DEBUG("VectorFile::from_ref()");
+    DEBUG("VectorFile::from_ref() size:" + Utility::to_string(buf_ref.size()));
     VectorFile *file = new VectorFile(buf_ref.size());
-    //file->buf.resize(buf_ref.size());
+    DEBUG("VectorFile::from_ref() No.1");
+    file->buf.resize(buf_ref.size());
     for(size_t i=0;i<buf_ref.size();i++){
         file->buf[i] = buf_ref[i];
     }
+    DEBUG("VectorFile::from_ref() No.2");
     //file->index = buf_ref.size();
     return (file);
 }
@@ -82,8 +84,10 @@ int VectorFile::read(char **buf, size_t size)
     for(size_t i=0;i<this->buf.size();i++){
         printf("%c", this->buf[i]);
     }
+    //buf[this->buf.size()-1] = '\0';
 
-        DEBUG("vector file test No.6");
+    //string tmp = *buf;
+        //DEBUG("vector file test No.6 buf=" + tmp);
     this->state = FILE_COMPLETED_READ;
     printf("vector file buffer=%s\n", *buf);
 
@@ -96,6 +100,8 @@ int VectorFile::write(char **buf, size_t size)
     size_t buf_size = this->buf.size();
     this->buf.resize(buf_size + size);
     char *p_buf = *buf;
+    p_buf[size] = '\0';
+    DEBUG("VectorFile::write() buf=" + Utility::to_string(p_buf));
     //size_t 
     //size_t rest = this->max_buf_size - this->index - 1;
     //size_t min = Utility::min(size, rest);

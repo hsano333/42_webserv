@@ -35,8 +35,17 @@ void WebservWaiter::wait(int sec)
 
 bool WebservWaiter::is_not_busy()
 {
+    DEBUG("WebservWaiter::is_not_busy()");
+    if(event_manager){
+        printf("not null \n");
+    }else{
+        printf("null \n");
+
+    }
     size_t all_size = event_manager->event_size();
+    DEBUG("WebservWaiter::is_not_busy() No.1");
     size_t keep_alive_size = event_manager->keep_alive_event_size();
+    DEBUG("WebservWaiter::is_not_busy() No.2");
     cout << "all_size:" << all_size << endl;
     cout << "keep_alive_size:" << keep_alive_size << endl;
     return (all_size == keep_alive_size);

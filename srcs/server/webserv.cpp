@@ -63,24 +63,32 @@ void Webserv::communication()
     int count = 0;
     while(1)
     {
+        DEBUG("while start");
         count++;
         wait_time = 0;
         if(waiter.is_not_busy()){
             wait_time = 1;
         }
+        DEBUG("while start No.1");
         waiter.wait(wait_time);
+        DEBUG("while start No.2");
         waiter.fetch_events();
+        DEBUG("while start No.3");
 
         size_t cur_size = this->event_manager->event_size();
+        DEBUG("while start No.4");
         for(size_t i=0; i < cur_size; i++)
         {
+        DEBUG("while start No.5");
             WebservEvent *event = this->event_manager->pop_first();
+        DEBUG("while start No.6");
             if(event == NULL){
                 continue;
             }
 
             WebservEvent *next_event = NULL;
             try{
+        DEBUG("while start No.7");
                 handle(event);
                 DEBUG("end handle()");
                 if(event->entity()->completed()){
@@ -133,6 +141,7 @@ void Webserv::communication()
 
         if(exit_flag || count > 100){
         }
+        DEBUG("while end");
     }
 }
 
