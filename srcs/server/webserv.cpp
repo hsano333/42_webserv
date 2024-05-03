@@ -79,9 +79,9 @@ void Webserv::communication()
         DEBUG("while start No.4");
         for(size_t i=0; i < cur_size; i++)
         {
-        DEBUG("while start No.5");
+            DEBUG("while start No.5");
             WebservEvent *event = this->event_manager->pop_first();
-        DEBUG("while start No.6");
+            DEBUG("while start No.6");
             if(event == NULL){
                 continue;
             }

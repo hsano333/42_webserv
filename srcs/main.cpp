@@ -143,8 +143,20 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
        #include <fcntl.h>
 
 #include <stdint.h>
+#include <stdlib.h>
+//extern char **environ;
+//int main(int argc, char const* argv[], char **envp)
 int main(int argc, char const* argv[])
 {
+    /*
+    int env_i = 0;
+    while(environ[env_i]){
+
+        cout << environ[env_i] << endl;
+        env_i++;
+    }
+    exit(0);
+    */
 
     std::map<int, std::string> map;
     map.insert(std::make_pair(0, "12345"));

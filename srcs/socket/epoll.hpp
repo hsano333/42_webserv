@@ -13,12 +13,13 @@ typedef enum E_EpollEvent
     EPOLL_ADD_READ,
     EPOLL_ADD_WRITE,
     EPOLL_FOR_CGI,
-    EPOLL_CONTINUE, //5
+    EPOLL_FOR_GET_CGI, //5
+    EPOLL_CONTINUE, 
     EPOLL_CLOSE,
     EPOLL_CGI_IN,
     EPOLL_CGI_OUT,
-    EPOLL_CGI_STOP,
-    EPOLL_CGI, //10
+    EPOLL_CGI_STOP, //10
+    EPOLL_CGI, 
     EPOLL_NONE,
 } E_EpollEvent;
 

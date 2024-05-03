@@ -53,6 +53,15 @@ E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     DEBUG("WebservIOCGIEvent::epoll_event()");
+
+    if (event->entity()->completed()){
+        DEBUG("WebservIOCGIEvent::epoll_event() No.1");
+        return (EPOLL_NONE);
+    }
+    return (EPOLL_FOR_CGI);
+
+
+    DEBUG("WebservIOCGIEvent::epoll_event()");
     //return (EPOLL_FOR_CGI);
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){

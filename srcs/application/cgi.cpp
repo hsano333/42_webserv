@@ -1,7 +1,10 @@
 #include "cgi.hpp"
 #include "http_exception.hpp"
 #include "webserv_event.hpp"
+#include <stdlib.h>
 #include <unistd.h>
+
+extern char **environ;
 
 CGI::CGI()
 {
@@ -102,16 +105,29 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
     string const &file_path = req->requested_filepath();
     string const &query = req->req_line().uri().query();
     string const path_info = location->root() + "/" + req->tmp_path_info();
-    string env_query = "QUERY_STRING:" + query;
-    string env_path_info = "PATH_INFO:" + path_info;
+    DEBUG("query:" + query);
+    string env_query = "QUERY_STRING=" + query;
+    DEBUG("env_query:" + env_query);
+    string env_path_info = "PATH_INFO=" + path_info;
 
     char* argv[2] = {NULL};
     argv[0] = const_cast<char*>(file_path.c_str());
 
 
+    //string env1 = "PATH_INFO=/abc";
+    //string env2 = "QUERY_STRING=abc=123&b=12aa";
+    char *env[3] = {NULL};
+    //env[0] = const_cast<char*>(env_query.c_str());
+    //env[0] = const_cast<char*>(env1.c_str());
+    //env[1] = const_cast<char*>(env2.c_str());
+    env[0] = const_cast<char*>(env_query.c_str());
+    env[1] = const_cast<char*>(env_path_info.c_str());
+    env[2] = NULL;
+    /*
     char* env[3] = {NULL};
     env[0] = const_cast<char*>(env_query.c_str());
     env[1] = const_cast<char*>(env_path_info.c_str());
+    */
 
     int fd_in;
     int fd_out;
@@ -121,7 +137,15 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
         throw HttpException("500");
     }
 
+    /*
+    int env_i = 0;
+    while(environ[env_i]){
+        cout << environ[env_i++] << endl;
+    }
+    */
+
     if (pid == 0) {
+        //int rval = execve(file_path.c_str(), argv, environ);
         int rval = execve(file_path.c_str(), argv, env);
         cout << "rval:" << rval << endl;
         std::exit(0);
