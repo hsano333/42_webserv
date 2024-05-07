@@ -134,6 +134,7 @@ void Webserv::communication()
             }
 
             if(next_event != event){
+                DEBUG("webserv clean");
                 this->cleaner->delete_event(event);
                 count++;
             }

@@ -52,6 +52,7 @@
 #define LF2 "\n\n"
 #define CRLF "\r\n"
 #define CRLF2 "\r\n\r\n"
+#define NL_CGI "\n\n"
 
 //32GB
 #define MAX_BODY_SIZE (34359738368ul)

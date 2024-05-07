@@ -9,7 +9,7 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR		:= file/
-FILESYSTEMSRC 		:= webserv_file.cpp webserv_file_factory.cpp normal_file.cpp multi_normal_file.cpp directory_file.cpp error_file.cpp socket_file.cpp socket_chunk_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp vector_file.cpp file_manager.cpp buffer_controller.cpp
+FILESYSTEMSRC 		:= webserv_file.cpp webserv_file_factory.cpp normal_file.cpp multi_normal_file.cpp directory_file.cpp error_file.cpp pipe_file.cpp socket_file.cpp socket_chunk_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp vector_file.cpp file_manager.cpp buffer_controller.cpp
 FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/
@@ -17,7 +17,7 @@ SERVERSRC 			:= webserv.cpp webserv_waiter.cpp webserv_cleaner.cpp webserv_entit
 SERVER 				:= $(addprefix $(SERVERDIR)/, $(SERVERSRC))
 
 EVENTDIR			:= event/
-EVENTSRC 			:= webserv_event.cpp  webserv_event_factory.cpp webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_application_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_io_event.cpp webserv_io_socket_event.cpp webserv_io_cgi_event.cpp webserv_application_upload_event.cpp
+EVENTSRC 			:= webserv_event.cpp  webserv_event_factory.cpp webserv_make_request_event.cpp webserv_make_response_event.cpp webserv_application_event.cpp webserv_clean_event.cpp webserv_nothing_event.cpp webserv_timeout_event.cpp webserv_keep_alive_event.cpp event_manager.cpp event_controller.cpp webserv_io_event.cpp webserv_io_socket_event.cpp webserv_io_cgi_event.cpp webserv_application_upload_event.cpp  webserv_waiting_cgi_out_event.cpp  webserv_make_response_for_cgi_event.cpp
 
 EVENT 				:= $(addprefix $(EVENTDIR)/, $(EVENTSRC))
 

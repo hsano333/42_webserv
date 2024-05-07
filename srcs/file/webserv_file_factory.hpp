@@ -19,6 +19,7 @@
 #include "split.hpp"
 #include "header.hpp"
 #include "request.hpp"
+#include "application_result.hpp"
 #include <cstdio>
 #include <stdlib.h>
 
@@ -57,6 +58,9 @@ class WebservFileFactory
         WebservFile *make_webserv_directory_file(FileDiscriptor const &fd, FileT *file);
         template <class FileT>
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file);
+
+        template <class FileT>
+        WebservFile *make_result_file_for_cgi(FileDiscriptor const &fd,  FileT *file);
         template <class FileT>
         WebservFile *make_webserv_file_regular(FileDiscriptor const &fd, FileT *file);
         template <class FileT>
@@ -68,11 +72,14 @@ class WebservFileFactory
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
         WebservFile *make_pipe_file(FileDiscriptor const &fd, FileDiscriptor const &pipe_fd , IReader *reader);
         WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
+        WebservFile *make_pipe_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_chunk_file(FileDiscriptor const &fd, WebservFile *file);
         WebservFile *make_socket_chunk_file_for_write(FileDiscriptor const &fd, WebservFile *file);
         WebservFile *make_error_file(FileDiscriptor const &fd, StatusCode const &status_code);
+        WebservFile *make_result_file_for_cgi(FileDiscriptor const &fd, ApplicationResult *file);
+        WebservFile *make_vector_file_for_cgi(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file_for_socket(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref);
         WebservFile *make_vector_file(FileDiscriptor const &fd, char *buf, size_t size);
@@ -295,6 +302,14 @@ template <class FileT>
 WebservFile *WebservFileFactory::make_webserv_directory_file(FileDiscriptor const &fd, FileT *file)
 {
     WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DefaultFunc::remove<FileT>, DefaultFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DefaultFunc::path<FileT>, DefaultFunc::size<FileT>, DummyFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>);
+    this->file_manager->insert(fd, new_file);
+    return (new_file);
+}
+
+template <class FileT>
+WebservFile *WebservFileFactory::make_result_file_for_cgi(FileDiscriptor const &fd,  FileT *file)
+{
+    WebservFile *new_file = new WebservFile(file, DefaultFunc::open<FileT>, DefaultFunc::read<FileT>, DefaultFunc::write<FileT>, DefaultFunc::close<FileT>, DummyFunc::remove<FileT>, DummyFunc::can_read<FileT>, DummyFunc::can_write<FileT>, DummyFunc::path<FileT>, DummyFunc::size<FileT>, DefaultFunc::is_chunk<FileT>, DummyFunc::set_chunk<FileT>, CheckSocketReadEndFunc::completed<FileT>);
     this->file_manager->insert(fd, new_file);
     return (new_file);
 }

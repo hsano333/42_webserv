@@ -1,4 +1,3 @@
-
 #ifndef VECTOR_FILE_HPP
 #define VECTOR_FILE_HPP
 #include <dirent.h>
@@ -38,6 +37,25 @@ class VectorFile
         //char buf_c[MAX_BUF];
 };
 
+namespace CheckSocketReadEndForCGIFunc{
+    template <class FileT>
+    bool completed(FileT *file){
+        DEBUG("CheckSocketReadEndForCGIFunc::completed()");
+        bool flag = false;
+        if(file->size() >= MAX_REAUEST_EXCEPT_BODY ){
+            flag = true;
+        }else{
+            char *buf;
+            size_t read_size = file->read(&buf, file->size());
+            char *pos = Utility::strnstr(buf, NL_CGI, read_size);
+            if(pos){
+                flag = true;
+            }
+        }
+        file->clear_read();
+        return (flag);
+    }
+}
 
 namespace CheckSocketReadEndFunc{
     template <class FileT>

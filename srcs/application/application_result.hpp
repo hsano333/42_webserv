@@ -37,7 +37,8 @@ class ApplicationResult
         //void set_app(Application *app);
         void set_file(WebservFile *file);
 
-        bool is_completed();
+        bool completed();
+        //bool is_completed();
         void set_status_code(int status_code);
         void set_completed(bool flag);
         void add_header(std::string const &key, std::string const &value) ;
@@ -61,7 +62,7 @@ class ApplicationResult
         Method method_;
         std::string text;
         WebservFile *file_;
-        bool completed;
+        bool completed_;
         FileState   state;
         BufferController buffer;
         bool           is_cgi_;

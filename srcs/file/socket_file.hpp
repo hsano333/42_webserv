@@ -1,6 +1,6 @@
 
-#ifndef OPENED_SOCKET_FILE_HPP
-#define OPENED_SOCKET_FILE_HPP
+#ifndef SOCKET_FILE_HPP
+#define SOCKET_FILE_HPP
 #include <dirent.h>
 #include <string>
 #include <vector>

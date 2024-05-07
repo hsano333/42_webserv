@@ -71,30 +71,6 @@ WebservEvent* PostApplication::next_event(WebservEvent *event, WebservEventFacto
 
     WebservEvent *new_event = (event_factory->make_making_upload_event(event, file));
 
-    /*
-    size_t size = 0;
-    char *buf = event->entity()->request()->get_buf_body(&size);
-
-    MYINFO("size=" + Utility::to_string(size));
-    MYINFO("buf=" + Utility::to_string(buf));
-
-    if(size >0){
-        printf("No.0 size=%zu", size);
-        MYINFO("No.0 size=" + Utility::to_string(size));
-        file->open();
-        file->write(&buf, size);
-    }
-    */
-    //buf[size] = '\0';
-    //cout << "post application buf=" << buf << endl << endl;
-    //printf("post application buf=[%s]\n\n", buf);
-    /*
-    new_event->entity()->io().save(buf[0].c_str(), 0, buf[0].size());
-    for(size_t i=0;i<buf.size();i++){
-        new_event->entity()->io().save(CRLF2, 0, 2);
-        new_event->entity()->io().save(buf[i].c_str(), 0, buf[i].size());
-    }
-    */
 
     return (new_event);
 }

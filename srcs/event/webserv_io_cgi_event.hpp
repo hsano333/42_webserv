@@ -20,7 +20,8 @@ class WebservIOCGIEvent
         E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
 
-        static WebservIOCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
+        static WebservEvent *from_event(WebservEvent *event);
+        //static WebservIOCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:
         WebservIOCGIEvent();
         static WebservIOCGIEvent *singleton;

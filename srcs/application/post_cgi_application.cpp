@@ -5,6 +5,8 @@
 //#include "cgi_file.hpp"
 #include "directory_file.hpp"
 #include "webserv_event.hpp"
+#include "socket_writer.hpp"
+#include "socket_reader.hpp"
 #include <unistd.h>
 
 PostCGIApplication::PostCGIApplication() : method(Method::from_string("POST"))
@@ -29,20 +31,26 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
 
     Request *req = event->entity()->request();
-    DEBUG("WebservApplicationWithCgiEvent::make_next_event No.2 query:" + req->req_line().uri().query());
-    WebservFile *file = file_factory->make_vector_file(event->entity()->fd(), req->req_line().uri().query());
-    DEBUG("WebservApplicationWithCgiEvent::make_next_event No.3");
-    req->set_file(file);
+    WebservFile *req_file = file_factory->make_request_file_read_buf(event->entity()->fd(), req);
+    WebservFile *file = file_factory->make_pipe_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
+
+    if(event->entity()->request()->header().is_chunked()){
+        file = file_factory->make_socket_chunk_file(event->entity()->fd(), file);
+    }
 
     //todo 
-    WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
+    /*
+    WebservFile *write_src = file;
     WebservFile *read_dst = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
+    */
     ApplicationResult *result = event->entity()->app_result();
-    WebservFile *result_file = file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_BUF);
+    WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);
 
-    return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
+    //todo
+    //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
+    return (event_factory->make_io_socket_for_cgi(event));
 }
 
 E_EpollEvent PostCGIApplication::epoll_event(WebservEntity *entity)

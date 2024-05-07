@@ -36,19 +36,21 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
 
     //todo 
     WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
-    WebservFile *read_dst = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
+    WebservFile *read_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
-    WebservFile *result_file = file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_BUF);
+    WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);
 
-    return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
+    return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
+    //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
 }
 
 E_EpollEvent GetCGIApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
-    return (EPOLL_FOR_GET_CGI);
+    //return (EPOLL_FOR_CGI);
+    return (EPOLL_WRITE);
 }
 
 bool GetCGIApplication::execute(WebservEntity *entity)

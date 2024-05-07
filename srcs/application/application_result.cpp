@@ -6,17 +6,17 @@
 #include "application_result.hpp"
 #include <unistd.h>
 
-ApplicationResult::ApplicationResult() : app_(NULL), method_(Method::from_string("NONE")), file_(NULL), completed(false), is_cgi_(false), reader(NULL), writer(NULL)
+ApplicationResult::ApplicationResult() : app_(NULL), method_(Method::from_string("NONE")), file_(NULL), completed_(false), is_cgi_(false), reader(NULL), writer(NULL)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : app_(NULL), code_(code), method_(method), file_(NULL), completed(false), is_cgi_(false), reader(NULL), writer(NULL)
+ApplicationResult::ApplicationResult(StatusCode &code, Method const &method) : app_(NULL), code_(code), method_(method), file_(NULL), completed_(false), is_cgi_(false), reader(NULL), writer(NULL)
 {
     ;
 }
 
-ApplicationResult::ApplicationResult(StatusCode &code, string &method) : app_(NULL), code_(code), method_(Method::from_string(method)), file_(NULL), completed(false), is_cgi_(false), reader(NULL), writer(NULL)
+ApplicationResult::ApplicationResult(StatusCode &code, string &method) : app_(NULL), code_(code), method_(Method::from_string(method)), file_(NULL), completed_(false), is_cgi_(false), reader(NULL), writer(NULL)
 {
     ;
 }
@@ -153,7 +153,7 @@ void ApplicationResult::add_header(std::string const &key, std::string const &va
 
 void ApplicationResult::set_completed(bool flag)
 {
-    this->completed = flag;
+    this->completed_ = flag;
 }
 
 ApplicationResult *ApplicationResult::from_fd(int in, int out, int pid)
@@ -178,10 +178,23 @@ ApplicationResult *ApplicationResult::from_status_code(StatusCode &code, string 
 }
 
 
+bool ApplicationResult::completed()
+{
+    DEBUG("ApplicationResult::completed");
+    if(this->file_){
+        DEBUG("ApplicationResult::completed No.1");
+        return (this->file_->completed());
+    }
+    return (this->completed_);
+}
+
+
+/*
 bool ApplicationResult::is_completed()
 {
-    return (this->completed);
+    return (this->completed_);
 }
+*/
 
 
 /*
