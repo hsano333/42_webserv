@@ -115,6 +115,11 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
         flag = dst->completed();
     }else{
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
+        WebservFile *src = entity->io().source_for_write();
+        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT write_size:" + Utility::to_string(src->size()));
+        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT get_content_length():" + Utility::to_string(entity->request()->header().get_content_length()));
+
+
         //EPOLLOUT 
         //  src : Response
         Response *res= entity->response();

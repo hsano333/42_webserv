@@ -139,8 +139,13 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         if(cached_event){
+            DEBUG("WebservEvent::from_epoll_event No.1: EPOLLOUT found event");
             cached_event->entity()->io().switching_io(EPOLLOUT);
             cached_event->update_time();
+        }else{
+            DEBUG("WebservEvent::from_epoll_event No.1: EPOLLOUT doun't found event");
+
+
         }
         return (cached_event);
     }else if(event_epoll.events & EPOLLERR){

@@ -51,25 +51,34 @@ WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscripto
 WebservEvent* WebservIOCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOCGIEvent::make_next_event()");
-    WebservEvent* new_event;
-    if(event->entity()->io().in_out() == EPOLLIN){
-        DEBUG("WebservIOCGIEvent::make_next_event() No.1");
-        //return (event_factory->make_making_response_event(event, event->entity()->io().destination_for_read()));
-        new_event = (event_factory->make_waiting_out_cgi(event));
-    }else{
 
+    WebservEvent* new_event = NULL;
+    if (event->entity()->completed()){
+        /*
+        if(event->entity()->io().in_out() == EPOLLIN){
+            DEBUG("WebservIOCGIEvent::make_next_event() No.1");
+            //return (event_factory->make_making_response_event(event, event->entity()->io().destination_for_read()));
+            new_event = (event_factory->make_waiting_out_cgi(event));
+        }else{
+
+        }
+        */
+        new_event = (event_factory->make_clean_event(event, false));
+
+    }else{
+        new_event = (event_factory->make_waiting_out_cgi(event));
     }
+
     return (new_event);
 }
 
 E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-
-
     if (event->entity()->completed()){
         return (EPOLL_NONE);
     }
+    return (EPOLL_WRITE);
 
     DEBUG("WebservIOCGIEvent::epoll_event()");
     if(event->entity()->io().in_out() == EPOLLIN){
@@ -84,8 +93,8 @@ E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
 void WebservIOCGIEvent::check_completed(WebservEntity * entity)
 {
     //todo 
-    entity->set_completed(true);
-    return ;
+    //entity->set_completed(true);
+    //return ;
     DEBUG("WebservIOCGIEvent::check_completed");
 
     // copy from WebservIOSocketEvent
@@ -99,13 +108,22 @@ void WebservIOCGIEvent::check_completed(WebservEntity * entity)
         WebservFile *dst = entity->io().destination_for_read();
         flag = dst->completed();
     }else{ //EPOLL_OUT
-        WebservFile *src = entity->io().source_for_write();
-        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT write_size:" + Utility::to_string(src->size()));
-        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT get_content_length():" + Utility::to_string(entity->request()->header().get_content_length()));
-        if(src->size() >= (size_t)entity->request()->header().get_content_length()){
-            DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT close()");
-            src->close();
+           //
+        flag = entity->response()->read_completed();
+        //WebservFile *src = entity->io().source_for_write();
+
+        /*
+        if(entity->response()->header().is_chunked()){
+
+        }else{
+            DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT write_size:" + Utility::to_string(src->size()));
+            DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT get_content_length():" + Utility::to_string(entity->response()->header().get_content_length()));
+            if(src->size() >= (size_t)entity->request()->header().get_content_length()){
+                DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT close()");
+                src->close();
+            }
         }
+        */
         //flag = src->completed();
     }
 
