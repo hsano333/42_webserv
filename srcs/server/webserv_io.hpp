@@ -29,6 +29,9 @@ class WebservIO
         void            set_read_fd(FileDiscriptor &read_fd);
         FileDiscriptor  &get_write_fd();
         FileDiscriptor  &get_read_fd();
+        void            set_is_cgi_read(bool flag);
+        bool            is_cgi_read();
+        
         
         void            set_in_out(uint32_t inout);
         uint32_t        in_out();
@@ -43,10 +46,16 @@ class WebservIO
         void            set_write_completed(bool flag);
 
         void switching_io(uint32_t epoll_event);
+
+        size_t          total_status_header_size();
+        void            set_total_status_header_size(size_t size);
+
         size_t          total_write_size();
         void            set_total_write_size(size_t size);
         void            add_total_write_size(size_t size);
 
+        bool            cgi_divided();
+        void            set_cgi_divided(bool flag);
     private:
         WebservFile *source_;
         WebservFile *destination_;
@@ -65,7 +74,13 @@ class WebservIO
         bool is_read_completed_;
         bool is_write_completed_;
 
+        size_t total_status_header_size_;
         size_t total_write_size_;
+        bool cgi_divided_;
+
+        // when read from socket and write to cgi, it is true;
+        bool is_cgi_read_;
+        //bool is_cgi_write_;
 };
 
 #endif

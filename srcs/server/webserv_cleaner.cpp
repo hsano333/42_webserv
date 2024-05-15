@@ -67,10 +67,11 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
 void WebservCleaner::delete_event(WebservEvent *event)
 {
+    (void)event;
     DEBUG("WebservCleaner::delete_event");
-    if(event){
-        delete event;
-    }
+    //if(event){
+        //delete event;
+    //}
 }
 
 /*

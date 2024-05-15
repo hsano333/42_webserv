@@ -32,31 +32,43 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
 
     Request *req = event->entity()->request();
     WebservFile *req_file = file_factory->make_request_file_read_buf(event->entity()->fd(), req);
-    WebservFile *file = file_factory->make_pipe_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
+    WebservFile *file = file_factory->make_socket_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
+    //WebservFile *file = file_factory->make_pipe_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
 
     if(event->entity()->request()->header().is_chunked()){
         file = file_factory->make_socket_chunk_file(event->entity()->fd(), file);
     }
 
     //todo 
+    WebservFile *read_src = file;
+
     /*
-    WebservFile *write_src = file;
-    WebservFile *read_dst = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
+    char test_read[2000] = {0};
+    char *test_read_p = test_read;
+    int tmp = file->read(&test_read_p, 100);
+    cout << "tmp=" << tmp << endl;
+    cout << "test_read_p=" << test_read_p << endl;
+    exit(1);
     */
+    WebservFile *write_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
+    //WebservFile *read_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
     WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);
 
+    event->entity()->io().set_total_write_size(0);
     //todo
     //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
-    return (event_factory->make_io_socket_for_cgi(event));
+    //return (event_factory->make_io_socket_for_cgi(event));
+    return (event_factory->make_waiting_cgi(event, write_dst, read_src, result));
 }
 
 E_EpollEvent PostCGIApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
-    return (EPOLL_FOR_CGI);
+    return (EPOLL_FOR_CGI_POST);
+    //return (EPOLL_NONE);
 }
 
 bool PostCGIApplication::execute(WebservEntity *entity)

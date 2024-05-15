@@ -1,7 +1,7 @@
 #include "webserv_io.hpp"
 #include "http_exception.hpp"
 
-WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false), total_write_size_(0)
+WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false), total_write_size_(0), cgi_divided_(false), is_cgi_read_(true)
 {
     DEBUG("WebservIO() Constructor");
 }
@@ -181,6 +181,22 @@ void WebservIO::set_write_completed(bool flag)
     this->is_write_completed_ = flag;
 }
 
+size_t WebservIO::total_status_header_size()
+{
+
+    DEBUG("WebservIO::total_status_header_size:" + Utility::to_string(this->total_status_header_size_));
+    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(&this->total_write_size_));
+    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(this));
+    return (this->total_status_header_size_);
+}
+
+void WebservIO::set_total_status_header_size(size_t size)
+{
+    DEBUG("WebservIO::set_total_status_header_size:" + Utility::to_string(size));
+    this->total_status_header_size_ = size;
+}
+
+
 size_t WebservIO::total_write_size()
 {
 
@@ -208,3 +224,23 @@ void WebservIO::add_total_write_size(size_t size)
     DEBUG("WebservIO::total_write_size_:" + Utility::to_string(this->total_write_size_));
 }
 
+
+void WebservIO::set_cgi_divided(bool flag)
+{
+    this->cgi_divided_ = flag;
+}
+
+bool WebservIO::is_cgi_read()
+{
+    return (this->is_cgi_read_);
+}
+
+void WebservIO::set_is_cgi_read(bool flag)
+{
+    this->is_cgi_read_ = flag;
+}
+
+bool WebservIO::cgi_divided()
+{
+    return (this->cgi_divided_);
+}

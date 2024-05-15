@@ -45,11 +45,16 @@ class WebservEventFactory
         WebservEvent *make_waiting_socket_out_cgi(WebservEvent *event);
         WebservEvent *make_waiting_out_cgi(WebservEvent *event);
         WebservEvent *make_waiting_out_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result);
+        //WebservEvent *make_waiting_out_cgi(WebservEvent *event);
+        WebservEvent *make_waiting_cgi(WebservEvent *event);
+        WebservEvent *make_waiting_cgi(WebservEvent *event, WebservFile *write_dst, WebservFile *read_src, ApplicationResult *result);
+        WebservEvent *make_io_socket_for_post_cgi(WebservEvent *event);
         WebservEvent *make_io_socket_for_cgi(WebservEvent *event);
         //WebservEvent *make_io_socket_for_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result);
         void make_cgi_event(FileDiscriptor pid, FileDiscriptor fd_in, FileDiscriptor fd_out, Request *req);
         //void          register_file_manager(WebservEvent *event);
         WebservEvent *make_making_request_event(WebservEvent *event);
+        WebservEvent *make_making_response_for_post_cgi_event(WebservEvent *event);
         WebservEvent *make_making_response_for_cgi_event(WebservEvent *event);
         WebservEvent *make_making_response_event(WebservEvent *event, WebservFile *src);
         WebservEvent *make_application_event(WebservEvent *event);

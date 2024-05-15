@@ -84,7 +84,9 @@ void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
     size_t total_size = entity->io().total_write_size();
     size_t content_length = entity->request()->header().get_content_length();
     bool is_completed = file->completed();
-    if(content_length == total_size && is_completed){
+    if((file->is_chunk() == false && content_length == total_size) && is_completed){
+        is_completed = true;
+    }else if(file->is_chunk() == true  && is_completed){
         is_completed = true;
     }else{
         is_completed = false;

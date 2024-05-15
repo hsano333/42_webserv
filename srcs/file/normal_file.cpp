@@ -95,6 +95,7 @@ int NormalFile::close()
 
 int NormalFile::read(char **buf, size_t size)
 {
+    DEBUG("NormalFile::read");
     return (this->ireader->read(this->fd, *buf, size, &(this->iofs)));
 }
 

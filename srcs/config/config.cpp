@@ -558,7 +558,7 @@ void Config::check(SocketRepository *socket_repository)
         char const *hostname = http->server(i)->server_name().c_str();
         cout << "hostname:" << hostname << endl;
         int rval = getaddrinfo(hostname, NULL, &hints, &res);
-        cout << "rval:" << rval << endl;
+        cout << "rval1:" << rval << endl;
         if (rval < 0) {
             ERROR("Host name is invalid:" + http->server(i)->server_name());
             //throw std::runtime_error("hostname is invalid");

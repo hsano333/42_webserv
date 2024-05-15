@@ -33,9 +33,10 @@ WebservFile *WebservFileFactory::make_multi_normal_file(std::string const &direc
 WebservFile *WebservFileFactory::make_pipe_file(FileDiscriptor const &fd, FileDiscriptor const &pipe_fd, IReader *reader)
 {
 
+    DEBUG("WebservFileFactory::make_pipe_file:" + fd.to_string());
     //IReader *reader = NormalReader::get_instance();
-    SocketFile *socket_file = SocketFile::from_fd(pipe_fd, NULL, reader);
-    return (this->make_webserv_file(fd, socket_file, DummyFunc::open, DefaultFunc::read, DummyFunc::write, DefaultFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DummyFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+    PipeFile *pipe_file = PipeFile::from_fd(pipe_fd, NULL, reader);
+    return (this->make_webserv_file(fd, pipe_file, DummyFunc::open, DefaultFunc::read, DummyFunc::write, DefaultFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DummyFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
 WebservFile *WebservFileFactory::make_pipe_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader)

@@ -31,6 +31,10 @@ VectorFile* VectorFile::from_buf(char *buf, size_t size)
     for(size_t i=0;i<size;i++){
         file->buf[i] = buf[i];
     }
+
+    // will remove
+    buf[size] = '\0';
+    DEBUG("VectorFile::from_buf() buf=" + Utility::to_string(buf));
     //file->index = size;
     return (file);
 }
@@ -80,10 +84,12 @@ int VectorFile::read(char **buf, size_t size)
     //this->buf.push_back('\0');
     //this->buf[this->buf.size()] = '\0';
     *buf = &(this->buf[0]);
+    printf("\n\nvector_file test[");
         DEBUG("vector file test No.5");
     for(size_t i=0;i<this->buf.size();i++){
         printf("%c", this->buf[i]);
     }
+    printf("]\n\n");
     //buf[this->buf.size()-1] = '\0';
 
     //string tmp = *buf;

@@ -47,7 +47,7 @@ namespace CheckSocketReadEndForCGIFunc{
         }else{
             char *buf;
             size_t read_size = file->read(&buf, file->size());
-            char *pos = Utility::strnstr(buf, NL_CGI, read_size);
+            char *pos = Utility::strnstr(buf, NL2_CGI, read_size);
             if(pos){
                 flag = true;
             }

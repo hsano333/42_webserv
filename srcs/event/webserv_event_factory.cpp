@@ -16,10 +16,13 @@
 #include "webserv_io_event.hpp"
 #include "webserv_io_socket_event.hpp"
 #include "webserv_io_cgi_event.hpp"
+#include "webserv_io_post_cgi_event.hpp"
 #include "error_file.hpp"
 #include "webserv_keep_alive_event.hpp"
 #include "webserv_waiting_cgi_out_event.hpp"
+#include "webserv_waiting_cgi_in_event.hpp"
 #include "webserv_make_response_for_cgi_event.hpp"
+#include "webserv_make_response_for_post_cgi_event.hpp"
 
 WebservEventFactory::WebservEventFactory(
         Config *cfg,
@@ -136,7 +139,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             }
         }
     }else if(event_epoll.events & EPOLLOUT){
-        DEBUG("WebservEvent::from_epoll_event: EPOLLOUT");
+        MYINFO("WebservEvent::from_epoll_event() EPOLLOUT fd:" + fd.to_string());
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         if(cached_event){
             DEBUG("WebservEvent::from_epoll_event No.1: EPOLLOUT found event");
@@ -185,6 +188,26 @@ WebservEvent *WebservEventFactory::make_waiting_out_cgi(WebservEvent *event)
     return (new_event);
 }
 
+WebservEvent *WebservEventFactory::make_waiting_cgi(WebservEvent *event)
+{
+    WebservEvent *new_event = WebservWaitingCGIInEvent::from_event(event);
+    return (new_event);
+}
+
+WebservEvent *WebservEventFactory::make_waiting_cgi(WebservEvent *event, WebservFile *write_dst, WebservFile *read_src, ApplicationResult *result)
+{
+    DEBUG("WebservEventFactory::make_waiting_cgi fd=" + event->entity()->fd().to_string());
+    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+    WebservFile *read_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    WebservFile *write_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+    FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
+
+    WebservEvent *new_event = WebservWaitingCGIInEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
+
+    return (new_event);
+}
+
 WebservEvent *WebservEventFactory::make_waiting_out_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result)
 {
     DEBUG("WebservEventFactory::make_waiting_out_cgi fd=" + event->entity()->fd().to_string());
@@ -197,6 +220,17 @@ WebservEvent *WebservEventFactory::make_waiting_out_cgi(WebservEvent *event, Web
     return (new_event);
 }
 
+WebservEvent *WebservEventFactory::make_io_socket_for_post_cgi(WebservEvent *event)
+{
+    DEBUG("WebservEventFactory::make_io_socket_for_post_cgi fd=" + event->entity()->fd().to_string());
+    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+    //FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
+    //WebservEvent *new_event = WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
+    WebservEvent *new_event = WebservIOPostCGIEvent::from_event(event);
+
+    return (new_event);
+}
 
 WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event)
 {
@@ -267,8 +301,16 @@ WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event
 
 WebservEvent *WebservEventFactory::make_making_response_for_cgi_event(WebservEvent *event)
 {
-    DEBUG("WebservEventFactory::make_making_response_event");
+    DEBUG("WebservEventFactory::make_making_response_for_cgi_event");
     WebservEvent *new_event = WebservMakeResponseForCGIEvent::from_event(event);
+
+    return (new_event);
+}
+
+WebservEvent *WebservEventFactory::make_making_response_for_post_cgi_event(WebservEvent *event)
+{
+    DEBUG("WebservEventFactory::make_making_response_for_post_cgi_event");
+    WebservEvent *new_event = WebservMakeResponseForPostCGIEvent::from_event(event);
 
     return (new_event);
 }

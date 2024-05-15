@@ -157,7 +157,7 @@ void Request::set_buf_body(char *body, size_t size)
         //ERROR("buf_body is not NULL. set_buf_body must be used only once");
         //throw std::runtime_error("buf_body is not NULL");
     //}
-    this->buf_body.resize(size);
+    this->buf_body.resize(size+1);
 
     DEBUG("Request::set_buf_body No.4 size:" + Utility::to_string(size));
     //this->buf_body = new char[size+1];
@@ -480,7 +480,9 @@ std::string const &Request::path()
 int Request::read(char** data, size_t max_read_size)
 {
     DEBUG("Request::read() max_size=" + Utility::to_string(max_read_size));
-    return (this->file->read(data, max_read_size));
+    int tmp = (this->file->read(data, max_read_size));
+    DEBUG("Request::read() No.2 max_size=" + Utility::to_string(max_read_size));
+    return (tmp);
 }
 
 std::string const &Request::path_info() const

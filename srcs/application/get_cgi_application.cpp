@@ -35,7 +35,12 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     //req->set_file(file);
 
     //todo 
-    WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
+    //WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
+
+    // CGI: write_src( read from socket , write to cgi)
+    WebservFile *write_src = NULL;
+
+    // CGI: read_dst( read from CGI,  write to socket)
     WebservFile *read_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
     WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF);

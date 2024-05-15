@@ -147,7 +147,14 @@ ApplicationResult *CGI::execute(ConfigLocation const *location, Request const *r
     if (pid == 0) {
         //int rval = execve(file_path.c_str(), argv, environ);
         int rval = execve(file_path.c_str(), argv, env);
-        cout << "rval:" << rval << endl;
+        if(rval < 0){
+            ERROR("CGI error rval:" + Utility::to_string(rval));
+            ERROR("CGI error file_path:" + Utility::to_string(file_path));
+            ERROR("CGI error argv[0]:" + Utility::to_string(argv[0]));
+            ERROR("CGI error argv[1]:" + Utility::to_string(argv[1]));
+
+        }
+        //cout << "rval2:" << rval << endl;
         std::exit(0);
     }
 
