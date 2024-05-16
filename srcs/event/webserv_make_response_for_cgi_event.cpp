@@ -110,6 +110,21 @@ Response* WebservMakeResponseForCGIEvent::make_response_for_cgi(ApplicationResul
         throw HttpException("500");
     }
 
+
+    if(res->header().get_content_length() == -1)
+    {
+        if(res->header().is_chunked() == false){
+            res->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
+        }
+    }
+
+    if(!res->check_body_and_chunk()){
+        DEBUG("WebservMakeResponseEvent::make_response_for_cgi not chunk");
+        res->add_header(CONTENT_LENGTH, "0");
+    }
+
+
+
     return (res);
 
 }

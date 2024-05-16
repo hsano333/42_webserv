@@ -72,6 +72,10 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
         delete res;
         throw HttpException("500");
     }
+    if(!res->check_body_and_chunk()){
+        DEBUG("WebservMakeResponseEvent::make_response_for_cgi not chunk");
+        res->add_header(CONTENT_LENGTH, "0");
+    }
 
     return (res);
 

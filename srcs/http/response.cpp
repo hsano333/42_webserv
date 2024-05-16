@@ -132,7 +132,6 @@ Response* Response::from_cgi_header_line(Split &header_line, WebservFile *file)
 const Header &Response::header()
 {
     return (this->headers);
-
 }
 
 bool Response::check_body_size(ConfigServer const *server)
@@ -448,7 +447,8 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
             int size=0;
             DEBUG("Response::read chunked No.1:");
             if (this->is_chunked){
-                size = this->read_body_and_copy(cp, max_read_size);
+                //size = this->read_body_and_copy(cp, max_read_size);
+                size = this->read_body_and_copy_chunk(cp, max_read_size);
                 DEBUG("Response::read chunked No.12 size:" + Utility::to_string(size));
                 if (size <= 0){
                     DEBUG("Response::read chunked No.13:");

@@ -4,6 +4,8 @@
 #include "response.hpp"
 #include "error_file.hpp"
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 
 WebservIOCGIEvent::WebservIOCGIEvent()
@@ -79,22 +81,11 @@ E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
         return (EPOLL_NONE);
     }
     return (EPOLL_WRITE);
-
-    DEBUG("WebservIOCGIEvent::epoll_event()");
-    if(event->entity()->io().in_out() == EPOLLIN){
-        return (EPOLL_WRITE);
-    }else{
-        return (EPOLL_READ);
-    }
-
-    return (EPOLL_NONE);
 }
 
 void WebservIOCGIEvent::check_completed(WebservEntity * entity)
 {
     //todo 
-    //entity->set_completed(true);
-    //return ;
     DEBUG("WebservIOCGIEvent::check_completed");
 
     // copy from WebservIOSocketEvent
@@ -108,8 +99,17 @@ void WebservIOCGIEvent::check_completed(WebservEntity * entity)
         WebservFile *dst = entity->io().destination_for_read();
         flag = dst->completed();
     }else{ //EPOLL_OUT
+        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
            //
         flag = entity->response()->read_completed();
+        int wstatus;
+        int result = waitpid(entity->app_result()->pid().to_int(), &wstatus,WUNTRACED | WCONTINUED);
+        if(result == -1){
+            DEBUG("waitpid ERROR");
+        }else{
+            flag = true;
+
+        }
         //WebservFile *src = entity->io().source_for_write();
 
         /*
