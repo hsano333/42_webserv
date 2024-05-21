@@ -258,19 +258,35 @@ int Response::read_body_and_copy(char** dst, size_t size)
 int Response::read_body_and_copy_chunk(char** dst, size_t size)
 {
     DEBUG("Response::read_body_and_copy_chunk");
-    char *dst_p = *dst;
     //printf("tmp=%p\n", tmp);
     const int  MAX_CHUNKED_SIZE = 20;
+    char *dst_p = *dst;
+    int read_size = 0;
     DEBUG("Response::read chunked No.4:");
-    //char *tmp2 = &(tmp[chunk_size]);
 
-    DEBUG("Response::read chunked No.4-2 size=:" + Utility::to_string(size));
-    //printf("tmp2=%p\n", tmp2);
-    //int read_size = 10;
-    //char tmp_buffer[size - max_chunk_size];
-    char *tmp = &(dst_p[MAX_CHUNKED_SIZE]);
-    int read_size = this->file->read(&tmp, size - MAX_CHUNKED_SIZE);
+    if(this->buf_body_size > 0){
 
+        read_size = this->buf_body_size;
+        Utility::memcpy(&(dst_p[MAX_CHUNKED_SIZE]), &(this->buf_body[0]), this->buf_body_size);
+        //std::string size_str = Utility::to_hexstr(this->buf_body_size);
+        dst_p[MAX_CHUNKED_SIZE + this->buf_body_size] = '\0';
+        DEBUG("chunk buffer =" + Utility::to_string(dst_p));
+        DEBUG("buffer_size=" + Utility::to_string(this->buf_body_size));
+        //for(int i=0;i<this->buf_body_size;i++){
+            //(*dst)[i] = (this->buf_body[i]);
+            ////cout << this->buf_body[i];
+        //}
+    //cout << "]" << endl;
+        //int tmp = this->buf_body_size;
+        this->buf_body_size = 0;
+        //return (tmp);
+    }else{
+
+        DEBUG("Response::read chunked No.4-2 size=:" + Utility::to_string(size));
+        char *tmp = &(dst_p[MAX_CHUNKED_SIZE]);
+        read_size = this->file->read(&tmp, size - MAX_CHUNKED_SIZE);
+
+    }
     DEBUG("Response::read chunked No.5:");
     //int read_size = this->file->read(&(tmp[chunk_size]), size - chunk_size);
 

@@ -147,13 +147,10 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     //string const env_path_info = "PATH_INFO=" + path_info;
     //string const auth_type = "AUTH_TYPE" + "";
     //string const content_length_header = req->header().get_content_length_str() == req->header().not_find() ? "" : req->header().get_content_length_str();
-    string const content_length = "CONTENT_LENGTH=" + req->header().get_content_length_str();
-    string const content_type = "CONTENT_TYPE=" + req->header().get_content_type();
+
     string const document_root = "DOCUMENT_ROOT=" + location->root();
     string const gateway_interface= "GATEWAY_INTERFACE=1.1";
-    string const path_info = "PATH_INFO=" + location->root() + "/" + req->tmp_path_info();
     string const path_translated = location->root() + "/" + req->tmp_path_info();
-    string const env_query = "QUERY_STRING=" + query;
     string const remote_host = "REMOTE_HOST=" + req->header().get_host();
     string const request_method= "REQUEST_METHOD=" + method.to_string();
     string const script_name = "SCRIPT_NAME=" + script_file_name;
@@ -161,6 +158,11 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     string const server_protocol = "SERVER_PROTOCOL=" + req->req_line().version().to_string();
     string const server_software = "SERVER_SOFTWARE=Webserv 0.0.1";
     string const remote_USER = "REMOTE_USER=";
+
+    string const content_length = "CONTENT_LENGTH=" + req->header().get_content_length_str();
+    string const content_type = "CONTENT_TYPE=" + req->header().get_content_type();
+    string const env_query = "QUERY_STRING=" + query;
+    string const path_info = "PATH_INFO=" + location->root() + "/" + req->tmp_path_info();
 
     //対応しない
     ////string const remote_addr = "REMOTE_ADDR=";
@@ -176,10 +178,21 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     //env[0] = const_cast<char*>(env_query.c_str());
     //env[0] = const_cast<char*>(env1.c_str());
     //env[1] = const_cast<char*>(env2.c_str());
-    env[0] = const_cast<char*>(env_query.c_str());
-    env[1] = const_cast<char*>(path_info.c_str());
+    env[0] = const_cast<char*>(document_root.c_str());
+    env[1] = const_cast<char*>(gateway_interface.c_str());
     //env[2] = const_cast<char*>(env_path_info.c_str());
-    env[2] = NULL;
+    env[2] = const_cast<char*>(path_translated.c_str());
+    env[3] = const_cast<char*>(remote_host.c_str());
+    env[4] = const_cast<char*>(request_method.c_str());
+    env[5] = const_cast<char*>(script_name.c_str());
+    env[6] = const_cast<char*>(server_port.c_str());
+    env[7] = const_cast<char*>(server_protocol.c_str());
+    env[8] = const_cast<char*>(server_software.c_str());
+    env[9] = const_cast<char*>(remote_USER.c_str());
+    env[10] = const_cast<char*>(content_length.c_str());
+    env[11] = const_cast<char*>(content_type.c_str());
+    env[12] = const_cast<char*>(env_query.c_str());
+    env[13] = const_cast<char*>(path_info.c_str());
     /*
     char* env[3] = {NULL};
     env[0] = const_cast<char*>(env_query.c_str());
