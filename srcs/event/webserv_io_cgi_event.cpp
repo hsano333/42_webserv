@@ -32,6 +32,8 @@ WebservEvent *WebservIOCGIEvent::from_event(WebservEvent *event)
 {
     DEBUG("WebservIOCGIEvent::from_fd");
     WebservIOCGIEvent *io_event = WebservIOCGIEvent::get_instance();
+    //todo
+    //WebservEvent *new_event =  new WebservEvent( io_event, io_work_ref<WebservIOCGIEvent>, event->entity());
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOCGIEvent>, event->entity());
     return (new_event);
 }

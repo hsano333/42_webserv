@@ -113,11 +113,9 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         DEBUG("WebservIOPostCGIEvent::check_completed::content_length :" + Utility::to_string(content_length));
         DEBUG("WebservIOPostCGIEvent::check_completed::is_completed :" + Utility::to_string(is_completed));
         entity->set_completed(is_completed);
-        //char *nl = &NL_CGI;
-        //char const *tmp = NL2_CGI;
-        char nl = NL2_CGI[0];
-        char *tmp = &nl;
-        file->write(&(tmp), 1);
+        char *tmp;
+        *tmp = EOF;
+        file->write(&tmp, 1);
         return ;
         // read from socket, write to cgi
 

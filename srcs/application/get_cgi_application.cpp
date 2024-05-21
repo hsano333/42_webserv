@@ -62,13 +62,8 @@ bool GetCGIApplication::execute(WebservEntity *entity)
 {
     DEBUG("GetCGIApplication::execute");
     //(void)entity;
-    Request *req = entity->request();
-    Config const *cfg = entity->config();
-    ConfigServer const *server = cfg->get_server(req);
-    ConfigLocation const *location = cfg->get_location(server, req);
-    req->set_path_info(location->root());
-    //std::string path_info = location->root() + "/" + req->tmp_path_info();
-    ApplicationResult *result = this->cgi->execute(location, req);
+
+    ApplicationResult *result = this->cgi->execute(entity, this->which());
     entity->set_result(result);
     return (true);
 }

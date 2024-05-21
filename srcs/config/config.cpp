@@ -192,11 +192,8 @@ const ConfigServer* Config::get_server(Request const *req) const
                 throw HttpException("500");
             }
             Port port = Port::from_int(ntohs(addr.sin_port));
-
             const ConfigServer *server = this->get_server(port, "");
             return (server);
-
-
         }catch(std::invalid_argument &e){
             throw HttpException("500");
         }

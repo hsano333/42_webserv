@@ -85,7 +85,9 @@ int PipeFile::read(char **buf, size_t max_size)
     //return (this->reader->read(this->fd, *buf, max_size, NULL));
     int tmp =  (this->reader->read(this->fd, *buf, max_size, NULL));
     if(tmp <= 0){
+        this->state = FILE_CLOSE;
         this->close();
+        return (0);
     }
     this->state = FILE_READING;
     DEBUG("PipeFile::read() read size=" + Utility::to_string(tmp));
