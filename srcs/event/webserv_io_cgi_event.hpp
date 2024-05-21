@@ -21,7 +21,6 @@ class WebservIOCGIEvent
         void        check_completed(WebservEntity * entity);
 
         static WebservEvent *from_event(WebservEvent *event);
-        //static WebservIOCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:
         WebservIOCGIEvent();
         static WebservIOCGIEvent *singleton;

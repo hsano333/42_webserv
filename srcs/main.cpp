@@ -85,9 +85,7 @@ void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
 {
     DEBUG("clean_all()");
     event_manager->close_all_events_waiting_epoll(cleaner);
-    //event_manager->close_all_events_waiting_writing(cleaner);
     event_manager->close_all_events();
-    //cleaner.clean();
 }
 
 Config *create_config(std::string &cfg_file, FDManager* fd_manager)
@@ -110,26 +108,12 @@ Config *create_config(std::string &cfg_file, FDManager* fd_manager)
                                               parser_cgi
     );
 
-    //return (cfg_factory.create(fd_manager));
     return (cfg_factory.create(fd_manager));
 }
 
-
-/*
-SocketManager *create_socket_manager(Config *cfg)
-{
-    SocketFactory  factory = SocketFactory();
-    //SocketManager* socket_manager = factory.create(cfg);
-    //return (socket_manager);
-    SocketRepository* socket_repository = factory.create_from_config(cfg);
-    return (socket_repository );
-}
-*/
 SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 {
     SocketFactory  factory = SocketFactory(fd_manager);
-    //SocketManager* socket_manager = factory.create(cfg);
-    //return (socket_manager);
     SocketRepository* socket_repository = factory.create_from_config(cfg);
     return (socket_repository );
 }
@@ -138,71 +122,22 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 #include <sys/stat.h>
 #include <iomanip>
 
-       #include <sys/types.h>
-       #include <sys/stat.h>
-       #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include <stdint.h>
 #include <stdlib.h>
-//extern char **environ;
-//int main(int argc, char const* argv[], char **envp)
+
 int main(int argc, char const* argv[])
 {
-    /*
-    int env_i = 0;
-    while(environ[env_i]){
-
-        cout << environ[env_i] << endl;
-        env_i++;
-    }
-    exit(0);
-    */
-
-    std::map<int, std::string> map;
-    map.insert(std::make_pair(0, "12345"));
-    map.insert(std::make_pair(1, "12346"));
-    map.insert(std::make_pair(2, "12347"));
-    map.insert(std::make_pair(3, "12348"));
-    map.insert(std::make_pair(0, "abc"));
-    map.insert(std::make_pair(1, "abcde"));
-    map.insert(std::make_pair(2, "defg"));
-    map[3] = "defd";
-    std::map<int, string>::iterator ite2a = map.begin();
-    std::map<int, string>::iterator end2a = map.end();
-    while(ite2a != end2a){
-        cout << "ite:" << ite2a->first << ", value=" << ite2a->second << endl;
-        ite2a++;
-
-    }
-    
-
-    CGI *cgi1 = new CGI();
-    CGI *cgi2 = new CGI();
-    CGI *cgi3 = new CGI();
-    CGI *cgi4 = new CGI();
-    CGI *cgi5 = new CGI();
-
-    std::set<CGI*> cgi_set;
-    cgi_set.insert(cgi1);
-    cgi_set.insert(cgi2);
-    cgi_set.insert(cgi3);
-    cgi_set.insert(cgi4);
-    cgi_set.insert(cgi5);
-
-    std::set<CGI*>::iterator ite = cgi_set.begin();
-    std::set<CGI*>::iterator end = cgi_set.end();
-
-    while(ite != end){
-
-        delete *ite;
-        ite++;
-    }
-    cout << "end" << endl;
 
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){
+        cout << "Invalid arguments" << endl;
         return 0;
     }else if(argc == 2){
+        cout << "load Config file:" << argv[1] << endl;
         cfg_file = argv[1];
     }
 
@@ -212,7 +147,7 @@ int main(int argc, char const* argv[])
     try{
         cfg = create_config(cfg_file, fd_manager);
     }catch(std::runtime_error &e){
-        cout << "Config Error exit:" << e.what() << endl;
+        cout << "Config Error:" << e.what() << endl;
         exit(1);
     }
 
@@ -228,7 +163,6 @@ int main(int argc, char const* argv[])
     NormalWriter *normal_writer = NormalWriter::get_instance();
     SocketWriter *socket_writer = SocketWriter::get_instance();
     NormalReader *normal_reader = NormalReader::get_instance();
-    //StreamReader *stream_reader = StreamReader::get_instance();
     EventManager *event_manager = new EventManager();
     WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
     WebservFileFactory *file_factory = WebservFileFactory::get_instance(file_manager);

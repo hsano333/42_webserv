@@ -12,8 +12,6 @@ template<typename EventT>
 bool io_work(EventT *event, WebservEntity *entity)
 {
     (void)event;
-    //entity->io().total_write_size();
-
     DEBUG("WebservIOWorker::work fd:" + entity->fd().to_string());
 
     WebservFile *source = entity->io().source();
@@ -27,72 +25,50 @@ bool io_work(EventT *event, WebservEntity *entity)
     destination->open();
     entity->set_completed(false);
     char buf[MAX_READ_SIZE+1];
-    //char *buf_init = &(buf[0]);
     ssize_t read_size_total = 0;
 
     char *buf_p = (buf);
-    // read_fileのbufferに保存するので削除
-    //size_t load_size = entity->io().load(&buf_p);
     size_t load_size = 0;
     
     while(1)
     {
-        //entity->io().total_write_size();
-        DEBUG("load_size=" + Utility::to_string(load_size));
         buf_p = &(buf[load_size]);
-        MYINFO("No.0 MYINFO::read size=" + Utility::to_string(MAX_READ_SIZE - load_size));
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
-        MYINFO("No.1 MYINFO::read size=" + Utility::to_string(read_size));
         if(read_size <= 0){
             MYINFO("MYINFO::read end");
             break;
         }
         read_size_total += read_size;
-        //buf_p[read_size] = '\0';
         buf_p = &(buf[0]);
-        //if(buf_p
         read_size += load_size;
-        //printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("\nwrite buffer test buf=[");
-    size_t tmp_size = read_size;
-    //int i=0;
-    //while(tmp_size > 0){
-    for(size_t i=0;i<tmp_size;i++){
-        if((buf_p)[i] == '\r'){
-            printf("R");
-        }else if((buf_p)[i] == '\n'){
-            printf("N");
-        }else{
-            printf("%c", (buf_p)[i]);
+        size_t tmp_size = read_size;
+
+
+        // will remove
+        for(size_t i=0;i<tmp_size;i++){
+            if((buf_p)[i] == '\r'){
+                printf("R");
+            }else if((buf_p)[i] == '\n'){
+                printf("N");
+            }else{
+                printf("%c", (buf_p)[i]);
+            }
         }
-        //i++;
-        //tmp_size--;
-    }
-    printf("]\nbuffer size =[%zu]\n\n", read_size);
+        printf("]\nbuffer size =[%zu]\n\n", read_size);
 
 
-        MYINFO("io_event ");
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("write end");
             entity->io().save(buf_p, 0, read_size);
             break;
         }else if(read_size > write_size){
-            MYINFO("read_size > write_size:");
             MYINFO("read_size=" + Utility::to_string(read_size));
             MYINFO("write_size=" + Utility::to_string(write_size));
-            printf("read_size=%s\n" , Utility::to_string(read_size).c_str());
-            printf("write_size=%s\n" , Utility::to_string(write_size).c_str());
-            //entity->io().save(*buf, write_size, read_size);
             size_t diff = read_size - write_size;
             Utility::memcpy(buf, buf_p, diff);
             entity->io().add_total_write_size(write_size);
             load_size = read_size - write_size;
-            //break;
         }else{
             MYINFO("Write OK::" + Utility::to_string(write_size));
             entity->io().add_total_write_size(write_size);
@@ -102,7 +78,6 @@ bool io_work(EventT *event, WebservEntity *entity)
 
     DEBUG("WebservIOWorker::check completed");
     event->check_completed(entity);
-    //entity->io().total_write_size();
     return (entity->completed());
 }
 
@@ -110,7 +85,6 @@ template<typename EventT>
 bool io_work_ref(EventT *event, WebservEntity *entity)
 {
     (void)event;
-    //entity->io().total_write_size();
 
     DEBUG("WebservIOWorker::io_work_ref fd:" + entity->fd().to_string());
 
@@ -125,72 +99,47 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
     destination->open();
     entity->set_completed(false);
     char buf[MAX_READ_SIZE+1];
-    //char *buf_init = &(buf[0]);
     ssize_t read_size_total = 0;
 
     char *buf_p = (buf);
-    // read_fileのbufferに保存するので削除
-    //size_t load_size = entity->io().load(&buf_p);
     size_t load_size = 0;
     
     while(1)
     {
-        //entity->io().total_write_size();
-        DEBUG("load_size=" + Utility::to_string(load_size));
         buf_p = &(buf[load_size]);
-        MYINFO("No.0 MYINFO::read size=" + Utility::to_string(MAX_READ_SIZE - load_size));
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
-        MYINFO("No.1 MYINFO::read size=" + Utility::to_string(read_size));
         if(read_size <= 0){
             MYINFO("MYINFO::read end");
             break;
         }
         read_size_total += read_size;
-        //buf_p[read_size] = '\0';
-        //buf_p = &(buf[0]);
-        //if(buf_p
         read_size += load_size;
-        //printf("\n\n size=%zu, webserv_io_event read buf=[%s]\n", read_size, buf);
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("\nwrite buffer test ref buf=[");
-    size_t tmp_size = read_size;
-    //int i=0;
-    //while(tmp_size > 0){
-    for(size_t i=0;i<tmp_size;i++){
-        if((buf_p)[i] == '\r'){
-            printf("R");
-        }else if((buf_p)[i] == '\n'){
-            printf("N");
-        }else{
-            printf("%c", (buf_p)[i]);
+
+        //will remove
+        size_t tmp_size = read_size;
+        for(size_t i=0;i<tmp_size;i++){
+            if((buf_p)[i] == '\r'){
+                printf("R");
+            }else if((buf_p)[i] == '\n'){
+                printf("N");
+            }else{
+                printf("%c", (buf_p)[i]);
+            }
         }
-        //i++;
-        //tmp_size--;
-    }
-    printf("]\nbuffer size =[%zu]\n\n", read_size);
+        printf("]\nbuffer size =[%zu]\n\n", read_size);
 
-
-        MYINFO("io_event ");
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("write end");
             entity->io().save(buf_p, 0, read_size);
             break;
         }else if(read_size > write_size){
-            MYINFO("read_size > write_size:");
             MYINFO("read_size=" + Utility::to_string(read_size));
             MYINFO("write_size=" + Utility::to_string(write_size));
-            printf("read_size=%s\n" , Utility::to_string(read_size).c_str());
-            printf("write_size=%s\n" , Utility::to_string(write_size).c_str());
-            //entity->io().save(*buf, write_size, read_size);
             size_t diff = read_size - write_size;
             Utility::memcpy(buf, buf_p, diff);
             entity->io().add_total_write_size(write_size);
             load_size = read_size - write_size;
-            //break;
         }else{
             MYINFO("Write OK::" + Utility::to_string(write_size));
             entity->io().add_total_write_size(write_size);
@@ -200,7 +149,6 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
 
     DEBUG("WebservIOWorker::check completed");
     event->check_completed(entity);
-    //entity->io().total_write_size();
     return (entity->completed());
 }
 

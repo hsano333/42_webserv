@@ -63,48 +63,35 @@ void Webserv::communication()
     int count = 0;
     while(1)
     {
-        DEBUG("while start");
         count++;
         wait_time = 0;
         if(waiter.is_not_busy()){
             wait_time = 1;
         }
-        DEBUG("while start No.1");
         waiter.wait(wait_time);
-        DEBUG("while start No.2");
         waiter.fetch_events();
-        DEBUG("while start No.3");
 
         size_t cur_size = this->event_manager->event_size();
-        DEBUG("while start No.4");
         for(size_t i=0; i < cur_size; i++)
         {
-            DEBUG("while start No.5");
             WebservEvent *event = this->event_manager->pop_first();
-            DEBUG("while start No.6");
             if(event == NULL){
                 continue;
             }
 
             WebservEvent *next_event = NULL;
             try{
-        DEBUG("while start No.7");
                 handle(event);
-                DEBUG("end handle()");
                 if(event->entity()->completed()){
-                    DEBUG("make_next_event");
                     next_event = make_next_event(event, this->event_factory);
                 }else{
-                    DEBUG("next is current event");
                     next_event = event;
                 }
-                DEBUG("set epoll event");
                 event_controller->set_next_epoll_event(event, next_event);
             }catch(ConnectionException &e){
                 ERROR(e.what());
                 next_event = this->event_factory->make_clean_event(event, true);
                 this->event_manager->push(next_event);
-                DEBUG("ConnectionException delete event:" + Utility::to_string(event));
             }catch(HttpException &e){
                 ERROR("HttpException:" + Utility::to_string(e.what()));
                 next_event = this->event_factory->make_event_from_http_error(event, e.what());
@@ -134,7 +121,6 @@ void Webserv::communication()
             }
 
             if(next_event != event){
-                DEBUG("webserv clean");
                 this->cleaner->delete_event(event);
                 count++;
             }

@@ -7,14 +7,6 @@
 #include "epoll_controller.hpp"
 #include "webserv_timeout_event.hpp"
 
-/*
-typedef enum E_WebservEvent
-{
-    READ_EVENT,
-    APPLICATION_EVENT,
-    WRITE_EVENT,
-} WebservEvent;
-*/
 
 class WebservWaiter
 {
@@ -27,13 +19,10 @@ class WebservWaiter
         void wait(int sec);
         bool is_not_busy();
         void fetch_events();
-        //WebservEvent* fetch_event();
-        void copy_event_to_manager();
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;
         WebservEventFactory *event_factory;
-        //WebservEvent *event;
 };
 
 #endif

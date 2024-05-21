@@ -33,14 +33,6 @@ WebservEvent *WebservApplicationUploadEvent::from_event(WebservEvent *event, Web
     WebservApplicationUploadEvent *upload_event = WebservApplicationUploadEvent::get_instance();
     WebservEvent *new_event = new WebservEvent(upload_event, io_work<WebservApplicationUploadEvent>, event->entity());
 
-    //Request const *req = event->entity()->request();
-    //WebservFile *dst;
-    //(void)req;
-    //(void)dst;
-
-    //WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), socket_writer, socket_reader);
-    //WebservFile *read_dst = this->file_factory->make_vector_file(fd_ref, MAX_REAUEST_EXCEPT_BODY);
-
     new_event->entity()->io().set_read_io(src, dst);
     new_event->entity()->io().set_read_fd(event->entity()->fd());
     new_event->entity()->io().switching_io(EPOLLIN);

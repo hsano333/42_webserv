@@ -17,13 +17,11 @@ class WebservCleanEvent
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
         static WebservEvent *from_event(WebservEvent *event, bool force_close);
-        //bool force_close();
 
     private:
         WebservCleanEvent();
         static WebservCleanEvent *singleton;
         static WebservCleanEvent *get_instance();
-        //bool force_close_;
 };
 
 #endif

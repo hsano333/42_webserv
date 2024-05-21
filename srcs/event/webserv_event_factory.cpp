@@ -2,8 +2,6 @@
 #include "webserv_make_request_event.hpp"
 #include "webserv_make_response_event.hpp"
 #include "webserv_application_event.hpp"
-//#include "webserv_application_with_cgi_event.hpp"
-//#include "webserv_application_without_cgi_event.hpp"
 #include "webserv_application_upload_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "global.hpp"
@@ -73,7 +71,6 @@ WebservEvent *WebservEventFactory::make_keep_alive_event(WebservEvent *event)
     DEBUG("WebservEventFactory::make_keep_alive_event");
     WebservEvent *new_event = WebservKeepAliveEvent::from_event(event);
     return (new_event);
-    //return (event);
 }
 
 
@@ -89,7 +86,6 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         this->make_clean_event(cached_event, true);
     }else if(event_epoll.events & EPOLLIN){
-        //cached_event->update_time();
 
         DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
         if(this->fd_manager->is_registered(fd) == false)
@@ -100,10 +96,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             this->io_multi_controller->add(io_fd, EPOLLIN  | EPOLLONESHOT );
 
             return (NULL);
-            //return (WebservNothingEvent::make_nothing_event());
         }else{
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
-            //WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
@@ -115,21 +109,15 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 try{
                     entity = new WebservEntity(fd, sockfd, this->cfg);
                 }catch(...){
-            MYINFO("test error No.4");
 
                 }
                 entity->config()->check();
                 FileDiscriptor const &fd_ref = entity->fd();
                 WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, socket_writer, socket_reader);
-            MYINFO("test No.9");
                 WebservFile *read_dst = this->file_factory->make_vector_file_for_socket(fd_ref, MAX_REAUEST_EXCEPT_BODY);
-            MYINFO("test No.10");
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
-            MYINFO("test No.11");
                 this->cfg->check();
-            MYINFO("test No.12");
                 event->entity()->config()->check();
-            MYINFO("test No.13");
                 return (event);
             }else{
                 cached_event->entity()->io().switching_io(EPOLLIN);
@@ -142,13 +130,8 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         MYINFO("WebservEvent::from_epoll_event() EPOLLOUT fd:" + fd.to_string());
         WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
         if(cached_event){
-            DEBUG("WebservEvent::from_epoll_event No.1: EPOLLOUT found event");
             cached_event->entity()->io().switching_io(EPOLLOUT);
             cached_event->update_time();
-        }else{
-            DEBUG("WebservEvent::from_epoll_event No.1: EPOLLOUT doun't found event");
-
-
         }
         return (cached_event);
     }else if(event_epoll.events & EPOLLERR){
@@ -167,10 +150,6 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 WebservEvent *WebservEventFactory::make_waiting_socket_out_cgi(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_waiting_out_cgi fd=" + event->entity()->fd().to_string());
-    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    //FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-
     WebservEvent *new_event = WebservWaitingCGIOUTEvent::from_event(event);
 
     return (new_event);
@@ -179,10 +158,6 @@ WebservEvent *WebservEventFactory::make_waiting_socket_out_cgi(WebservEvent *eve
 WebservEvent *WebservEventFactory::make_waiting_out_cgi(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_waiting_out_cgi fd=" + event->entity()->fd().to_string());
-    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    //FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-
     WebservEvent *new_event = WebservWaitingCGIOUTEvent::from_event(event);
 
     return (new_event);
@@ -197,8 +172,6 @@ WebservEvent *WebservEventFactory::make_waiting_cgi(WebservEvent *event)
 WebservEvent *WebservEventFactory::make_waiting_cgi(WebservEvent *event, WebservFile *write_dst, WebservFile *read_src, ApplicationResult *result)
 {
     DEBUG("WebservEventFactory::make_waiting_cgi fd=" + event->entity()->fd().to_string());
-    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
     WebservFile *read_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
     WebservFile *write_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
     FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
@@ -223,10 +196,6 @@ WebservEvent *WebservEventFactory::make_waiting_out_cgi(WebservEvent *event, Web
 WebservEvent *WebservEventFactory::make_io_socket_for_post_cgi(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_io_socket_for_post_cgi fd=" + event->entity()->fd().to_string());
-    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    //FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-    //WebservEvent *new_event = WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
     WebservEvent *new_event = WebservIOPostCGIEvent::from_event(event);
 
     return (new_event);
@@ -235,27 +204,11 @@ WebservEvent *WebservEventFactory::make_io_socket_for_post_cgi(WebservEvent *eve
 WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_io_socket_for_cgi fd=" + event->entity()->fd().to_string());
-    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    //FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-    //WebservEvent *new_event = WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
     WebservEvent *new_event = WebservIOCGIEvent::from_event(event);
 
     return (new_event);
 }
 
-/*
-WebservEvent *WebservEventFactory::make_io_socket_for_cgi(WebservEvent *event)
-{
-    DEBUG("WebservEventFactory::make_io_socket_for_cgi fd=" + event->entity()->fd().to_string());
-    WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-    WebservEvent *new_event = WebservIOCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
-
-    return (new_event);
-}
-*/
 
 WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *event, WebservFile *src)
 {
@@ -263,7 +216,6 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *e
     WebservFile *file = this->file_factory->make_socket_file(event->entity()->fd(), socket_writer, NULL);
     if(src->is_chunk()){
         DEBUG("WebservEventFactory:: Chunked");
-        //file = this->file_factory->make_socket_chunk_file(event->entity()->fd(), file);
         WebservEvent *new_event = WebservIOSocketEvent::as_chunked_write(event, event->entity()->fd(), src, file);
         return (new_event);
     }
@@ -283,7 +235,6 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
 WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
-    //WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), NULL, socket_reader);
     WebservFile *dst = this->file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
     WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
     return (new_event);
@@ -328,13 +279,6 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
     DEBUG("WebservEventFactory::make_application_event()");
     WebservEvent *new_event;
     new_event = WebservApplicationEvent::from_event(event);
-    /*
-    if(event->entity()->request()->is_cgi()){
-        new_event = WebservApplicationWithCgiEvent::from_event(event);
-    }else{
-        new_event = WebservApplicationWithoutCgiEvent::from_event(event);
-    }
-    */
 
     return (new_event);
 }
@@ -342,23 +286,12 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
 WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event, WebservFile *src)
 {
     DEBUG("WebservEventFactory::make_making_upload_event");
-    //event->entity()->request()->print_info();
     std::string const &filepath = event->entity()->request()->requested_path();
     std::string const &boundary = event->entity()->body().boundary();
     if(event->entity()->request()->is_directory() == false){
         ERROR("speciied path is not directory: " + filepath);
         throw HttpException("404");
     }
-    //Body &body = event->entity()->body();
-
-    /*
-    std::ios_base::openmode mode;
-    if(body.is_text){
-        mode = std::ios::in;
-    }else{
-        mode = std::ios::in | std::ios::binary;
-    }
-    */
 
     WebservFile *dst = this->file_factory->make_multi_normal_file(filepath, boundary, event->entity()->fd());
     WebservEvent *new_event = WebservApplicationUploadEvent::from_event(event, src, dst);

@@ -15,13 +15,11 @@ class WebservIOPostCGIEvent
 {
     public:
         ~WebservIOPostCGIEvent();
-        //tatic WebservEvent *from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent *event);
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
 
         static WebservEvent *from_event(WebservEvent *event);
-        //static WebservIOPostCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:
         WebservIOPostCGIEvent();
         static WebservIOPostCGIEvent *singleton;

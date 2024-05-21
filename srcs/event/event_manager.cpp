@@ -27,7 +27,6 @@ void EventManager::pop()
 
 WebservEvent *EventManager::pop_first()
 {
-    //WebservEvent *top = this->events.top();
     WebservEvent *top = this->events.front();
     if(this->events.size() > 0){
         this->events.pop_front();
@@ -99,30 +98,6 @@ WebservEvent* EventManager::pop_event_waiting_epoll(FileDiscriptor &fd)
     DEBUG("EventManager::pop_event_waiting_epoll size:" + Utility::to_string(events_waiting_epoll.size()));
     return (event);
 }
-
-/*
-void EventManager::count_up_to_all_event(int time)
-{
-    {
-        std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
-        std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
-
-        while(ite != end){
-            ite->second->increase_timeout_count(time);
-            ite++;
-        }
-    }
-
-    {
-        MutantStack<WebservEvent *>::iterator ite;
-        MutantStack<WebservEvent *>::iterator end;
-        while(ite != end){
-            (*ite)->increase_timeout_count(time);
-            ite++;
-        }
-    }
-}
-*/
 
 bool EventManager::check_timeout()
 {
@@ -202,7 +177,7 @@ void EventManager::close_all_events_waiting_epoll(WebservCleaner *cleaner)
         tmp.push_back(ite->second);
         ite++;
     }
-    DEBUG("EventManager::close_all_events_waiting_epoll size:" + Utility::to_string(tmp.size()));
+
     for(size_t i=0;i<tmp.size();i++){
         cleaner->clean(tmp[i]->entity(), true);
         delete tmp[i];

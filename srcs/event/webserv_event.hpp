@@ -104,14 +104,6 @@ class WebservEvent
             return (event->pimpl_->make_next_event(event, factory));
         }
 
-        //friend void check_completed(WebservEvent *event, WebservEntity *entity)
-        //{
-            //(void)event;
-            //(void)entity;
-            //bool test = event->pimpl_->handle();
-            //cout << test << endl;
-            //event->updated_time_ = std::time(NULL);
-        //}
         EventConcept *pimpl_;
 };
 

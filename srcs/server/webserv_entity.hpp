@@ -2,7 +2,6 @@
 #define WEBSERV_ENTITY_HPP
 
 #include "file_discriptor.hpp"
-//#include "application.hpp"
 #include "application_result.hpp"
 #include "webserv_io.hpp"
 #include "body.hpp"
@@ -16,8 +15,6 @@ class WebservEntity
         WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg);
         WebservEntity(WebservEntity const &entity);
         WebservEntity& operator=(WebservEntity const &entity);
-
-        void clean();
 
         void set_app(Application *app);
         void set_result(ApplicationResult *result);
@@ -38,7 +35,6 @@ class WebservEntity
         Config const *config();
         bool completed(){return this->completed_;};
         bool force_close();
-        //Body const &body() const;
         void set_body(Body &body);
     private:
         FileDiscriptor fd_;

@@ -17,7 +17,7 @@ WebservCleanEvent::~WebservCleanEvent()
 
 WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    MYINFO("WebservCleanEvent::make_next_event fd:" + event->entity()->fd().to_string());
+    DEBUG("WebservCleanEvent::make_next_event fd:" + event->entity()->fd().to_string());
     if (event->entity()->force_close()){
         MYINFO("WebservCleanEvent::make_next_event() >> NULL");
         return (NULL);
@@ -29,7 +29,6 @@ WebservEvent* WebservCleanEvent::make_next_event(WebservEvent* event, WebservEve
 
 E_EpollEvent WebservCleanEvent::epoll_event(WebservEvent *event)
 {
-    //return (EPOLL_NONE);
     if (event->entity()->force_close()){
         return (EPOLL_CLOSE);
     }else{
@@ -47,39 +46,11 @@ WebservCleanEvent *WebservCleanEvent::get_instance()
     return (singleton);
 }
 
-
-
-
-/*
-WebservEvent *WebservCleanEvent::from_webserv_event(WebservEvent *event, bool force_close, FDManager *fd_manager)
-{
-    DEBUG("WebservCleanEvent::from_webserv_event");
-    WebservCleanEvent *clean_event = WebservCleanEvent::get_instance(fd_manager);
-    WebservEvent *new_event =  new WebservEvent(clean_event, clean, event->entity());
-    new_event->entity()->set_force_close(force_close);
-    new_event->entity()->io().set_source(event->entity()->request());
-    return (new_event);
-}
-*/
-
-/*
-bool clean(WebservCleanEvent *event, WebservEntity *entity)
-{
-    (void)event;
-
-    event->cleaner()->clean(entity, event->force_close());
-    return (true);
-}
-*/
-
-
-
 bool prepare_clean(WebservCleanEvent *event, WebservEntity *entity)
 {
     (void)event;
     bool is_close = entity->force_close();
     DEBUG("prepare_clean() + is_close=" + Utility::to_string(is_close));
-    //bool is_close = event->force_close() || entity->force_close();
     if (entity->request()){
         std::string const &conect = entity->request()->header().find(CONNECTION);
         if (conect == "close"){

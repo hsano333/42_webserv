@@ -80,7 +80,6 @@ class WebservIO
 
         // when read from socket and write to cgi, it is true;
         bool is_cgi_read_;
-        //bool is_cgi_write_;
 };
 
 #endif

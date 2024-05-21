@@ -201,8 +201,6 @@ size_t WebservIO::total_write_size()
 {
 
     DEBUG("WebservIO::total_write_size:" + Utility::to_string(this->total_write_size_));
-    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(&this->total_write_size_));
-    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(this));
     return (this->total_write_size_);
 }
 
@@ -221,7 +219,6 @@ void WebservIO::add_total_write_size(size_t size)
         throw std::runtime_error("exceed total write buffer size");
     }
     this->total_write_size_ += size;
-    DEBUG("WebservIO::total_write_size_:" + Utility::to_string(this->total_write_size_));
 }
 
 
