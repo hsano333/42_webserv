@@ -110,7 +110,6 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
             }
             break;
         case POST:
-            //todo
             if (is_cgi){
                 DEBUG("ApplicationFactory::make_application() Post Method with CGI");
                 app = PostCGIApplication::get_instance();
