@@ -150,7 +150,7 @@ namespace RequestBufferFunc{
         DEBUG("RequestBufferFunc::read()");
         size_t buf_size;
         char *tmp = file->get_buf_body(&buf_size);
-        DEBUG("RequestBufferFunc::read size:" + Utility::to_string(size));
+        DEBUG("RequestBufferFunc::buf_size:" + Utility::to_string(buf_size));
         if(buf_size <= 0 || tmp == NULL){
             return (buf_size);
         }

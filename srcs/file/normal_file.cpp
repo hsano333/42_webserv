@@ -124,6 +124,7 @@ bool NormalFile::can_write()
 
 bool NormalFile::can_read()
 {
+    DEBUG("NormalFile::can_read() filepath:" + this->filepath);
     return (Utility::is_readable_file(this->filepath));
 }
 

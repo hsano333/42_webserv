@@ -92,7 +92,9 @@ int MultiNormalFile::read(char **buf, size_t size)
 
 int MultiNormalFile::write(char **buf, size_t size)
 {
+    DEBUG("MultiNormalFile::write size:" + Utility::to_string(size));
     if(file){
+        DEBUG("MultiNormalFile::write No.2 size:" + Utility::to_string(size));
         return (file->write(buf, size));
     }
     return (-1);
@@ -134,9 +136,11 @@ void MultiNormalFile::register_file(WebservFile *file, int code)
 
 bool MultiNormalFile::can_write_file()
 {
+    DEBUG("MultiNormalFile::can_write_file");
     if(this->file == NULL){
         return (false);
     }
+    DEBUG("MultiNormalFile::can_write_file No.2");
     StatusCode &status = this->uploaded_files_[this->file];
     if(status.to_int() == 200){
         return (true);

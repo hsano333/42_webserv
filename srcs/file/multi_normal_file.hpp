@@ -114,8 +114,10 @@ namespace MultiFileFunc{
             write_size -= 2;
             int tmp_size;
             if(file->can_write_file()){
+            MYINFO("MultiFileFunc write_file() No.3 size=" + Utility::to_string(size));
                 tmp_size = (file->write(data, write_size));
             }else{
+            MYINFO("MultiFileFunc write_file() No.4 size=" + Utility::to_string(size));
                 tmp_size = write_size;
             }
             if(tmp_size <= 0){
@@ -126,10 +128,12 @@ namespace MultiFileFunc{
             //
             //bool is_ok = is_ok(file);
 
+            MYINFO("MultiFileFunc write_file() No.5 size=" + Utility::to_string(size));
             file->close();
             file->set_file(NULL);
             file->clear_buf();
             *data = pos;
+            MYINFO("MultiFileFunc write_file() No.6 tmp_size=" + Utility::to_string(tmp_size + 2));
             //size_t read_size = pos2-*data;
             // +2 is CRLF
             return (tmp_size+2);
@@ -235,10 +239,12 @@ namespace MultiFileFunc{
             MYINFO("not found \\r\\n");
             return (-1);
         }
+        DEBUG("search_file() boundary No.2:" + boundary);
         if(pos[boundary_size] == '-' && pos[boundary_size+1] == '-'){
             file->set_completed(true);
             return (size);
         }
+        DEBUG("search_file() boundary No.3:" + boundary);
 
         pos += boundary_size+2;
         size_t rest_size = size - (pos - *data);
@@ -249,6 +255,7 @@ namespace MultiFileFunc{
             //*data = pos;
             return (-1);
         }
+        DEBUG("search_file() boundary No.4:" + boundary);
         pos2[0] = '\0';
         Split sp(pos, CRLF, false, true);
         Header header = Header::from_splited_data(sp, 0);
@@ -257,6 +264,7 @@ namespace MultiFileFunc{
             ERROR(" Invalid format: not find Content-Disposition in body");
             throw HttpException("400");
         }
+        DEBUG("search_file() boundary No.5:" + boundary);
         pos2 += 4;
         Split sp2(disposition, "; ", true, true);
         Split::iterator ite = sp2.begin();
@@ -270,6 +278,7 @@ namespace MultiFileFunc{
             }
             ite++;
         }
+        DEBUG("search_file() boundary No.6:" + boundary);
 
         std::string filepath = directory + "/" + name;
         MYINFO("filepath=" + filepath);
@@ -282,19 +291,24 @@ namespace MultiFileFunc{
         }else{
             mode = std::ios::out | std::ios::binary;
         }
+        DEBUG("search_file() boundary No.7 filepath:" + filepath);
 
         WebservFileFactory *file_factory = WebservFileFactory::get_instance();
         WebservFile *normal_file = file_factory->make_normal_file(file->fd(), filepath, mode);
-        if(normal_file->can_read()){
+        DEBUG("search_file() boundary No.8:" + boundary);
+        //if(normal_file->can_read()){
+        //DEBUG("search_file() boundary No.9:" + boundary);
             try{
                 normal_file->open();
                 file->register_file(normal_file, 200);
             }catch(std::runtime_error &e){
                 file->register_file(normal_file, 500);
             }
-        }else{
-            file->register_file(normal_file, 500);
-        }
+        //}else{
+        //DEBUG("search_file() boundary No.10:" + boundary);
+            //file->register_file(normal_file, 500);
+        //}
+        DEBUG("search_file() boundary No.11:" + boundary);
         file->set_file(normal_file);
         size_t read_size = pos2-*data;
         *data = pos2;
