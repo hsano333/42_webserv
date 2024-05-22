@@ -39,7 +39,7 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
 
     size_t header_size = body_p - data;
     if(header_size >= MAX_REAUEST_EXCEPT_BODY){
-        ERROR("exceed CGI Response Status Line" + Utility::to_string(header_size));
+        ERROR("exceed Response Status Line" + Utility::to_string(header_size));
         throw HttpException("exceed CGI Response Status Line:" + Utility::to_string(header_size));
     }
     *body_p = '\0';
@@ -51,14 +51,14 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
     for(size_t i=0;i<headers_line.size();i++){
         cout << "headers_line[" << i << "]=" << headers_line[i] << endl;
     }
-    IReader *reader = NormalReader::get_instance();
+    //IReader *reader = NormalReader::get_instance();
 
-    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     //WebservFile *file = file_factory->make_socket_file(result->cgi_out(), NULL, reader );
-    WebservFile *file = file_factory->make_pipe_file(entity->fd(),  result->cgi_out(), reader);
+    //WebservFile *file = file_factory->make_pipe_file(entity->fd(),  result->cgi_out(), reader);
     Request const *req = entity->request();
     ConfigServer const *server = entity->config()->get_server(req);
-    Response *res = Response::from_cgi_header_line(headers_line, file);
+    Response *res = Response::from_cgi_header_line(headers_line, NULL);
 
     int tmp_size = read_size - header_size - 4;
     cout << "body_p[2+i]:[" ;

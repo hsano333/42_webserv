@@ -24,6 +24,7 @@ class SocketChunkFile
         //int open();
         //int close();
         WebservFile *file();
+        int open();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         //int save(char *data, size_t size);

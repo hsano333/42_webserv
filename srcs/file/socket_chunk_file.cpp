@@ -64,6 +64,17 @@ int SocketChunkFile::open()
 }
 
 */
+
+int SocketChunkFile::open()
+{
+    DEBUG("SocketChunkFile::open()");
+    this->state = FILE_OPEN;
+    if(this->file()){
+        this->file()->open();
+    }
+    return 0;
+}
+
 void SocketChunkFile::clear_buf()
 {
     this->buf_.clear();
