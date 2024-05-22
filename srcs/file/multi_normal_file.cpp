@@ -8,6 +8,7 @@ MultiNormalFile::MultiNormalFile(std::string const &directory_path, std::string 
     fd_(fd),
     directory_path_(directory_path),
     boundary_(boundary),
+    is_chunked_(false),
     file(NULL),
     completed_(false),
     register_file_flag_(false),
@@ -116,6 +117,7 @@ FileDiscriptor const &MultiNormalFile::fd()
 
 bool MultiNormalFile::is_chunk()
 {
+    DEBUG("MultiNormalFile::is_chunk():" + Utility::to_string(this->is_chunked_));
     return (this->is_chunked_);
 }
 
