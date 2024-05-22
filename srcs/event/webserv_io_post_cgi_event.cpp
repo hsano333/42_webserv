@@ -69,10 +69,14 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         }else{
             is_completed = false;
         }
-        entity->set_completed(is_completed);
-        char *tmp;
-        *tmp = EOF;
-        file->write(&tmp, 1);
+        //if(is_completed){
+        is_completed = true;
+            entity->set_completed(is_completed);
+            char tmp[2] = {0};
+            tmp[0] = EOF;
+            char *tmp_p = tmp;
+            file->write(&tmp_p, 1);
+        //}
         return ;
 
     }else{

@@ -121,6 +121,7 @@ Config const *WebservEntity::config()
 
 void WebservEntity::set_completed(bool flag)
 {
+    DEBUG("WebservEntity::set_completed:" + Utility::to_string(flag));
     this->completed_ = flag;
 }
 
