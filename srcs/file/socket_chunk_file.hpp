@@ -27,7 +27,7 @@ class SocketChunkFile
         int open();
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
-        //int save(char *data, size_t size);
+        void save(std::vector<char> &buffer);
         bool can_read();
         //bool is_chunk();
         FileState   state;
@@ -255,12 +255,18 @@ namespace ChunkedFunc{
         std::string size_str = Utility::to_hexstr(read_size);
         size_str += CRLF;
         size_t len = size_str.size();
-        Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
-        *dst = &(tmp[chunk_size-len]);
-        *dst = &(tmp[chunk_size-len]);
+        Utility::memcpy(tmp, size_str.c_str(), len);
+        Utility::memcpy(&(tmp[len]), tmp2, read_size);
+        //*dst = &(tmp[chunk_size-len]);
+        //*dst = &(tmp[chunk_size-len]);
         tmp2[read_size] = '\r';
         tmp2[read_size+1] = '\n';
         read_size += 2;
+
+        //test
+        tmp2[read_size+2] = '\0';
+        DEBUG("chunked data tmp2 size:" + Utility::to_string(read_size));
+        DEBUG("chunked data tmp2:" + Utility::to_string(*tmp));
 
         //*dst = tmp2 - (size_str.size()+2);
         return (read_size+len);

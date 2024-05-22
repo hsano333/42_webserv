@@ -65,11 +65,15 @@ class Response
         //bool can_read();
         //size_t size();
         bool is_chunk();
+        bool has_body();
         bool read_completed();
         //int remove();
         //std::string const &path();
         bool check_body_and_chunk();
         void add_written_body_size(size_t size);
+        void switching_file(WebservFile *file);
+        std::vector<char> &buffer();
+        void clear_buffer();
 
     private:
         StatusCode status_code;
@@ -89,11 +93,12 @@ class Response
         int read_body_and_copy_chunk(char** dst, size_t size);
         int read_body_and_copy(char** dst, size_t size);
         //bool exist_body_;
-        bool has_body;
+        bool has_body_;
         bool is_chunked;
         std::vector<char> tmp_buf;
 
         size_t written_body_size;
+
 };
 
 

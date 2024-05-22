@@ -15,7 +15,7 @@ Response::Response() :
     file(NULL),
     is_redirect(false),
     send_state(STILL_NOT_SEND),
-    has_body(false),
+    has_body_(false),
     is_chunked(false),
     written_body_size(0)
     //exist_body_(false)
@@ -152,7 +152,7 @@ bool Response::check_body_size(ConfigServer const *server)
         }
     }else if(this->is_chunk()){
     DEBUG("Response::check_body_size No.3");
-        this->has_body = true;
+        this->has_body_ = true;
     }
     DEBUG("Response::check_body_size No.4");
     return (true);
@@ -172,7 +172,7 @@ void Response::set_buf_body(char *body_p, int size)
     this->buf_body_size = size;
     this->buf_body.resize(size);
     if(size > 0){
-        this->has_body = true;
+        this->has_body_ = true;
         for(int i=0;i<size;i++){
             this->buf_body[i] = body_p[i];
         }
@@ -380,36 +380,36 @@ std::string const &Response::path()
 bool Response::is_chunk()
 {
     DEBUG("Response::is_chunk()");
-    std::string enc = this->headers.find(TRANSFER_ENCODING);
-    if(enc != this->headers.not_find()){
-        if(enc == TRANSFER_ENCODING_CHUNKED){
-            return (true);
-        }
-    }
-    return (false);
+    return (this->is_chunked);
+}
+
+bool Response::has_body()
+{
+    DEBUG("Response::has_body()");
+    return (this->has_body_);
 }
 
 bool Response::check_body_and_chunk()
 {
-    this->has_body = false;
+    this->has_body_ = false;
     this->is_chunked = false;
 
     std::string const &enc = this->headers.find(TRANSFER_ENCODING);
     if(enc != this->headers.not_find()){
         if(enc == TRANSFER_ENCODING_CHUNKED){
             this->is_chunked = true;
-            this->has_body = true;
+            this->has_body_ = true;
         }
     }
     std::string const &len = this->headers.find(CONTENT_LENGTH);
     if(len != this->headers.not_find()){
         if(Utility::to_int(len) > 0){
-            this->has_body = true;
+            this->has_body_ = true;
         }
     }
 
     DEBUG("Response::check_body_and_chunk() chunked:" + Utility::to_string(this->is_chunked));
-    if(this->is_chunked == false && this->has_body == false){
+    if(this->is_chunked == false && this->has_body_ == false){
         return (false);
     }
     return (true);
@@ -465,11 +465,11 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
         return (this->header_line.size());
     }else if (this->send_state == SENT_HEADER){
         ref_flag = false;
-        if(this->has_body){
+        if(this->has_body()){
             DEBUG("Response::read: SENT_HEADER");
             int size=0;
+            DEBUG("Response::read chunked No.1:");
             if (this->is_chunked){
-                DEBUG("Response::read chunked No.1:");
                 size = this->read_body_and_copy(cp, max_read_size);
                 //size = this->read_body_and_copy_chunk(cp, max_read_size);
                 DEBUG("Response::read chunked No.12 size:" + Utility::to_string(size));
@@ -478,7 +478,6 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
                     this->send_state = SENT_BODY;
                 }
             }else{
-                DEBUG("Response::read not chunked No.1:");
                 ssize_t content_length = this->headers.get_content_length();
                 //cout << " not chunk" << endl;
             //DEBUG("Response::read chunked No.12:");
@@ -738,3 +737,18 @@ void Response::add_written_body_size(size_t size)
     this->written_body_size += size;
 }
 
+void Response::switching_file(WebservFile *file)
+{
+    this->file = file;
+}
+
+std::vector<char> &Response::buffer()
+{
+    return (this->buf_body);
+}
+
+void Response::clear_buffer()
+{
+    this->buf_body.clear();
+    buf_body_size = 0;
+}

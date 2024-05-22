@@ -114,6 +114,23 @@ Response* WebservMakeResponseForPostCGIEvent::make_response_for_cgi(ApplicationR
         delete res;
         throw HttpException("500");
     }
+    if(res->header().get_content_length() == -1)
+    {
+        if(res->header().is_chunked() == false){
+            res->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
+        }
+    }
+
+    if(!res->check_body_and_chunk()){
+        DEBUG("WebservMakeResponseEvent::make_response_for_cgi not chunk");
+        res->add_header(CONTENT_LENGTH, "0");
+    }else{
+        WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+        WebservFile *socket_file = file_factory->make_socket_chunk_file_for_write(entity->fd(), res->get_file(), res->buffer());
+        res->clear_buffer();
+        socket_file->set_chunk(true);
+        res->switching_file(socket_file);
+    }
     return (res);
 }
 

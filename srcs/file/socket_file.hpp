@@ -25,6 +25,7 @@ class SocketFile
         WebservFile *file();
         //bool can_read();
         FileState   state;
+        //void save(std::vector<char> &buffer);
 
         size_t chunked_size();
         void set_chunked_size(size_t size);

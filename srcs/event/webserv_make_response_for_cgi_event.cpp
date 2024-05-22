@@ -95,6 +95,8 @@ Response* WebservMakeResponseForCGIEvent::make_response_for_cgi(ApplicationResul
     WebservFile *file = file_factory->make_pipe_file(entity->fd(),  result->cgi_out(), reader);
     Request const *req = entity->request();
     ConfigServer const *server = entity->config()->get_server(req);
+
+
     Response *res = Response::from_cgi_header_line(headers_line, file);
 
     int tmp_size = read_size - header_size - 2;
@@ -118,13 +120,17 @@ Response* WebservMakeResponseForCGIEvent::make_response_for_cgi(ApplicationResul
         }
     }
 
-    if(!res->check_body_and_chunk()){
-        DEBUG("WebservMakeResponseEvent::make_response_for_cgi not chunk");
+    res->check_body_and_chunk();
+    if(res->has_body()){
         res->add_header(CONTENT_LENGTH, "0");
     }
-
-
-
+    if(res->is_chunk()){
+        WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+        WebservFile *socket_file = file_factory->make_socket_chunk_file_for_write(entity->fd(), res->get_file(), res->buffer());
+        res->clear_buffer();
+        socket_file->set_chunk(true);
+        res->switching_file(socket_file);
+    }
     return (res);
 
 }

@@ -160,7 +160,12 @@ WebservFile *SocketChunkFile::file()
 
 int SocketChunkFile::read(char **buf, size_t max_size)
 {
-    DEBUG("SocketChunkFile::read() max_size=" + Utility::to_string(max_size));
+
+    int size = buffer.retrieve(buf, max_size);
+    DEBUG("SocketChunkFile::read buffer_size=" + Utility::to_string(size));
+    if(size > 0){
+        return size;
+    }
     return (this->file_->read(buf, max_size));
 }
 
@@ -195,12 +200,13 @@ int SocketChunkFile::write(char **buf, size_t size)
 }
 
 
-/*
-int SocketChunkFile::save(char *buf, size_t size)
+void SocketChunkFile::save(std::vector<char> &buf)
 {
-    return (this->buffer.save(buf, size));
+    DEBUG("SocketChunkFile::save");
+    return (this->buffer.copy(buf));
 }
 
+/*
 int SocketChunkFile::save(char **buf, size_t size)
 {
     (void)size;

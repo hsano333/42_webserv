@@ -8,6 +8,7 @@ class BufferController
     public:
         BufferController();
         ~BufferController();
+        void copy(std::vector<char> &buf);
         int save(char *data, size_t size);
         int retrieve(char **data, size_t max_size);
     private:

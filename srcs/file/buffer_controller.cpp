@@ -14,11 +14,18 @@ BufferController::~BufferController()
 ;
 }
 
+void BufferController::copy(std::vector<char> &buf)
+{
+    DEBUG("BufferController::copy size:" + Utility::to_string(buf.size()));
+    this->buf = buf;
+    DEBUG("BufferController::copy size:" + Utility::to_string(this->buf.size()));
+}
+
 int BufferController::save(char *data, size_t size)
 {
-    for(size_t i=0;i<size;i++){
-        this->buf.push_back(data[i]);
-    }
+    DEBUG("BufferController::save");
+    this->buf.resize(size);
+    Utility::memcpy(&(this->buf[0]), data, size);
     return (this->buf.size());
 
 }
@@ -29,11 +36,12 @@ int BufferController::retrieve(char **data, size_t max_size)
     if(this->buf.size() <= 0){
         return (0);
     }
-
+    DEBUG("test No.1");
     if(this->buf.size() > max_size)
     {
+    DEBUG("test No.2");
         for(size_t i=0; i<max_size; i++){
-            *data[i] = this->buf[i];
+            (*data)[i] = this->buf[i];
         }
         this->buf.clear();
         std::vector<char> tmp(this->buf.size() - max_size);
@@ -45,10 +53,14 @@ int BufferController::retrieve(char **data, size_t max_size)
     }
     else
     {
+    DEBUG("test No.3");
         for(size_t i=0;i<this->buf.size();i++){
-            *data[i] = this->buf[i];
+            (*data)[i] = this->buf[i];
         }
+        int return_size = buf.size();
+    DEBUG("test No.5");
         this->buf.clear();
-        return buf.size();
+    DEBUG("test No.6");
+        return return_size;
     }
 }

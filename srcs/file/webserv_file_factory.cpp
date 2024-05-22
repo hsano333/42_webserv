@@ -75,6 +75,14 @@ WebservFile *WebservFileFactory::make_socket_chunk_file_for_write(FileDiscriptor
     return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, ChunkedFunc::read_for_write, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, ChunkedFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
+WebservFile *WebservFileFactory::make_socket_chunk_file_for_write(FileDiscriptor const &fd, WebservFile *file, std::vector<char> &buffer)
+{
+    DEBUG("WebservFileFactory::make_socket_chunk_file:" + fd.to_string());
+    SocketChunkFile *socket_file = SocketChunkFile::from_file(fd, file);
+    socket_file->save(buffer);
+    return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, ChunkedFunc::read_for_write, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, ChunkedFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+}
+
 
 /*
 WebservFile *WebservFileFactory::make_socket_file_as_read(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader, bool is_chunked)
