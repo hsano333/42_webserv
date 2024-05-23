@@ -259,14 +259,14 @@ namespace ChunkedFunc{
         Utility::memcpy(&(tmp[len]), tmp2, read_size);
         //*dst = &(tmp[chunk_size-len]);
         //*dst = &(tmp[chunk_size-len]);
-        tmp2[read_size] = '\r';
-        tmp2[read_size+1] = '\n';
+        tmp[read_size+len] = '\r';
+        tmp[read_size+len+1] = '\n';
         read_size += 2;
 
         //test
-        tmp2[read_size+2] = '\0';
-        DEBUG("chunked data tmp2 size:" + Utility::to_string(read_size));
-        DEBUG("chunked data tmp2:" + Utility::to_string(*tmp));
+        //tmp2[read_size+2] = '\0';
+        //DEBUG("chunked data tmp2 size:" + Utility::to_string(read_size));
+        //DEBUG("chunked data tmp2:" + Utility::to_string(*tmp));
 
         //*dst = tmp2 - (size_str.size()+2);
         return (read_size+len);
