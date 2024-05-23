@@ -185,7 +185,7 @@ bool GetApplication::execute(WebservEntity *entity)
                 std::string const &relative_path= req->req_line().uri().path();
                 //file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
                 WebservFile *directory_file = file_factory->make_directory_file(fd, req->requested_path(), relative_path, host);
-                file = file_factory->make_socket_chunk_file_for_write(entity->fd(), directory_file);
+                file = file_factory->make_socket_chunk_file_for_autoindex(entity->fd(), directory_file);
                 file->set_chunk(true);
                 code = StatusCode::from_int(200);
                 is_directory = true;
