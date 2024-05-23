@@ -1,5 +1,6 @@
 #include "post_cgi_application.hpp"
 #include "http_exception.hpp"
+#include "normal_writer.hpp"
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 //#include "cgi_file.hpp"
@@ -50,6 +51,7 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
     cout << "test_read_p=" << test_read_p << endl;
     exit(1);
     */
+    //WebservFile *write_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     WebservFile *write_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     //WebservFile *read_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
@@ -58,10 +60,24 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
     result->set_is_cgi(true);
 
     event->entity()->io().set_total_write_size(0);
+
+
+    NormalWriter *normal_writer = NormalWriter::get_instance();
+    NormalReader *normal_reader = NormalReader::get_instance();
+
+    WebservFile *read_dst = file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    WebservFile *write_src = file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+    //FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
+
+    event->entity()->io().set_read_io(write_src, write_dst);
+    event->entity()->io().set_write_io(read_src, read_dst);
+    event->entity()->io().set_read_fd(result->cgi_out());
+    event->entity()->io().set_write_fd(result->cgi_in());
+
+
     //todo
-    //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
-    //return (event_factory->make_io_socket_for_cgi(event));
-    return (event_factory->make_waiting_cgi(event, write_dst, read_src, result));
+    //return (event_factory->make_waiting_cgi(event, write_dst, read_src, result));
+    return (event_factory->make_waiting_cgi(event));
 }
 
 E_EpollEvent PostCGIApplication::epoll_event(WebservEntity *entity)

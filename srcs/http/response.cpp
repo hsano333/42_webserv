@@ -17,7 +17,8 @@ Response::Response() :
     send_state(STILL_NOT_SEND),
     has_body_(false),
     is_chunked(false),
-    written_body_size(0)
+    written_body_size(0),
+    header_index(0)
     //exist_body_(false)
 {
     DEBUG("Response Constructor");
@@ -424,7 +425,7 @@ bool Response::read_completed(){
 int Response::read(char** data, size_t max_read_size)
 {
     char *tmp;
-    DEBUG("Response::read()");
+    DEBUG("Response::read() max_read_size=" + Utility::to_string(max_read_size));
 
     bool ref = true;
     int read_size = read_data(&tmp, data,  max_read_size , ref);
@@ -455,14 +456,24 @@ int Response::read_data(char** ref, char **cp, size_t max_read_size, bool &ref_f
         this->send_state = SENT_STATUS_LINE;
 
         MYINFO("\nResponse Status Line:" + this->status_line);
+        this->make_header_line();
         return (this->status_line.size());
     }else if (this->send_state == SENT_STATUS_LINE){
         DEBUG("Response::read: SENT_STATUS_LINE");
-        this->make_header_line();
-        *ref = const_cast<char*>(&(this->header_line[0]));
+        *ref = const_cast<char*>(&(this->header_line[this->header_index]));
         MYINFO("Response  Header:" + string(*ref));
-        this->send_state = SENT_HEADER;
-        return (this->header_line.size());
+        MYINFO("Response  Header size:" + Utility::to_string(this->header_line.size()));
+
+        size_t return_size = this->header_line.size() - this->header_index;
+        //this->header_index += return_size;
+        if(max_read_size >= return_size){
+            this->send_state = SENT_HEADER;
+            this->header_index = this->header_line.size();
+        }else{
+            return_size = max_read_size;
+            this->header_index += max_read_size;
+        }
+        return (return_size);
     }else if (this->send_state == SENT_HEADER){
         ref_flag = false;
         if(this->has_body()){

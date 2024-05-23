@@ -30,6 +30,35 @@ int BufferController::save(char *data, size_t size)
 
 }
 
+int BufferController::save(char const *data, size_t size)
+{
+    this->save(const_cast<char const *>(data), size);
+
+    //DEBUG("BufferController::save");
+    //this->buf.resize(size);
+    //Utility::memcpy(&(this->buf[0]), data, size);
+    return (this->buf.size());
+}
+
+void BufferController::ref(char **data, size_t size)
+{
+    (void)size;
+    *data = &(this->buf[0]);
+    //DEBUG("BufferController::save");
+    //this->buf.resize(size);
+    //Utility::memcpy(&(this->buf[0]), data, size);
+    //return (this->buf.size());
+
+}
+
+size_t BufferController::append(char const *data, size_t size)
+{
+    for(size_t i=0;i<size;i++){
+        this->buf.push_back(data[i]);
+    }
+    return (this->buf.size());
+}
+
 int BufferController::retrieve(char **data, size_t max_size)
 {
     DEBUG("BufferController::retrieve buffer size=" + Utility::to_string(this->buf.size()));
@@ -63,4 +92,9 @@ int BufferController::retrieve(char **data, size_t max_size)
     DEBUG("test No.6");
         return return_size;
     }
+}
+
+size_t BufferController::size()
+{
+    return (this->buf.size());
 }

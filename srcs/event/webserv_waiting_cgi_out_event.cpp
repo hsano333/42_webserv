@@ -33,19 +33,21 @@ WebservEvent *WebservWaitingCGIOUTEvent::from_event(WebservEvent * event)
     return (new_event);
 }
 
+/*
 WebservEvent *WebservWaitingCGIOUTEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
 {
     DEBUG("WebservWaitingCGIOUTEvent::from_fd");
     WebservWaitingCGIOUTEvent *io_event = WebservWaitingCGIOUTEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservWaitingCGIOUTEvent>, event->entity());
-    new_event->entity()->io().set_read_io(read_src, read_dst);
-    new_event->entity()->io().set_write_io(write_src, write_dst);
+    //new_event->entity()->io().set_read_io(read_src, read_dst);
+    //new_event->entity()->io().set_write_io(write_src, write_dst);
 
-    new_event->entity()->io().set_read_fd(read_fd);
-    new_event->entity()->io().set_write_fd(write_fd);
+    //new_event->entity()->io().set_read_fd(read_fd);
+    //new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLIN);
     return (new_event);
 }
+*/
 
 WebservEvent* WebservWaitingCGIOUTEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {

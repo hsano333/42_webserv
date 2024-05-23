@@ -163,7 +163,6 @@ namespace RequestBufferFunc{
             printf("%c", (tmp)[i]);
         }
         printf("]******Request read end size=%zu\n", size);
-
         printf("Request read test=[[[[[");
         for(size_t i=0;i<size;i++){
             (*data)[i] = tmp[i];

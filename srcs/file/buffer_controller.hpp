@@ -10,7 +10,13 @@ class BufferController
         ~BufferController();
         void copy(std::vector<char> &buf);
         int save(char *data, size_t size);
+        int save(char const *data, size_t size);
+        size_t append(char const *data, size_t size);
         int retrieve(char **data, size_t max_size);
+        void ref(char **data, size_t size);
+        void clear();
+        
+        size_t size();
     private:
         std::vector<char> buf;
 

@@ -82,9 +82,11 @@ void Webserv::communication()
             WebservEvent *next_event = NULL;
             try{
                 handle(event);
+                DEBUG("end handle()");
                 if(event->entity()->completed()){
                     next_event = make_next_event(event, this->event_factory);
                 }else{
+                    DEBUG("next is same event");
                     next_event = event;
                 }
                 event_controller->set_next_epoll_event(event, next_event);

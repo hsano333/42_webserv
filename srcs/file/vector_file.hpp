@@ -8,6 +8,7 @@
 #include "iwriter.hpp"
 #include "status_code.hpp"
 #include "global.hpp"
+#include "buffer_controller.hpp"
 
 class VectorFile
 {
@@ -28,11 +29,12 @@ class VectorFile
     private:
         VectorFile(size_t max_buf_size);
         //change_reader(IReader *ireader);
-        std::vector<char> buf;
+        //std::vector<char> buf;
+        BufferController buffer;
         size_t max_buf_size;
         //IReader *reader;
         //IWriter *writer;
-        //size_t index;
+        //size_t buf_size;
         //std::vector<char> tmp_buf;
         //char buf_c[MAX_BUF];
 };

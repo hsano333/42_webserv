@@ -33,6 +33,9 @@ bool io_work(EventT *event, WebservEntity *entity)
     while(1)
     {
         buf_p = &(buf[load_size]);
+        DEBUG("io read() read_size:" + Utility::to_string(MAX_READ_SIZE - load_size));
+        DEBUG("io read() buffer_size:" + Utility::to_string(load_size));
+        //char *buf_p_bk = buf_p;
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
         if(read_size <= 0){
             MYINFO("MYINFO::read end");
@@ -42,7 +45,6 @@ bool io_work(EventT *event, WebservEntity *entity)
         buf_p = &(buf[0]);
         read_size += load_size;
         size_t tmp_size = read_size;
-
 
         // will remove
         for(size_t i=0;i<tmp_size;i++){
@@ -57,6 +59,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         printf("]\nbuffer size =[%zu]\n\n", read_size);
 
 
+        DEBUG("io write()");
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("write end");
@@ -78,6 +81,7 @@ bool io_work(EventT *event, WebservEntity *entity)
 
     DEBUG("WebservIOWorker::check completed");
     event->check_completed(entity);
+    DEBUG("WebservIOWorker::check completed No.2");
     return (entity->completed());
 }
 
@@ -107,6 +111,7 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
     while(1)
     {
         buf_p = &(buf[load_size]);
+        DEBUG("io read()");
         ssize_t read_size = source->read(&buf_p, MAX_READ_SIZE - load_size);
         if(read_size <= 0){
             MYINFO("MYINFO::read end");
@@ -128,6 +133,7 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
         }
         printf("]\nbuffer size =[%zu]\n\n", read_size);
 
+        DEBUG("io write()");
         ssize_t write_size = destination->write(&buf_p, read_size);
         if(write_size <= 0){
             MYINFO("write end");

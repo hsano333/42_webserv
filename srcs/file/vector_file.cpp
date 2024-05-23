@@ -27,14 +27,18 @@ VectorFile* VectorFile::from_buf(char *buf, size_t size)
 {
     DEBUG("VectorFile::from_buf()");
     VectorFile *file = new VectorFile(size);
-    file->buf.resize(size);
+    file->buffer.save(buf, size);
+    //file->buf.resize(size);
+    /*
     for(size_t i=0;i<size;i++){
         file->buf[i] = buf[i];
     }
+    */
+    //this->buf_size = size;
 
     // will remove
-    buf[size] = '\0';
-    DEBUG("VectorFile::from_buf() buf=" + Utility::to_string(buf));
+    //buf[size] = '\0';
+    //DEBUG("VectorFile::from_buf() buf=" + Utility::to_string(buf));
     //file->index = size;
     return (file);
 }
@@ -44,10 +48,16 @@ VectorFile* VectorFile::from_ref(std::string const& buf_ref)
     DEBUG("VectorFile::from_ref() size:" + Utility::to_string(buf_ref.size()));
     VectorFile *file = new VectorFile(buf_ref.size());
     DEBUG("VectorFile::from_ref() No.1");
-    file->buf.resize(buf_ref.size());
+
+    file->buffer.save(&(buf_ref[0]), buf_ref.size());
+    //file->buf.resize(buf_ref.size());
+    /*
     for(size_t i=0;i<buf_ref.size();i++){
         file->buf[i] = buf_ref[i];
     }
+    this->buf_size = buf_ref.size();
+    */
+
     DEBUG("VectorFile::from_ref() No.2");
     //file->index = buf_ref.size();
     return (file);
@@ -66,7 +76,6 @@ VectorFile* VectorFile::from_buf_size(size_t buf_size)
 
 int VectorFile::read(char **buf, size_t size)
 {
-
     DEBUG("vector file test No.1");
     if(this->state == FILE_COMPLETED_READ){
         DEBUG("vector file test No.2");
@@ -74,7 +83,7 @@ int VectorFile::read(char **buf, size_t size)
     }
     //return (this->reader(buf, size));
 
-    DEBUG("VectorFile::read() buf_size=" + Utility::to_string(this->buf.size()));
+    DEBUG("VectorFile::read() buf_size=" + Utility::to_string(this->buffer.size()));
         DEBUG("vector file test No.3");
     // sizeは無視する(ポインタを渡すのでサイズの大小に関係がない)
     (void)size;
@@ -83,7 +92,11 @@ int VectorFile::read(char **buf, size_t size)
 
     //this->buf.push_back('\0');
     //this->buf[this->buf.size()] = '\0';
-    *buf = &(this->buf[0]);
+    //*buf = &(this->buffer[0]);
+    this->buffer.ref(buf, size);
+    return (this->buffer.size());
+
+    /*
     printf("\n\nvector_file test[");
         DEBUG("vector file test No.5");
     for(size_t i=0;i<this->buf.size();i++){
@@ -98,13 +111,24 @@ int VectorFile::read(char **buf, size_t size)
     printf("vector file buffer=%s\n", *buf);
 
     return (this->buf.size());
+    */
 }
 
 int VectorFile::write(char **buf, size_t size)
 {
     DEBUG("VectorFile::write() size=" + Utility::to_string(size));
-    size_t buf_size = this->buf.size();
-    this->buf.resize(buf_size + size);
+    size_t current_size = this->buffer.size();
+    (this->buffer.append(*buf, size));
+    size_t new_size = this->buffer.size();
+
+    return (int)(new_size - current_size);
+
+    /*
+    size_t buf_size = this->buffer.size();
+    if(size + buf_size > this->buf.size()){
+        ERROR("VectorFile: write exceed");
+        throw std::runtime_error("VectorFile: write exceed");
+    }
     char *p_buf = *buf;
     p_buf[size] = '\0';
     DEBUG("VectorFile::write() buf=" + Utility::to_string(p_buf));
@@ -119,6 +143,7 @@ int VectorFile::write(char **buf, size_t size)
     //DEBUG("VectorFile::write()min =" + Utility::to_string(min));
     //DEBUG("VectorFile::write()rest=" + Utility::to_string(rest));
     return (size);
+    */
 
     //if(min != size){
         //return (this->max_buf_size-this->index);
@@ -135,6 +160,11 @@ int VectorFile::write(char **buf, size_t size)
 int VectorFile::save(char *buf, size_t size)
 {
     DEBUG("VectorFile::save()");
+    size_t current_size = this->buffer.size();
+    this->buffer.append(buf, size);
+    size_t new_size = this->buffer.size();
+    return (int)(new_size - current_size);
+    /*
     for(size_t i=0;i<size;i++){
         this->buf.push_back(buf[i]);
     }
@@ -143,13 +173,14 @@ int VectorFile::save(char *buf, size_t size)
         throw std::runtime_error("exceed vecotr size");
     }
     return (this->buf.size());
+    */
 }
 
 
 
 size_t VectorFile::size()
 {
-    return (this->buf.size());
+    return (this->buffer.size());
 }
 
 void VectorFile::clear_read()

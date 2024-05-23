@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/16 02:54:50 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/23 20:51:35 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,22 @@ WebservWaitingCGIInEvent *WebservWaitingCGIInEvent::get_instance()
     return (singleton);
 }
 
+namespace myfunc{
+    bool nothing(WebservWaitingCGIInEvent *event, WebservEntity *entity)
+    {
+        (void)event;
+        entity->set_completed(true);
+        return (true);
+    }
+}
+
+
 WebservEvent *WebservWaitingCGIInEvent::from_event(WebservEvent * event)
 {
     DEBUG("WebservWaitingCGIInEvent::from_fd");
     WebservWaitingCGIInEvent *io_event = WebservWaitingCGIInEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservWaitingCGIInEvent>, event->entity());
-    //new_event->entity()->io().switching_io(EPOLLIN);
+    WebservEvent *new_event =  new WebservEvent( io_event, myfunc::nothing, event->entity());
+    //WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservWaitingCGIInEvent>, event->entity());
     return (new_event);
 }
 
@@ -121,11 +131,21 @@ E_EpollEvent WebservWaitingCGIInEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     DEBUG("WebservWaitingCGIInEvent::epoll_event()");
+
     if(event->entity()->response() == NULL && event->entity()->io().is_cgi_read() == false){
         return (EPOLL_NONE);
-
     }
 
+    /*
+    if(event->entity()->io().is_cgi_read()){
+        event->entity()->io().set_is_cgi_read(true);
+    }else{
+        event->entity()->io().set_is_cgi_read(false);
+    }
+    */
+
+
+    return (EPOLL_NONE);
     /*
     if(event->entity()->io().cgi_divided() == true && event->entity()->completed() == false){
         DEBUG("WebservWaitingCGIInEvent::epoll_event() DIvided");
@@ -146,14 +166,14 @@ E_EpollEvent WebservWaitingCGIInEvent::epoll_event(WebservEvent *event)
         // 入力がまだ残っている時はEPOLL_READ,そうでないときはEPOLL_NONE
         // todo
         //return (EPOLL_READ);
-        return (EPOLL_NONE);
+        //return (EPOLL_NONE);
     }else{
         event->entity()->io().set_is_cgi_read(false);
         // EPOLLIN is CGI_IN(read cgi), so next is waiting socket out.
         DEBUG("WebservWaitingCGIInEvent::epoll_event() No.3");
         //event->entity()->io().switching_io(EPOLLOUT);
         //end Socket in
-        return (EPOLL_WRITE);
+        //return (EPOLL_WRITE);
 
     }
 

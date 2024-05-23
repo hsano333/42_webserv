@@ -1,5 +1,6 @@
 #include "get_cgi_application.hpp"
 #include "http_exception.hpp"
+#include "normal_writer.hpp"
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 //#include "cgi_file.hpp"
@@ -47,7 +48,19 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     result->set_file(result_file);
     result->set_is_cgi(true);
 
-    return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
+    NormalWriter *normal_writer = NormalWriter::get_instance();
+    NormalReader *normal_reader = NormalReader::get_instance();
+
+    WebservFile *write_dst = file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    WebservFile *read_src = file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+
+    event->entity()->io().set_read_io(read_src, read_dst);
+    event->entity()->io().set_write_io(write_src, write_dst);
+    event->entity()->io().set_read_fd(result->cgi_out());
+    event->entity()->io().set_write_fd(result->cgi_in());
+
+    return (event_factory->make_waiting_out_cgi(event));
+    //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
     //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
 }
 

@@ -121,10 +121,11 @@ Response* WebservMakeResponseForPostCGIEvent::make_response_for_cgi(ApplicationR
         }
     }
 
-    if(!res->check_body_and_chunk()){
-        DEBUG("WebservMakeResponseEvent::make_response_for_cgi not chunk");
+    res->check_body_and_chunk();
+    if(res->has_body()){
         res->add_header(CONTENT_LENGTH, "0");
-    }else{
+    }
+    if(res->is_chunk()){
         WebservFileFactory *file_factory = WebservFileFactory::get_instance();
         WebservFile *socket_file = file_factory->make_socket_chunk_file_for_write(entity->fd(), res->get_file(), res->buffer());
         res->clear_buffer();

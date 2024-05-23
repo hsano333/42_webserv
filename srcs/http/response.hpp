@@ -98,6 +98,7 @@ class Response
         std::vector<char> tmp_buf;
 
         size_t written_body_size;
+        size_t header_index;
 
 };
 
