@@ -30,7 +30,7 @@ WebservEvent *WebservMakeResponseForGetCGIEvent::from_event(WebservEvent *event)
 {
     DEBUG("WebservMakeResponseForGetCGIEvent::from_fd");
     WebservMakeResponseForGetCGIEvent *res_event = WebservMakeResponseForGetCGIEvent::get_instance();
-    WebservEvent *new_event = new WebservEvent( res_event, io_work<WebservMakeResponseForGetCGIEvent>, event->entity());
+    WebservEvent *new_event = new WebservEvent( res_event, io_work_reverse_io<WebservMakeResponseForGetCGIEvent>, event->entity());
     //new_event->entity()->io().set_source(src);
     //new_event->entity()->io().set_destination(dst);
     //WebservMakeResponseForGetCGIEvent *io_event = WebservMakeResponseForGetCGIEvent::get_instance();
@@ -227,7 +227,7 @@ E_EpollEvent WebservMakeResponseForGetCGIEvent::epoll_event(WebservEvent *event)
 
 void WebservMakeResponseForGetCGIEvent::check_completed(WebservEntity * entity)
 {
-    WebservFile *dst = entity->io().destination_for_read();
+    WebservFile *dst = entity->io().destination_for_write();
     bool flag = dst->completed();
     DEBUG("WebservMakeResponseForGetCGIEvent::check_completed flag:" + Utility::to_string(flag));
     entity->set_completed(flag);

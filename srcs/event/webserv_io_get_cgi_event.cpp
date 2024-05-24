@@ -32,7 +32,7 @@ WebservEvent *WebservIOGetCGIEvent::from_event(WebservEvent *event)
 {
     DEBUG("WebservIOGetCGIEvent::from_fd");
     WebservIOGetCGIEvent *io_event = WebservIOGetCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOGetCGIEvent>, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work_reverse_io<WebservIOGetCGIEvent>, event->entity());
     return (new_event);
 }
 

@@ -231,11 +231,15 @@ void WebservMakeResponseForPostCGIEvent::check_completed(WebservEntity * entity)
 {
     //todo
     DEBUG("WebservMakeResponseForPostCGIEvent::check_completed");
-    entity->set_completed(true);
-    return;
-
-    WebservFile *dst = entity->io().destination_for_read();
+    //entity->set_completed(true);
+    WebservFile *dst = entity->io().destination_for_write();
     bool flag = dst->completed();
     DEBUG("WebservMakeResponseForPostCGIEvent::check_completed flag:" + Utility::to_string(flag));
     entity->set_completed(flag);
+    return;
+
+    //WebservFile *dst = entity->io().destination_for_read();
+    //bool flag = dst->completed();
+    //DEBUG("WebservMakeResponseForPostCGIEvent::check_completed flag:" + Utility::to_string(flag));
+    //entity->set_completed(flag);
 }

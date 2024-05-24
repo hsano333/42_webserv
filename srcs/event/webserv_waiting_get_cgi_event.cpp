@@ -25,11 +25,19 @@ WebservWaitingGetCGIEvent *WebservWaitingGetCGIEvent::get_instance()
     return (singleton);
 }
 
+namespace myfunc{
+    bool check_completed(WebservWaitingGetCGIEvent *event, WebservEntity *entity)
+    {
+        event->check_completed(entity);
+        return (true);
+    }
+}
+
 WebservEvent *WebservWaitingGetCGIEvent::from_event(WebservEvent * event)
 {
     DEBUG("WebservWaitingGetCGIEvent::from_fd");
     WebservWaitingGetCGIEvent *io_event = WebservWaitingGetCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservWaitingGetCGIEvent>, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, myfunc::check_completed, event->entity());
     return (new_event);
 }
 
@@ -112,6 +120,7 @@ E_EpollEvent WebservWaitingGetCGIEvent::epoll_event(WebservEvent *event)
 
 void WebservWaitingGetCGIEvent::check_completed(WebservEntity * entity)
 {
+        entity->io().set_is_cgi_read(false);
     // EPOLLOUTの時、CGIからの出力
     // EPOLLINの時、SOCKETに対する入力（クライアントに対する出力)
     //if(entity->io().in_out() == EPOLLIN){
