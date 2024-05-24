@@ -49,6 +49,7 @@ class SocketChunkFile
         //void              append_buf(char *data, size_t size);
         size_t            size();
         void              clear_read();
+        BufferController const &get_buffer();
 
     private:
         SocketChunkFile(FileDiscriptor const &fd, WebservFile *file);

@@ -94,7 +94,7 @@ int BufferController::retrieve(char **data, size_t max_size)
     }
 }
 
-size_t BufferController::size()
+size_t BufferController::size() const
 {
     return (this->buf.size());
 }

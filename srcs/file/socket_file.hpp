@@ -23,7 +23,8 @@ class SocketFile
         int open();
         int close();
         WebservFile *file();
-        //bool can_read();
+        BufferController const &get_buffer();
+        bool can_read();
         FileState   state;
         //void save(std::vector<char> &buffer);
 
@@ -46,6 +47,8 @@ class SocketFile
 };
 
 namespace BufferFunc{
+
+
     template <class FileT>
     int write(FileT *file, char **data, size_t size){
         DEBUG("BufferFunc::write()");
@@ -68,6 +71,21 @@ namespace BufferFunc{
             }
         }
         return (file->read(data, size));
+    }
+
+    template <class FileT>
+    bool can_read(FileT *file){
+        DEBUG("BufferFunc::can_read()");
+        BufferController const buffer = file->get_buffer();
+        if(buffer.size() > 0){
+            DEBUG("BufferFunc::can_read() True No.1");
+            return (true);
+        }else if(file->file()){
+            //BufferController const buffer2 = file->file()->get_buffer();
+            DEBUG("BufferFunc::read() True No.2");
+            return (file->file()->can_read());
+        }
+        return (false);
     }
 }
 

@@ -81,10 +81,11 @@ void Webserv::communication()
 
             WebservEvent *next_event = NULL;
             try{
+                DEBUG("start handle() event address:" + Utility::to_string(event));
                 handle(event);
-                DEBUG("end handle()");
                 if(event->entity()->completed()){
                     next_event = make_next_event(event, this->event_factory);
+                    DEBUG("new event:"  + Utility::to_string(next_event));
                 }else{
                     DEBUG("next is same event");
                     next_event = event;

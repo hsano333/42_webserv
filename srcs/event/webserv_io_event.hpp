@@ -86,6 +86,35 @@ bool io_work(EventT *event, WebservEntity *entity)
 }
 
 template<typename EventT>
+bool io_work_reverse_io(EventT *event, WebservEntity *entity)
+{
+    DEBUG("io_work_reverse_io");
+    if(entity->io().is_cgi_read()){
+        DEBUG("io_work_reverse_io No.1");
+        entity->io().switching_io(EPOLLIN);
+    }else{
+        entity->io().switching_io(EPOLLOUT);
+    //}else{
+        //entity->io().switching_io(EPOLLIN);
+    }
+    return (io_work<EventT>(event, entity));
+}
+
+template<typename EventT>
+bool io_work_with_switching_in(EventT *event, WebservEntity *entity)
+{
+    entity->io().switching_io(EPOLLIN);
+    return (io_work<EventT>(event, entity));
+}
+
+template<typename EventT>
+bool io_work_with_switching_out(EventT *event, WebservEntity *entity)
+{
+    entity->io().switching_io(EPOLLOUT);
+    return (io_work<EventT>(event, entity));
+}
+
+template<typename EventT>
 bool io_work_ref(EventT *event, WebservEntity *entity)
 {
     (void)event;

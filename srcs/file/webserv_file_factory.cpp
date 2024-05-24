@@ -58,14 +58,21 @@ WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, Webs
 {
     DEBUG("WebservFileFactory::make_socket_file with file:" + fd.to_string());
     SocketFile *socket_file = SocketFile::from_file(fd, file, iwriter, ireader);
-    return (this->make_webserv_file(fd, socket_file, CommonFunc::open, BufferFunc::read, BufferFunc::write, CommonFunc::close, DummyFunc::remove,DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+    return (this->make_webserv_file(fd, socket_file, CommonFunc::open, BufferFunc::read, BufferFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
-WebservFile *WebservFileFactory::make_socket_chunk_file(FileDiscriptor const &fd, WebservFile *file)
+WebservFile *WebservFileFactory::make_socket_file_for_post_cgi(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader)
+{
+    DEBUG("WebservFileFactory::make_socket_file with file:" + fd.to_string());
+    SocketFile *socket_file = SocketFile::from_file(fd, file, iwriter, ireader);
+    return (this->make_webserv_file(fd, socket_file, CommonFunc::open, BufferFunc::read, BufferFunc::write, CommonFunc::close, DummyFunc::remove, BufferFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+}
+
+WebservFile *WebservFileFactory::make_socket_chunk_file_for_post_cgi(FileDiscriptor const &fd, WebservFile *file)
 {
     DEBUG("WebservFileFactory::make_socket_chunk_file:" + fd.to_string());
     SocketChunkFile *socket_file = SocketChunkFile::from_file(fd, file);
-    return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, ChunkedFunc::read, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+    return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, ChunkedFunc::read, DummyFunc::write, CommonFunc::close, DummyFunc::remove, BufferFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
 WebservFile *WebservFileFactory::make_socket_chunk_file_for_autoindex(FileDiscriptor const &fd, WebservFile *file)
@@ -73,6 +80,13 @@ WebservFile *WebservFileFactory::make_socket_chunk_file_for_autoindex(FileDiscri
     DEBUG("WebservFileFactory::make_socket_chunk_file:" + fd.to_string());
     SocketChunkFile *socket_file = SocketChunkFile::from_file(fd, file);
     return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, ChunkedFunc::read_for_autoindex, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, ChunkedFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+}
+
+WebservFile *WebservFileFactory::make_socket_chunk_file(FileDiscriptor const &fd, WebservFile *file)
+{
+    DEBUG("WebservFileFactory::make_socket_chunk_file:" + fd.to_string());
+    SocketChunkFile *socket_file = SocketChunkFile::from_file(fd, file);
+    return (this->make_webserv_file(fd, socket_file, DefaultFunc::open, ChunkedFunc::read_for_write, DummyFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, ChunkedFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
 WebservFile *WebservFileFactory::make_socket_chunk_file_for_write(FileDiscriptor const &fd, WebservFile *file)
@@ -167,7 +181,7 @@ WebservFile *WebservFileFactory::make_request_file(FileDiscriptor const &fd, Req
 
 WebservFile *WebservFileFactory::make_request_file_read_buf(FileDiscriptor const &fd, Request *req)
 {
-    return (this->make_webserv_file(fd, req, DummyFunc::open, RequestBufferFunc::read, DummyFunc::write, DummyFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+    return (this->make_webserv_file(fd, req, DummyFunc::open, RequestBufferFunc::read, DummyFunc::write, DummyFunc::close, DummyFunc::remove, DefaultFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
 WebservFileFactory *WebservFileFactory::singleton = NULL;

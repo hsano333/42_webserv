@@ -46,7 +46,7 @@ Request::Request() :
 */
 
 Request::Request(FileDiscriptor const &fd) :
-    file(NULL),
+    file_(NULL),
     fd_(fd),
     //buf_body(NULL),
     //raw_buf_pos_(0),
@@ -407,7 +407,7 @@ ssize_t Request::get_data(char** data)
 
 void Request::set_file(WebservFile *file)
 {
-    this->file = file;
+    this->file_ = file;
 }
 /*
 
@@ -480,7 +480,7 @@ std::string const &Request::path()
 int Request::read(char** data, size_t max_read_size)
 {
     DEBUG("Request::read() max_size=" + Utility::to_string(max_read_size));
-    int tmp = (this->file->read(data, max_read_size));
+    int tmp = (this->file_->read(data, max_read_size));
     DEBUG("Request::read() No.2 max_size=" + Utility::to_string(max_read_size));
     return (tmp);
 }
@@ -497,6 +497,28 @@ void Request::set_path_info(std::string const &root){
 void Request::add_read_body_size(size_t size)
 {
     this->read_body_size_ += size;
+}
+
+bool Request::can_read()
+{
+    if(this->buf_body_size > 0){
+        DEBUG("Request::can_read True");
+        return (true);
+    }
+    DEBUG("Request::can_read False");
+    return (false);
+}
+
+/*
+BufferController const &Request::get_buffer()
+{
+    return (this->buffer);
+}
+*/
+
+WebservFile *Request::file()
+{
+    return (this->file_);
 }
 
 void Request::print_info() const

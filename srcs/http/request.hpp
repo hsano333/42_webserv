@@ -17,6 +17,7 @@
 #include <vector>
 #include "file_discriptor.hpp"
 #include "request_line.hpp"
+#include "buffer_controller.hpp"
 
 using std::map;
 using std::string;
@@ -93,7 +94,7 @@ class Request
         int read(char **buf, size_t size);
         //int write(char **buf, size_t size);
         //int save(char *data, size_t size);
-        //bool can_read();
+        bool can_read();
         size_t size();
         //bool is_chunk();
         //int remove();
@@ -101,6 +102,8 @@ class Request
 
         void set_file(WebservFile *file);
         void add_read_body_size(size_t size);
+        //BufferController const &get_buffer();
+        WebservFile *file();
 
         //void set_source_file(File *source);
         //File *get_source_file();
@@ -112,7 +115,7 @@ class Request
         Request();
         Request(FileDiscriptor const &fd);
 
-        WebservFile *file;
+        WebservFile *file_;
         FileDiscriptor const &fd_;
         //FileDiscriptor sockfd_;
         //char    raw_buf[MAX_BUF];
@@ -136,9 +139,10 @@ class Request
         std::string    tmp_path_info_;
         std::string    path_info_;
         bool           read_completed_;
-        std::vector<char> tmp_buf;
+        //std::vector<char> tmp_buf;
         bool            is_cgi_;
         size_t          read_body_size_;
+        //BufferController buffer;
         //File *source;
 
 };

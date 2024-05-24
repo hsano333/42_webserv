@@ -380,13 +380,13 @@ std::string const &Response::path()
 
 bool Response::is_chunk()
 {
-    DEBUG("Response::is_chunk()");
+    DEBUG("Response::is_chunk():" + Utility::to_string(this->is_chunked));
     return (this->is_chunked);
 }
 
 bool Response::has_body()
 {
-    DEBUG("Response::has_body()");
+    DEBUG("Response::has_body();" + Utility::to_string(this->has_body_));
     return (this->has_body_);
 }
 

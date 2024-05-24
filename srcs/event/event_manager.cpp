@@ -76,8 +76,9 @@ bool EventManager::find(FileDiscriptor &fd)
 void EventManager::add_event_waiting_epoll(FileDiscriptor const &fd, WebservEvent* event)
 {
     DEBUG("add_event_waiting_epoll() fd:" + fd.to_string());
+    DEBUG("EventManager::events_waiting_epoll No.0 size:" + Utility::to_string(events_waiting_epoll.size()));
     this->events_waiting_epoll.insert(std::make_pair(fd, event));
-    DEBUG("EventManager::events_waiting_epoll size:" + Utility::to_string(events_waiting_epoll.size()));
+    DEBUG("EventManager::events_waiting_epoll No.1 size:" + Utility::to_string(events_waiting_epoll.size()));
 }
 
 void EventManager::erase_event_waiting_epoll(FileDiscriptor const &fd)

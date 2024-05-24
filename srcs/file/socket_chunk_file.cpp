@@ -278,6 +278,12 @@ void SocketChunkFile::clear_read()
     }
 }
 
+BufferController const &SocketChunkFile::get_buffer()
+{
+    DEBUG("SocketChunkFile::get_buffer");
+    return (this->buffer);
+}
+
 /*
 bool SocketChunkFile::is_chunk()
 {

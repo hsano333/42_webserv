@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/24 19:30:52 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/25 03:00:13 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,9 @@ WebservWaitingPostCGIEvent *WebservWaitingPostCGIEvent::get_instance()
 }
 
 namespace myfunc{
-    bool nothing(WebservWaitingPostCGIEvent *event, WebservEntity *entity)
+    bool check_completed(WebservWaitingPostCGIEvent *event, WebservEntity *entity)
     {
-        (void)event;
-        entity->set_completed(true);
+        event->check_completed(entity);
         return (true);
     }
 }
@@ -51,9 +50,7 @@ WebservEvent *WebservWaitingPostCGIEvent::from_event(WebservEvent * event)
 {
     DEBUG("WebservWaitingCGIInEvent::from_fd");
     WebservWaitingPostCGIEvent *io_event = WebservWaitingPostCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, myfunc::nothing, event->entity());
-    //WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservWaitingCGIInEvent>, event->entity());
-    //
+    WebservEvent *new_event =  new WebservEvent( io_event, myfunc::check_completed, event->entity());
     return (new_event);
 }
 
@@ -142,6 +139,20 @@ E_EpollEvent WebservWaitingPostCGIEvent::epoll_event(WebservEvent *event)
         return (EPOLL_NONE);
     }
 
+    if(event->entity()->io().is_cgi_read()){
+        DEBUG("WebservWaitingPostCGIEvent::epoll_event() READ");
+        WebservFile *file = event->entity()->io().source_for_write();
+
+        if(file->can_read()){
+            return (EPOLL_NONE);
+        }
+        return (EPOLL_READ);
+    }else{
+        DEBUG("WebservWaitingPostCGIEvent::epoll_event() WRITE");
+        //WebservFile *file = event->entity()->io().destination_for_write();
+        return (EPOLL_WRITE);
+    }
+
     /*
     if(event->entity()->io().is_cgi_read()){
         event->entity()->io().set_is_cgi_read(true);
@@ -163,7 +174,7 @@ E_EpollEvent WebservWaitingPostCGIEvent::epoll_event(WebservEvent *event)
     //
     if(event->entity()->io().is_cgi_read()){
 
-        event->entity()->io().set_is_cgi_read(true);
+        //event->entity()->io().set_is_cgi_read(true);
         // EPOLLOUT is CGI_OUT(write cgi), so next is waiting socket in.
         DEBUG("WebservWaitingPostCGIEvent::epoll_event() No.2");
         //end Socket in
@@ -174,13 +185,9 @@ E_EpollEvent WebservWaitingPostCGIEvent::epoll_event(WebservEvent *event)
         //return (EPOLL_READ);
         //return (EPOLL_NONE);
     }else{
-        event->entity()->io().set_is_cgi_read(false);
+        //event->entity()->io().set_is_cgi_read(false);
         // EPOLLIN is CGI_IN(read cgi), so next is waiting socket out.
         DEBUG("WebservWaitingPostCGIEvent::epoll_event() No.3");
-        //event->entity()->io().switching_io(EPOLLOUT);
-        //end Socket in
-        //return (EPOLL_WRITE);
-
     }
 
     // next event
@@ -214,48 +221,15 @@ void WebservWaitingPostCGIEvent::check_completed(WebservEntity * entity)
 {
     DEBUG("WebservWaitingPostCGIEvent::check_completed No.1");
     entity->set_completed(true);
-    /*
-    return ;
 
-    if(entity->io().cgi_divided() == false){
-    DEBUG("WebservWaitingPostCGIEvent::check_completed No.2");
-        event->entity()->io().set_is_cgi_read(true);
-        return ;
-    }
-    */
     // EPOLLOUTの時、CGIからの出力
     // EPOLLINの時、SOCKETに対する入力（クライアントに対する出力)
-    if(entity->io().in_out() == EPOLLIN){
+    if(entity->io().in_out() == EPOLLOUT){
         //entity->set_completed(true);
         DEBUG("WebservWaitingPostCGIEvent::check_completed No.3");
-        entity->io().set_is_cgi_read(false);
-        /*
-        //entity->set_completed(true);
-        WebservFile *file = entity->io().destination();
-        //WebservFile *file = entity->io().source_for_read();
-
-        size_t total_size = entity->io().total_write_size();
-        size_t content_length = entity->request()->header().get_content_length();
-        bool is_completed = file->completed();
-        if(content_length == total_size && is_completed){
-            is_completed = true;
-        }else{
-            is_completed = false;
-        }
-        DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(is_completed));
-        DEBUG("WebservApplicationUploadEvent::total_size :" + Utility::to_string(total_size));
-        entity->set_completed(is_completed);
-
-        if(is_completed){
-            char *tmp = NULL;
-                // 一度目だけステータスコードを読み取れる。
-                // ２回目以降は読み取れなくなる
-            int status_code = file->read(&tmp, 0);
-            entity->app_result()->set_status_code(status_code);
-        }
-        */
-    }else{
         entity->io().set_is_cgi_read(true);
+    }else{
+        entity->io().set_is_cgi_read(false);
 
     }
     DEBUG("WebservWaitingPostCGIEvent::check_completed No.4");

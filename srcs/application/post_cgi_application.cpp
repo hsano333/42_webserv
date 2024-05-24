@@ -35,11 +35,11 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
 
     Request *req = event->entity()->request();
     WebservFile *req_file = file_factory->make_request_file_read_buf(event->entity()->fd(), req);
-    WebservFile *file = file_factory->make_socket_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
+    WebservFile *file = file_factory->make_socket_file_for_post_cgi(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
     //WebservFile *file = file_factory->make_pipe_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
 
     if(event->entity()->request()->header().is_chunked()){
-        file = file_factory->make_socket_chunk_file(event->entity()->fd(), file);
+        file = file_factory->make_socket_chunk_file_for_post_cgi(event->entity()->fd(), file);
     }
 
     //todo 
@@ -65,11 +65,11 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
     WebservFile *from_socket_to_cgi_dst = file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
     WebservFile *from_cgi_to_socket_src = file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
 
-    event->entity()->io().set_write_io(from_socket_to_cgi_src, from_socket_to_cgi_dst);
-    event->entity()->io().set_read_io(from_cgi_to_socket_src, from_cgi_to_socket_dst);
+    event->entity()->io().set_read_io(from_socket_to_cgi_src, from_socket_to_cgi_dst);
+    event->entity()->io().set_write_io(from_cgi_to_socket_src, from_cgi_to_socket_dst);
 
-    event->entity()->io().set_write_fd(result->cgi_in());
-    event->entity()->io().set_read_fd(result->cgi_out());
+    event->entity()->io().set_read_fd(result->cgi_in());
+    event->entity()->io().set_write_fd(result->cgi_out());
 
     //todo
     //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));

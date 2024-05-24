@@ -30,7 +30,7 @@ WebservEvent *WebservMakeResponseForPostCGIEvent::from_event(WebservEvent *event
 {
     DEBUG("WebservMakeResponseForPostCGIEvent::from_fd");
     WebservMakeResponseForPostCGIEvent *res_event = WebservMakeResponseForPostCGIEvent::get_instance();
-    WebservEvent *new_event = new WebservEvent( res_event, io_work<WebservMakeResponseForPostCGIEvent>, event->entity());
+    WebservEvent *new_event = new WebservEvent( res_event, io_work_reverse_io<WebservMakeResponseForPostCGIEvent>, event->entity());
     //new_event->entity()->io().set_source(src);
     //new_event->entity()->io().set_destination(dst);
     //WebservMakeResponseForPostCGIEvent *io_event = WebservMakeResponseForPostCGIEvent::get_instance();
@@ -149,7 +149,7 @@ WebservEvent* WebservMakeResponseForPostCGIEvent::make_next_event(WebservEvent* 
     entity->set_response(res);
     //WebservFile *read_dst = entity->io().destination_for_read();
     WebservFile *read_dst = file_factory->make_socket_file(event->entity()->fd(), SocketWriter::get_instance(), NULL);
-    entity->io().set_read_io(res_file, read_dst);
+    entity->io().set_write_io(res_file, read_dst);
     //read_dst->open();
     /*
 
@@ -187,7 +187,7 @@ WebservEvent* WebservMakeResponseForPostCGIEvent::make_next_event(WebservEvent* 
     //}
     //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
 
-    event->entity()->io().switching_io(EPOLLIN);
+    //event->entity()->io().switching_io(EPOLLIN);
     return (event_factory->make_io_socket_for_post_cgi(event));
     //return (event);
 }
@@ -199,7 +199,7 @@ E_EpollEvent WebservMakeResponseForPostCGIEvent::epoll_event(WebservEvent *event
 
     if (event->entity()->completed()){
         DEBUG("WebservMakeResponseForPostCGIEvent::epoll_event() No.1");
-        //return (EPOLL_WRITE);
+        return (EPOLL_WRITE);
     }
     return (EPOLL_NONE);
 

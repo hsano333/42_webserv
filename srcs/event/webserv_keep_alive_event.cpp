@@ -32,6 +32,7 @@ WebservEvent *WebservKeepAliveEvent::from_event(WebservEvent *event)
 
 WebservEvent* WebservKeepAliveEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
+    DEBUG("WebservKeepAliveEvent::make_next_event");
     (void)event_factory;
     (void)event;
     //WARNING("WebservKeepAliveEvent::make_next_event() there is no next event");

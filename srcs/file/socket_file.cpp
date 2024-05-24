@@ -131,6 +131,13 @@ int SocketFile::close()
     return (0);
 }
 
+BufferController const &SocketFile::get_buffer()
+{
+    DEBUG("SocketFile::get_buffer");
+    return (this->buffer);
+}
+
+
 /*
 int SocketFile::save(char *buf, size_t size)
 {
@@ -157,11 +164,11 @@ int SocketFile::close()
     return (0);
 }
 
+*/
 bool SocketFile::can_read()
 {
     return (true);
 }
-*/
 
 size_t SocketFile::chunked_size()
 {
@@ -185,6 +192,7 @@ void SocketFile::set_is_chunk(bool flag)
 
 size_t SocketFile::size()
 {
+    DEBUG("SocketFile::size()");
     return (this->total_write_size);
 }
 

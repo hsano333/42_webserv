@@ -201,6 +201,7 @@ WebservEvent *WebservEventFactory::make_io_socket_for_post_cgi(WebservEvent *eve
 {
     DEBUG("WebservEventFactory::make_io_socket_for_post_cgi fd=" + event->entity()->fd().to_string());
     WebservEvent *new_event = WebservIOPostCGIEvent::from_event(event);
+    DEBUG("new_event address:" + Utility::to_string(new_event));
 
     return (new_event);
 }
