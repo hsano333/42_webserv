@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/16 02:54:50 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/24 15:20:13 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ WebservEvent *WebservWaitingCGIInEvent::from_event(WebservEvent * event)
 {
     DEBUG("WebservWaitingCGIInEvent::from_fd");
     WebservWaitingCGIInEvent *io_event = WebservWaitingCGIInEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservWaitingCGIInEvent>, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservWaitingCGIInEvent>, event->entity());
     //new_event->entity()->io().switching_io(EPOLLIN);
     return (new_event);
 }
@@ -123,7 +123,6 @@ E_EpollEvent WebservWaitingCGIInEvent::epoll_event(WebservEvent *event)
     DEBUG("WebservWaitingCGIInEvent::epoll_event()");
     if(event->entity()->response() == NULL && event->entity()->io().is_cgi_read() == false){
         return (EPOLL_NONE);
-
     }
 
     /*
@@ -200,7 +199,7 @@ void WebservWaitingCGIInEvent::check_completed(WebservEntity * entity)
     // EPOLLOUTの時、CGIからの出力
     // EPOLLINの時、SOCKETに対する入力（クライアントに対する出力)
     if(entity->io().in_out() == EPOLLIN){
-        entity->set_completed(true);
+        //entity->set_completed(true);
         DEBUG("WebservWaitingCGIInEvent::check_completed No.3");
         entity->io().set_is_cgi_read(false);
         /*

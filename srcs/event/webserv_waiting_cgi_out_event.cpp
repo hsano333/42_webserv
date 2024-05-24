@@ -33,6 +33,7 @@ WebservEvent *WebservWaitingCGIOUTEvent::from_event(WebservEvent * event)
     return (new_event);
 }
 
+/*
 WebservEvent *WebservWaitingCGIOUTEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
 {
     DEBUG("WebservWaitingCGIOUTEvent::from_fd");
@@ -46,6 +47,7 @@ WebservEvent *WebservWaitingCGIOUTEvent::from_fd(FileDiscriptor &write_fd, FileD
     new_event->entity()->io().switching_io(EPOLLIN);
     return (new_event);
 }
+*/
 
 WebservEvent* WebservWaitingCGIOUTEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
@@ -67,18 +69,22 @@ E_EpollEvent WebservWaitingCGIOUTEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     DEBUG("WebservWaitingCGIOUTEvent::epoll_event()");
-    // SCOKET OUT
-    if(event->entity()->io().in_out() == EPOLLOUT){
-        //end Socket out
-        return (EPOLL_FOR_CGI_IN);
-    }
 
     // next event
     if(event->entity()->response() == NULL){
         DEBUG("WebservWaitingCGIOUTEvent::epoll_event() No.1");
         return (EPOLL_NONE);
     }
-        DEBUG("WebservWaitingCGIOUTEvent::epoll_event() No.2");
+    // SCOKET OUT
+    /*
+    if(event->entity()->io().in_out() == EPOLLOUT){
+        DEBUG("WebservWaitingCGIOUTEvent::epoll_event() No.0");
+        //end Socket out
+        return (EPOLL_FOR_CGI_IN);
+    }
+    */
+
+    DEBUG("WebservWaitingCGIOUTEvent::epoll_event() No.2");
     return (EPOLL_WRITE);
     /*
     if (event->entity()->completed()){

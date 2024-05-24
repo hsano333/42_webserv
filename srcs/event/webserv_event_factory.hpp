@@ -44,7 +44,7 @@ class WebservEventFactory
         WebservEvent *make_io_socket_event_as_read(WebservEvent *event, WebservFile *src);
         WebservEvent *make_waiting_socket_out_cgi(WebservEvent *event);
         WebservEvent *make_waiting_out_cgi(WebservEvent *event);
-        WebservEvent *make_waiting_out_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result);
+        //WebservEvent *make_waiting_out_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result);
         WebservEvent *make_waiting_cgi(WebservEvent *event);
         WebservEvent *make_waiting_cgi(WebservEvent *event, WebservFile *write_dst, WebservFile *read_src, ApplicationResult *result);
         WebservEvent *make_io_socket_for_post_cgi(WebservEvent *event);

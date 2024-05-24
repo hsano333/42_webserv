@@ -1,5 +1,6 @@
 #include "get_cgi_application.hpp"
 #include "http_exception.hpp"
+#include "normal_writer.hpp"
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
 //#include "cgi_file.hpp"
@@ -38,24 +39,39 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     //WebservFile *write_src = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
 
     // CGI: write_src( read from socket , write to cgi)
-    WebservFile *write_src = NULL;
+    WebservFile *from_socket_to_cgi_src = NULL;
 
     // CGI: read_dst( read from CGI,  write to socket)
-    WebservFile *read_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
+    WebservFile *from_cgi_to_socket_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
     WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF);
     result->set_file(result_file);
     result->set_is_cgi(true);
 
-    return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
+    //NormalWriter *normal_writer = NormalWriter::get_instance();
+    NormalReader *normal_reader = NormalReader::get_instance();
+
+    // CGI I/O
+    //WebservFile *write_dst = file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
+    WebservFile *from_socket_to_cgi_dst = NULL;
+    WebservFile *from_cgi_to_socket_src = file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+
+    event->entity()->io().set_write_io(from_socket_to_cgi_src, from_socket_to_cgi_dst);
+    event->entity()->io().set_read_io(from_cgi_to_socket_src, from_cgi_to_socket_dst);
+
+    event->entity()->io().set_write_fd(result->cgi_in());
+    event->entity()->io().set_read_fd(result->cgi_out());
+
+    return (event_factory->make_waiting_out_cgi(event));
+    //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
     //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
 }
 
 E_EpollEvent GetCGIApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
-    //return (EPOLL_FOR_CGI);
-    return (EPOLL_WRITE);
+    return (EPOLL_FOR_CGI_GET);
+    //return (EPOLL_WRITE);
 }
 
 bool GetCGIApplication::execute(WebservEntity *entity)

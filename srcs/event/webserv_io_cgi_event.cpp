@@ -70,7 +70,7 @@ E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
     if (event->entity()->completed()){
         return (EPOLL_NONE);
     }
-    return (EPOLL_WRITE);
+    return (EPOLL_FOR_CGI_GET);
 }
 
 void WebservIOCGIEvent::check_completed(WebservEntity * entity)
