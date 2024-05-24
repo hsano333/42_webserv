@@ -122,7 +122,7 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
     DEBUG("WebservMakeResponseEvent::make_response() No.5-1");
     if(!res->check_body_and_chunk()){
     DEBUG("WebservMakeResponseEvent::make_response() No.5-2");
-        res->add_header(CONTENT_LENGTH, "0");
+        //res->add_header(CONTENT_LENGTH, "0");
     }
 
     DEBUG("WebservMakeResponseEvent::make_response() No.6");

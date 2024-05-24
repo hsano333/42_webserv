@@ -3,7 +3,7 @@
 #include "webserv_entity.hpp"
 #include "file_discriptor.hpp"
 #include "webserv_file.hpp"
-#include "webserv_io_cgi_event.hpp"
+#include "webserv_io_get_cgi_event.hpp"
 
 class WebservEntity;
 bool write_buffer_data(WebservEntity *entity, char *buf_p);

@@ -10,10 +10,10 @@
 #include "response.hpp"
 #include "webserv_entity.hpp"
 
-class WebservMakeResponseForCGIEvent
+class WebservMakeResponseForGetCGIEvent
 {
     public:
-        ~WebservMakeResponseForCGIEvent();
+        ~WebservMakeResponseForGetCGIEvent();
         static WebservEvent *from_event(WebservEvent *event);
         //static WebservEvent *from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent *event);
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
@@ -21,11 +21,11 @@ class WebservMakeResponseForCGIEvent
         void        check_completed(WebservEntity * entity);
         Response* make_response_for_cgi(ApplicationResult *result, WebservEntity *entity);
 
-        //static WebservMakeResponseForCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
+        //static WebservMakeResponseForGetCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:
-        WebservMakeResponseForCGIEvent();
-        static WebservMakeResponseForCGIEvent *singleton;
-        static WebservMakeResponseForCGIEvent *get_instance();
-        WebservMakeResponseForCGIEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
+        WebservMakeResponseForGetCGIEvent();
+        static WebservMakeResponseForGetCGIEvent *singleton;
+        static WebservMakeResponseForGetCGIEvent *get_instance();
+        WebservMakeResponseForGetCGIEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
 };
 #endif

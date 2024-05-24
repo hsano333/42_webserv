@@ -261,14 +261,45 @@ namespace ChunkedFunc{
         tmp[len+read_size+2] = '\n';
         //*dst = &(tmp[chunk_size-len]);
         //*dst = &(tmp[chunk_size-len]);
-        //tmp2[read_size] = '\r';
-        //tmp2[read_size+1] = '\n';
+        tmp[read_size+len] = '\r';
+        tmp[read_size+len+1] = '\n';
         read_size += 2;
 
         //test
         //tmp2[read_size+2] = '\0';
-        DEBUG("chunked data tmp2 size:" + Utility::to_string(read_size));
-        DEBUG("chunked data tmp2:" + Utility::to_string(*tmp));
+        //DEBUG("chunked data tmp2 size:" + Utility::to_string(read_size));
+        //DEBUG("chunked data tmp2:" + Utility::to_string(*tmp));
+
+        //*dst = tmp2 - (size_str.size()+2);
+        return (read_size+len);
+    }
+
+    template <class FileT>
+    int read_ref_body_chunk(FileT *file, char** dst, size_t size)
+    {
+        (void)file;
+        DEBUG("ChunkedFunc::read_body_and_copy_chunk");
+        char *tmp = *dst;
+        int chunk_size = 20;
+        char *tmp2 = &(tmp[chunk_size]);
+        int read_size = file->read(&(tmp2), size - chunk_size-5);
+
+        // chunkサイズは16進数
+        std::string size_str = Utility::to_hexstr(read_size);
+        size_str += CRLF;
+        size_t len = size_str.size();
+        Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
+        *dst = &(tmp[chunk_size-len]);
+        //Utility::memcpy(tmp, size_str.c_str(), len);
+        //Utility::memcpy(&(tmp[len]), tmp2, read_size);
+        //*dst = &(tmp[chunk_size-len]);
+        //*dst = &(tmp[chunk_size-len]);
+        tmp2[read_size] = '\r';
+        tmp2[read_size+1] = '\n';
+        read_size += 2;
+
+        //test
+        //tmp2[read_size+2] = '\0';
 
         //*dst = tmp2 - (size_str.size()+2);
         return (read_size+len);
@@ -288,6 +319,45 @@ namespace ChunkedFunc{
         //return (file->write(data, size));
 
         int tmp2 = (read_body_and_copy_chunk(file, data, size));
+        printf("%s\r\n", Utility::to_string(size).c_str());
+        printf("\nchunked data write[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+        for(int i=0;i<tmp2;i++){
+            printf("%c", (*data)[i]);
+        }
+        printf("\r\n");
+        printf("]]]]]]]]]]]]]]]]]]]]]]]]\n");
+        return (tmp2);
+
+        size_t chunked_size = file->chunked_size();
+        // ひとつのチャンクがすべて消化されるまで、書き込み禁止
+        if(chunked_size > 0){
+            ERROR("chunked size is not zero: ");
+            throw std::runtime_error("chunked size is not zero");
+        }
+        //size_t chunked_str_size;
+        MYINFO("No.2 size=" + Utility::to_string(size));
+        //chunked_size = get_chunked_size<FileT>(data, size, &chunked_str_size);
+        //*data = &((*data)[chunked_str_size+2]);
+
+        //file->set_buf(*data, chunked_size);
+        file->set_buf(*data, size);
+        return (size);
+    }
+
+    template <class FileT>
+    int read_for_autoindex(FileT *file, char **data, size_t size)
+    {
+        (void)size;
+        DEBUG("Chunked read_for_write()");
+        MYINFO("size=" + Utility::to_string(size));
+        if (!(file->state == FILE_OPEN)){
+            ERROR(" not open: ");
+            throw std::runtime_error("not open");
+            return (0);
+        }
+        //return (file->write(data, size));
+
+        int tmp2 = (read_ref_body_chunk(file, data, size));
         printf("%s\r\n", Utility::to_string(size).c_str());
         printf("\nchunked data write[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
         for(int i=0;i<tmp2;i++){

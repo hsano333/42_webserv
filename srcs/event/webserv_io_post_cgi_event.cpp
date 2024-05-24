@@ -41,7 +41,7 @@ WebservEvent* WebservIOPostCGIEvent::make_next_event(WebservEvent* event, Webser
     if (event->entity()->completed() && event->entity()->io().is_cgi_read() == false){
         return (event_factory->make_clean_event(event, false));
     }
-    return (event_factory->make_waiting_cgi(event));
+    return (event_factory->make_waiting_post_cgi(event));
 }
 
 E_EpollEvent WebservIOPostCGIEvent::epoll_event(WebservEvent *event)
