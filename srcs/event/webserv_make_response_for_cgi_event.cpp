@@ -121,7 +121,7 @@ Response* WebservMakeResponseForCGIEvent::make_response_for_cgi(ApplicationResul
     }
 
     res->check_body_and_chunk();
-    if(res->has_body()){
+    if(!res->has_body()){
         res->add_header(CONTENT_LENGTH, "0");
     }
     if(res->is_chunk()){
