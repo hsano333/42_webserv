@@ -1,4 +1,4 @@
-#include "webserv_io_cgi_event.hpp"
+#include "webserv_io_get_cgi_event.hpp"
 #include "socket_writer.hpp"
 #include "socket_file.hpp"
 #include "response.hpp"
@@ -8,39 +8,39 @@
 #include <sys/wait.h>
 
 
-WebservIOCGIEvent::WebservIOCGIEvent()
+WebservIOGetCGIEvent::WebservIOGetCGIEvent()
 {
     ;
 }
 
-WebservIOCGIEvent::~WebservIOCGIEvent()
+WebservIOGetCGIEvent::~WebservIOGetCGIEvent()
 {
     ;
 }
 
-WebservIOCGIEvent *WebservIOCGIEvent::singleton = NULL;
-WebservIOCGIEvent *WebservIOCGIEvent::get_instance()
+WebservIOGetCGIEvent *WebservIOGetCGIEvent::singleton = NULL;
+WebservIOGetCGIEvent *WebservIOGetCGIEvent::get_instance()
 {
-    if (WebservIOCGIEvent::singleton == NULL){
-        singleton = new WebservIOCGIEvent();
+    if (WebservIOGetCGIEvent::singleton == NULL){
+        singleton = new WebservIOGetCGIEvent();
     }
     return (singleton);
 }
 
 
-WebservEvent *WebservIOCGIEvent::from_event(WebservEvent *event)
+WebservEvent *WebservIOGetCGIEvent::from_event(WebservEvent *event)
 {
-    DEBUG("WebservIOCGIEvent::from_fd");
-    WebservIOCGIEvent *io_event = WebservIOCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOCGIEvent>, event->entity());
+    DEBUG("WebservIOGetCGIEvent::from_fd");
+    WebservIOGetCGIEvent *io_event = WebservIOGetCGIEvent::get_instance();
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOGetCGIEvent>, event->entity());
     return (new_event);
 }
 
-WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
+WebservEvent *WebservIOGetCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
 {
-    DEBUG("WebservIOCGIEvent::from_fd");
-    WebservIOCGIEvent *io_event = WebservIOCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOCGIEvent>, event->entity());
+    DEBUG("WebservIOGetCGIEvent::from_fd");
+    WebservIOGetCGIEvent *io_event = WebservIOGetCGIEvent::get_instance();
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOGetCGIEvent>, event->entity());
     new_event->entity()->io().set_read_io(read_src, read_dst);
     new_event->entity()->io().set_write_io(write_src, write_dst);
 
@@ -50,21 +50,21 @@ WebservEvent *WebservIOCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscripto
     return (new_event);
 }
 
-WebservEvent* WebservIOCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+WebservEvent* WebservIOGetCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservIOCGIEvent::make_next_event()");
+    DEBUG("WebservIOGetCGIEvent::make_next_event()");
 
     WebservEvent* new_event = NULL;
     if (event->entity()->completed()){
         new_event = (event_factory->make_clean_event(event, false));
     }else{
-        new_event = (event_factory->make_waiting_out_cgi(event));
+        new_event = (event_factory->make_waiting_get_cgi(event));
     }
 
     return (new_event);
 }
 
-E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
+E_EpollEvent WebservIOGetCGIEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
     if (event->entity()->completed()){
@@ -73,12 +73,12 @@ E_EpollEvent WebservIOCGIEvent::epoll_event(WebservEvent *event)
     return (EPOLL_FOR_CGI_GET);
 }
 
-void WebservIOCGIEvent::check_completed(WebservEntity * entity)
+void WebservIOGetCGIEvent::check_completed(WebservEntity * entity)
 {
 
     // copy from WebservIOSocketEvent
     size_t total_size = entity->io().destination()->size();
-    DEBUG("WebservIOCGIEvent::check_completed size=" + Utility::to_string(total_size));
+    DEBUG("WebservIOGetCGIEvent::check_completed size=" + Utility::to_string(total_size));
 
     bool flag = false;
     if(entity->io().in_out() == EPOLLIN){

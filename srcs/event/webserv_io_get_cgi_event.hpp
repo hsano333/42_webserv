@@ -11,10 +11,10 @@
 #include "webserv_entity.hpp"
 
 // source_fileからデータを読み出し、fdに対して書き込む
-class WebservIOCGIEvent
+class WebservIOGetCGIEvent
 {
     public:
-        ~WebservIOCGIEvent();
+        ~WebservIOGetCGIEvent();
         static WebservEvent *from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent *event);
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEvent *event);
@@ -22,9 +22,9 @@ class WebservIOCGIEvent
 
         static WebservEvent *from_event(WebservEvent *event);
     private:
-        WebservIOCGIEvent();
-        static WebservIOCGIEvent *singleton;
-        static WebservIOCGIEvent *get_instance();
-        WebservIOCGIEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
+        WebservIOGetCGIEvent();
+        static WebservIOGetCGIEvent *singleton;
+        static WebservIOGetCGIEvent *get_instance();
+        WebservIOGetCGIEvent(FileDiscriptor  &fd, FileDiscriptor  &sockfd);
 };
 #endif

@@ -62,7 +62,7 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     event->entity()->io().set_write_fd(result->cgi_in());
     event->entity()->io().set_read_fd(result->cgi_out());
 
-    return (event_factory->make_waiting_out_cgi(event));
+    return (event_factory->make_waiting_get_cgi(event));
     //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
     //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
 }

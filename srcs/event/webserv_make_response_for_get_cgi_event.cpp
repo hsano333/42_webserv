@@ -1,4 +1,4 @@
-#include "webserv_make_response_for_cgi_event.hpp"
+#include "webserv_make_response_for_get_cgi_event.hpp"
 #include "socket_writer.hpp"
 #include "socket_file.hpp"
 #include "response.hpp"
@@ -7,43 +7,43 @@
 #include <assert.h>
 
 
-WebservMakeResponseForCGIEvent::WebservMakeResponseForCGIEvent()
+WebservMakeResponseForGetCGIEvent::WebservMakeResponseForGetCGIEvent()
 {
     ;
 }
 
-WebservMakeResponseForCGIEvent::~WebservMakeResponseForCGIEvent()
+WebservMakeResponseForGetCGIEvent::~WebservMakeResponseForGetCGIEvent()
 {
     ;
 }
 
-WebservMakeResponseForCGIEvent *WebservMakeResponseForCGIEvent::singleton = NULL;
-WebservMakeResponseForCGIEvent *WebservMakeResponseForCGIEvent::get_instance()
+WebservMakeResponseForGetCGIEvent *WebservMakeResponseForGetCGIEvent::singleton = NULL;
+WebservMakeResponseForGetCGIEvent *WebservMakeResponseForGetCGIEvent::get_instance()
 {
-    if (WebservMakeResponseForCGIEvent::singleton == NULL){
-        singleton = new WebservMakeResponseForCGIEvent();
+    if (WebservMakeResponseForGetCGIEvent::singleton == NULL){
+        singleton = new WebservMakeResponseForGetCGIEvent();
     }
     return (singleton);
 }
 
-WebservEvent *WebservMakeResponseForCGIEvent::from_event(WebservEvent *event)
+WebservEvent *WebservMakeResponseForGetCGIEvent::from_event(WebservEvent *event)
 {
-    DEBUG("WebservMakeResponseForCGIEvent::from_fd");
-    WebservMakeResponseForCGIEvent *res_event = WebservMakeResponseForCGIEvent::get_instance();
-    WebservEvent *new_event = new WebservEvent( res_event, io_work<WebservMakeResponseForCGIEvent>, event->entity());
+    DEBUG("WebservMakeResponseForGetCGIEvent::from_fd");
+    WebservMakeResponseForGetCGIEvent *res_event = WebservMakeResponseForGetCGIEvent::get_instance();
+    WebservEvent *new_event = new WebservEvent( res_event, io_work<WebservMakeResponseForGetCGIEvent>, event->entity());
     //new_event->entity()->io().set_source(src);
     //new_event->entity()->io().set_destination(dst);
-    //WebservMakeResponseForCGIEvent *io_event = WebservMakeResponseForCGIEvent::get_instance();
-    //WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservMakeResponseForCGIEvent>, event->entity());
+    //WebservMakeResponseForGetCGIEvent *io_event = WebservMakeResponseForGetCGIEvent::get_instance();
+    //WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservMakeResponseForGetCGIEvent>, event->entity());
     return (new_event);
 }
 
 /*
-WebservEvent *WebservMakeResponseForCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
+WebservEvent *WebservMakeResponseForGetCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
 {
-    DEBUG("WebservMakeResponseForCGIEvent::from_fd");
-    WebservMakeResponseForCGIEvent *io_event = WebservMakeResponseForCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservMakeResponseForCGIEvent>, event->entity());
+    DEBUG("WebservMakeResponseForGetCGIEvent::from_fd");
+    WebservMakeResponseForGetCGIEvent *io_event = WebservMakeResponseForGetCGIEvent::get_instance();
+    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservMakeResponseForGetCGIEvent>, event->entity());
     new_event->entity()->io().set_read_io(read_src, read_dst);
     new_event->entity()->io().set_write_io(write_src, write_dst);
 
@@ -54,9 +54,9 @@ WebservEvent *WebservMakeResponseForCGIEvent::from_fd(FileDiscriptor &write_fd, 
 }
 */
 
-Response* WebservMakeResponseForCGIEvent::make_response_for_cgi(ApplicationResult *result, WebservEntity *entity)
+Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationResult *result, WebservEntity *entity)
 {
-    DEBUG("WebservMakeResponseForCGIEvent::make_response_for_cgi()");
+    DEBUG("WebservMakeResponseForGetCGIEvent::make_response_for_cgi()");
 
     char *data;
     int read_size = result->file()->read(&data, MAX_READ_SIZE);
@@ -135,9 +135,9 @@ Response* WebservMakeResponseForCGIEvent::make_response_for_cgi(ApplicationResul
 
 }
 
-WebservEvent* WebservMakeResponseForCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
+WebservEvent* WebservMakeResponseForGetCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservMakeResponseForCGIEvent::make_next_event()");
+    DEBUG("WebservMakeResponseForGetCGIEvent::make_next_event()");
     WebservEntity *entity = event->entity();
     ApplicationResult *result = event->entity()->app_result();
     Response *res = make_response_for_cgi(result, entity);
@@ -181,54 +181,54 @@ WebservEvent* WebservMakeResponseForCGIEvent::make_next_event(WebservEvent* even
     //entity->io().set_read_fd(res->get_file()->fd());
 
     //if(event->entity()->io().in_out() == EPOLLIN){
-        //DEBUG("WebservMakeResponseForCGIEvent::make_next_event() No.1");
+        //DEBUG("WebservMakeResponseForGetCGIEvent::make_next_event() No.1");
         //return (event_factory->make_making_response_event(event, event->entity()->io().destination_for_read()));
     //}
     //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
 
-    return (event_factory->make_io_socket_for_cgi(event));
+    return (event_factory->make_io_socket_for_get_cgi(event));
     //return (event);
 }
 
-E_EpollEvent WebservMakeResponseForCGIEvent::epoll_event(WebservEvent *event)
+E_EpollEvent WebservMakeResponseForGetCGIEvent::epoll_event(WebservEvent *event)
 {
     (void)event;
-    DEBUG("WebservMakeResponseForCGIEvent::epoll_event()");
+    DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event()");
 
     if (event->entity()->completed()){
-        DEBUG("WebservMakeResponseForCGIEvent::epoll_event() No.1");
+        DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
         return (EPOLL_WRITE);
     }
     return (EPOLL_NONE);
 
     /*
     if (event->entity()->completed()){
-        DEBUG("WebservMakeResponseForCGIEvent::epoll_event() No.1");
+        DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
         return (EPOLL_NONE);
     }
     return (EPOLL_FOR_CGI);
 
 
-    DEBUG("WebservMakeResponseForCGIEvent::epoll_event()");
+    DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event()");
     //return (EPOLL_FOR_CGI);
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
-            DEBUG("WebservMakeResponseForCGIEvent::epoll_event() No.1");
+            DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
             return (EPOLL_NONE);
         }else{
-            DEBUG("WebservMakeResponseForCGIEvent::epoll_event() No.2");
+            DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.2");
             return (EPOLL_READ);
         }
     }
-            DEBUG("WebservMakeResponseForCGIEvent::epoll_event() No.3");
+            DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.3");
     return (EPOLL_NONE);
     */
 }
 
-void WebservMakeResponseForCGIEvent::check_completed(WebservEntity * entity)
+void WebservMakeResponseForGetCGIEvent::check_completed(WebservEntity * entity)
 {
     WebservFile *dst = entity->io().destination_for_read();
     bool flag = dst->completed();
-    DEBUG("WebservMakeResponseForCGIEvent::check_completed flag:" + Utility::to_string(flag));
+    DEBUG("WebservMakeResponseForGetCGIEvent::check_completed flag:" + Utility::to_string(flag));
     entity->set_completed(flag);
 }
