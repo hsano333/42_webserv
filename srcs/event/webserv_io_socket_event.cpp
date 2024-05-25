@@ -45,7 +45,7 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
 {
     DEBUG("WebservIOSocketEvent::as_write fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
     new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLOUT);
@@ -117,7 +117,7 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
         WebservFile *src = entity->io().source_for_write();
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT write_size:" + Utility::to_string(src->size()));
-        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT get_content_length():" + Utility::to_string(entity->request()->header().get_content_length()));
+        //DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT get_content_length():" + Utility::to_string(entity->request()->header().get_content_length()));
 
 
         //EPOLLOUT 

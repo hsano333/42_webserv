@@ -10,7 +10,7 @@
 #define WRITE_OPEN2 "</h1><hr><pre><a href=\""
 #define WRITE_OPEN3 "\">../</a>"
 
-#define WRITE_READING1 "<a href=\"" 
+#define WRITE_READING1 "<div style=\" display:flex;justify-content: space-between; padding:0px 30px; \"><a href=\"" 
 #define WRITE_READING2 "\">"
 #define WRITE_READING3 "</a>"
 

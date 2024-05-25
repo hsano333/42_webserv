@@ -122,7 +122,7 @@ int DirectoryFile::read(char **buf, size_t size)
     std::string tmp = WRITE_READING1 + uri + WRITE_READING2 + dirr->d_name + WRITE_READING3;
 
     std::stringstream ss;
-    ss  << std::setfill(' ') << std::left << std::setw(128) << tmp << date << " " << std::setfill(' ') << std::right << std::setw(8) << filesize_str << "<br>";
+    ss  << std::setfill(' ') << std::left << std::setw(128) << tmp << date << " " << std::setfill(' ') << std::right << std::setw(8) << filesize_str << "</div>";
     //ss  << std::setfill('\r') << std::left << std::setw(64) << tmp << "<br>";
     std::string returned_str = ss.str();
 
