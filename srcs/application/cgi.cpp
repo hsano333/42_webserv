@@ -23,11 +23,11 @@ int CGI::make_thread(int* fd_in, int* fd_out)
     int stdout_fd[2];
     int rval_in = pipe(stdin_fd);
     if (rval_in < 0) {
-        return 0;
+        return -1;
     }
     int rval_out = pipe(stdout_fd);
     if (rval_out < 0) {
-        return 0;
+        return -1;
     }
     pid_t pid = fork();
     if (pid == 0) {
@@ -39,7 +39,8 @@ int CGI::make_thread(int* fd_in, int* fd_out)
         dup2(stdout_fd[1], 1);
         close(stdout_fd[1]);
 
-    } else {
+    } else if(pid > 0) {
+        DEBUG("Child PID:" + Utility::to_string(pid));
         cout << "parent:close1:" << stdin_fd[0] << ", close2:" << stdout_fd[1] << endl;
         close(stdin_fd[0]);
         close(stdout_fd[1]);
@@ -133,6 +134,11 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     string const &query = req->req_line().uri().query();
     string const script_file_name = file_path.substr(file_path.rfind("/"));
 
+    /*
+    if(!(Utility::is_executable_file(file_path) || Utility::is_readable_file(file_path))){
+        throw HttpException("403");
+    }
+    */
 
     // checked in make_request_event
     //check_extension(file_path, config_cgi);
@@ -215,9 +221,9 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     */
 
 
-            DEBUG("CGI error file_path:" + Utility::to_string(file_path));
-            DEBUG("CGI error argv[0]:" + Utility::to_string(argv[0]));
-            DEBUG("CGI error argv[1]:" + Utility::to_string(argv[1]));
+    DEBUG("CGI error file_path:" + Utility::to_string(file_path));
+    DEBUG("CGI error argv[0]:" + Utility::to_string(argv[0]));
+    DEBUG("CGI error argv[1]:" + Utility::to_string(argv[1]));
 
     if (pid == 0) {
         //int rval = execve(file_path.c_str(), argv, environ);
@@ -227,6 +233,13 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
             ERROR("CGI error file_path:" + Utility::to_string(file_path));
             ERROR("CGI error argv[0]:" + Utility::to_string(argv[0]));
             ERROR("CGI error argv[1]:" + Utility::to_string(argv[1]));
+            //std::exit(EXIT_FAILURE);
+            //std::exit(0);
+            exit(1);
+            //130  118 0
+            //1     52 128
+            //2     123 0
+            //129   65 0
 
         }
         //cout << "rval2:" << rval << endl;

@@ -4,6 +4,7 @@
 
 void WebservEvent::update_time()
 {
+    DEBUG("update_time()");
     this->updated_time_ = std::time(NULL);
 }
 

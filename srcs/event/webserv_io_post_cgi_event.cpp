@@ -3,6 +3,8 @@
 #include "socket_file.hpp"
 #include "response.hpp"
 #include "error_file.hpp"
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <assert.h>
 
 
@@ -79,8 +81,8 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         if(is_completed){
         DEBUG("WebservIOPostCGIEvent::check_completed No.2 completed:" + Utility::to_string(is_completed));
             char tmp[2] = {0};
-            //tmp[0] = EOF;
-            tmp[0] = '\n';
+            tmp[0] = EOF;
+            //tmp[0] = '\n';
             char *tmp_p = tmp;
             int result = file->write(&tmp_p, 1);
             if(result <= 0){
@@ -121,6 +123,34 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
     }else{ //EPOLL_OUT
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
         flag = entity->response()->read_completed();
+
+            int wstatus;
+            int result = waitpid(entity->app_result()->pid().to_int(), &wstatus,   WNOWAIT );
+
+        if(result == -1){
+            DEBUG("waitpid ERROR");
+        }else{
+        DEBUG("WebservIOPostCGIEvent::check_completed EPOLLOUT No.2");
+
+
+            //flag = true;
+        if(result == -1){
+            DEBUG("waitpid ERROR");
+        }else{
+            if(WIFEXITED(wstatus)){
+                DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(wstatus)));
+            } else if (WIFSIGNALED(wstatus)) {
+                DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+            } else if (WIFSTOPPED(wstatus)) {
+                DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
+            } else if (WIFCONTINUED(wstatus)) {
+                DEBUG("continued\n");
+
+            }
+
+        }
+        }
+
     }
 
     DEBUG("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));

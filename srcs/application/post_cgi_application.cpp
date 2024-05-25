@@ -9,6 +9,8 @@
 #include "socket_writer.hpp"
 #include "socket_reader.hpp"
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 PostCGIApplication::PostCGIApplication() : method(Method::from_string("POST"))
 {
@@ -102,6 +104,44 @@ bool PostCGIApplication::execute(WebservEntity *entity)
     //std::string path_info = location->root() + "/" + req->tmp_path_info();
     ApplicationResult *result = this->cgi->execute(entity, this->which());
     entity->set_result(result);
+
+    /*
+
+
+        int wstatus;
+        ERROR("CGI post Child Process ERROR pid:" +  Utility::to_string(entity->app_result()->pid().to_int()));
+        int result_exe = waitpid(entity->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WNOHANG | WCONTINUED);
+        ERROR("CGI post Child Process ERROR result:" +  Utility::to_string(result_exe));
+
+        if(result_exe == -1){
+            ERROR("Child Process ERROR");
+            throw HttpException("500");
+        }
+
+            //flag = true;
+        if(WIFEXITED(wstatus)){
+            int exit_status = WEXITSTATUS(wstatus);
+            DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(exit_status)));
+            if(exit_status == EXIT_FAILURE){
+                DEBUG("Child EROOR!!!!!!!!!!!!!!!!!!!!!!");
+
+            }
+        } 
+        if (WIFSIGNALED(wstatus)) {
+            DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+            DEBUG("killed by  status=" + Utility::to_string(WCOREDUMP(wstatus)));
+        }
+        if (WIFSTOPPED(wstatus)) {
+            DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
+        }
+        if (WIFCONTINUED(wstatus)) {
+            DEBUG("continued\n");
+
+        }
+
+        */
+
+
     return (true);
 }
 

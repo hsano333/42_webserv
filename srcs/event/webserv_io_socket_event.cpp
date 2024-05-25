@@ -45,6 +45,7 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
 {
     DEBUG("WebservIOSocketEvent::as_write fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
+    //WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, event->entity());
     WebservEvent *new_event =  new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
     new_event->entity()->io().set_write_fd(write_fd);

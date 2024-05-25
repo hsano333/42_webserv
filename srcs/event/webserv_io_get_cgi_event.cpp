@@ -75,18 +75,27 @@ void WebservIOGetCGIEvent::check_completed(WebservEntity * entity)
     }else{ //EPOLL_OUT
         DEBUG("WebservIOCGIEvent::check_completed EPOLLOUT");
         flag = entity->response()->read_completed();
-        /*
         int wstatus;
+
         int result = waitpid(entity->app_result()->pid().to_int(), &wstatus,   WNOWAIT );
         DEBUG("WebservIOCGIEvent::check_completed EPOLLOUT No.1 result=" + Utility::to_string(result));
         if(result == -1){
             DEBUG("waitpid ERROR");
         }else{
-        DEBUG("WebservIOCGIEvent::check_completed EPOLLOUT No.2");
-            flag = true;
+        DEBUG("WebservIOGetCGIEvent::check_completed EPOLLOUT No.2");
+            //flag = true;
+            if(WIFEXITED(wstatus)){
+                DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(wstatus)));
+            } else if (WIFSIGNALED(wstatus)) {
+                DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+            } else if (WIFSTOPPED(wstatus)) {
+                DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
+            } else if (WIFCONTINUED(wstatus)) {
+                DEBUG("continued\n");
+
+            }
 
         }
-        */
     }
 
     MYINFO("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));

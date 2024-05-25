@@ -7,6 +7,8 @@
 #include "directory_file.hpp"
 #include "webserv_event.hpp"
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 GetCGIApplication::GetCGIApplication() : method(Method::from_string("GET"))
 {
@@ -62,6 +64,33 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     event->entity()->io().set_read_fd(result->cgi_in());
     event->entity()->io().set_write_fd(result->cgi_out());
 
+
+    /*
+    int wstatus;
+    ERROR("Child Process ERROR pid:" +  Utility::to_string(event->entity()->app_result()->pid().to_int()));
+    int result_exe = waitpid(event->entity()->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WNOHANG);
+    ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
+
+    if(result_exe == -1){
+        ERROR("Child Process ERROR");
+        throw HttpException("500");
+    }
+        //flag = true;
+        if(WIFEXITED(wstatus)){
+            DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(wstatus)));
+        } else if (WIFSIGNALED(wstatus)) {
+            DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+        } else if (WIFSTOPPED(wstatus)) {
+            DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
+        } else if (WIFCONTINUED(wstatus)) {
+            DEBUG("continued\n");
+        }
+        */
+
+
+
+
+
     return (event_factory->make_waiting_get_cgi(event));
     //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
     //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
@@ -78,8 +107,14 @@ bool GetCGIApplication::execute(WebservEntity *entity)
 {
     DEBUG("GetCGIApplication::execute");
     //(void)entity;
+    //
+
 
     ApplicationResult *result = this->cgi->execute(entity, this->which());
+
+
+
+
     entity->set_result(result);
     return (true);
 }

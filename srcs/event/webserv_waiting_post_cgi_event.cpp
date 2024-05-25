@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/25 03:00:13 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/25 23:27:54 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "response.hpp"
 #include "error_file.hpp"
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 
 WebservWaitingPostCGIEvent::WebservWaitingPostCGIEvent()
@@ -38,9 +40,38 @@ WebservWaitingPostCGIEvent *WebservWaitingPostCGIEvent::get_instance()
 }
 
 namespace myfunc{
-    bool check_completed(WebservWaitingPostCGIEvent *event, WebservEntity *entity)
+    bool check_error(WebservWaitingPostCGIEvent *event, WebservEntity *entity)
     {
         event->check_completed(entity);
+
+    int wstatus = 0;
+    siginfo_t info;
+    (void)info;
+    ERROR("check error Child Process ERROR pid:" +  Utility::to_string(entity->app_result()->pid().to_int()));
+    //int result_exe = waitpid(entity->app_result()->pid().to_int(), &wstatus,  WNOHANG  | WUNTRACED | WCONTINUED);
+    int result_exe = waitpid(entity->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
+    ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
+    ERROR("Child Process ERROR status:" +  Utility::to_string(wstatus));
+
+    if(result_exe == -1){
+        ERROR("Child Process ERROR");
+        //throw HttpException("500");
+    }
+        //flag = true;
+        if(WIFEXITED(wstatus)){
+            DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(wstatus)));
+        } 
+        if (WIFSIGNALED(wstatus)) {
+            DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+        } 
+        if (WIFSTOPPED(wstatus)) {
+            DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
+        } 
+        if (WIFCONTINUED(wstatus)) {
+            DEBUG("continued\n");
+        }
+
+
         return (true);
     }
 }
@@ -48,9 +79,51 @@ namespace myfunc{
 
 WebservEvent *WebservWaitingPostCGIEvent::from_event(WebservEvent * event)
 {
-    DEBUG("WebservWaitingCGIInEvent::from_fd");
+    DEBUG("WebservWaitingCGIInEvent::from_event");
     WebservWaitingPostCGIEvent *io_event = WebservWaitingPostCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, myfunc::check_completed, event->entity());
+    WebservEvent *new_event =  new WebservEvent( io_event, myfunc::check_error, event->entity());
+
+    /*
+        int wstatus;
+        ERROR("Waiting post Child Process ERROR pid:" +  Utility::to_string(event->entity()->app_result()->pid().to_int()));
+        int result_exe = waitpid(event->entity()->app_result()->pid().to_int(), &wstatus,   WNOHANG  | WUNTRACED | WCONTINUED);
+        ERROR("Waiting post Child Process ERROR result:" +  Utility::to_string(result_exe));
+
+        if(result_exe == -1){
+            ERROR("Child Process ERROR");
+            throw HttpException("500");
+        }
+
+            //flag = true;
+        if(WIFEXITED(wstatus)){
+            int exit_status = WEXITSTATUS(wstatus);
+            DEBUG("waiting killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+            DEBUG("waitng killed by  status=" + Utility::to_string(WCOREDUMP(wstatus)));
+            if(exit_status == EXIT_FAILURE){
+                DEBUG("Child EROOR!!!!!!!!!!!!!!!!!!!!!!");
+
+            }
+        } 
+        if (WIFSIGNALED(wstatus)) {
+            DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
+            DEBUG("checked killed by  status=" + Utility::to_string(WCOREDUMP(wstatus)));
+            DEBUG("EXIT_FAIGLURE=" + Utility::to_string(EXIT_FAILURE));
+            if(WCOREDUMP(wstatus) == EXIT_FAILURE)
+            {
+                DEBUG("ERRORRR!!!!!!!!!!!!!!!!!");
+            }
+        }
+        if (WIFSTOPPED(wstatus)) {
+            DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
+        }
+        if (WIFCONTINUED(wstatus)) {
+            DEBUG("continued\n");
+
+        }
+
+
+        */
+
     return (new_event);
 }
 
