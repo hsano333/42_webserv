@@ -18,4 +18,6 @@
 #define CHUNKED "chunked"
 #define CONTENT_DISPOSITION "content-disposition"
 
+#define ALLOW "allow"
+
 #endif

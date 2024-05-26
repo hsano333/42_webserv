@@ -35,6 +35,7 @@
 #define MESSAGE401 ("Unauthorized")
 #define MESSAGE403 ("Forbidden")
 #define MESSAGE404 ("Not Found")
+#define MESSAGE405 ("Method Not Allowed")
 #define MESSAGE408 ("Request Timeout")
 #define MESSAGE500 ("Internal Server Error")
 #define MESSAGE503 ("Service Unavailable")

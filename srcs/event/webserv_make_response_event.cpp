@@ -88,7 +88,7 @@ Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *res
 
 }
 
-Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
+Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, WebservEntity *entity)
 {
     DEBUG("WebservMakeResponseEvent::make_response()");
     StatusCode code = result->status_code();
@@ -125,6 +125,17 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result)
         //res->add_header(CONTENT_LENGTH, "0");
     }
 
+    if(code.to_int() == 405){
+        const Config *cfg = entity->config();
+        Request const *req = entity->request();
+        ConfigServer const *server = entity->config()->get_server(req);
+        ConfigLocation const *location = cfg->get_location(server, req);
+        ConfigLimit const *limit = location->limit();
+        std::string allowed_methods = limit->allowed_method_str();
+
+        res->add_header(ALLOW, allowed_methods);
+    }
+
     DEBUG("WebservMakeResponseEvent::make_response() No.6");
     return (res);
 }
@@ -137,7 +148,7 @@ Response *WebservMakeResponseEvent::make(WebservEntity *entity)
     if(result->is_cgi()){
         res = make_response_for_cgi(result, entity);
     }else{
-        res = make_response(result);
+        res = make_response(result, entity);
     }
     return (res);
 }

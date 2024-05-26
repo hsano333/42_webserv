@@ -36,10 +36,6 @@ ErrorFile* ErrorFile::from_status_code(StatusCode const &code)
 </div>";
 
     file->text = str1 + code.to_string() + str2 + string(code.message()) + str3;
-    //j.file->text = str1;
-    //std::cout << code.to_string() << std::endl;
-    //cout << "str:" << page.text << endl;
-
     return (file);
 }
 

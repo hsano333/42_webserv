@@ -95,6 +95,21 @@ std::vector<Method> const & ConfigLimit::allowed_method() const
     return (allowed_method_);
 }
 
+std::string ConfigLimit::allowed_method_str() const
+{
+
+    if(allowed_method_.size() == 0){
+        return "";
+    }
+
+    std::string method_string = allowed_method_[0].to_string();
+    for(size_t i=1;i<allowed_method_.size();i++){
+        method_string += " ";
+        method_string += allowed_method_[i].to_string();
+    }
+    return (method_string);
+}
+
 std::vector<std::pair<CIDR, bool> > const & ConfigLimit::allowed_cidr() const
 {
     return (allowd_cidr);

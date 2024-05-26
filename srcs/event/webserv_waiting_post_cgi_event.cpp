@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/26 02:58:15 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/26 22:37:30 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,11 +231,12 @@ E_EpollEvent WebservWaitingPostCGIEvent::epoll_event(WebservEvent *event)
         if(file->can_read()){
             return (EPOLL_NONE);
         }
-        return (EPOLL_READ);
+        //READ
+        return (EPOLL_READ_FOR_POST_CGI);
     }else{
         DEBUG("WebservWaitingPostCGIEvent::epoll_event() WRITE");
         //WebservFile *file = event->entity()->io().destination_for_write();
-        return (EPOLL_WRITE);
+        return (EPOLL_WRITE_FOR_POST_CGI);
     }
 
     /*

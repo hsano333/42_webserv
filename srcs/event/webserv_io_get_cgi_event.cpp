@@ -61,7 +61,6 @@ E_EpollEvent WebservIOGetCGIEvent::epoll_event(WebservEvent *event)
 
 void WebservIOGetCGIEvent::check_completed(WebservEntity * entity)
 {
-
     // copy from WebservIOSocketEvent
     size_t total_size = entity->io().destination()->size();
     DEBUG("WebservIOGetCGIEvent::check_completed size=" + Utility::to_string(total_size));

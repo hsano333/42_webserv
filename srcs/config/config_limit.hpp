@@ -20,6 +20,7 @@ class ConfigLimit : public ConfigObject<ConfigCgi*>
         void push_all(std::vector<ConfigCgi*> const &vec);
         void check();
 
+        std::string allowed_method_str() const;
         std::vector<Method> const & allowed_method() const;
         std::vector<std::pair<CIDR, bool> > const &allowed_cidr() const;
         //void assign_properties();

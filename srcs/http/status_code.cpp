@@ -57,6 +57,8 @@ const char* StatusCode::message() const
             return MESSAGE403;
         case 404:
             return MESSAGE404;
+        case 405:
+            return MESSAGE405;
         case 408:
             return MESSAGE408;
         case 500:

@@ -21,7 +21,7 @@ class WebservMakeResponseEvent
         WebservMakeResponseEvent();
         static WebservMakeResponseEvent *singleton;
         static WebservMakeResponseEvent *get_instance();
-        Response *make_response(ApplicationResult *result);
+        Response *make_response(ApplicationResult *result, WebservEntity *entity);
         Response *make_response_for_cgi(ApplicationResult *result, WebservEntity *entity);
         bool check_body_size(Request *req, const ConfigServer *server);
         void parse_req(WebservEvent *event);
