@@ -2,7 +2,7 @@
 #include "request.hpp"
 #include "response.hpp"
 
-WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL), completed_(false), force_close_(false)
+WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL), completed_(false), force_close_(false),event_error_(None)
 {
     DEBUG("WebservEntity() Constructor");
 }
@@ -14,12 +14,12 @@ WebservEntity::~WebservEntity()
 
 
 // fd,socket_fdはコピーする
-WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_(NULL), app_result_(NULL), completed_(false), force_close_(false)
+WebservEntity::WebservEntity(FileDiscriptor &fd, FileDiscriptor &socket_fd, Config *cfg) : fd_(fd), sock_fd_(socket_fd), req_(NULL), res_(NULL), cfg_(cfg), app_(NULL), app_result_(NULL), completed_(false), force_close_(false),event_error_(None)
 {
     DEBUG("WebservEntity::WebservEntity Constructor from fd");
 }
 
-WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_(entity.app_), app_result_(entity.app_result_), completed_(entity.completed_), force_close_(entity.force_close_)
+WebservEntity::WebservEntity(WebservEntity const &entity) : fd_(entity.fd_), sock_fd_(entity.sock_fd_), req_(entity.req_), res_(entity.res_), cfg_(entity.cfg_), app_(entity.app_), app_result_(entity.app_result_), completed_(entity.completed_), force_close_(entity.force_close_),event_error_(None)
 {
     DEBUG("WebservEntity() Copy Constructor");
 }
@@ -143,4 +143,14 @@ void WebservEntity::set_body(Body &body)
 void WebservEntity::set_force_close(bool flag)
 {
     this->force_close_ = flag;
+}
+
+EventError WebservEntity::event_error()
+{
+    return (this->event_error_);
+}
+
+void WebservEntity::set_event_error(EventError error)
+{
+    this->event_error_ = error;
 }

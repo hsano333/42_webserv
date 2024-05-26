@@ -6,6 +6,7 @@
 #include "MutantStack.hpp"
 #include <stack>
 #include <queue>
+#include <set>
 
 class WebservEvent;
 class WebservCleaner;
@@ -25,9 +26,10 @@ class EventManager
         bool check_timeout();
         void close_all_events_waiting_epoll(WebservCleaner *cleaner);
         void close_all_events();
-        void retrieve_timeout_events(std::vector<WebservEvent *> &event_return);
+        void retrieve_clean_events(std::set<WebservEvent *> &event_return);
         bool find(FileDiscriptor &fd);
     private:
+        // simple deque with iterator
         MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::deque<WebservEvent*> > events;
         std::map<FileDiscriptor, WebservEvent*> events_waiting_epoll;
 };

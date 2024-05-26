@@ -30,11 +30,16 @@ WebservCleaner::~WebservCleaner()
 void WebservCleaner::clean_timeout_events()
 {
     DEBUG("WebservCleaner::clean_timeout_events()");
-    std::vector<WebservEvent *> timeout_events;
+    std::set<WebservEvent *> timeout_events;
 
-    this->event_manager->retrieve_timeout_events(timeout_events);
-    for(size_t i=0;i<timeout_events.size();i++){
-        this->clean(timeout_events[i]->entity(), true);
+    this->event_manager->retrieve_clean_events(timeout_events);
+
+    std::set<WebservEvent *>::iterator ite = timeout_events.begin();
+    std::set<WebservEvent *>::iterator end = timeout_events.end();
+
+    //for(size_t i=0;i<timeout_events.size();i++){
+    while(ite != end){
+        this->clean((*ite)->entity(), true);
     }
 }
 

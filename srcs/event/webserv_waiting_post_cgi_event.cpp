@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/25 23:27:54 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/26 02:58:15 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,14 @@ namespace myfunc{
     {
         event->check_completed(entity);
 
+    /*
     int wstatus = 0;
     siginfo_t info;
     (void)info;
     ERROR("check error Child Process ERROR pid:" +  Utility::to_string(entity->app_result()->pid().to_int()));
     //int result_exe = waitpid(entity->app_result()->pid().to_int(), &wstatus,  WNOHANG  | WUNTRACED | WCONTINUED);
+    //
+    while(1){
     int result_exe = waitpid(entity->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
     ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
     ERROR("Child Process ERROR status:" +  Utility::to_string(wstatus));
@@ -60,7 +63,13 @@ namespace myfunc{
         //flag = true;
         if(WIFEXITED(wstatus)){
             DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(wstatus)));
-        } 
+        }   
+        if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {
+            DEBUG("execve failed");
+          }
+
+
+
         if (WIFSIGNALED(wstatus)) {
             DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
         } 
@@ -70,6 +79,9 @@ namespace myfunc{
         if (WIFCONTINUED(wstatus)) {
             DEBUG("continued\n");
         }
+        //sleep(1);
+    }
+    */
 
 
         return (true);

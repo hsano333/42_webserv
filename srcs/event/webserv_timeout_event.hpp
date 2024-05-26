@@ -14,13 +14,13 @@ class WebservTimeoutEvent
         E_EpollEvent epoll_event(WebservEvent *event);
         FDManager *fd_manager;
         EventManager *event_manager;
-        //WebservCleaner *cleaner() const;
         void        check_completed(WebservEntity * entity);
+        WebservEvent *from_event(WebservEvent *event);
+        
 
     private:
         WebservTimeoutEvent();
         static WebservTimeoutEvent *singleton;
         static WebservTimeoutEvent *get_instance();
-        //WebservCleaner *cleaner_;
 };
 #endif

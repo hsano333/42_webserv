@@ -6,6 +6,14 @@
 #include "webserv_io.hpp"
 #include "body.hpp"
 
+typedef enum E_Error
+{
+    None,
+    Timeout,
+    DiedChild,
+} EventError;
+
+
 class Application;
 class WebservEntity
 {
@@ -36,6 +44,8 @@ class WebservEntity
         bool completed(){return this->completed_;};
         bool force_close();
         void set_body(Body &body);
+        EventError event_error();
+        void set_event_error(EventError error);
     private:
         FileDiscriptor fd_;
         FileDiscriptor sock_fd_;
@@ -49,6 +59,8 @@ class WebservEntity
         bool completed_;
         bool force_close_;
         Body body_;
+        EventError event_error_;
+
 
 };
 #endif

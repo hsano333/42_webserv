@@ -129,24 +129,36 @@ bool EventManager::check_timeout()
     return (false);
 }
 
-void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_return)
+void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
 {
     std::time_t now = std::time(NULL);
     DEBUG("retrieve_timeout_events()");
     {
-        std::vector<FileDiscriptor> tmp_fds;
+        std::vector<FileDiscriptor> timeout_fds;
+        std::vector<FileDiscriptor> execve_error_fds;
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
             if(ite->second->check_timeout(now)){
-                tmp_fds.push_back(ite->first);
+                ite->second->entity()->set_event_error(Timeout);
+                timeout_fds.push_back(ite->first);
+            }
+            if(ite->second->check_died_child()){
+                ite->second->entity()->set_event_error(DiedChild);
+                execve_error_fds.push_back(ite->first);
             }
             ite++;
         }
-        for(size_t i=0;i<tmp_fds.size();i++){
-            WebservEvent *event = this->pop_event_waiting_epoll(tmp_fds[i]);
+        for(size_t i=0;i<execve_error_fds.size();i++){
+            WebservEvent *event = this->pop_event_waiting_epoll(execve_error_fds[i]);
             if(event != NULL){
-                event_return.push_back(event);
+                event_return.insert(event);
+            }
+        }
+        for(size_t i=0;i<timeout_fds.size();i++){
+            WebservEvent *event = this->pop_event_waiting_epoll(timeout_fds[i]);
+            if(event != NULL){
+                event_return.insert(event);
             }
         }
     }
@@ -157,8 +169,10 @@ void EventManager::retrieve_timeout_events(std::vector<WebservEvent *> &event_re
         {
             WebservEvent *event = this->pop_first();
             if(event->check_timeout(now)){
-                event_return.push_back(event);
+                event->entity()->set_event_error(Timeout);
+                event_return.insert(event);
             }else{
+                event->entity()->set_event_error(DiedChild);
                 event_saved.push_back(event);
             }
         }

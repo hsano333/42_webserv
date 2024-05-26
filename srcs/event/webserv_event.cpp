@@ -1,6 +1,8 @@
 #include "webserv_event.hpp"
 #include "global.hpp"
 #include "socket_reader.hpp"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 void WebservEvent::update_time()
 {
@@ -21,3 +23,20 @@ bool WebservEvent::check_timeout(std::time_t now)
     return (diff >= TIMEOUT);
 }
 
+bool WebservEvent::check_died_child()
+{
+    if(this->entity_ && this->entity_->app_result() && this->entity_->app_result()->is_cgi()){
+        int wstatus = 0;
+        DEBUG("WebservEvent::check_died_child");
+        waitpid(this->entity_->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
+        //ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
+        ERROR("Child Process ERROR status:" +  Utility::to_string(wstatus));
+
+        if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {
+            MYINFO("WebservEvent::check_died_child True");
+            return (true);
+        }
+    }
+    MYINFO("WebservEvent::check_died_child False");
+    return (false);
+}

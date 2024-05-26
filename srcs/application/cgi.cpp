@@ -134,11 +134,9 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     string const &query = req->req_line().uri().query();
     string const script_file_name = file_path.substr(file_path.rfind("/"));
 
-    /*
     if(!(Utility::is_executable_file(file_path) || Utility::is_readable_file(file_path))){
         throw HttpException("403");
     }
-    */
 
     // checked in make_request_event
     //check_extension(file_path, config_cgi);

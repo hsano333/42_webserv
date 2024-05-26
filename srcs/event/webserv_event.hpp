@@ -73,6 +73,7 @@ class WebservEvent
         void update_time();
         std::time_t last_updated_time();
         bool check_timeout(std::time_t now);
+        bool check_died_child();
 
 
         E_EpollEvent epoll_event()
