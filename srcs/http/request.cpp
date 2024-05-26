@@ -57,7 +57,11 @@ Request::Request(FileDiscriptor const &fd) :
     is_file_(false),
     is_directory_(false),
     is_not_executable_parent_dir_(false),
-    read_body_size_(0)
+    is_deletable_parent_dir_(false),
+    read_completed_(false),
+    is_cgi_(false),
+    read_body_size_(0),
+    has_body_(false)
     //source_file(NULL)
     //is_redable_darectory(false)
 {
@@ -520,6 +524,17 @@ WebservFile *Request::file()
 {
     return (this->file_);
 }
+
+void Request::set_has_body(bool flag)
+{
+    this->has_body_ = flag;
+}
+
+bool Request::has_body()
+{
+    return (this->has_body_);
+}
+
 
 void Request::print_info() const
 {

@@ -70,6 +70,9 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
         ERROR("Invalid Request Content-Length:" + header.get_content_length_str());
         throw HttpException("400");
     }
+    if(content_len > 0){
+        req->set_has_body(true);
+    }
 
     size_t cur_body_size = 0;
     req->get_buf_body(&cur_body_size);
@@ -79,7 +82,7 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
     bool is_chunk = header.is_chunked();
 
     if(!is_chunk){
-        if(content_len < 0 && cur_body_size > 0){
+        if(content_len <= 0 && cur_body_size > 0){
             ERROR("Invalid Request. Content-Length is not set but body exist. body size:" + Utility::to_string(cur_body_size));
             throw HttpException("411");
         }
@@ -87,6 +90,8 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
             ERROR("Invalid Request. Content-Length is more than " + Utility::to_string(max_body_size));
             throw HttpException("413");
         }
+    }else{
+        req->set_has_body(true);
     }
 
     return (true);

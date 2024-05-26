@@ -35,8 +35,10 @@
 #define MESSAGE401 ("Unauthorized")
 #define MESSAGE403 ("Forbidden")
 #define MESSAGE404 ("Not Found")
+#define MESSAGE408 ("Request Timeout")
 #define MESSAGE500 ("Internal Server Error")
 #define MESSAGE503 ("Service Unavailable")
+#define MESSAGE504 ("Gateway Timeout")
 #define MESSAGEUnknown ("Unknown Status")
 
 

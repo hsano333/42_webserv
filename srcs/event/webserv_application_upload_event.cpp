@@ -90,6 +90,7 @@ void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
     DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(is_completed));
     DEBUG("WebservApplicationUploadEvent::total_size :" + Utility::to_string(total_size));
     entity->set_completed(is_completed);
+    entity->request()->set_read_completed(true);
 
     if(is_completed){
         char *tmp = NULL;

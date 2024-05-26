@@ -87,6 +87,8 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
             int result = file->write(&tmp_p, 1);
             if(result <= 0){
                 is_completed = false;
+            }else{
+                entity->request()->set_read_completed(true);
             }
         }
         entity->set_completed(is_completed);
@@ -124,6 +126,7 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
         flag = entity->response()->read_completed();
 
+        /*
             int wstatus;
             int result = waitpid(entity->app_result()->pid().to_int(), &wstatus,   WNOWAIT );
 
@@ -150,6 +153,7 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
 
         }
         }
+        */
 
     }
 

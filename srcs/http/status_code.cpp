@@ -57,10 +57,14 @@ const char* StatusCode::message() const
             return MESSAGE403;
         case 404:
             return MESSAGE404;
+        case 408:
+            return MESSAGE408;
         case 500:
             return MESSAGE500;
         case 503:
             return MESSAGE503;
+        case 504:
+            return MESSAGE504;
         default:
             return MESSAGEUnknown;
     }

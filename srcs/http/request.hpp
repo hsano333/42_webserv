@@ -69,6 +69,9 @@ class Request
         bool    is_cgi();
         void    set_cgi(bool flag);
 
+        void set_has_body(bool flag);
+        bool has_body();
+
         //void    set_buf_pos(size_t pos);
         //
         //
@@ -142,6 +145,7 @@ class Request
         //std::vector<char> tmp_buf;
         bool            is_cgi_;
         size_t          read_body_size_;
+        bool            has_body_;
         //BufferController buffer;
         //File *source;
 
