@@ -149,7 +149,7 @@ void Webserv::communication()
 
             if(this->cleaner->delete_event(event, next_event)){
                 cnt++;
-                if(cnt > 1){
+                if(cnt > 2){
                     DEBUG("exit_flag True");
                     exit_flag = true;
                 }

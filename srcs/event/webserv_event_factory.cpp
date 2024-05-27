@@ -101,7 +101,9 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
+                //if(cached_event && cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
+                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event");
                     delete cached_event;
                 }
 
@@ -112,6 +114,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 }catch(...){
 
                 }
+                DEBUG("new entity address:" + Utility::to_string(entity));
                 entity->config()->check();
                 FileDiscriptor const &fd_ref = entity->fd();
                 WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, fd_ref, socket_writer, socket_reader);

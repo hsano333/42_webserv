@@ -40,7 +40,9 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     event_manager->erase_events_will_deleted(fd);
 
     if(entity){
+        DEBUG("delete entity in clean event address::" + Utility::to_string(entity));
         delete entity;
+        DEBUG("end delete entity in clean event");
     }
 
     // except keep-alive
