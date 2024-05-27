@@ -46,6 +46,9 @@ class WebservEntity
         void set_body(Body &body);
         EventError event_error();
         void set_event_error(EventError error);
+
+        void set_error_code(StatusCode &code);
+        StatusCode &error_code();
     private:
         FileDiscriptor fd_;
         FileDiscriptor sock_fd_;
@@ -60,6 +63,7 @@ class WebservEntity
         bool force_close_;
         Body body_;
         EventError event_error_;
+        StatusCode error_code_;
 
 
 };

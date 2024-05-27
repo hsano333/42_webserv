@@ -53,7 +53,7 @@ class WebservEventFactory
         WebservEvent *make_making_request_event(WebservEvent *event);
         WebservEvent *make_making_response_for_post_cgi_event(WebservEvent *event);
         WebservEvent *make_making_response_for_get_cgi_event(WebservEvent *event);
-        WebservEvent *make_making_response_event(WebservEvent *event, WebservFile *src);
+        WebservEvent *make_making_response_event(WebservEvent *event, WebservFile *src, WebservFile *dst);
         WebservEvent *make_application_event(WebservEvent *event);
         WebservEvent *make_making_upload_event(WebservEvent *event, WebservFile *src);
         void          make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req);

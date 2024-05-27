@@ -53,7 +53,7 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
 
     if(event->entity()->app_result()->status_code() == 200){
         DEBUG("WebservApplicationUploadEvent:: 200 OK");
-        return event_factory->make_making_response_event(event, NULL);
+        return event_factory->make_making_response_event(event, NULL, NULL);
     }else{
         DEBUG("WebservApplicationUploadEvent:: 207 Multi Response");
        WebservFileFactory *file_factory = WebservFileFactory::get_instance();
@@ -63,7 +63,7 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
         WebservFile *chunk_file = file_factory->make_socket_chunk_file_for_write(event->entity()->fd(), multi_file);
         chunk_file->set_chunk(true);
         result->set_file(chunk_file);
-        return event_factory->make_making_response_event(event, chunk_file);
+        return event_factory->make_making_response_event(event, chunk_file, NULL);
     }
 }
 

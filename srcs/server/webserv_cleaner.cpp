@@ -29,7 +29,7 @@ WebservCleaner::~WebservCleaner()
 
 void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 {
-    DEBUG("WebservCleaner::clean()");
+    DEBUG("WebservCleaner::clean() force_close:" + Utility::to_string(force_close));
 
     FileDiscriptor const &fd = entity->fd();
 

@@ -2,20 +2,23 @@
 #include "request.hpp"
 #include "response.hpp"
 
-WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL), completed_(false), force_close_(false),event_error_(None)
+WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL), completed_(false), force_close_(false),event_error_(None), error_code_(StatusCode::from_int(0))
 {
     DEBUG("WebservEntity() Constructor");
 }
 
 WebservEntity::~WebservEntity()
 {
-    DEBUG("WebservEntity() Destructor");
+    DEBUG("WebservEntity() Destructor request address:" + Utility::to_string(this->req_));
     if(this->req_)
         delete this->req_;
+    DEBUG("WebservEntity() Destructor No.1 response address:" + Utility::to_string(this->res_));
     if(this->res_)
         delete this->res_;
+    DEBUG("WebservEntity() Destructor No.2");
     if(this->app_result_)
         delete this->app_result_;
+    DEBUG("WebservEntity() Destructor No.3");
     //delete this->app_;
 }
 
@@ -64,6 +67,10 @@ void WebservEntity::set_result(ApplicationResult *result)
     if(this->app_result_ == result){
         return ;
     }
+    if(this->app_result_){
+        delete this->app_result_;
+
+    }
     this->app_result_ = result;
 }
 
@@ -80,8 +87,14 @@ void WebservEntity::set_request(Request *req)
 
 void WebservEntity::set_response(Response *res)
 {
+    DEBUG("WebservEntity::set_response address:" + Utility::to_string(res));
     if(this->res_ == res){
         return ;
+    }
+    DEBUG("WebservEntity::set_response No.1 address:" + Utility::to_string(res));
+    if(this->res_){
+        DEBUG("WebservEntity::set_response No.2 delete old address:" + Utility::to_string(this->res_));
+        delete this->res_;
     }
     this->res_ = res;
 }
@@ -164,3 +177,14 @@ void WebservEntity::set_event_error(EventError error)
 {
     this->event_error_ = error;
 }
+
+void WebservEntity::set_error_code(StatusCode &code)
+{
+    this->error_code_ = code;
+}
+
+StatusCode &WebservEntity::error_code()
+{
+    return (this->error_code_);
+}
+

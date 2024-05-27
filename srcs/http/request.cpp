@@ -78,6 +78,7 @@ Request::~Request()
 Request *Request::from_fd(FileDiscriptor const &fd)
 {
     Request *req = new Request(fd);
+    DEBUG("Request::from_fd reques address:" + Utility::to_string(req));
     //req->fd_ = fd;
     //req->sockfd_ = sockfd;
     return (req);

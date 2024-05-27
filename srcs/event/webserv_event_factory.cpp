@@ -21,6 +21,7 @@
 #include "webserv_waiting_post_cgi_event.hpp"
 #include "webserv_make_response_for_get_cgi_event.hpp"
 #include "webserv_make_response_for_post_cgi_event.hpp"
+#include "webserv_error_event.hpp"
 
 WebservEventFactory::WebservEventFactory(
         Config *cfg,
@@ -271,10 +272,10 @@ WebservEvent *WebservEventFactory::make_making_response_for_post_cgi_event(Webse
     return (new_event);
 }
 
-WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, WebservFile *src)
+WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *event, WebservFile *src, WebservFile *dst)
 {
     DEBUG("WebservEventFactory::make_making_response_event");
-    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, NULL);
+    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, dst);
 
     return (new_event);
 }
@@ -310,9 +311,10 @@ WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event,
 WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *event, char const *code_c)
 {
     DEBUG("WebservEventFactory::make_event_from_http_error");
-    Response const *res = event->entity()->response();
-    if(res){
-        delete res;
+    /*
+    Response const *current_res = event->entity()->response();
+    if(current_res){
+        delete current_res;
     }
 
     std::string code_str = code_c;
@@ -335,6 +337,16 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
 
     WebservFile *result_file = this->file_factory->make_webserv_file_regular(event->entity()->fd(), result);
     WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, result_file, dst);
+    */
+
+    std::string code_str = code_c;
+    StatusCode code;
+    try{
+        code = StatusCode::from_string(code_str);
+    }catch (std::runtime_error &e){
+        code = StatusCode::from_string("500");
+    }
+    WebservEvent *new_event = WebservErrorEvent::from_event(event, code);
     return (new_event);
 }
 

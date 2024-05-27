@@ -231,16 +231,22 @@ bool WebservMakeRequestEvent::check_cgi(const Request *req, const ConfigLocation
 
 Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
 {
-    DEBUG("WebservMakeRequestEvent::make_request()");
     Request *req = Request::from_fd(entity->fd());
-    this->parse_request(req, entity->io().source());
+    DEBUG("WebservMakeRequestEvent::make_request() address:" + Utility::to_string(req));
+    try{
+        this->parse_request(req, entity->io().source());
 
-    const ConfigServer *server = entity->config()->get_server(req);
-    const ConfigLocation *location = entity->config()->get_location(server, req);
+        const ConfigServer *server = entity->config()->get_server(req);
+        const ConfigLocation *location = entity->config()->get_location(server, req);
 
-    req->set_requested_filepath(location);
-    this->check_body_size(req, server);
-    req->set_cgi(check_cgi(req, location));
+        req->set_requested_filepath(location);
+        this->check_body_size(req, server);
+        req->set_cgi(check_cgi(req, location));
+    }catch(HttpException &e){
+        ERROR("WebservMakeRequestEvent::make_request:" + Utility::to_string(e.what()));
+        delete req;
+        throw HttpException(e.what());
+    }
 
     return (req);
 }

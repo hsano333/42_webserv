@@ -84,21 +84,25 @@ void Webserv::communication()
             try{
                 DEBUG("start handle() event address:" + Utility::to_string(event));
                 handle(event);
-                if(event->entity()->completed()){
-                    next_event = make_next_event(event, this->event_factory);
-                    DEBUG("new event:"  + Utility::to_string(next_event));
-                }else{
-                    DEBUG("next is same event");
-                    next_event = event;
-                }
-                event_controller->set_next_epoll_event(event, next_event);
             }catch(ConnectionException &e){
-                ERROR(e.what());
-                next_event = this->event_factory->make_clean_event(event, true);
-                this->event_manager->push(next_event);
+                ERROR("onnectionException:" + Utility::to_string(e.what()));
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
+
+                //event = this->event_factory->make_event_from_http_error(event, e.what());
+                event = this->event_factory->make_clean_event(event, true);
+                handle(event);
+                //this->event_manager->push(next_event);
             }catch(HttpException &e){
                 ERROR("HttpException:" + Utility::to_string(e.what()));
-                next_event = this->event_factory->make_event_from_http_error(event, e.what());
+
+                // delete current event, and make new event for error process;
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
+                event = this->event_factory->make_event_from_http_error(event, e.what());
+                handle(event);
+                //delete event;
+                //event = error_event;
+
+                /*
                 this->event_manager->push(next_event);
                 try{
                     this->event_controller->change_write_event(next_event);
@@ -107,25 +111,45 @@ void Webserv::communication()
                     next_event = this->event_factory->make_clean_event(event, true);
                     this->event_manager->push(next_event);
                 }
+                */
             }catch(std::runtime_error &e){
                 WARNING("Wevserv RuntimeError:");
                 WARNING(e.what());
                 next_event = this->event_factory->make_clean_event(event, false);
-                this->event_manager->push(next_event);
+                //this->event_manager->push(next_event);
             }catch(std::invalid_argument &e){
                 WARNING("Wevserv InvalidArgument:");
                 WARNING(e.what());
                 next_event = this->event_factory->make_clean_event(event, false);
-                event_manager->push(next_event);
+                //event_manager->push(next_event);
             }catch(std::exception &e){
                 WARNING("Wevserv Exception:");
                 WARNING(e.what());
                 next_event = this->event_factory->make_clean_event(event, false);
-                event_manager->push(next_event);
+                //event_manager->push(next_event);
             }
+
+
+            try{
+                if(event->entity()->completed()){
+                    next_event = make_next_event(event, this->event_factory);
+                    DEBUG("new event:"  + Utility::to_string(next_event));
+                }else{
+                    DEBUG("next is same event");
+                    next_event = event;
+                }
+                event_controller->set_next_epoll_event(event, next_event);
+            }catch(std::runtime_error &e){
+                WARNING("Making Nexe Event Exception:");
+                WARNING(e.what());
+                next_event = this->event_factory->make_clean_event(event, true);
+                this->event_manager->push(next_event);
+                this->event_controller->change_write_event(next_event);
+            }
+
             if(this->cleaner->delete_event(event, next_event)){
                 cnt++;
-                if(cnt > 5){
+                if(cnt > 1){
                     DEBUG("exit_flag True");
                     exit_flag = true;
                 }

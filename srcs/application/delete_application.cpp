@@ -80,7 +80,7 @@ void DeleteApplication::execute_cgi()
 
 WebservEvent* DeleteApplication::next_event(WebservEvent *event, WebservEventFactory *event_factory)
 {
-    return (event_factory->make_making_response_event(event, event->entity()->io().destination()));
+    return (event_factory->make_making_response_event(event, event->entity()->io().destination(), NULL));
 }
 
 E_EpollEvent DeleteApplication::epoll_event(WebservEntity *entity)

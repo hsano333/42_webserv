@@ -232,7 +232,7 @@ void EventManager::erase_events_will_deleted(FileDiscriptor const &fd)
         std::set<WebservEvent*>::iterator ite_event = ite->second.begin();
         std::set<WebservEvent*>::iterator end_event = ite->second.end();
         while(ite_event != end_event){
-            DEBUG("delete erase_events_will_deleted");
+            DEBUG("delete erase_events_will_deleted address:" + Utility::to_string(*ite_event));
             delete *ite_event;
             ite_event++;
         }

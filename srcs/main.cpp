@@ -68,6 +68,7 @@
 #include "post_application.hpp"
 #include "post_cgi_application.hpp"
 #include "delete_application.hpp"
+#include "webserv_error_event.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -110,6 +111,8 @@ void server(Webserv& webserv)
 void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
 {
     DEBUG("clean_all()");
+    (void)cleaner;
+    (void)event_manager;
     event_manager->close_all_events_waiting_epoll(cleaner);
     //event_manager->close_all_events();
 }
@@ -278,13 +281,15 @@ int main(int argc, char const* argv[])
     delete WebservWaitingGetCGIEvent::get_instance();
     delete WebservWaitingPostCGIEvent::get_instance();
     */
+    DEBUG("end server communication loop No.1");
     WebservApplicationEvent::delete_myself();
     WebservApplicationUploadEvent::delete_myself();
     WebservCleanEvent::delete_myself();
+    DEBUG("end server communication loop No.12");
     WebservIOGetCGIEvent::delete_myself();
     WebservIOPostCGIEvent::delete_myself();
     WebservIOSocketEvent::delete_myself();
-    WebservIOSocketEvent::delete_myself();
+    DEBUG("end server communication loop No.13");
     WebservMakeRequestEvent::delete_myself();
     WebservMakeResponseEvent::delete_myself();
     WebservMakeResponseForGetCGIEvent::delete_myself();
@@ -292,9 +297,12 @@ int main(int argc, char const* argv[])
     WebservNothingEvent::delete_myself();
     WebservTimeoutEvent::delete_myself();
     //WebservWaitingCGIOUTEvent::delete_myself();
+    DEBUG("end server communication loop No.14");
     WebservWaitingGetCGIEvent::delete_myself();
     WebservWaitingPostCGIEvent::delete_myself();
     WebservKeepAliveEvent::delete_myself();
+    DEBUG("end server communication loop No.15");
+    WebservErrorEvent::delete_myself();
     DEBUG("end server communication loop No.2");
 
     //delete DirectoryReader::get_instance();

@@ -32,7 +32,6 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
     printf("file manager file=%p\n", file);
     DEBUG("filemanager:: file=" + Utility::to_string(file));
 
-
     std::map<FileDiscriptor, std::vector<WebservFile*> >::iterator ite = this->file_list.begin();
     std::map<FileDiscriptor, std::vector<WebservFile*> >::iterator end = this->file_list.end();
 

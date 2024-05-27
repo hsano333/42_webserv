@@ -17,77 +17,6 @@ WebservMakeResponseEvent::~WebservMakeResponseEvent()
 };
 
 
-Response* WebservMakeResponseEvent::make_response_for_cgi(ApplicationResult *result, WebservEntity *entity)
-{
-    DEBUG("WebservMakeResponseEvent::make_response_for_cgi()");
-
-    char *data;
-    int read_size = result->file()->read(&data, MAX_READ_SIZE);
-
-    if(read_size <= 0){
-        ERROR("CGI Respons Data is nothing or error");
-        throw HttpException("500");
-    }
-
-    // RFC3875にはNL(New Line)の具体的な定義がないため、
-    // 改行文字はLFとする(Linuxでの運用を想定しているため)
-    char *body_p = Utility::strnstr(data, LF2, read_size);
-    if(!body_p){
-        ERROR("CGI Statement Error: not find LFLF(double New Line)");
-        throw HttpException("500");
-    }
-
-    size_t header_size = body_p - data;
-    if(header_size >= MAX_REAUEST_EXCEPT_BODY){
-        ERROR("exceed Response Status Line" + Utility::to_string(header_size));
-        throw HttpException("exceed CGI Response Status Line:" + Utility::to_string(header_size));
-    }
-    *body_p = '\0';
-    cout << "cgi header_size:" << header_size << endl;
-    cout << "cgi data:[" <<  data <<  "]" << endl;
-    cout << "cgi body_p:[" << body_p <<  "]" << endl;
-
-    Split headers_line(data, LF, false, true);
-    for(size_t i=0;i<headers_line.size();i++){
-        cout << "headers_line[" << i << "]=" << headers_line[i] << endl;
-    }
-    //IReader *reader = NormalReader::get_instance();
-
-    //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    //WebservFile *file = file_factory->make_socket_file(result->cgi_out(), NULL, reader );
-    //WebservFile *file = file_factory->make_pipe_file(entity->fd(),  result->cgi_out(), reader);
-    Request const *req = entity->request();
-    ConfigServer const *server = entity->config()->get_server(req);
-    Response *res = Response::from_cgi_header_line(headers_line, NULL);
-
-    int tmp_size = read_size - header_size - 4;
-    cout << "body_p[2+i]:[" ;
-    for(int i=0;i<tmp_size;i++){
-        cout << body_p[2+i];
-    }
-    cout << "]" << endl;
-    res->set_buf_body(body_p + 2, tmp_size);
-    if(!res->check_body_size(server))
-    {
-        delete res;
-        throw HttpException("500");
-    }
-    res->check_body_and_chunk();
-    if(res->is_chunk()){
-        //DEBUG("WebservMakeResponseEvent::make_response_for_cgi not chunk");
-        res->add_header(CONTENT_LENGTH, "0");
-    }else{
-        WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-        WebservFile *socket_file = file_factory->make_socket_chunk_file_for_write(entity->fd(), res->get_file(), res->buffer());
-        res->clear_buffer();
-        socket_file->set_chunk(true);
-        res->switching_file(socket_file);
-    }
-
-    return (res);
-
-}
-
 Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, WebservEntity *entity)
 {
     DEBUG("WebservMakeResponseEvent::make_response()");
@@ -145,11 +74,12 @@ Response *WebservMakeResponseEvent::make(WebservEntity *entity)
     ApplicationResult *result = entity->app_result();
     DEBUG("WebservMakeResponseEvent::make()");
     Response *res;
-    if(result->is_cgi()){
-        res = make_response_for_cgi(result, entity);
-    }else{
-        res = make_response(result, entity);
-    }
+    //if(result->is_cgi()){
+        //res = make_response_for_cgi(result, entity);
+    //}else{
+    res = make_response(result, entity);
+    DEBUG("make response address:" + Utility::to_string(res));
+    //}
     return (res);
 }
 
