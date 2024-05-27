@@ -9,6 +9,8 @@ WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL),
 
 WebservEntity::~WebservEntity()
 {
+    DEBUG("WebservEntity() Destructor address:" + Utility::to_string(this));
+    /*
     DEBUG("WebservEntity() Destructor request address:" + Utility::to_string(this->req_));
     if(this->req_)
         delete this->req_;
@@ -16,9 +18,10 @@ WebservEntity::~WebservEntity()
     if(this->res_)
         delete this->res_;
     DEBUG("WebservEntity() Destructor No.2");
+    */
+    DEBUG("WebservEntity() Destructor No.1 response address:" + Utility::to_string(this->app_result_));
     if(this->app_result_)
         delete this->app_result_;
-    DEBUG("WebservEntity() Destructor No.3");
     //delete this->app_;
 }
 

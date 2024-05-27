@@ -113,7 +113,7 @@ void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
     DEBUG("clean_all()");
     (void)cleaner;
     (void)event_manager;
-    event_manager->close_all_events_waiting_epoll(cleaner);
+    //event_manager->close_all_events_waiting_epoll(cleaner);
     //event_manager->close_all_events();
 }
 

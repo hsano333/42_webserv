@@ -44,6 +44,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         read_size_total += read_size;
         buf_p = &(buf[0]);
         read_size += load_size;
+        /*
         size_t tmp_size = read_size;
 
         // will remove
@@ -57,6 +58,7 @@ bool io_work(EventT *event, WebservEntity *entity)
             }
         }
         printf("]\nbuffer size =[%zu]\n\n", read_size);
+        */
 
 
         DEBUG("io write()");
@@ -149,6 +151,7 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
         read_size_total += read_size;
         read_size += load_size;
 
+        /*
         //will remove
         size_t tmp_size = read_size;
         for(size_t i=0;i<tmp_size;i++){
@@ -161,6 +164,7 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
             }
         }
         printf("]\nbuffer size =[%zu]\n\n", read_size);
+        */
 
         DEBUG("io write()");
         ssize_t write_size = destination->write(&buf_p, read_size);

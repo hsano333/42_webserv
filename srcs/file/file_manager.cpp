@@ -1,5 +1,6 @@
 #include "file_manager.hpp"
 #include "global.hpp"
+#include "log.hpp"
 
 FileManager::FileManager()
 {

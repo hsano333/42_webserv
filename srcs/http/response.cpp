@@ -29,6 +29,7 @@ Response::Response() :
 
 Response::~Response()
 {
+    DEBUG("Response Destructor");
 }
 
 Response::Response(Response const &res)

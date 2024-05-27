@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <string>
 #include <iostream>
+#include "global.hpp"
+#include "utility.hpp"
 
 
 typedef enum E_FileState
@@ -43,7 +45,10 @@ class OwningFileModel : public FileConcept
         OwningFileModel(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, CanWriteStrategyPointer can_write, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk, SetChunkStrategyPointer set_chunk, CompletedStrategyPointer completed) : file_(file), open_(open), read_(read), write_(write), close_(close), remove_(remove), can_read_(can_read), can_write_(can_write), path_(path), size_(size), is_chunk_(is_chunk), set_chunk_(set_chunk), completed_(completed){};
         //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
         //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
-        ~OwningFileModel(){delete file_;};
+        ~OwningFileModel(){
+            DEBUG("WebservFile delete file:" + Utility::to_string(file_));
+            delete file_;
+        };
         int open()  {return open_(file_);}
         int read(char **data, size_t size)  {return read_(file_, data, size);}
         int write(char **data, size_t size)  {return write_(file_, data, size);}
@@ -91,7 +96,10 @@ class WebservFile
             pimpl_ = new Model(file);
         }
 
-        ~WebservFile(){delete pimpl_;};
+        ~WebservFile(){
+            DEBUG("WebservFile delete Model:" + Utility::to_string(pimpl_));
+            delete pimpl_;
+        };
 
         int test(){return 1;};
         int open(){return pimpl_->open();};
