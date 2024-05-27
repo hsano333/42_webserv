@@ -194,7 +194,9 @@ void EventManager::close_all_events_waiting_epoll(WebservCleaner *cleaner)
     }
 
     for(size_t i=0;i<tmp.size();i++){
-        cleaner->clean(tmp[i]->entity(), true);
+        if(tmp[i]->which() != KEEP_ALIVE_EVENT){
+            cleaner->clean(tmp[i]->entity(), true);
+        }
         delete tmp[i];
     }
 }
