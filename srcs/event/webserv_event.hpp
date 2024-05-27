@@ -41,6 +41,7 @@ class OwningEventModel : public EventConcept
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *factory) const {return (event_->make_next_event(event, factory));}
         EWebservEvent which() const {return (event_type_);}
         void check_completed() {return event_->check_completed(this->entity_);}
+        EventPointer event(){return event_;};
 
     private:
         EventPointer event_;
@@ -67,6 +68,9 @@ class WebservEvent
 
         ~WebservEvent(){delete pimpl_;};
         WebservEntity *entity(){return(this->entity_);}
+
+        template<typename EventPointer, typename HandleStrategyPointer>
+        EventPointer event(){return(this->event);}
 
         template<typename EventPointer>
         EventPointer event(){return (this->pimpl_);};

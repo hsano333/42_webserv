@@ -30,7 +30,7 @@ ApplicationFactory *ApplicationFactory::get_instance()
 
 ApplicationFactory::~ApplicationFactory()
 {
-    delete (singleton);
+    //delete (singleton);
 }
 
 std::string ApplicationFactory::get_server_name()

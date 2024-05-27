@@ -11,7 +11,7 @@
 #include "ireader.hpp"
 #include "iwriter.hpp"
 
-class Application;
+//class Application;
 class ApplicationResult
 {
     public:

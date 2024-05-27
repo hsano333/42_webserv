@@ -69,12 +69,11 @@ char* Utility::strdup(const char* str)
 
 static char* process(const char* haystack, const char* needle, size_t len)
 {
-    size_t i;
-    size_t k;
+    size_t i = 0;
+    size_t k = 0;
     size_t len_n;
 
     i = -1;
-    k = 0;
     len_n = Utility::strlen(needle);
     if (len_n == 0)
         return ((char*)haystack);

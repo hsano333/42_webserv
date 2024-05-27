@@ -25,6 +25,12 @@ WebservWaitingGetCGIEvent *WebservWaitingGetCGIEvent::get_instance()
     return (singleton);
 }
 
+void WebservWaitingGetCGIEvent::delete_myself()
+{
+    if(WebservWaitingGetCGIEvent::singleton)
+        delete WebservWaitingGetCGIEvent::singleton;
+}
+
 namespace myfunc{
     bool check_completed(WebservWaitingGetCGIEvent *event, WebservEntity *entity)
     {

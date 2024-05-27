@@ -13,6 +13,7 @@ class WebservApplicationUploadEvent
         E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
         static WebservEvent *from_event(WebservEvent *event, WebservFile *src, WebservFile *dst);
+        static void delete_myself();
 
     private:
         WebservApplicationUploadEvent();

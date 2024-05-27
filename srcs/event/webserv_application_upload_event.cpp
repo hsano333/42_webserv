@@ -26,6 +26,13 @@ WebservApplicationUploadEvent *WebservApplicationUploadEvent::get_instance()
     return (singleton);
 }
 
+void WebservApplicationUploadEvent::delete_myself()
+{
+    if(WebservApplicationUploadEvent::singleton)
+        delete WebservApplicationUploadEvent::singleton;
+}
+
+
 
 WebservEvent *WebservApplicationUploadEvent::from_event(WebservEvent *event, WebservFile *src, WebservFile *dst)
 {

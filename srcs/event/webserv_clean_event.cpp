@@ -46,6 +46,12 @@ WebservCleanEvent *WebservCleanEvent::get_instance()
     return (singleton);
 }
 
+void WebservCleanEvent::delete_myself()
+{
+    if(WebservCleanEvent::singleton)
+        delete WebservCleanEvent::singleton;
+}
+
 bool prepare_clean(WebservCleanEvent *event, WebservEntity *entity)
 {
     (void)event;

@@ -9,7 +9,7 @@ WebservApplicationEvent::WebservApplicationEvent()
 
 WebservApplicationEvent::~WebservApplicationEvent()
 {
-    ;
+    DEBUG("~WebservApplicationEvent");
 }
 
 WebservApplicationEvent *WebservApplicationEvent::singleton = NULL;
@@ -20,6 +20,13 @@ WebservApplicationEvent *WebservApplicationEvent::get_instance()
     }
     return (singleton);
 }
+
+void WebservApplicationEvent::delete_myself()
+{
+    if(WebservApplicationEvent::singleton)
+        delete WebservApplicationEvent::singleton;
+}
+
 
 WebservEvent *WebservApplicationEvent::from_event(WebservEvent *event)
 {

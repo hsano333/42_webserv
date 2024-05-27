@@ -210,3 +210,34 @@ void EventManager::close_all_events()
     }
 }
 
+void EventManager::add_events_will_deleted(FileDiscriptor const &fd, WebservEvent* event)
+{
+
+    std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
+    if(ite == this->events_will_deleted.end()){
+        std::set<WebservEvent*> new_set;
+        new_set.insert(event);
+        this->events_will_deleted.insert(std::make_pair(fd, new_set));
+    }else{
+        ite->second.insert(event);
+    }
+
+}
+
+void EventManager::erase_events_will_deleted(FileDiscriptor const &fd)
+{
+    DEBUG("erase_events_will_deleted");
+    std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
+    if(ite != this->events_will_deleted.end()){
+        std::set<WebservEvent*>::iterator ite_event = ite->second.begin();
+        std::set<WebservEvent*>::iterator end_event = ite->second.end();
+        while(ite_event != end_event){
+            DEBUG("delete erase_events_will_deleted");
+            delete *ite_event;
+            ite_event++;
+        }
+        this->events_will_deleted.erase(ite);
+    }
+}
+
+

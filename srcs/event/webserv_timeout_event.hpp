@@ -16,6 +16,7 @@ class WebservTimeoutEvent
         EventManager *event_manager;
         void        check_completed(WebservEntity * entity);
         WebservEvent *from_event(WebservEvent *event);
+        static void delete_myself();
         
 
     private:

@@ -21,6 +21,7 @@ class WebservIOGetCGIEvent
         void        check_completed(WebservEntity * entity);
 
         static WebservEvent *from_event(WebservEvent *event);
+        static void delete_myself();
     private:
         WebservIOGetCGIEvent();
         static WebservIOGetCGIEvent *singleton;

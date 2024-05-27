@@ -27,6 +27,12 @@ WebservIOSocketEvent *WebservIOSocketEvent::get_instance()
     return (singleton);
 }
 
+void WebservIOSocketEvent::delete_myself()
+{
+    if(WebservIOSocketEvent::singleton)
+        delete WebservIOSocketEvent::singleton;
+}
+
 
 WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, WebservFile *src, WebservFile *dst, WebservEntity *entity)
 {

@@ -70,6 +70,7 @@ Request::Request(FileDiscriptor const &fd) :
 
 Request::~Request()
 {
+    DEBUG("Request: Destructor()");
     //delete (this->buf_body);
 }
 

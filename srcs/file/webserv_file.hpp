@@ -43,6 +43,7 @@ class OwningFileModel : public FileConcept
         OwningFileModel(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, CanWriteStrategyPointer can_write, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk, SetChunkStrategyPointer set_chunk, CompletedStrategyPointer completed) : file_(file), open_(open), read_(read), write_(write), close_(close), remove_(remove), can_read_(can_read), can_write_(can_write), path_(path), size_(size), is_chunk_(is_chunk), set_chunk_(set_chunk), completed_(completed){};
         //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
         //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
+        ~OwningFileModel(){delete file_;};
         int open()  {return open_(file_);}
         int read(char **data, size_t size)  {return read_(file_, data, size);}
         int write(char **data, size_t size)  {return write_(file_, data, size);}

@@ -14,6 +14,7 @@ class WebservKeepAliveEvent
         E_EpollEvent epoll_event(WebservEvent *event);
         static WebservEvent *from_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
+        static void delete_myself();
 
     private:
         WebservKeepAliveEvent();

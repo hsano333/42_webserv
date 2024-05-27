@@ -22,6 +22,12 @@ WebservKeepAliveEvent *WebservKeepAliveEvent::get_instance()
     return (singleton);
 }
 
+void WebservKeepAliveEvent::delete_myself()
+{
+    if(WebservKeepAliveEvent::singleton)
+        delete WebservKeepAliveEvent::singleton;
+}
+
 WebservEvent *WebservKeepAliveEvent::from_event(WebservEvent *event)
 {
     DEBUG("WebservKeepAliveEvent::from_event");

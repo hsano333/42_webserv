@@ -6,7 +6,7 @@ Endian::Endian(){
 }
 
 Endian::~Endian(){
-    delete (singleton);
+    //delete (singleton);
 }
 
 Endian* Endian::singleton = NULL;

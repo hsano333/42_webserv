@@ -10,6 +10,13 @@ WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL),
 WebservEntity::~WebservEntity()
 {
     DEBUG("WebservEntity() Destructor");
+    if(this->req_)
+        delete this->req_;
+    if(this->res_)
+        delete this->res_;
+    if(this->app_result_)
+        delete this->app_result_;
+    //delete this->app_;
 }
 
 
@@ -64,6 +71,9 @@ void WebservEntity::set_request(Request *req)
 {
     if(this->req_ == req){
         return ;
+    }
+    if(this->req_ != NULL){
+        delete this->req_;
     }
     this->req_ = req;
 }

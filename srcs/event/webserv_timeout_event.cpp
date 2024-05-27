@@ -20,6 +20,12 @@ WebservTimeoutEvent *WebservTimeoutEvent::get_instance()
     return (singleton);
 }
 
+void WebservTimeoutEvent::delete_myself()
+{
+    if(WebservTimeoutEvent::singleton)
+        delete WebservTimeoutEvent::singleton;
+}
+
 
 /*
 bool clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)

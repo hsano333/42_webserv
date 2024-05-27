@@ -16,6 +16,7 @@ class WebservMakeResponseEvent
         E_EpollEvent epoll_event(WebservEvent *event);
         Response  *make(WebservEntity *entity);
         void        check_completed(WebservEntity * entity);
+        static void delete_myself();
 
     private:
         WebservMakeResponseEvent();

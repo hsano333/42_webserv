@@ -73,6 +73,7 @@ class WebservFileFactory
         WebservFile *make_pipe_file(FileDiscriptor const &fd, FileDiscriptor const &pipe_fd , IReader *reader);
         WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
         WebservFile *make_pipe_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
+        WebservFile *make_socket_file(FileDiscriptor const &registrered_fd, FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
         WebservFile *make_socket_file_for_post_cgi(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);

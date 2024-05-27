@@ -20,6 +20,7 @@ class WebservApplicationEvent
         void         set_next_epoll_event(E_EpollEvent epoll_event);
         E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
+        static void delete_myself();
 
     private:
         WebservApplicationEvent();

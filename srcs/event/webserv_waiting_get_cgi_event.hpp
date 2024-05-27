@@ -20,6 +20,7 @@ class WebservWaitingGetCGIEvent
         WebservEvent* make_next_event(WebservEvent* event, WebservEventFactory *event_factory);
         E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
+        static void delete_myself();
 
         //static WebservWaitingGetCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:

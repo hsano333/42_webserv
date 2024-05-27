@@ -47,11 +47,11 @@ WebservFile *WebservFileFactory::make_pipe_file(FileDiscriptor const &fd, Webser
 }
 
 
-WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader)
+WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &registered_fd, FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader)
 {
     DEBUG("WebservFileFactory::make_socket_file_as_read:" + fd.to_string());
     SocketFile *socket_file = SocketFile::from_fd(fd, iwriter, ireader);
-    return (this->make_webserv_file(fd, socket_file, CommonFunc::open, CommonFunc::read, CommonFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DefaultFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
+    return (this->make_webserv_file(registered_fd, socket_file, CommonFunc::open, CommonFunc::read, CommonFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DefaultFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
 WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader)

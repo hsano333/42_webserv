@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/26 22:37:30 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/27 21:05:58 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,12 @@ WebservWaitingPostCGIEvent *WebservWaitingPostCGIEvent::get_instance()
         singleton = new WebservWaitingPostCGIEvent();
     }
     return (singleton);
+}
+
+void WebservWaitingPostCGIEvent::delete_myself()
+{
+    if(WebservWaitingPostCGIEvent::singleton)
+        delete WebservWaitingPostCGIEvent::singleton;
 }
 
 namespace myfunc{

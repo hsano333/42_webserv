@@ -22,6 +22,12 @@ WebservNothingEvent *WebservNothingEvent::get_instance()
     return (singleton);
 }
 
+void WebservNothingEvent::delete_myself()
+{
+    if(WebservNothingEvent::singleton)
+        delete WebservNothingEvent::singleton;
+}
+
 
 
 

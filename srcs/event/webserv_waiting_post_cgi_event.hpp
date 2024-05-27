@@ -22,6 +22,7 @@ class WebservWaitingPostCGIEvent
         void        check_completed(WebservEntity * entity);
 
         static WebservWaitingPostCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
+        static void delete_myself();
     private:
         WebservWaitingPostCGIEvent();
         static WebservWaitingPostCGIEvent *singleton;

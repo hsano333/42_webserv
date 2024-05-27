@@ -67,10 +67,14 @@ namespace CheckSocketReadEndFunc{
         if(file->size() >= MAX_REAUEST_EXCEPT_BODY ){
             flag = true;
         }else{
-            char *buf;
-            size_t read_size = file->read(&buf, file->size());
+            char *buf = NULL;
+            int read_size = file->read(&buf, file->size());
+            if(read_size <= 0){
+                return (false);
+            }
             char *pos = Utility::strnstr(buf, CRLF2, read_size);
             if(pos){
+                DEBUG("CheckSocketReadEndFunc::completed() True");
                 flag = true;
             }
         }

@@ -172,6 +172,12 @@ WebservMakeResponseEvent *WebservMakeResponseEvent::get_instance()
     return (singleton);
 }
 
+void WebservMakeResponseEvent::delete_myself()
+{
+    if(WebservMakeResponseEvent::singleton)
+        delete WebservMakeResponseEvent::singleton;
+}
+
 WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, WebservFile *src, WebservFile *dst)
 {
     DEBUG("WebservMakeResponseEvent::from_event");

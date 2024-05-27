@@ -32,6 +32,13 @@ WebservMakeRequestEvent *WebservMakeRequestEvent::get_instance()
     return (singleton);
 }
 
+void WebservMakeRequestEvent::delete_myself()
+{
+    if(WebservMakeRequestEvent::singleton)
+        delete WebservMakeRequestEvent::singleton;
+}
+
+
 
 WebservEvent *WebservMakeRequestEvent::from_event(WebservEvent *event, WebservFile *src, WebservFile *dst)
 {

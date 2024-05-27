@@ -27,6 +27,13 @@ WebservIOPostCGIEvent *WebservIOPostCGIEvent::get_instance()
     return (singleton);
 }
 
+void WebservIOPostCGIEvent::delete_myself()
+{
+    if(WebservIOPostCGIEvent::singleton)
+        delete WebservIOPostCGIEvent::singleton;
+}
+
+
 
 WebservEvent *WebservIOPostCGIEvent::from_event(WebservEvent *event)
 {

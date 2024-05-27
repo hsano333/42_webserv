@@ -28,10 +28,19 @@ class EventManager
         void close_all_events();
         void retrieve_clean_events(std::set<WebservEvent *> &event_return);
         bool find(FileDiscriptor &fd);
+
+        void add_events_will_deleted(FileDiscriptor const &fd, WebservEvent* event);
+        void erase_events_will_deleted(FileDiscriptor const &fd);
+
+        //void add_child_events_will_deleted(FileDiscriptor const &fd, WebservEvent* event);
+        //void erase_child_events_will_deleted(FileDiscriptor const &fd);
     private:
         // simple deque with iterator
         MutantStack<WebservEvent*, std::deque<WebservEvent*>, std::deque<WebservEvent*> > events;
         std::map<FileDiscriptor, WebservEvent*> events_waiting_epoll;
+        std::map<FileDiscriptor, std::set<WebservEvent*> > events_will_deleted;
+
+        //std::map<FileDiscriptor, std::set<void*> > child_events_will_deleted;
 };
 
 #endif

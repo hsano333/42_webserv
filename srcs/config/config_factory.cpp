@@ -69,6 +69,7 @@ std::vector<ConfigLimit*> ConfigFactory::create_limit(ConfigParseredData &parser
 std::vector<ConfigLocation*> ConfigFactory::create_location(ConfigParseredData &parsered_location_data)
 {
     std::vector<ConfigLocation*> locations;
+    DEBUG("parsered_location_data.size():" + Utility::to_string(parsered_location_data.size()));
     for(size_t i=0; i<parsered_location_data.size();i++){
         ConfigLocation *location = new ConfigLocation();
         ConfigParseredData parsered_limit_data = parser_location.parser(parsered_location_data.raw_data(i), location);

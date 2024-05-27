@@ -26,6 +26,7 @@ class WebservIOSocketEvent
         void        check_completed(WebservEntity * entity);
         int write(char *buf, size_t size);
         int read(char *buf, size_t size);
+        static void delete_myself();
 
     private:
         WebservIOSocketEvent();

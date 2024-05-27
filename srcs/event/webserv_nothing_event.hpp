@@ -15,6 +15,7 @@ class WebservNothingEvent
         void        check_completed(WebservEntity * entity);
 
         static WebservEvent *make_nothing_event();
+        static void delete_myself();
     private:
         WebservNothingEvent();
         static WebservNothingEvent *singleton;

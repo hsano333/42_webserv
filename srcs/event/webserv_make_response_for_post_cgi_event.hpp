@@ -20,6 +20,7 @@ class WebservMakeResponseForPostCGIEvent
         E_EpollEvent epoll_event(WebservEvent *event);
         void        check_completed(WebservEntity * entity);
         Response* make_response_for_cgi(ApplicationResult *result, WebservEntity *entity);
+        static void delete_myself();
 
         //static WebservMakeResponseForPostCGIEvent *from_event(WebservEvent *event, WebservFile *io, WebservFile *write_src, WebservFile *read_dst);
     private:

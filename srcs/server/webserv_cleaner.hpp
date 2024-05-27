@@ -20,10 +20,10 @@ class WebservCleaner
                     FileManager *file_manager
                 );
         ~WebservCleaner();
-        void delete_event(WebservEvent *event);
+        bool delete_event(WebservEvent *event, WebservEvent *next_event);
         void clean(WebservEntity *entity, bool force_close);
         void close_fd(FileDiscriptor const &fd);
-        void clean_timeout_events();
+        //void clean_timeout_events();
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;

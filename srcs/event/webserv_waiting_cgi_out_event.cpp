@@ -25,6 +25,12 @@ WebservWaitingCGIOUTEvent *WebservWaitingCGIOUTEvent::get_instance()
     return (singleton);
 }
 
+void WebservWaitingCGIOUTEvent::delete_myself()
+{
+    if(WebservWaitingCGIOUTEvent::singleton)
+        delete WebservWaitingCGIOUTEvent::singleton;
+}
+
 WebservEvent *WebservWaitingCGIOUTEvent::from_event(WebservEvent * event)
 {
     DEBUG("WebservWaitingCGIOUTEvent::from_fd");

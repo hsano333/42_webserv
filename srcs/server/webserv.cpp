@@ -61,6 +61,7 @@ void Webserv::communication()
     bool exit_flag = false;
     int wait_time;
     int count = 0;
+    int cnt = 0;
     while(1)
     {
         count++;
@@ -122,14 +123,17 @@ void Webserv::communication()
                 next_event = this->event_factory->make_clean_event(event, false);
                 event_manager->push(next_event);
             }
-
-            if(next_event != event){
-                this->cleaner->delete_event(event);
-                count++;
+            if(this->cleaner->delete_event(event, next_event)){
+                cnt++;
+                if(cnt > 5){
+                    DEBUG("exit_flag True");
+                    exit_flag = true;
+                }
             }
         }
 
         if(exit_flag || count > 100){
+            break;
         }
         DEBUG("while end");
     }

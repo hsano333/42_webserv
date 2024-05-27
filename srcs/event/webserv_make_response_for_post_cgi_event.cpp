@@ -26,6 +26,12 @@ WebservMakeResponseForPostCGIEvent *WebservMakeResponseForPostCGIEvent::get_inst
     return (singleton);
 }
 
+void WebservMakeResponseForPostCGIEvent::delete_myself()
+{
+    if(WebservMakeResponseForPostCGIEvent::singleton)
+        delete WebservMakeResponseForPostCGIEvent::singleton;
+}
+
 WebservEvent *WebservMakeResponseForPostCGIEvent::from_event(WebservEvent *event)
 {
     DEBUG("WebservMakeResponseForPostCGIEvent::from_fd");
@@ -148,7 +154,7 @@ WebservEvent* WebservMakeResponseForPostCGIEvent::make_next_event(WebservEvent* 
 
     entity->set_response(res);
     //WebservFile *read_dst = entity->io().destination_for_read();
-    WebservFile *read_dst = file_factory->make_socket_file(event->entity()->fd(), SocketWriter::get_instance(), NULL);
+    WebservFile *read_dst = file_factory->make_socket_file(event->entity()->fd(), event->entity()->fd(), SocketWriter::get_instance(), NULL);
     entity->io().set_write_io(res_file, read_dst);
     //read_dst->open();
     /*

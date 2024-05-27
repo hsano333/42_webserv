@@ -17,6 +17,7 @@ class WebservCleanEvent
 
         static WebservCleanEvent *from_fd(FileDiscriptor fd);
         static WebservEvent *from_event(WebservEvent *event, bool force_close);
+        static void delete_myself();
 
     private:
         WebservCleanEvent();

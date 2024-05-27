@@ -26,6 +26,7 @@ Log::Log()
 Log *Log::_singleton = NULL;
 Log::~Log()
 {
+    ofs.close();
 }
 
 Log *Log::get_instance()

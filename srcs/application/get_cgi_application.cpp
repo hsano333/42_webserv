@@ -56,7 +56,7 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     // CGI I/O
     //WebservFile *write_dst = file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
     WebservFile *from_socket_to_cgi_dst = NULL;
-    WebservFile *from_cgi_to_socket_src = file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
+    WebservFile *from_cgi_to_socket_src = file_factory->make_socket_file(event->entity()->fd(), result->cgi_out(), NULL, normal_reader);
 
     event->entity()->io().set_read_io(from_socket_to_cgi_src, from_socket_to_cgi_dst);
     event->entity()->io().set_write_io(from_cgi_to_socket_src, from_cgi_to_socket_dst);

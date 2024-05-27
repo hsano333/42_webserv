@@ -18,6 +18,11 @@ MultiNormalFile::MultiNormalFile(std::string const &directory_path, std::string 
     this->state_ = FILE_NOT_OPEN;
 }
 
+MultiNormalFile::~MultiNormalFile()
+{
+    ;
+}
+
 MultiNormalFile* MultiNormalFile::from_directory_path(std::string const &directory_path,std::string const &boundary, FileDiscriptor const &fd)
 {
     return (new MultiNormalFile(directory_path, boundary, fd));
