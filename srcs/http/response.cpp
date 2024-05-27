@@ -8,6 +8,7 @@
 #include "config.hpp"
 #include "error_file.hpp"
 #include "header_word.hpp"
+#include "webserv_file_factory.hpp"
 
 Response::Response() :
     //buf_body(NULL),
@@ -50,6 +51,7 @@ Response& Response::operator=(Response const &res)
     return (*this);
 }
 
+
 Response* Response::from_success_status_code(StatusCode &code, WebservFile *file)
 {
     DEBUG("Response::from_success_status_code");
@@ -60,19 +62,21 @@ Response* Response::from_success_status_code(StatusCode &code, WebservFile *file
     return (res);
 }
 
-/*
-Response* Response::from_error_status_code(StatusCode &code)
+Response* Response::from_error_status_code(FileDiscriptor const &fd, StatusCode &code)
 {
     DEBUG("Response::from_error_status_code");
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     Response *res = new Response();
     res->status_code = code;
     //res->file = ErrorFile::from_status_code(code);
-    res->file = file_factory->make_error_file( , code);
+    res->file = file_factory->make_error_file(fd, code);
+    res->add_header(CONTENT_LENGTH, Utility::to_string(res->file->size()));
+    res->has_body_ = true;
+
+    //res->file = file_factory->make_error_file( , code);
     //res->exist_body_ = true;
     return (res);
 }
-*/
 
 Response* Response::from_error_file(WebservFile *file, StatusCode &code)
 {

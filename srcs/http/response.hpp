@@ -7,6 +7,7 @@
 #include "http_data.hpp"
 #include "config_server.hpp"
 #include "config_location.hpp"
+#include "file_discriptor.hpp"
 #include <unistd.h>
 #include <map>
 #include <vector>
@@ -29,7 +30,7 @@ class Response
         Response(Response const &res);
         Response& operator=(Response const &res);
         static Response* from_success_status_code(StatusCode &code, WebservFile *file);
-        //static Response* from_error_status_code(StatusCode &code);
+        static Response* from_error_status_code(FileDiscriptor const &fd, StatusCode &code);
         static Response* from_error_file(WebservFile *file, StatusCode &code);
         //static Response* from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location);
         static Response* from_cgi_header_line(Split &header_line, WebservFile *file);
@@ -74,6 +75,7 @@ class Response
         void switching_file(WebservFile *file);
         std::vector<char> &buffer();
         void clear_buffer();
+        void set_satus_code(StatusCode &code);
 
     private:
         StatusCode status_code;

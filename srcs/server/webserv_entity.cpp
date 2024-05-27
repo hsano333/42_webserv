@@ -13,11 +13,13 @@ WebservEntity::~WebservEntity()
     if(this->req_)
         delete this->req_;
     DEBUG("WebservEntity() Destructor No.1 response address:" + Utility::to_string(this->res_));
+    /*
     if(this->res_)
         delete this->res_;
     DEBUG("WebservEntity() Destructor No.2");
     if(this->app_result_)
         delete this->app_result_;
+        */
     DEBUG("WebservEntity() Destructor No.3");
     //delete this->app_;
 }
