@@ -149,14 +149,14 @@ void Webserv::communication()
 
             if(this->cleaner->delete_event(event, next_event)){
                 cnt++;
-                if(cnt > 2){
+                if(cnt > 10){
                     DEBUG("exit_flag True");
                     exit_flag = true;
                 }
             }
         }
 
-        if(exit_flag || count > 100){
+        if(exit_flag || count > 1000){
             break;
         }
         DEBUG("while end");

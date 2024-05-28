@@ -145,8 +145,9 @@ void FileManager::erase(FileDiscriptor const &fd)
             DEBUG("end  deleting file:" + Utility::to_string(address));
             //deleted_address_vector.push_back(address);
         }else{
-            file_counts[file]--;
+            file_counts[address]--;
             DEBUG("already delete file:" + Utility::to_string(address));
+            DEBUG("already delete count:" + Utility::to_string(file_counts[address]));
         }
 
         DEBUG("FileManager::erase file=" + Utility::to_string(file));
