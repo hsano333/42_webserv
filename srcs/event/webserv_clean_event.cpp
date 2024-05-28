@@ -76,10 +76,10 @@ WebservEvent *WebservCleanEvent::from_event(WebservEvent *event, bool force_clos
     WebservEvent *new_event = new WebservEvent(clean_event, prepare_clean, event->entity(), CLEAN_EVENT);
     event->entity()->set_force_close(force_close || event->entity()->force_close());
 
-    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    WebservFile *file = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
+    //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    //WebservFile *file = file_factory->make_request_file(event->entity()->fd(), event->entity()->request());
 
-    new_event->entity()->io().set_source(file);
+    //new_event->entity()->io().set_source(file);
     return (new_event);
 }
 

@@ -86,6 +86,7 @@ class WebservFile
         {
             typedef OwningFileModel<FilePointer, OpenStrategyPointer, ReadStrategyPointer, WriteStrategyPointer, CloseStrategyPointer, RemoveStrategyPointer, CanReadStrategyPointer, CanWriteStrategyPointer, PathStrategyPointer, SizeStrategyPointer, IsChunkStrategyPointer, SetChunkStrategyPointer, CompletedStrategyPointer > Model;
             pimpl_ = new Model(file, open, read, write, close, remove, can_read, can_write, path, size, is_chunk, set_chunk, completed);
+            DEBUG("WebserbFile register file:" + Utility::to_string(file));
         }
 
 
@@ -94,6 +95,7 @@ class WebservFile
         {
             typedef OwningFileModel<FilePointer, OpenStrategyPointer, ReadStrategyPointer, WriteStrategyPointer, CloseStrategyPointer, RemoveStrategyPointer, CanReadStrategyPointer, CanWriteStrategyPointer, PathStrategyPointer, SizeStrategyPointer, IsChunkStrategyPointer, SetChunkStrategyPointer, CompletedStrategyPointer > Model;
             pimpl_ = new Model(file);
+            DEBUG("WebserbFile register file:" + Utility::to_string(file));
         }
 
         ~WebservFile(){

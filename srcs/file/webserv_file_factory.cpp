@@ -63,7 +63,7 @@ WebservFile *WebservFileFactory::make_socket_file(FileDiscriptor const &fd, Webs
 
 WebservFile *WebservFileFactory::make_socket_file_for_post_cgi(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader)
 {
-    DEBUG("WebservFileFactory::make_socket_file with file:" + fd.to_string());
+    DEBUG("WebservFileFactory::make_socket_file_for_post_cgi with file:" + fd.to_string());
     SocketFile *socket_file = SocketFile::from_file(fd, file, iwriter, ireader);
     return (this->make_webserv_file(fd, socket_file, CommonFunc::open, BufferFunc::read, BufferFunc::write, CommonFunc::close, DummyFunc::remove, BufferFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }

@@ -2,7 +2,7 @@
 #define FILE_MANAGER_HPP
 
 #include <map>
-#include <vector>
+#include <set>
 #include "webserv_file.hpp"
 #include "file_discriptor.hpp"
 
@@ -19,7 +19,7 @@ class FileManager
         void erase(FileDiscriptor const &fd);
 
     private:
-        std::map<FileDiscriptor, std::vector<WebservFile*> > file_list;
+        std::map<FileDiscriptor, std::set<WebservFile*> > file_list;
 };
 
 #endif

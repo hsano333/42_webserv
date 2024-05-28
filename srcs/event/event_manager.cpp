@@ -143,7 +143,7 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
                 ite->second->entity()->set_event_error(Timeout);
                 timeout_fds.push_back(ite->first);
             }
-            if(ite->second->check_died_child()){
+            if(ite->second->which() != KEEP_ALIVE_EVENT && ite->second->check_died_child()){
                 ite->second->entity()->set_event_error(DiedChild);
                 execve_error_fds.push_back(ite->first);
             }
@@ -184,6 +184,7 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
 
 void EventManager::close_all_events_waiting_epoll(WebservCleaner *cleaner)
 {
+    (void)cleaner;
     DEBUG("EventManager::close_all_events_waiting_epoll");
     std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
     std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
@@ -194,9 +195,9 @@ void EventManager::close_all_events_waiting_epoll(WebservCleaner *cleaner)
     }
 
     for(size_t i=0;i<tmp.size();i++){
-        if(tmp[i]->which() != KEEP_ALIVE_EVENT){
-            cleaner->clean(tmp[i]->entity(), true);
-        }
+        //if(tmp[i]->which() != KEEP_ALIVE_EVENT){
+            //cleaner->clean(tmp[i]->entity(), true);
+        //}
         delete tmp[i];
     }
 }

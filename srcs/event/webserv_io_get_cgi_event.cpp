@@ -80,6 +80,7 @@ void WebservIOGetCGIEvent::check_completed(WebservEntity * entity)
     }else{ //EPOLL_OUT
         DEBUG("WebservIOCGIEvent::check_completed EPOLLOUT");
         flag = entity->response()->read_completed();
+        /*
         int wstatus;
 
         int result = waitpid(entity->app_result()->pid().to_int(), &wstatus,   WNOWAIT );
@@ -101,6 +102,7 @@ void WebservIOGetCGIEvent::check_completed(WebservEntity * entity)
             }
 
         }
+        */
     }
 
     MYINFO("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));

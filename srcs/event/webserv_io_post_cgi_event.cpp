@@ -45,7 +45,8 @@ WebservEvent *WebservIOPostCGIEvent::from_event(WebservEvent *event)
 
 WebservEvent* WebservIOPostCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservIOPostCGIEvent::make_next_event()");
+    DEBUG("WebservIOPostCGIEvent::make_next_event() completed:" + Utility::to_string(event->entity()->completed()));
+    DEBUG("WebservIOPostCGIEvent::make_next_event() is_cgi_read:" + Utility::to_string(event->entity()->io().is_cgi_read()));
 
     if (event->entity()->completed() && event->entity()->io().is_cgi_read() == false){
         DEBUG("WebservIOPostCGIEvent::make_next_event() clean");
@@ -101,10 +102,11 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         entity->set_completed(is_completed);
         return ;
     }else{
-        DEBUG("WebservIOPostCGIEvent::check_completed No.2");
         // read from CGI, write to socket
-        WebservFile *dst = entity->io().destination_for_read();
-        bool flag = dst->completed();
+        //WebservFile *dst = entity->io().destination_for_read();
+        bool flag = entity->response()->read_completed();
+        //bool flag = dst->completed();
+        DEBUG("WebservIOPostCGIEvent::check_completed write No.1 completed:" + Utility::to_string(flag));
         entity->set_completed(flag);
         return ;
     }
