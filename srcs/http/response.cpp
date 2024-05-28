@@ -53,12 +53,19 @@ Response& Response::operator=(Response const &res)
 }
 
 
-Response* Response::from_success_status_code(StatusCode &code, WebservFile *file)
+Response* Response::from_success_status_code(FileDiscriptor const &fd, StatusCode &code, WebservFile *file)
 {
     DEBUG("Response::from_success_status_code");
     Response *res = new Response();
     res->status_code = code;
     res->file = file;
+
+
+    (void)fd;
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *dummy = file_factory->make_dummy_file(fd, res);
+    (void)dummy;
+
     //res->exist_body_ = false;
     return (res);
 }
@@ -79,6 +86,7 @@ Response* Response::from_error_status_code(FileDiscriptor const &fd, StatusCode 
     return (res);
 }
 
+/*
 Response* Response::from_error_file(WebservFile *file, StatusCode &code)
 {
     DEBUG("Response::from_error_file");
@@ -88,7 +96,9 @@ Response* Response::from_error_file(WebservFile *file, StatusCode &code)
     //res->exist_body_ = true;
     return (res);
 }
+*/
 
+/*
 Response* Response::from_file(WebservFile *file)
 {
     DEBUG("Response::from_file");
@@ -99,8 +109,11 @@ Response* Response::from_file(WebservFile *file)
     }else{
         res->status_code = StatusCode::from_int(406);
     }
+
+
     return (res);
 }
+*/
 
 
 void Response::set_header(Split &sp, size_t offset)
@@ -109,7 +122,7 @@ void Response::set_header(Split &sp, size_t offset)
 }
 
 //Response* Response::from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location)
-Response* Response::from_cgi_header_line(Split &header_line, WebservFile *file)
+Response* Response::from_cgi_header_line(FileDiscriptor const &fd, Split &header_line, WebservFile *file)
 {
     //(void)location;
     Response *res = new Response();
@@ -131,6 +144,11 @@ Response* Response::from_cgi_header_line(Split &header_line, WebservFile *file)
     }
     /*
     */
+
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *dummy = file_factory->make_dummy_file(fd, res);
+    (void)dummy;
 
     return (res);
 }

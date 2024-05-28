@@ -205,7 +205,7 @@ bool GetApplication::execute(WebservEntity *entity)
         //file = file_factory->make_error_file(fd, code);
     }
 
-    ApplicationResult *result_ = ApplicationResult::from_status_code(code, this->method);
+    ApplicationResult *result_ = ApplicationResult::from_status_code(entity->fd(), code, this->method);
     if(extension != ""){
         result_->add_header(CONTENT_TYPE, extension);
     }

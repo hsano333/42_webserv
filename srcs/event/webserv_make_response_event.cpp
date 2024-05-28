@@ -23,6 +23,7 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, Web
     StatusCode code = result->status_code();
     DEBUG("WebservMakeResponseEvent::make_response() No.1");
     Response *res = Response::from_success_status_code(
+            entity->fd(),
             code,
             result->file()
     );

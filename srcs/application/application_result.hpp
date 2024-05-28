@@ -17,9 +17,9 @@ class ApplicationResult
     public:
         ~ApplicationResult();
 
-        static ApplicationResult* from_status_code(StatusCode &code, Method const &method);
-        static ApplicationResult* from_status_code(StatusCode &code, string method);
-        static ApplicationResult* from_fd(int in, int out, int pid);
+        static ApplicationResult* from_status_code(FileDiscriptor const &fd, StatusCode &code, Method const &method);
+        static ApplicationResult* from_status_code(FileDiscriptor const &fd, StatusCode &code, string method);
+        static ApplicationResult* from_fd(FileDiscriptor const &fd, int in, int out, int pid);
 
         int open();
         int read(char **data, size_t size);

@@ -91,6 +91,10 @@ class WebservFileFactory
         WebservFile *make_directory_file(FileDiscriptor const &fd, std::string const &path, std::string const &relative_path, std::string const &domain);
         WebservFile *make_request_file(FileDiscriptor const &fd, Request *req);
         WebservFile *make_request_file_read_buf(FileDiscriptor const &fd, Request *req);
+        WebservFile *make_dummy_response_file(FileDiscriptor const &fd, Response *res);
+
+        template<typename FilePointer> 
+        WebservFile *make_dummy_file(FileDiscriptor const &fd, FilePointer *file);
 
         // for dummy_func; not use;
         static string string_ref;
@@ -186,6 +190,7 @@ namespace CommonFunc{
     template <class FileT>
     int close(FileT *file){
         DEBUG("Common close()");
+        (void)file;
         file->state = FILE_CLOSE;
         return 0;
     }
@@ -338,6 +343,13 @@ WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, Fil
     WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, can_write, path, size, is_chunk, set_chunk, completed);
     this->file_manager->insert(fd, new_file);
     return (new_file);
+}
+
+
+template<typename FilePointer> 
+WebservFile *WebservFileFactory::make_dummy_file(FileDiscriptor const &fd, FilePointer *file)
+{
+    return (this->make_webserv_file(fd, file, DummyFunc::open, DummyFunc::read, DummyFunc::write, DummyFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DummyFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }
 
 #endif

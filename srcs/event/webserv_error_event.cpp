@@ -71,7 +71,7 @@ namespace free_func{
             entity->set_result(NULL);
         }
         */
-        ApplicationResult *result = ApplicationResult::from_status_code(code, "NONE");
+        ApplicationResult *result = ApplicationResult::from_status_code(entity->fd(), code, "NONE");
         result->set_file(file);
         entity->set_result(result);
 

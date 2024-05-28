@@ -35,6 +35,8 @@ class FileConcept
         virtual bool is_chunk() = 0;
         virtual void set_chunk(bool flag) = 0;
         virtual bool completed() = 0;
+        virtual void *file_address() = 0;
+        virtual void delete_file() = 0;
         virtual std::string const &path() = 0;
 };
 
@@ -46,8 +48,8 @@ class OwningFileModel : public FileConcept
         //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
         //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
         ~OwningFileModel(){
-            DEBUG("WebservFile delete file:" + Utility::to_string(file_));
-            delete file_;
+            DEBUG("WebservFile Destractor:" + Utility::to_string(file_));
+            //delete file_;
         };
         int open()  {return open_(file_);}
         int read(char **data, size_t size)  {return read_(file_, data, size);}
@@ -61,6 +63,12 @@ class OwningFileModel : public FileConcept
         bool is_chunk()  {return is_chunk_(file_);}
         void set_chunk(bool flag)  {set_chunk_(file_, flag);}
         bool completed() {return completed_(file_);}
+        void *file_address() {return (file_);}
+        void delete_file() {
+            DEBUG("OwningFileModel delete file:" + Utility::to_string(file_));
+            delete (this->file_);
+            DEBUG("OwningFileModel end deleting file:" + Utility::to_string(file_));
+        }
 
     private:
         FilePointer *file_;
@@ -115,6 +123,12 @@ class WebservFile
         size_t size(){return pimpl_->size();};
         void set_chunk(bool flag){
             return pimpl_->set_chunk(flag);
+        };
+        void *file_address(){
+            return (void *)(pimpl_->file_address());
+        };
+        void delete_file(){
+            pimpl_->delete_file();
         };
         bool is_chunk(){
             std::cout << "is_chunk test" << std::endl;

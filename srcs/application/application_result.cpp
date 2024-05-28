@@ -156,24 +156,39 @@ void ApplicationResult::set_completed(bool flag)
     this->completed_ = flag;
 }
 
-ApplicationResult *ApplicationResult::from_fd(int in, int out, int pid)
+ApplicationResult *ApplicationResult::from_fd(FileDiscriptor const &fd, int in, int out, int pid)
 {
     ApplicationResult *result = new ApplicationResult();
     result->cgi_in_ = FileDiscriptor::from_int(in);
     result->cgi_out_ = FileDiscriptor::from_int(out);
     result->pid_ = ProcessID::from_int(pid);
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *dummy = file_factory->make_dummy_file(fd, result);
+    (void)dummy;
+
     return (result);
 }
 
-ApplicationResult *ApplicationResult::from_status_code(StatusCode &code, Method const &method)
+ApplicationResult *ApplicationResult::from_status_code(FileDiscriptor const &fd, StatusCode &code, Method const &method)
 {
     ApplicationResult *result = new ApplicationResult(code, method);
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *dummy = file_factory->make_dummy_file(fd, result);
+    (void)dummy;
+
     return (result);
 }
 
-ApplicationResult *ApplicationResult::from_status_code(StatusCode &code, string method)
+ApplicationResult *ApplicationResult::from_status_code(FileDiscriptor const &fd, StatusCode &code, string method)
 {
     ApplicationResult *result = new ApplicationResult(code, method);
+
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *dummy = file_factory->make_dummy_file(fd, result);
+    (void)dummy;
+
     return (result);
 }
 

@@ -14,6 +14,7 @@
 #include "global.hpp"
 #include "http_exception.hpp"
 #include "utility.hpp"
+#include "webserv_file_factory.hpp"
 
 using std::cin;
 using std::cout;
@@ -78,6 +79,13 @@ Request::~Request()
 Request *Request::from_fd(FileDiscriptor const &fd)
 {
     Request *req = new Request(fd);
+
+
+    // for memory leak
+    (void)fd;
+    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+    WebservFile *dummy = file_factory->make_dummy_file(fd, req);
+    (void)dummy;
     DEBUG("Request::from_fd reques address:" + Utility::to_string(req));
     //req->fd_ = fd;
     //req->sockfd_ = sockfd;

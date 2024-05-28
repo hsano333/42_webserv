@@ -30,7 +30,6 @@ bool WebservEvent::check_died_child()
         DEBUG("WebservEvent::check_died_child");
         waitpid(this->entity_->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
         //ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
-        ERROR("Child Process ERROR status:" +  Utility::to_string(wstatus));
 
         if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {
             MYINFO("WebservEvent::check_died_child True");

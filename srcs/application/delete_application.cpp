@@ -134,7 +134,7 @@ bool DeleteApplication::execute(WebservEntity *entity)
     }
 
     DEBUG("DeleteApplication::invoke No.8");
-    ApplicationResult *result_ = ApplicationResult::from_status_code(code, this->method);
+    ApplicationResult *result_ = ApplicationResult::from_status_code(entity->fd(), code, this->method);
     result_->add_header(CONTENT_LENGTH, "0");
     result_->set_file(NULL);
     DEBUG("DeleteApplication::invoke No.9");

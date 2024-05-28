@@ -247,7 +247,7 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     MYINFO("fd_out(for read)=" + Utility::to_string(fd_out));
     MYINFO("fd_in(for write)=" + Utility::to_string(fd_in));
 
-    ApplicationResult *result = ApplicationResult::from_fd(fd_in, fd_out, pid);
+    ApplicationResult *result = ApplicationResult::from_fd(entity->fd(), fd_in, fd_out, pid);
     return (result);
 }
 

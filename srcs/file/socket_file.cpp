@@ -9,6 +9,7 @@ using std::vector;
 using std::map;
 
 SocketFile::SocketFile(FileDiscriptor const &fd, WebservFile *file) :
+                            state(FILE_NOT_OPEN),
                             fd(fd),
                             file_(file),
                             reader(NULL),

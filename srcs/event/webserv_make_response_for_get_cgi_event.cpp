@@ -103,7 +103,7 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
     ConfigServer const *server = entity->config()->get_server(req);
 
 
-    Response *res = Response::from_cgi_header_line(headers_line, file);
+    Response *res = Response::from_cgi_header_line(entity->fd(), headers_line, file);
 
     int tmp_size = read_size - header_size - 2;
     cout << "body_p[2+i]:[" ;
