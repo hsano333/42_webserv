@@ -87,7 +87,29 @@ void FileManager::erase(FileDiscriptor const &fd)
     std::set<WebservFile*>::iterator ite = tmp_vector.begin();
     std::set<WebservFile*>::iterator end = tmp_vector.end();
 
-    std::vector<void *> deleted_address_vector;
+    std::map<void*, int> file_counts;
+    //std::set<void *> file_address;
+
+    while(ite != end)
+    {
+        WebservFile *file = *ite;
+        void *address = file->file_address();
+        DEBUG("address info :" + Utility::to_string(address));
+        DEBUG("address info2:" + Utility::to_string(file));
+        //file_address.insert(file->file_address());
+        std::map<void *, int>::iterator cnt_ite = file_counts.find(address);
+        if(cnt_ite == file_counts.end()){
+            file_counts.insert(std::make_pair(address, 1));
+        }else{
+            DEBUG("count up");
+            cnt_ite->second++;
+        }
+        ite++;
+    }
+
+    ite = tmp_vector.begin();
+    end = tmp_vector.end();
+
     int cnt = 0;
     while(ite != end)
     {
@@ -103,6 +125,7 @@ void FileManager::erase(FileDiscriptor const &fd)
         void *address = file->file_address();
         DEBUG("child file address:" + Utility::to_string(address));
 
+        /*
         std::vector<void *>::iterator address_ite = deleted_address_vector.begin();
         std::vector<void *>::iterator address_end = deleted_address_vector.end();
         while(address_ite != address_end){
@@ -111,71 +134,36 @@ void FileManager::erase(FileDiscriptor const &fd)
             }
             address_ite++;
         }
+        */
+        int file_cnt = file_counts[address];
+        DEBUG("file_cnt=" + Utility::to_string(file_cnt));
 
-        if(address_ite == deleted_address_vector.end()){
-            file->close();
+        //file->close();
+        if(file_cnt == 1){
             DEBUG("delete file:" + Utility::to_string(address));
             file->delete_file();
             DEBUG("end  deleting file:" + Utility::to_string(address));
-            deleted_address_vector.push_back(address);
+            //deleted_address_vector.push_back(address);
         }else{
+            file_counts[file]--;
             DEBUG("already delete file:" + Utility::to_string(address));
         }
-
-
 
         DEBUG("FileManager::erase file=" + Utility::to_string(file));
         delete file;
         ite++;
 
-        /*
-        cnt++;
-        //File *tmp_file = *ite;
-        if(*ite == NULL){
-            continue;
-        }
-        (*ite)->close();
-        DEBUG("FileManager::erase file=" + Utility::to_string(*ite));
-        delete *ite;
-        ite++;
-        */
-
-            /*
-        cnt++;
-        //File *tmp_file = *ite;
-        WebservFile *file = *ite;
-        if(file == NULL){
-            ite++;
-            continue;
-        }
-        void *address = file->file_address();
-        DEBUG("child file address:" + Utility::to_string(address));
-
-        std::vector<void *>::iterator address_ite = deleted_address_vector.begin();
-        std::vector<void *>::iterator address_end = deleted_address_vector.end();
-        while(address_ite != address_end){
-            if(*address_ite == address){
-                break;
-            }
-            address_ite++;
-        }
-        //std::vector<void *>::iterator deleted_address = std::find(deleted_address_vector.begin(), deleted_address_vector.end(), address);
-
-        if(address_ite == deleted_address_vector.end()){
-            file->delete_file();
-            deleted_address_vector.push_back(address);
-        }else{
-            DEBUG("already delete file:" + Utility::to_string(address));
-
-        }
-        file->close();
-        DEBUG("delete WebservFile");
-        delete file;
-
-
-        DEBUG("FileManager::erase file=" + Utility::to_string(*ite));
-        ite++;
-        */
     }
+
+    /*
+    std::map<void*, int>::iterator address_ite = file_counts.begin();
+    std::map<void*, int>::iterator address_end = file_counts.end();
+    while(address_ite != address_end){
+        void *address = address_ite->first;
+        delete static_cast<char*>(address);
+        address_ite++;
+    }
+    */
+
     this->file_list.erase(fd);
 }

@@ -78,6 +78,7 @@ Request::~Request()
 
 Request *Request::from_fd(FileDiscriptor const &fd)
 {
+    DEBUG("Request::from_fd");
     Request *req = new Request(fd);
 
 
@@ -94,6 +95,7 @@ Request *Request::from_fd(FileDiscriptor const &fd)
 
 FileDiscriptor Request::fd() const
 {
+    DEBUG("Request::fd");
     return (this->fd_);
 }
 
@@ -142,11 +144,13 @@ void Request::clear_raw_buf()
 
 void Request::add_buf_body_p(size_t size)
 {
+    DEBUG("Request::add_buf_body_p");
     this->buf_body_p += size;
 }
 
 char *Request::get_buf_body(size_t *size)
 {
+    DEBUG("Request::get_buf_body");
     *size = this->buf_body_size - this->buf_body_p;
     if(*size == 0){
         return NULL;
@@ -185,6 +189,7 @@ void Request::set_buf_body(char *body, size_t size)
 
 void Request::clear_buf_body()
 {
+    DEBUG("Request::clear_buf_body");
     this->buf_body_size = 0;
     this->buf_body.clear();
     //delete (this->buf_body);
@@ -194,21 +199,25 @@ void Request::clear_buf_body()
 
 std::string const &Request::requested_filepath() const
 {
+    DEBUG("Request::requested_filepath");
     return (this->requested_filepath_);
 }
 
 std::string const &Request::requested_path() const
 {
+    DEBUG("Request::requested_path");
     return (this->requested_path_);
 }
 
 std::string const &Request::tmp_path_info() const
 {
+    DEBUG("Request::tmp_path_info");
     return (this->tmp_path_info_);
 }
 
 std::string const &Request::parent_dir_path() const
 {
+    DEBUG("Request::parent_dir_path");
     return (this->parent_dir_path_);
 }
 
@@ -245,6 +254,7 @@ void Request::renew_raw_buf_space(int space)
 
 void Request::set_request_line(std::string const &str)
 {
+    DEBUG("Request::set_request_line");
     this->req_line_ = RequestLine::from_string(str);
 }
 
@@ -256,16 +266,19 @@ void Request::set_header(Split &sp, size_t offset)
 
 void Request::set_read_completed(bool flag)
 {
+    DEBUG("Request::set_read_completed");
     this->read_completed_ = flag;
 }
 
 bool Request::read_completed()
 {
+    DEBUG("Request::read_completed");
     return (this->read_completed_);
 }
 
 void Request::check_parent_permittion(std::string &path)
 {
+    DEBUG("Request::check_parent_permittion");
     if (Utility::is_directory(path)){
         if (Utility::is_executable_directory(path)){
             this->is_not_executable_parent_dir_ = false;
@@ -341,31 +354,37 @@ void Request::set_requested_filepath(const ConfigLocation *location)
 
 void Request::set_is_file(bool flag)
 {
+    DEBUG("Request::set_is_file");
     this->is_file_ = flag;
 }
 
 bool Request::is_file() const
 {
+    DEBUG("Request::is_file");
     return (this->is_file_);
 }
 
 void Request::set_is_directory(bool flag)
 {
+    DEBUG("Request::set_is_directory");
     this->is_directory_ = flag;
 }
 
 void Request::set_cgi(bool flag)
 {
+    DEBUG("Request::set_cgi");
     this->is_cgi_ = flag;
 }
 
 bool Request::is_cgi()
 {
+    DEBUG("Request::is_cgi");
     return (is_cgi_);
 }
 
 bool Request::is_directory() const
 {
+    DEBUG("Request::is_directory");
     return (this->is_directory_);
 }
 
@@ -452,6 +471,7 @@ int Request::write(char **data, size_t size)
 // body以外のステータスライン、ヘッダーのサイズを返す
 size_t Request::size()
 {
+    DEBUG("Request::size()");
     return (0);
 }
 
@@ -532,16 +552,19 @@ BufferController const &Request::get_buffer()
 
 WebservFile *Request::file()
 {
+    DEBUG("Request::file()");
     return (this->file_);
 }
 
 void Request::set_has_body(bool flag)
 {
+    DEBUG("Request::set_has_body");
     this->has_body_ = flag;
 }
 
 bool Request::has_body()
 {
+    DEBUG("Request::has_body");
     return (this->has_body_);
 }
 

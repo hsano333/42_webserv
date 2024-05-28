@@ -48,7 +48,7 @@ class OwningFileModel : public FileConcept
         //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
         //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
         ~OwningFileModel(){
-            DEBUG("WebservFile Destractor:" + Utility::to_string(file_));
+            //DEBUG("WebservFile Destractor:" + Utility::to_string(file_));
             //delete file_;
         };
         int open()  {return open_(file_);}
@@ -67,7 +67,6 @@ class OwningFileModel : public FileConcept
         void delete_file() {
             DEBUG("OwningFileModel delete file:" + Utility::to_string(file_));
             delete (this->file_);
-            DEBUG("OwningFileModel end deleting file:" + Utility::to_string(file_));
         }
 
     private:

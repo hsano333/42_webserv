@@ -31,7 +31,9 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 {
     DEBUG("WebservCleaner::clean() force_close:" + Utility::to_string(force_close));
 
-    FileDiscriptor const &fd = entity->fd();
+    FileDiscriptor fd = entity->fd();
+    DEBUG("WebservCleaner::clean fd:" + Utility::to_string(fd));
+    DEBUG("WebservCleaner::clean fd:" + fd.to_string());
 
     // delete all registered files;
     file_manager->erase(fd);
@@ -46,7 +48,9 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     }
 
     // except keep-alive
-    if(!force_close){
+    if(force_close){
+        DEBUG("force close ::clean fd:" + Utility::to_string(fd));
+        DEBUG("force close:" + fd.to_string());
         fd.close();
     }
 

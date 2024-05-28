@@ -244,7 +244,7 @@ Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
         req->set_cgi(check_cgi(req, location));
     }catch(HttpException &e){
         ERROR("WebservMakeRequestEvent::make_request:" + Utility::to_string(e.what()));
-        delete req;
+        //delete req;
         throw HttpException(e.what());
     }
 
