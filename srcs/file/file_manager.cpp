@@ -112,8 +112,8 @@ void FileManager::erase(FileDiscriptor const &fd)
             address_ite++;
         }
 
-        file->close();
         if(address_ite == deleted_address_vector.end()){
+            file->close();
             DEBUG("delete file:" + Utility::to_string(address));
             file->delete_file();
             DEBUG("end  deleting file:" + Utility::to_string(address));

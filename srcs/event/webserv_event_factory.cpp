@@ -245,6 +245,7 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *e
     if(src->is_chunk()){
         DEBUG("WebservEventFactory:: Chunked");
         WebservEvent *new_event = WebservIOSocketEvent::as_chunked_write(event, event->entity()->fd(), src, file);
+        this->register_event(new_event);
         return (new_event);
     }
     WebservEvent *new_event = WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, file);
