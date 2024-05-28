@@ -79,6 +79,7 @@ ApplicationResult *GetApplication::get_result()
 string GetApplication::check_content(string const &filepath)
 {
     string ext = Utility::get_extension(filepath);
+    DEBUG("GetApplication::check_content ext:" + ext);
     if(ext == TEXT_PLAIN){
         return (CONTENT_TEXT_PLAIN);
     }else if(ext == TEXT_HTML){
@@ -107,6 +108,8 @@ string GetApplication::check_content(string const &filepath)
         return (CONTENT_IMAEG_JPEG);
     }else if(ext == IMAGE_BMP){
         return (CONTENT_IMAEG_BMP);
+    }else if(ext == IMAGE_SVG){
+        return (CONTENT_IMAGE_SVG);
     }else if(ext == AUDIO_MP3){
         return (CONTENT_AUDIO_MP3);
     }

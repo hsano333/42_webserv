@@ -32,7 +32,7 @@ class URI
     //Split query;
     Split path_sp;
     Split encoded_path_sp;
-    void uri_encode(std::string const &raw_uri);
+    std::string uri_encode(std::string const &raw_uri);
 };
 
 std::ostream& operator<<(std::ostream& os, const  URI&uri);

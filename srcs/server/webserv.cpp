@@ -58,13 +58,14 @@ Webserv& Webserv::operator=(const Webserv& socket)
 void Webserv::communication()
 {
     DEBUG("Webserv::communication() start");
-    bool exit_flag = false;
     int wait_time;
-    int count = 0;
+
+#ifdef TEST
+    bool exit_flag = false;
     int cnt = 0;
+#endif
     while(1)
     {
-        count++;
         wait_time = 0;
         if(waiter.is_not_busy()){
             wait_time = 1;
@@ -148,17 +149,22 @@ void Webserv::communication()
             }
 
             if(this->cleaner->delete_event(event, next_event)){
+#ifdef TEST
                 cnt++;
                 if(cnt > 10){
                     DEBUG("exit_flag True");
                     exit_flag = true;
                 }
+#endif
             }
         }
 
-        if(exit_flag || count > 1000){
+
+#ifdef TEST
+        if(exit_flag){
             break;
         }
+#endif
         DEBUG("while end");
     }
 }

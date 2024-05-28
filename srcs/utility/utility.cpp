@@ -108,6 +108,7 @@ string Utility::get_extension(string const &str)
     if(pos == std::string::npos || pos == str.size()-1){
         return ("");
     }
+    pos++;
     return (str.substr(pos));
 }
 

@@ -16,6 +16,8 @@
 #define CONTENT_IMAEG_GIF "image/gif"
 #define CONTENT_IMAEG_JPEG "image/jpeg"
 #define CONTENT_IMAEG_BMP "image/bmp"
+#define CONTENT_IMAGE_SVG "image/svg+xml"
+
 #define CONTENT_AUDIO_MP3 "audio/mp3"
 
 #define TEXT_PLAIN "txt"
@@ -32,6 +34,7 @@
 #define IMAGE_GIF "gif"
 #define IMAGE_JPEG "jpeg"
 #define IMAGE_BMP "bmp"
+#define IMAGE_SVG "svg"
 #define AUDIO_MP3 "mp3"
 
 #endif

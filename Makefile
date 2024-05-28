@@ -81,6 +81,12 @@ DEPS			:= $(OBJECTS:.o=.d)
 CXX			:= c++
 CXXFLAGS	:= -Wall -Wextra -Werror -std=c++98
 
+ifdef WITH_TEST
+CXX += -DTEST
+endif
+
+
+
 all:
 	@make $(NAME)
 
@@ -107,6 +113,9 @@ re	:		fclean all
 
 bonus	:
 			@make WITH_BONUS=1
+
+test	:
+			@make WITH_TEST=1
 
 r: run
 run:

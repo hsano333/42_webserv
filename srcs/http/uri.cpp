@@ -87,12 +87,15 @@ URI URI::from_string(std::string const &uri_raw)
 
     uri.path_sp = Split(tmp_uri , "/");
     uri.encoded_path_sp = uri.path_sp;
+    //DEBUG("url pre encoded:" + uri.encoded_path_sp);
     //uri.path_ = tmp_uri;
 
     for(size_t i=0;i<uri.encoded_path_sp.size();i++){
-        uri.uri_encode(uri.encoded_path_sp[i]);
-        uri.path_ = uri.path_ + "/" + uri.encoded_path_sp[i];
+        //uri.uri_encode(uri.encoded_path_sp[i]);
+        uri.path_ = uri.path_ + "/" + uri.uri_encode(uri.encoded_path_sp[i]);
+        DEBUG("url encoded:" + uri.path_);
     }
+    DEBUG("end url encoded:" + uri.path_);
     /*
     for(size_t i=0;i<uri.query.size();i++){
         uri.uri_encode(uri.query[i]);
@@ -122,7 +125,7 @@ const Split &URI::splited_path() const
     return (this->path_sp);
 }
 
-void URI::uri_encode(std::string const &raw_uri_)
+std::string URI::uri_encode(std::string const &raw_uri_)
 {
     std::string raw_uri = raw_uri_;
     char* pos = &(raw_uri[0]);
@@ -162,6 +165,7 @@ void URI::uri_encode(std::string const &raw_uri_)
     //_endorded_uri = string(bk);
     raw_uri = std::string(bk);
     delete[] (bk) ;
+    return (raw_uri);
 }
 
 std::string const &URI::get_path_info() const
