@@ -76,6 +76,9 @@ class WebservEventFactory
         IReader *socket_reader;
         WebservCleaner *cleaner;
 
+        WebservEvent *register_event(WebservEvent *event);
+
+
 };
 
 #endif

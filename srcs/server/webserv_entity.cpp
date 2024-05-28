@@ -20,8 +20,8 @@ WebservEntity::~WebservEntity()
     DEBUG("WebservEntity() Destructor No.2");
     */
     DEBUG("WebservEntity() Destructor No.1 response address:" + Utility::to_string(this->app_result_));
-    if(this->app_result_)
-        delete this->app_result_;
+    //if(this->app_result_)
+        //delete this->app_result_;
     //delete this->app_;
 }
 

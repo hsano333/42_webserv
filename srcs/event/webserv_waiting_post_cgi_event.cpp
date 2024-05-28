@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 01:24:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/27 21:05:58 by sano             ###   ########.fr       */
+/*   Updated: 2024/05/28 13:31:07 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,11 @@ namespace myfunc{
 
 WebservEvent *WebservWaitingPostCGIEvent::from_event(WebservEvent * event)
 {
-    DEBUG("WebservWaitingCGIInEvent::from_event");
+    DEBUG("WebservWaitingPostCGIEvent::from_event");
     WebservWaitingPostCGIEvent *io_event = WebservWaitingPostCGIEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, myfunc::check_error, event->entity());
+    DEBUG("WebservWaitingPostCGIEvent::from_event address:" + Utility::to_string(new_event));
+
 
     /*
         int wstatus;

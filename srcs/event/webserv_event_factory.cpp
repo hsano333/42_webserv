@@ -58,6 +58,12 @@ WebservEventFactory::~WebservEventFactory()
     DEBUG("WebservEventFactory::~WebservEventFactory Destructor");
 }
 
+WebservEvent *WebservEventFactory::register_event(WebservEvent *event)
+{
+    this->event_manager->add_events_will_deleted(event->entity()->fd(), event);
+    return (event);
+}
+
 void WebservEventFactory::make_and_push_write_cgi_event(FileDiscriptor pid, FileDiscriptor fd_out, Request *req)
 {
     (void)req;
@@ -71,6 +77,10 @@ WebservEvent *WebservEventFactory::make_keep_alive_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_keep_alive_event");
     WebservEvent *new_event = WebservKeepAliveEvent::from_event(event);
+
+
+    // keep_aliveのみ削除しない
+    //this->register_event(new_event);
     return (new_event);
 }
 
@@ -122,7 +132,10 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
                 this->cfg->check();
                 event->entity()->config()->check();
+
+                this->register_event(event);
                 return (event);
+
             }else{
                 cached_event->entity()->io().switching_io(EPOLLIN);
                 cached_event->update_time();
@@ -156,6 +169,7 @@ WebservEvent *WebservEventFactory::make_waiting_socket_out_cgi(WebservEvent *eve
     DEBUG("WebservEventFactory::make_waiting_out_cgi fd=" + event->entity()->fd().to_string());
     WebservEvent *new_event = WebservWaitingGetCGIEvent::from_event(event);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -164,12 +178,15 @@ WebservEvent *WebservEventFactory::make_waiting_get_cgi(WebservEvent *event)
     DEBUG("WebservEventFactory::make_waiting_out_cgi fd=" + event->entity()->fd().to_string());
     WebservEvent *new_event = WebservWaitingGetCGIEvent::from_event(event);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_waiting_post_cgi(WebservEvent *event)
 {
     WebservEvent *new_event = WebservWaitingPostCGIEvent::from_event(event);
+
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -207,6 +224,7 @@ WebservEvent *WebservEventFactory::make_io_socket_for_post_cgi(WebservEvent *eve
     WebservEvent *new_event = WebservIOPostCGIEvent::from_event(event);
     DEBUG("new_event address:" + Utility::to_string(new_event));
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -215,6 +233,7 @@ WebservEvent *WebservEventFactory::make_io_socket_for_get_cgi(WebservEvent *even
     DEBUG("WebservEventFactory::make_io_socket_for_get_cgi fd=" + event->entity()->fd().to_string());
     WebservEvent *new_event = WebservIOGetCGIEvent::from_event(event);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -229,6 +248,8 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_write(WebservEvent *e
         return (new_event);
     }
     WebservEvent *new_event = WebservIOSocketEvent::as_write(event, event->entity()->fd(), src, file);
+
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -238,6 +259,8 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
     WebservFile *src = this->file_factory->make_socket_file(event->entity()->fd(), event->entity()->fd(), NULL, socket_reader);
     WebservFile *dst = this->file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
     WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
+
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -246,6 +269,8 @@ WebservEvent *WebservEventFactory::make_io_socket_event_as_read(WebservEvent *ev
     DEBUG("WebservEventFactory::make_io_socket_event_as_read fd=" + event->entity()->fd().to_string());
     WebservFile *dst = this->file_factory->make_vector_file_for_socket(event->entity()->fd(), MAX_REAUEST_EXCEPT_BODY);
     WebservEvent *new_event = WebservIOSocketEvent::as_read(event->entity()->fd(), src, dst, event->entity());
+
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -254,6 +279,7 @@ WebservEvent *WebservEventFactory::make_making_request_event(WebservEvent *event
     DEBUG("WebservEventFactory::make_making_request_event");
     WebservEvent *new_event = WebservMakeRequestEvent::from_event(event, event->entity()->io().destination(), NULL);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -264,6 +290,7 @@ WebservEvent *WebservEventFactory::make_making_response_for_get_cgi_event(Webser
     DEBUG("WebservEventFactory::make_making_response_for_get_cgi_event");
     WebservEvent *new_event = WebservMakeResponseForGetCGIEvent::from_event(event);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -272,6 +299,7 @@ WebservEvent *WebservEventFactory::make_making_response_for_post_cgi_event(Webse
     DEBUG("WebservEventFactory::make_making_response_for_post_cgi_event");
     WebservEvent *new_event = WebservMakeResponseForPostCGIEvent::from_event(event);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -280,6 +308,7 @@ WebservEvent *WebservEventFactory::make_making_response_event(WebservEvent *even
     DEBUG("WebservEventFactory::make_making_response_event");
     WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, src, dst);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -289,6 +318,7 @@ WebservEvent *WebservEventFactory::make_application_event(WebservEvent *event)
     WebservEvent *new_event;
     new_event = WebservApplicationEvent::from_event(event);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -307,6 +337,7 @@ WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event,
     ApplicationResult *result = event->entity()->app_result();
     result->set_file(dst);
 
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -350,6 +381,7 @@ WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *even
         code = StatusCode::from_string("500");
     }
     WebservEvent *new_event = WebservErrorEvent::from_event(event, code);
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -358,12 +390,15 @@ WebservEvent *WebservEventFactory::make_clean_event(WebservEvent *event, bool fo
 {
     DEBUG("WebservEventFactory::make_clean_event()");
     WebservEvent *new_event = WebservCleanEvent::from_event(event, force_close);
+    this->register_event(new_event);
     return (new_event);
 }
 
 WebservEvent *WebservEventFactory::make_timeout_event(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_timeout_event()");
-    return (WebservTimeoutEvent::make(event));
+    WebservEvent *new_event = (WebservTimeoutEvent::make(event));
+    this->register_event(new_event);
+    return (new_event);
 }
 

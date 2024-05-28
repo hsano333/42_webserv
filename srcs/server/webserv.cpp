@@ -85,7 +85,7 @@ void Webserv::communication()
                 DEBUG("start handle() event address:" + Utility::to_string(event));
                 handle(event);
             }catch(ConnectionException &e){
-                ERROR("onnectionException:" + Utility::to_string(e.what()));
+                ERROR("ConnectionException:" + Utility::to_string(e.what()));
                 event_manager->add_events_will_deleted(event->entity()->fd(), event);
 
                 //event = this->event_factory->make_event_from_http_error(event, e.what());
@@ -140,7 +140,7 @@ void Webserv::communication()
                 }
                 event_controller->set_next_epoll_event(event, next_event);
             }catch(std::runtime_error &e){
-                WARNING("Making Nexe Event Exception:");
+                WARNING("Making Next Event Exception:");
                 WARNING(e.what());
                 next_event = this->event_factory->make_clean_event(event, true);
                 this->event_manager->push(next_event);

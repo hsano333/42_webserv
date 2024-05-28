@@ -135,7 +135,8 @@ WebservFile *WebservFileFactory::make_result_file_for_cgi(FileDiscriptor const &
 {
     (void)fd;
     //VectorFile *vector_file = VectorFile::from_buf_size(buf_size);
-    return (new WebservFile(file, DefaultFunc::open<ApplicationResult>, DefaultFunc::read<ApplicationResult>, DefaultFunc::write<ApplicationResult>, DefaultFunc::close<ApplicationResult>, DummyFunc::remove<ApplicationResult>, DummyFunc::can_read<ApplicationResult>, DummyFunc::can_write<ApplicationResult>, DummyFunc::path<ApplicationResult>, DummyFunc::size<ApplicationResult>, DefaultFunc::is_chunk<ApplicationResult>, DummyFunc::set_chunk<ApplicationResult>, DefaultFunc::completed<ApplicationResult>));
+    return (make_webserv_file(fd, file, DefaultFunc::open<ApplicationResult>, DefaultFunc::read<ApplicationResult>, DefaultFunc::write<ApplicationResult>, DefaultFunc::close<ApplicationResult>, DummyFunc::remove<ApplicationResult>, DummyFunc::can_read<ApplicationResult>, DummyFunc::can_write<ApplicationResult>, DummyFunc::path<ApplicationResult>, DummyFunc::size<ApplicationResult>, DefaultFunc::is_chunk<ApplicationResult>, DummyFunc::set_chunk<ApplicationResult>, DefaultFunc::completed<ApplicationResult>));
+    //return (new WebservFile(file, DefaultFunc::open<ApplicationResult>, DefaultFunc::read<ApplicationResult>, DefaultFunc::write<ApplicationResult>, DefaultFunc::close<ApplicationResult>, DummyFunc::remove<ApplicationResult>, DummyFunc::can_read<ApplicationResult>, DummyFunc::can_write<ApplicationResult>, DummyFunc::path<ApplicationResult>, DummyFunc::size<ApplicationResult>, DefaultFunc::is_chunk<ApplicationResult>, DummyFunc::set_chunk<ApplicationResult>, DefaultFunc::completed<ApplicationResult>));
 }
 
 WebservFile *WebservFileFactory::make_vector_file_for_cgi(FileDiscriptor const &fd, size_t buf_size)

@@ -54,7 +54,8 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
 bool WebservCleaner::delete_event(WebservEvent *event, WebservEvent *next_event)
 {
-    event_manager->add_events_will_deleted(event->entity()->fd(), event);
+    DEBUG("delete_event register event :" + Utility::to_string(event));
+    //event_manager->add_events_will_deleted(event->entity()->fd(), event);
     if(event->which() == CLEAN_EVENT){
         DEBUG("WebservCleaner::delete_event");
         this->clean(event->entity(), event->entity()->force_close());
