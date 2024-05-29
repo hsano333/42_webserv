@@ -114,6 +114,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 //if(cached_event && cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
                     MYINFO("WebservEvent::from_epoll_event() delete keep alive event");
+                    delete cached_event->entity();
                     delete cached_event;
                 }
 

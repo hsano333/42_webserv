@@ -72,7 +72,7 @@ Response* Response::from_success_status_code(FileDiscriptor const &fd, StatusCod
 
 Response* Response::from_error_status_code(FileDiscriptor const &fd, StatusCode &code)
 {
-    DEBUG("Response::from_error_status_code");
+    DEBUG("Response::from_error_status_code fd:" + fd.to_string());
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     Response *res = new Response();
     res->status_code = code;

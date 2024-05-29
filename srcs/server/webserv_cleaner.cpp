@@ -43,7 +43,6 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
     if(entity){
         DEBUG("delete entity in clean event address::" + Utility::to_string(entity));
-        delete entity;
         DEBUG("end delete entity in clean event");
     }
 
@@ -52,6 +51,7 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
         DEBUG("force close ::clean fd:" + Utility::to_string(fd));
         DEBUG("force close:" + fd.to_string());
         fd.close();
+        delete entity;
     }
 
 }

@@ -71,7 +71,8 @@ void WebservEntity::set_result(ApplicationResult *result)
         return ;
     }
     if(this->app_result_){
-        delete this->app_result_;
+        // must not delete because of double free;
+        //delete this->app_result_;
 
     }
     this->app_result_ = result;
@@ -83,7 +84,8 @@ void WebservEntity::set_request(Request *req)
         return ;
     }
     if(this->req_ != NULL){
-        delete this->req_;
+        // must not delete because of double free;
+        //delete this->req_;
     }
     this->req_ = req;
 }
@@ -96,8 +98,8 @@ void WebservEntity::set_response(Response *res)
     }
     DEBUG("WebservEntity::set_response No.1 address:" + Utility::to_string(res));
     if(this->res_){
-        DEBUG("WebservEntity::set_response No.2 delete old address:" + Utility::to_string(this->res_));
-        delete this->res_;
+        // must not delete because of double free;
+        //delete this->res_;
     }
     this->res_ = res;
 }

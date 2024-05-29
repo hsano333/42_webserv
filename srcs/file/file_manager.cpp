@@ -37,12 +37,14 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
     std::map<FileDiscriptor, std::set<WebservFile*> >::iterator ite = this->file_list.begin();
     std::map<FileDiscriptor, std::set<WebservFile*> >::iterator end = this->file_list.end();
 
+    DEBUG("test file_manager No.1");
 
     //DEBUG("No.1 this->file_list size=" + Utility::to_string(this->file_list.size()));
 
     bool exist_flag = false;
     while(ite != end)
     {
+    DEBUG("test file_manager No.2");
         cout << "fd:" << ite->first.to_string() << endl;
         //DEBUG("ite->second size=" + Utility::to_string(ite->second.size()));
 
@@ -55,12 +57,15 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
         }
         ite++;
     }
+    DEBUG("test file_manager No.3");
     //DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
     if(!exist_flag){
         std::set<WebservFile *> file_vector;
         this->file_list.insert(std::make_pair(fd, file_vector));
         this->file_list[fd].insert(file);
     }
+    DEBUG("test file_manager No.4");
+    //DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
     //DEBUG("No.2 this->file_list size=" + Utility::to_string(this->file_list.size()));
 
     std::map<FileDiscriptor, std::set<WebservFile*> >::iterator ite2 = this->file_list.begin();
@@ -71,6 +76,7 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
         //DEBUG("No.2 ite->second size=" + Utility::to_string(ite2->second.size()));
         ite2++;
     }
+    DEBUG("test file_manager No.5");
 
 }
 
