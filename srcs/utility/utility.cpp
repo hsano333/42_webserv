@@ -284,6 +284,20 @@ std::string Utility::to_hexstr(size_t i)
     return (ss.str());
 }
 
+std::string Utility::uchar_to_hexstr(unsigned char c)
+{
+    unsigned int i = c;
+    //printf("Utility::%d\n\n", c);
+    //DEBUG("Utility::uchar_to_hexstr:" + Utility::to_string(c));
+    stringstream ss;
+    ss << std::hex << i;
+    //DEBUG("Utility::uchar_to_hexstr:" + ss.str());
+    //ss << std::hex << 250;
+    //DEBUG("Utility::uchar_to_hexstr test:" + ss.str());
+    return (ss.str());
+}
+
+
 size_t Utility::hex_string_to_number(const std::string &str)
 {
     DEBUG("Utility::hex_string_to_number str=" + str);

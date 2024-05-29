@@ -23,6 +23,7 @@ class URI
     std::string const &get_path_info() const;
     void print_info() const;
     std::string const &query() const;
+    static std::string uri_encode(std::string path);
 
   private:
     std::string raw_;
@@ -32,7 +33,7 @@ class URI
     //Split query;
     Split path_sp;
     Split encoded_path_sp;
-    std::string uri_encode(std::string const &raw_uri);
+    std::string uri_decode(std::string const &raw_uri);
 };
 
 std::ostream& operator<<(std::ostream& os, const  URI&uri);

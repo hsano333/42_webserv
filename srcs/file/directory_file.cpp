@@ -2,6 +2,7 @@
 #include "global.hpp"
 #include <sstream>
 #include <iomanip>
+#include "uri.hpp"
 
 DirectoryFile::DirectoryFile()
 {
@@ -111,7 +112,14 @@ int DirectoryFile::read(char **buf, size_t size)
         }
     }
 
-    std::string uri = "http://" + this->domain + "/" + relative_path + "/" + dirr->d_name;
+    string tmp_path = string(dirr->d_name);
+    tmp_path = (tmp_path);
+    DEBUG("relative_path=" + tmp_path);
+    DEBUG("tmp_path=" + relative_path);
+    std::string uri = "http://" + this->domain \
+        + "/" + (URI::uri_encode(Utility::trim_char(relative_path, '/'))) \
+        + "/" + (URI::uri_encode(Utility::trim_char(tmp_path, '/')));
+    DEBUG("uri=" + uri);
     std::string filepath = this->path_ + "/" +  dirr->d_name;
     size_t filesize = Utility::get_file_size(filepath);
     std::string filesize_str = Utility::adjust_filesize(filesize);

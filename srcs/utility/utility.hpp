@@ -54,8 +54,10 @@ class Utility
     //static size_t to_size_t(std::string &str);
     static size_t to_size_t(std::string const &str);
     static std::string to_hexstr(size_t i);
+    static std::string uchar_to_hexstr(unsigned char i);
     static size_t hex_string_to_number(const std::string &str);
     static IP_Address name_to_address(std::string name);
+    //static unsigned char char_to_hex(char c);
 
     static char hex_string_to_int(const std::string& hex_string);
     static std::string get_http_status_message(std::string status_code);

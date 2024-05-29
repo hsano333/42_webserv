@@ -91,14 +91,14 @@ URI URI::from_string(std::string const &uri_raw)
     //uri.path_ = tmp_uri;
 
     for(size_t i=0;i<uri.encoded_path_sp.size();i++){
-        //uri.uri_encode(uri.encoded_path_sp[i]);
-        uri.path_ = uri.path_ + "/" + uri.uri_encode(uri.encoded_path_sp[i]);
+        //uri.uri_decode(uri.encoded_path_sp[i]);
+        uri.path_ = uri.path_ + "/" + uri.uri_decode(uri.encoded_path_sp[i]);
         DEBUG("url encoded:" + uri.path_);
     }
     DEBUG("end url encoded:" + uri.path_);
     /*
     for(size_t i=0;i<uri.query.size();i++){
-        uri.uri_encode(uri.query[i]);
+        uri.uri_decode(uri.query[i]);
     }
     */
 
@@ -125,9 +125,18 @@ const Split &URI::splited_path() const
     return (this->path_sp);
 }
 
-std::string URI::uri_encode(std::string const &raw_uri_)
+std::string URI::uri_decode(std::string const &raw_uri_)
 {
+    //std::string s = "a-b-c";
+//std::replace(s.begin(), s.end(), '-', '=');
     std::string raw_uri = raw_uri_;
+    for(size_t i=0;i<raw_uri.size();i++){
+        if(raw_uri[i] == '+'){
+            raw_uri[i] = ' ';
+        }
+    }
+
+    //std::replace(raw_uri.begin(), raw_uri.end(), "+", " ");
     char* pos = &(raw_uri[0]);
     size_t cnt = 0;
     char tmp_hex[2];
@@ -178,6 +187,42 @@ void URI::set_path_info(std::string &path)
     this->path_info_ = path;
 }
 
+bool must_encode(char c)
+{
+    if(isalnum(c)){
+        return (false);
+    }else if(c == '-' \
+           || c== '_' \
+           || c== '.' \
+           || c== '!' \
+           || c== '~' \
+           || c== '*' \
+           || c== '\'' \
+           || c== '(' \
+           || c== ')'){
+    return (false);
+    }
+    return (true);
+
+}
+
+std::string URI::uri_encode(std::string path)
+{
+    std::string encoded_str;
+    for(size_t i=0;i<path.size();i++){
+        if(must_encode(path[i])){
+            encoded_str += "%";
+            encoded_str += Utility::uchar_to_hexstr((unsigned char)path[i]);
+            DEBUG("pre encode :" + path[i]);
+            DEBUG("pre2 encode :" + Utility::to_string(path[i]));
+            DEBUG("encode :%" + Utility::uchar_to_hexstr(((unsigned char)path[i])));
+        }else{
+            encoded_str += path[i];
+        }
+    }
+    return (encoded_str);
+
+}
 
 void URI::print_info() const
 {
