@@ -6,8 +6,8 @@
 class Base64
 {
   public:
-    static std::string encode(std::string);
-    static std::string decode(std::string);
+    static std::string encode(std::string const &str);
+    static std::string decode(std::string const &str);
 };
 
 #endif

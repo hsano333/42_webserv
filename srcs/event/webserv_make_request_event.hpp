@@ -28,6 +28,7 @@ class WebservMakeRequestEvent
         void parse_request(Request *req, WebservFile *src);
         bool check_cgi(const Request *req, const ConfigLocation *location) const;
         bool check_body_size(Request *req, const ConfigServer *server);
+        void check_auth(Request *req, const ConfigLocation *location);
         void parse_req(WebservEvent *event);
 
 };

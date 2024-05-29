@@ -14,15 +14,21 @@ static char to_base64(unsigned char c)
         return ('a' + c - 26);
     } else if (c <= 61) {
         return ('0' + c - 52);
-    } else if (c == 61) {
+    } else if (c == 62) {
         return ('+');
     }
     return ('/');
 }
 
-std::string Base64::encode(std::string str)
+std::string Base64::encode(std::string const &str)
 {
-    size_t size = ((str.size() / 3) + 1) * 4;
+    if(str.size() == 0){
+        return ("");
+    }
+
+    //size_t size = ((str.size() / 3) + 1) * 4;
+    size_t size = (((str.size()-1) / 3) + 1) * 4;
+    //size_t size = ((str.size() * 8) / 6) + ((str.size() * 8) / 6) % 6 ;
     char bits[size + 1];
     const char* char_str = str.c_str();
     unsigned char c;
@@ -72,10 +78,12 @@ static unsigned char to_bit(char c)
     return (63);
 }
 
-std::string Base64::decode(std::string str)
+std::string Base64::decode(std::string const &str)
 {
     unsigned char rest_array[] = {0b00000000, 0b00100000, 0b00110000, 0b00111000, 0b00111100, 0b00111110, 0b00111111};
-    size_t size = (str.size() * 3) / 4;
+    //size_t size = (str.size() * 3) / 4;
+    size_t size = (str.size() / 4) * 3;
+    //size_t size = (((str.size()-1) / 3) + 1) * 4;
     const char* char_str = str.c_str();
     char decode_char[size + 1];
     size_t i = 0;

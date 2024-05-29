@@ -44,7 +44,7 @@ EXCEPTIONSRC 		:= timeout_exception.cpp http_exception.cpp connection_exception.
 EXCEPTION 			:= $(addprefix $(EXCEPTIONDIR)/, $(EXCEPTIONSRC))
 
 UTILITYDIR			:= utility/
-UTILITYSRC 			:= split.cpp  utility.cpp endian.cpp log.cpp process_id.cpp
+UTILITYSRC 			:= split.cpp  utility.cpp endian.cpp log.cpp process_id.cpp base64.cpp
 UTILITY 			:= $(addprefix $(UTILITYDIR)/, $(UTILITYSRC))
 
 #socket_data.cpp request.cpp response.cpp socket.cpp tcp_socket.cpp uri.cpp  fd_manager.cpp 

@@ -54,6 +54,10 @@ namespace free_func{
 
             res->add_header(ALLOW, allowed_methods);
         }
+        if(code.to_int() == 401){
+            res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
+
+        }
         entity->set_response(res);
 
         return (true);

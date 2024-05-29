@@ -20,4 +20,8 @@
 
 #define ALLOW "allow"
 
+#define AUTHORIZATION "authorization"
+#define WWW_AUTHENTICATE "www-authenticate"
+#define AUTHENTICATE_BASIC "Basic"
+
 #endif

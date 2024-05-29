@@ -3,6 +3,7 @@
 #include "http_exception.hpp"
 #include "socket_file.hpp"
 #include "global.hpp"
+#include "base64.hpp"
 
 WebservMakeRequestEvent::WebservMakeRequestEvent()
 {
@@ -104,6 +105,56 @@ bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *
     return (true);
 }
 
+void WebservMakeRequestEvent::check_auth(Request *req, const ConfigLocation *location)
+{
+    DEBUG("WebservMakeRequestEvent::check_auth");
+    (void)req;
+    (void)location;
+    if(location->auth_basic() == false){
+        return;
+    }
+    DEBUG("WebservMakeRequestEvent::check_auth No.1");
+    std::string const &path = location->auth_basic_path();
+    if(Utility::is_readable_file(path) == false){
+        ERROR("not readable auth basic file:" + path);
+        throw HttpException("500");
+    }
+    DEBUG("WebservMakeRequestEvent::check_auth No.2");
+    Header const &header = req->header();
+    std::string const &auth = header.find(AUTHORIZATION);
+    if(auth == header.not_find()){
+        throw HttpException("401");
+    }
+    Split sp(auth, " ");
+    if(sp.size() < 2 || sp[1].size() == 0){
+        throw HttpException("401");
+    }
+
+
+    std::ifstream ifs(path.c_str());
+    if (ifs.is_open() == false){
+        ERROR("not readable auth basic file:" + path);
+        throw HttpException("500");
+    }
+
+    std::string decoded_auth = Base64::decode(sp[1]);
+    std::string buf;
+    while (getline(ifs, buf)) {
+        if(decoded_auth == buf){
+            return ;
+        }
+    }
+    throw HttpException("401");
+
+    //DEBUG("WebservMakeRequestEvent::check_auth No.3  auth:" + sp[1]);
+    ////DEBUG("WebservMakeRequestEvent::check_auth No.4  auth:" + decoded_auth);
+    //std::string test_str = "sano:basic_test";
+    //std::string test = Base64::encode(test_str);
+    //DEBUG("WebservMakeRequestEvent::check_auth No.5  auth:" + test);
+    //DEBUG("WebservMakeRequestEvent::check_auth No.6  auth:" + Base64::decode(test));
+        //throw HttpException("401");
+
+}
 
 void WebservMakeRequestEvent::parse_request(Request *req, WebservFile *src)
 {
@@ -241,6 +292,7 @@ Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
 
         req->set_requested_filepath(location);
         this->check_body_size(req, server);
+        this->check_auth(req, location);
         req->set_cgi(check_cgi(req, location));
     }catch(HttpException &e){
         ERROR("WebservMakeRequestEvent::make_request:" + Utility::to_string(e.what()));

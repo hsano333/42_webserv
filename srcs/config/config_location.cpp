@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigLocation::ConfigLocation() : root_(""), cgi_pass_(""), limit_(NULL), is_redirect_(false)
+ConfigLocation::ConfigLocation() : root_(""), cgi_pass_(""), limit_(NULL), is_redirect_(false), auth_basic_(false), auth_basic_path_("")
 {
     ;
 }
@@ -44,6 +44,10 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
             set_return(tmp_vec);
         }else if(tmp_vec[0] == "error_page"){
             set_error_page(tmp_vec);
+        }else if(tmp_vec[0] == "auth_basic"){
+            set_auth_basic(tmp_vec);
+        }else if(tmp_vec[0] == "auth_basic_user_file"){
+            set_auth_basic_user_file(tmp_vec);
         }else{
             ERROR("Invalid Config Error:" + tmp_vec[0] + " is not location directive");
             throw std::runtime_error("config parser error:location");
@@ -113,6 +117,16 @@ bool ConfigLocation::is_redirect() const
 const std::pair<StatusCode, std::string> &ConfigLocation::redirect() const
 {
     return (this->redirect_);
+}
+
+bool ConfigLocation::auth_basic() const
+{
+    return (this->auth_basic_);
+}
+
+std::string const &ConfigLocation::auth_basic_path() const
+{
+    return (this->auth_basic_path_);
 }
 
 
@@ -233,6 +247,34 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
     }
 }
 
+void ConfigLocation::set_auth_basic(std::vector<std::string> &vec)
+{
+    
+    size_t word_cnt = vec.size();
+    if(word_cnt != 2)
+    {
+        throw std::runtime_error("config parser error:server [auth_basic]");
+    }
+    if(vec[1] == "Basic"){
+        this->auth_basic_ = true;
+    }else{
+        this->auth_basic_ = false;
+        throw std::runtime_error("config parser error: [auth_basic]:" + vec[0]);
+    }
+}
+
+void ConfigLocation::set_auth_basic_user_file(std::vector<std::string> &vec)
+{
+    
+    size_t word_cnt = vec.size();
+    if(word_cnt != 2)
+    {
+        ERROR("Invalid Config Error: auth_basic_user_file directive is invalid");
+        throw std::runtime_error("config parser error:server [auth_basic_user_file]");
+    }
+    auth_basic_path_ = vec[1];
+}
+
 
 /*
 void ConfigLocation::set_error_page(std::vector<std::string> &vec)
@@ -252,6 +294,24 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
 */
 
 
+bool ConfigLocation::is_allowed_method(Method method) const
+{
+    DEBUG("ConfigLocation::is_allowed_method:method=" + method.to_string());
+    const ConfigLimit *limit = this->limit();
+    std::vector<Method>::const_iterator begin = limit->allowed_method().begin();
+    std::vector<Method>::const_iterator end = limit->allowed_method().end();
+
+    while(begin != end){
+        if(method == *begin){
+        DEBUG("ConfigLocation::is_allowed_method: No.1 method=" + method.to_string());
+            return (true);
+        }
+        begin++;
+    }
+        DEBUG("ConfigLocation::is_allowed_method: No.2 method=" + method.to_string());
+    return (false);
+}
+
 void ConfigLocation::check()
 {
     if(pathes_.size() == 0)
@@ -269,22 +329,14 @@ void ConfigLocation::check()
         ERROR("ConfigLocation::check(), index file is duplicated");
         throw std::runtime_error("ConfigLocation::check(), index file is duplicated");
     }
-}
-
-bool ConfigLocation::is_allowed_method(Method method) const
-{
-    DEBUG("ConfigLocation::is_allowed_method:method=" + method.to_string());
-    const ConfigLimit *limit = this->limit();
-    std::vector<Method>::const_iterator begin = limit->allowed_method().begin();
-    std::vector<Method>::const_iterator end = limit->allowed_method().end();
-
-    while(begin != end){
-        if(method == *begin){
-        DEBUG("ConfigLocation::is_allowed_method: No.1 method=" + method.to_string());
-            return (true);
-        }
-        begin++;
+    if(this->auth_basic_ && this->auth_basic_path_ == ""){
+        ERROR("ConfigLocation::check(), auth basic file path is not specified ");
+        throw std::runtime_error("ConfigLocation::check(), auth basic file path is not specified");
     }
-        DEBUG("ConfigLocation::is_allowed_method: No.2 method=" + method.to_string());
-    return (false);
+    if(this->auth_basic_ && this->auth_basic_path_ != ""){
+        if(Utility::is_readable_file(this->auth_basic_path_) == false){
+            ERROR("ConfigLocation::check(), auth_basic_file is not readable:" + this->auth_basic_path_);
+            throw std::runtime_error("ConfigLocation::check(), auth_basic_file is not readable:" + this->auth_basic_path_);
+        }
+    }
 }
