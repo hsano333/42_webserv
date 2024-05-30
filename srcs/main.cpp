@@ -160,6 +160,7 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
 
 int main(int argc, char const* argv[])
 {
+    StatusCode::init_http_status_message();
 
     std::string cfg_file = "./webserv.conf";
     if(argc > 2){

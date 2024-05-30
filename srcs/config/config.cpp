@@ -475,7 +475,7 @@ void Config::print_cfg()
             cout << "location No." << j << endl;
             ConfigLocation const *tmp = cfg->http->server(i)->location(j);
             cout << "location root:" << tmp->root() << endl;
-            cout << "location cgi_pass:" << tmp->cgi_pass() << endl;
+            //cout << "location cgi_pass:" << tmp->cgi_pass() << endl;
             cout << "location autoindex:" << tmp->autoindex() << endl;
 
             std::map<StatusCode, std::string> const & error_page = tmp->error_pages();
@@ -492,9 +492,9 @@ void Config::print_cfg()
             for(size_t i=0;i<pathes.size();i++){
                 cout << "location path[" << i << "]:" << pathes[i] << endl;
             }
-            for(size_t i=0;i<tmp->indexes().size();i++){
-                cout << "location index[" << i << "]:" << tmp->indexes()[i] << endl;
-            }
+            //for(size_t i=0;i<tmp->indexs().size();i++){
+                //cout << "location index[" << i << "]:" << tmp->indexes()[i] << endl;
+            //}
             for(size_t i=0;i<tmp->get_limit_size();i++){
                 const ConfigLimit *limit = tmp->limit();
 

@@ -51,12 +51,13 @@ namespace free_func{
             ConfigLocation const *location = cfg->get_location(server, req);
             ConfigLimit const *limit = location->limit();
             std::string allowed_methods = limit->allowed_method_str();
-
             res->add_header(ALLOW, allowed_methods);
         }
         if(code.to_int() == 401){
             res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
-
+        }
+        if(code.to_int() == 301){
+            //res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
         }
         entity->set_response(res);
 

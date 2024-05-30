@@ -33,6 +33,7 @@ class GetApplication : public Application
         static GetApplication *singleton;
 
         string get_index_path(Request *req, ConfigLocation const *location, bool *is_existed);
+        string get_default_index_path(Request *req, bool *is_existed);
         //WebservFile *get_requested_file(FileDiscriptor const &fd);
 
         //const Config *cfg;

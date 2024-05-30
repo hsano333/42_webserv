@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   global.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/30 02:47:33 by hsano             #+#    #+#             */
+/*   Updated: 2024/05/30 03:49:21 by sano             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GLOBAL_HPP
 #define GLOBAL_HPP
 #include <string>
@@ -37,6 +49,7 @@
 #define MESSAGE404 ("Not Found")
 #define MESSAGE405 ("Method Not Allowed")
 #define MESSAGE408 ("Request Timeout")
+#define MESSAGE413 ("Payload Too Large")
 #define MESSAGE500 ("Internal Server Error")
 #define MESSAGE503 ("Service Unavailable")
 #define MESSAGE504 ("Gateway Timeout")

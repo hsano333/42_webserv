@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigLocation::ConfigLocation() : root_(""), cgi_pass_(""), limit_(NULL), is_redirect_(false), auth_basic_(false), auth_basic_path_("")
+ConfigLocation::ConfigLocation() : root_(""), limit_(NULL), autoindex_(false), index_(false), is_redirect_(false), auth_basic_(false), auth_basic_path_("")
 {
     ;
 }
@@ -34,8 +34,8 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
         std::vector<std::string> &tmp_vec = *ite;
         if(tmp_vec[0] == "root"){
             set_root(tmp_vec);
-        }else if(tmp_vec[0] == "cgi_pass"){
-            set_cgi_pass(tmp_vec);
+        //}else if(tmp_vec[0] == "cgi_pass"){
+            //set_cgi_pass(tmp_vec);
         }else if(tmp_vec[0] == "autoindex"){
             set_autoindex(tmp_vec);
         }else if(tmp_vec[0] == "index"){
@@ -86,10 +86,13 @@ std::string const & ConfigLocation::root() const
 }
 
 
+// will remove
+/*
 std::string const & ConfigLocation::cgi_pass() const
 {
     return (this->cgi_pass_);
 }
+*/
 
 bool ConfigLocation::autoindex() const
 {
@@ -104,9 +107,14 @@ std::map<StatusCode, std::string> const & ConfigLocation::error_pages() const
 */
 
 
-std::vector<std::string> const & ConfigLocation::indexes() const
+bool ConfigLocation::index() const
 {
-    return (this->indexes_);
+    return (this->index_);
+}
+
+std::string const & ConfigLocation::index_file() const
+{
+    return (this->index_file_);
 }
 
 bool ConfigLocation::is_redirect() const
@@ -138,14 +146,15 @@ void ConfigLocation::set_root(std::vector<std::string> &vec)
         ERROR("Invalid Config Error: root directive is invalid");
         throw std::runtime_error("config parser error:location [root]");
     }
-    if (this->cgi_pass_ != "")
-    {
-        ERROR("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
-        throw std::runtime_error("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
-    }
     this->root_ = Utility::remove_obstruction_in_uri(vec[1]);
+    if (Utility::is_directory(this->root_) == false)
+    {
+        ERROR("Invalid Config Location Error: [root] is not directory: " + this->root_);
+        throw std::runtime_error("Invalid Config Location Error: [root] is not directory:" + this->root_);
+    }
 }
 
+/*
 void ConfigLocation::set_cgi_pass(std::vector<std::string> &vec)
 {
     size_t word_cnt = vec.size();
@@ -161,6 +170,7 @@ void ConfigLocation::set_cgi_pass(std::vector<std::string> &vec)
     }
     this->cgi_pass_ = Utility::remove_obstruction_in_uri(vec[1]);
 }
+*/
 
 void ConfigLocation::set_autoindex(std::vector<std::string> &vec)
 {
@@ -183,14 +193,19 @@ void ConfigLocation::set_autoindex(std::vector<std::string> &vec)
 void ConfigLocation::set_index(std::vector<std::string> &vec)
 {
     size_t word_cnt = vec.size();
-    if(word_cnt <= 1)
+    if(word_cnt != 2)
     {
         ERROR("Invalid Config Error: index directive is invalid");
         throw std::runtime_error("config parser error:location [index]");
     }
-    for(size_t i=1;i<vec.size();i++){
-        this->indexes_.push_back(Utility::remove_obstruction_in_uri(vec[i]));
+    this->index_file_ = Utility::remove_obstruction_in_uri(vec[1]);
+    /*
+    if(Utility::is_readable_file(this->index_file_)){
+        ERROR("Invalid Config Error: index file is not readable");
+        throw std::runtime_error("config parser error:location [index]");
     }
+    */
+    this->index_ = true;
 }
 
 void ConfigLocation::set_return(std::vector<std::string> &vec)
@@ -319,24 +334,32 @@ void ConfigLocation::check()
         ERROR("ConfigLocation::check(), pathes_ size is 0");
         throw std::runtime_error("ConfigLocation::check(), pathes_ size is 0");
     }
-    else if(root_ == "" && cgi_pass_ == "")
+
+    if(root_ == "")
     {
-        ERROR("ConfigLocation::check(), Neither root_ nor cgi_pass is set");
-        throw std::runtime_error("ConfigLocation::check(), Neither root_ nor cgi_pass is set");
+        ERROR("ConfigLocation::check(),  root is not specified");
+        throw std::runtime_error("ConfigLocation::check(), root is not specified");
     }
 
-    if (this->indexes_.size() > 1){
-        ERROR("ConfigLocation::check(), index file is duplicated");
-        throw std::runtime_error("ConfigLocation::check(), index file is duplicated");
-    }
+    //if (this->index_.size() > 1){
+        //ERROR("ConfigLocation::check(), index file is duplicated");
+        //throw std::runtime_error("ConfigLocation::check(), index file is duplicated");
+    //}
+
+
     if(this->auth_basic_ && this->auth_basic_path_ == ""){
         ERROR("ConfigLocation::check(), auth basic file path is not specified ");
         throw std::runtime_error("ConfigLocation::check(), auth basic file path is not specified");
     }
-    if(this->auth_basic_ && this->auth_basic_path_ != ""){
-        if(Utility::is_readable_file(this->auth_basic_path_) == false){
-            ERROR("ConfigLocation::check(), auth_basic_file is not readable:" + this->auth_basic_path_);
-            throw std::runtime_error("ConfigLocation::check(), auth_basic_file is not readable:" + this->auth_basic_path_);
-        }
+
+    if(this->auth_basic_ && Utility::is_readable_file(this->auth_basic_path_) == false){
+        ERROR("ConfigLocation::check(), Only one of autoindex and index directive is True");
+        throw std::runtime_error("ConfigLocation::check(), Only one of autoindex and index directive is True");
+    }
+
+    if((this->index_ && this->autoindex_)){
+        ERROR("ConfigLocation::check(), both index and autoindex cannot set at the same time");
+        throw std::runtime_error("ConfigLocation::check(), both index and autoindex cannot set at the same time");
+
     }
 }

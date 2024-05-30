@@ -18,9 +18,10 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         size_t get_limit_size() const;
         std::vector<std::string> const & pathes() const;
         std::string const & root() const;
-        std::string const & cgi_pass() const;
+        //std::string const & cgi_pass() const;
         bool autoindex() const;
-        std::vector<std::string> const &indexes() const;
+        bool index() const;
+        std::string const &index_file() const;
         bool is_redirect() const;
         const std::pair<StatusCode, std::string> &redirect() const;
         std::map<StatusCode, std::string> const &error_pages() const;
@@ -46,7 +47,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
     private:
 
         void set_root(std::vector<std::string> &vec);
-        void set_cgi_pass(std::vector<std::string> &vec);
+        //void set_cgi_pass(std::vector<std::string> &vec);
         void set_autoindex(std::vector<std::string> &vec);
         void set_index(std::vector<std::string> &vec);
         void set_return(std::vector<std::string> &vec);
@@ -56,10 +57,11 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
 
         std::vector<std::string> pathes_;
         std::string root_;
-        std::string cgi_pass_;
+        //std::string cgi_pass_;
         ConfigLimit* limit_;
         bool autoindex_;
-        std::vector<std::string> indexes_;
+        bool index_;
+        std::string index_file_;
         std::map<StatusCode, std::string> error_pages_;
         std::map<std::string, std::string> cgi_;
         bool is_redirect_;

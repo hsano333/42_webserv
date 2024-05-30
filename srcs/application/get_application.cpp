@@ -119,17 +119,33 @@ string GetApplication::check_content(string const &filepath)
 
 string GetApplication::get_index_path(Request *req, ConfigLocation const *location, bool *is_existed)
 {
-    for(size_t i=0;i<location->indexes().size();i++){
-        string index_path = req->requested_path() + location->indexes()[i];
+    DEBUG("get_index_path has_index:" + location->index());
+    if(location->index()){
+        string index_path = req->requested_path() + "/" +  location->index_file();
+        DEBUG("index_path=" + index_path);
         if(Utility::is_regular_file(index_path)){
+            *is_existed = true;
+            DEBUG("get_index_path No.3 has_index:" + location->index());
             if(Utility::is_readable_file(index_path)){
-                *is_existed = true;
+            DEBUG("get_index_path No.4 has_index:" + location->index());
                 return (index_path);
             }
         }
     }
     return ("");
+}
 
+string GetApplication::get_default_index_path(Request *req, bool *is_existed)
+{
+    string index_path = req->requested_path() + "/index.html";
+    DEBUG("default index_path=" + index_path);
+    if(Utility::is_regular_file(index_path)){
+        if(Utility::is_readable_file(index_path)){
+            *is_existed = true;
+            return (index_path);
+        }
+    }
+    return ("");
 }
 
 
@@ -172,34 +188,43 @@ bool GetApplication::execute(WebservEntity *entity)
             throw HttpException("403");
         }
     }else if(req->is_directory()){
+        DEBUG("directory No.1");
         bool is_existed = false;
         string index_path = get_index_path(req, location, &is_existed);
+        DEBUG("directory No.2 index path:" + index_path);
 
         if(index_path != ""){
             file = file_factory->make_normal_file(fd, index_path, std::ios::in);
             code = StatusCode::from_int(200);
             extension = GetApplication::check_content(index_path);
+        }else if(is_existed){
+            throw HttpException("403");
+        }else if(location->autoindex()){
+            //if(location->autoindex())
+            std::string const &host = req->header().get_host();
+            std::string const &relative_path= req->req_line().uri().path();
+            //file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
+            WebservFile *directory_file = file_factory->make_directory_file(fd, req->requested_path(), relative_path, host);
+            file = file_factory->make_socket_chunk_file_for_autoindex(entity->fd(), directory_file);
+            file->set_chunk(true);
+            code = StatusCode::from_int(200);
+            is_directory = true;
         }
         else
         {
-            if(location->autoindex())
-            {
-                std::string const &host = req->header().get_host();
-                std::string const &relative_path= req->req_line().uri().path();
-                //file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
-                WebservFile *directory_file = file_factory->make_directory_file(fd, req->requested_path(), relative_path, host);
-                file = file_factory->make_socket_chunk_file_for_autoindex(entity->fd(), directory_file);
-                file->set_chunk(true);
+            DEBUG("directory No.4  default path:");
+            is_existed = false;
+            string index_path = get_default_index_path(req, &is_existed);
+            DEBUG("directory No.5  default path:" + index_path);
+
+            if(index_path != ""){
+                file = file_factory->make_normal_file(fd, index_path, std::ios::in);
                 code = StatusCode::from_int(200);
-                is_directory = true;
-            }
-            else
-            {
-                if(is_existed){
-                    throw HttpException("403");
-                }else{
-                    throw HttpException("404");
-                }
+                extension = GetApplication::check_content(index_path);
+            }else if(is_existed){
+                throw HttpException("403");
+            }else{
+                throw HttpException("404");
             }
         }
     }else{

@@ -60,7 +60,7 @@ class Utility
     //static unsigned char char_to_hex(char c);
 
     static char hex_string_to_int(const std::string& hex_string);
-    static std::string get_http_status_message(std::string status_code);
+    //static std::string get_http_status_message(std::string status_code);
     template <typename T>
     static void print_vector(std::vector<T> v);
     //static int read_body_and_copy(int fd, char** dst, size_t size);

@@ -1,6 +1,7 @@
 #ifndef STATUS_CODE
 #define STATUS_CODE
 #include <string>
+#include <map>
 
 
 class StatusCode
@@ -26,6 +27,9 @@ class StatusCode
         bool operator<=(int code) const;
         bool operator>(int code) const;
         bool operator>=(int code) const;
+
+        static std::map<int, std::string> code_message_list;
+        static void init_http_status_message();
 
 
     private:

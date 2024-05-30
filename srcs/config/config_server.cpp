@@ -105,7 +105,7 @@ void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &pro
         cout << "tmp_vec = " << tmp_vec[0] << endl;
         if(tmp_vec[0] == "listen"){
             set_listen(tmp_vec);
-        }else if(tmp_vec[0] == "server_name"){
+        }else if(tmp_vec[0] == "server_names"){
             set_server_name(tmp_vec);
         }else if(tmp_vec[0] == "client_max_body_size"){
             set_max_body_size(tmp_vec);

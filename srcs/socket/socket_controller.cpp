@@ -38,9 +38,9 @@ FileDiscriptor SocketController::accept_request(FileDiscriptor sock_fd)
     FDManager* fd_m = new FDManager(fd);
     this->_fd_map.insert(std::make_pair(fd, fd_m));
     */
-    int cur_flags = fcntl(fd.to_int(), F_GETFL, 0);
-    cur_flags |= O_NONBLOCK;
-    fcntl(fd.to_int(), F_SETFL, cur_flags);
+    //int cur_flags = fcntl(fd.to_int(), F_GETFL, 0);
+    //cur_flags |= O_NONBLOCK;
+    fcntl(fd.to_int(), F_SETFL, O_NONBLOCK);
     return (fd);
 }
 
