@@ -177,6 +177,7 @@ void VectorReadCGIFile::clear_read()
 bool VectorReadCGIFile::completed()
 {
 
+    /*
     int wstatus = 0;
     waitpid(this->pid.to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
 
@@ -185,8 +186,9 @@ bool VectorReadCGIFile::completed()
         return (true);
     }
     MYINFO("VectorReadCGIFile::completed False pid:" + pid.to_string());
+    */
 
-    return (false);
+    return (true);
 }
 
 /*

@@ -140,6 +140,19 @@ void Webserv::communication()
                     next_event = event;
                 }
                 event_controller->set_next_epoll_event(event, next_event);
+            }catch(HttpException &e){
+                ERROR("HttpException:" + Utility::to_string(e.what()));
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
+                event = this->event_factory->make_event_from_http_error(event, e.what());
+                handle(event);
+                if(event->entity()->completed()){
+                    next_event = make_next_event(event, this->event_factory);
+                    DEBUG("new event:"  + Utility::to_string(next_event));
+                }else{
+                    DEBUG("next is same event");
+                    next_event = event;
+                }
+                event_controller->set_next_epoll_event(event, next_event);
             }catch(std::runtime_error &e){
                 WARNING("Making Next Event Exception:");
                 WARNING(e.what());

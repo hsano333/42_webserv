@@ -169,12 +169,16 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
         while(events.size() > 0)
         {
             WebservEvent *event = this->pop_first();
+
             if(event->check_timeout(now)){
                 event->entity()->set_event_error(Timeout);
                 event_return.insert(event);
-            }else{
+            }else if(event->which() != KEEP_ALIVE_EVENT && event->check_died_child()){
                 event->entity()->set_event_error(DiedChild);
+                event_return.insert(event);
+            }else{
                 event_saved.push_back(event);
+
             }
         }
         for(int i=event_saved.size()-1;i>=0;i--){
