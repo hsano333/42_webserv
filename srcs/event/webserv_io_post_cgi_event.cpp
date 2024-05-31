@@ -48,7 +48,7 @@ WebservEvent* WebservIOPostCGIEvent::make_next_event(WebservEvent* event, Webser
     DEBUG("WebservIOPostCGIEvent::make_next_event() completed:" + Utility::to_string(event->entity()->completed()));
     DEBUG("WebservIOPostCGIEvent::make_next_event() is_cgi_read:" + Utility::to_string(event->entity()->io().is_cgi_read()));
 
-    if (event->entity()->completed() && event->entity()->io().is_cgi_read() == false){
+    if (event->entity()->request()->read_completed() && event->entity()->io().is_cgi_read() == false){
         DEBUG("WebservIOPostCGIEvent::make_next_event() clean");
         return (event_factory->make_clean_event(event, false));
     }
@@ -60,7 +60,7 @@ E_EpollEvent WebservIOPostCGIEvent::epoll_event(WebservEvent *event)
     DEBUG("WebservIOPostCGIEvent::epoll_event");
     (void)event;
 
-    if (event->entity()->completed() && event->entity()->io().is_cgi_read() == false){
+    if (event->entity()->request()->read_completed() && event->entity()->io().is_cgi_read() == false){
         return (EPOLL_NONE);
     }
     return (EPOLL_FOR_CGI_POST);
@@ -95,11 +95,14 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
             int result = file->write(&tmp_p, 1);
             if(result <= 0){
                 is_completed = false;
-            }else{
-                entity->request()->set_read_completed(true);
+            //}else{
+                //entity->request()->set_read_completed(true);
             }
         }
-        entity->set_completed(is_completed);
+        entity->request()->set_read_completed(is_completed);
+
+        // because of returing WebservWaitingPostCGIEvent
+        entity->set_completed(true);
         return ;
     }else{
         // read from CGI, write to socket
@@ -107,7 +110,8 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         bool flag = entity->response()->read_completed();
         //bool flag = dst->completed();
         DEBUG("WebservIOPostCGIEvent::check_completed write No.1 completed:" + Utility::to_string(flag));
-        entity->set_completed(flag);
+        //entity->set_completed(flag);
+        entity->set_completed(true);
         return ;
     }
     return ;
