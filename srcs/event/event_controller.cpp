@@ -75,12 +75,16 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         // cgi入力検知を一時停止
         this->io_multi_controller->erase(next_event->entity()->io().get_write_fd());
 
-    }else if (next_epoll_event == EPOLL_FOR_CGI_GET){ // from socket to cgi in
-        MYINFO("EventController::next is epoll EPOLL_FOR_CGI_IN write_fd:" + Utility::to_string(next_event->entity()->io().get_write_fd()));
+    }else if (next_epoll_event == EPOLL_FOR_CGI_WAIT_CGI){ // from socket to cgi in
+        MYINFO("EventController::next is epoll EPOLL_FOR_CGI_WAIT_CGI write_fd:" + Utility::to_string(next_event->entity()->io().get_write_fd()));
         FileDiscriptor const &socket_fd = next_event->entity()->socket_fd();
 
         // CGI OUT
-        this->io_multi_controller->add(next_event->entity()->io().get_write_fd(), EPOLLIN | EPOLLONESHOT);
+        try{
+            this->io_multi_controller->add(next_event->entity()->io().get_write_fd(), EPOLLIN | EPOLLONESHOT);
+        }catch(std::runtime_error &e){
+            WARNING("This error is ignored:" + Utility::to_string(e.what()));
+        }
         this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_write_fd(), next_event);
         this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_write_fd(), socket_fd);
         /*
@@ -101,17 +105,20 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         try{
             // CGI IN
             this->io_multi_controller->add(next_event->entity()->io().get_write_fd(), EPOLLIN | EPOLLONESHOT);
-            this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_write_fd(), next_event);
-            this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_write_fd(), socket_fd);
-
-            // CGI OUT
-            this->io_multi_controller->add(next_event->entity()->io().get_read_fd(), EPOLLOUT | EPOLLONESHOT);
-            this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_read_fd(), next_event);
-            this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_read_fd(), socket_fd);
         }catch(std::runtime_error &e){
             WARNING("This error is ignored:" + Utility::to_string(e.what()));
-
         }
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_write_fd(), next_event);
+        this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_write_fd(), socket_fd);
+
+            // CGI OUT
+        try{
+            this->io_multi_controller->add(next_event->entity()->io().get_read_fd(), EPOLLOUT | EPOLLONESHOT);
+        }catch(std::runtime_error &e){
+            WARNING("This error is ignored:" + Utility::to_string(e.what()));
+        }
+        this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_read_fd(), next_event);
+        this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_read_fd(), socket_fd);
 
     }else if(next_event){
         MYINFO("EventController::next is not epoll");

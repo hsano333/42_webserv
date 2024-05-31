@@ -46,7 +46,7 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
     // CGI: read_dst( read from CGI,  write to socket)
     WebservFile *from_cgi_to_socket_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
-    WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF);
+    WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF, result->pid());
     result->set_file(result_file);
     result->set_is_cgi(true);
 
@@ -99,7 +99,7 @@ WebservEvent* GetCGIApplication::next_event(WebservEvent *event, WebservEventFac
 E_EpollEvent GetCGIApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
-    return (EPOLL_FOR_CGI_GET);
+    return (EPOLL_FOR_CGI_WAIT_CGI);
     //return (EPOLL_WRITE);
 }
 

@@ -156,6 +156,9 @@ string Utility::trim_white_space(string const &str)
 
 std::string Utility::delete_duplicated_slash(std::string str)
 {
+    if(str.size() == 1 && str == "/"){
+        return ("/");
+    }
     string delimiter = "/";
     Split sp(str, delimiter);
     std::string only_one_slash;

@@ -90,6 +90,21 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
     cout << "cgi data:[" <<  data <<  "]" << endl;
     cout << "cgi body_p:[" << body_p <<  "]" << endl;
 
+
+    printf("data=[[[[[[[[");
+    for(size_t i=0;i<header_size;i++){
+        if((data)[i] == '\r'){
+            printf("R");
+        }else if((data)[i] == '\n'){
+            printf("N");
+        }else{
+            printf("%c", (data)[i]);
+        }
+    }
+    printf("]\nbuffer size =[%zu]\n\n", header_size);
+
+
+
     Split headers_line(data, LF, false, true);
     for(size_t i=0;i<headers_line.size();i++){
         cout << "headers_line[" << i << "]=" << headers_line[i] << endl;
@@ -205,7 +220,8 @@ E_EpollEvent WebservMakeResponseForGetCGIEvent::epoll_event(WebservEvent *event)
         DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
         return (EPOLL_WRITE);
     }
-    return (EPOLL_NONE);
+    //return (EPOLL_NONE);
+    return (EPOLL_FOR_CGI_WAIT_CGI);
 
     /*
     if (event->entity()->completed()){
@@ -236,5 +252,8 @@ void WebservMakeResponseForGetCGIEvent::check_completed(WebservEntity * entity)
     WebservFile *dst = entity->io().destination_for_write();
     bool flag = dst->completed();
     DEBUG("WebservMakeResponseForGetCGIEvent::check_completed flag:" + Utility::to_string(flag));
+    //if(flag == false){
+
+    //}
     entity->set_completed(flag);
 }

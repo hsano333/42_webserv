@@ -265,6 +265,9 @@ ConfigParseredData ConfigParser<T, U>::parser(std::string const &str, T * object
         }
         i = end+1;
     }
+    if(end >= str.size()){
+        throw std::runtime_error("Config Parser Error: {} is not close? or find not [;]");
+    }
     std::string string_rest = str.substr(end+1);
     if(string_rest.size() > 0){
         retrieve_properties(string_rest, properties);

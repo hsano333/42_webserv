@@ -138,6 +138,7 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
         std::vector<FileDiscriptor> execve_error_fds;
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
+        DEBUG("epoll wait size:" + Utility::to_string(this->events_waiting_epoll.size()));
         while(ite != end){
             if(ite->second->check_timeout(now)){
                 ite->second->entity()->set_event_error(Timeout);

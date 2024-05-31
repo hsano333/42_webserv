@@ -134,7 +134,8 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     string const &query = req->req_line().uri().query();
     string const script_file_name = file_path.substr(file_path.rfind("/"));
 
-    if(!(Utility::is_executable_file(file_path) || Utility::is_readable_file(file_path))){
+    if(!((Utility::is_executable_file(file_path) && Utility::is_readable_file(file_path)))){
+        ERROR("cgi file is not executable, or not readable:" + file_path);
         throw HttpException("403");
     }
 

@@ -25,5 +25,7 @@ int NormalReader::read(FileDiscriptor const &fd, char *buf, size_t size, std::fs
 {
     DEBUG("NormalReader::read fd:" + fd.to_string());
     (void)ifs;
-    return ::read(fd.to_int(), buf, size);
+    int rval = ::read(fd.to_int(), buf, size);
+    DEBUG("NormalReader::read size:" + Utility::to_string(rval));
+    return (rval);
 }

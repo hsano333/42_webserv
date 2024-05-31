@@ -9,7 +9,7 @@ CONFIGSRC 			:= config.cpp config_factory.cpp config_parser.cpp config_raw_loade
 CONFIG 				:= $(addprefix $(CONFIGDIR)/, $(CONFIGSRC))
 
 FILESYSTEMDIR		:= file/
-FILESYSTEMSRC 		:= webserv_file.cpp webserv_file_factory.cpp normal_file.cpp multi_normal_file.cpp directory_file.cpp error_file.cpp pipe_file.cpp socket_file.cpp socket_chunk_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp vector_file.cpp file_manager.cpp buffer_controller.cpp
+FILESYSTEMSRC 		:= webserv_file.cpp webserv_file_factory.cpp normal_file.cpp multi_normal_file.cpp directory_file.cpp error_file.cpp pipe_file.cpp socket_file.cpp socket_chunk_file.cpp normal_reader.cpp socket_reader.cpp normal_writer.cpp socket_writer.cpp stream_reader.cpp stream_writer.cpp vector_file.cpp vector_read_cgi_file.cpp file_manager.cpp buffer_controller.cpp
 FILESYSTEM 			:= $(addprefix $(FILESYSTEMDIR)/, $(FILESYSTEMSRC))
 
 SERVERDIR			:= server/

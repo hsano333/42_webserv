@@ -22,13 +22,13 @@ FileDiscriptor::FileDiscriptor(int fd) : fd(fd)
 
 FileDiscriptor::FileDiscriptor(FileDiscriptor const &fd)
 {
-    DEBUG("FileDiscriptor::FileDiscriptor");
+    //DEBUG("FileDiscriptor::FileDiscriptor");
     this->fd = fd.fd;
 }
 
 FileDiscriptor& FileDiscriptor::operator=(FileDiscriptor const &fd)
 {
-    DEBUG("FileDiscriptor& FileDiscriptor::operator=");
+    //DEBUG("FileDiscriptor& FileDiscriptor::operator=");
     this->fd = fd.fd;
     return (*this);
 }
@@ -44,13 +44,13 @@ FileDiscriptor FileDiscriptor::from_int(int fd)
 
 int FileDiscriptor::to_int() const
 {
-    DEBUG("FileDiscriptor::to_int() const");
+    //DEBUG("FileDiscriptor::to_int() const");
     return (this->fd);
 }
 
 int FileDiscriptor::to_int()
 {
-    DEBUG("FileDiscriptor::to_int()");
+    //DEBUG("FileDiscriptor::to_int()");
     return (this->fd);
 }
 

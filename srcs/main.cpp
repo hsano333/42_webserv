@@ -177,7 +177,13 @@ int main(int argc, char const* argv[])
     try{
         cfg = create_config(cfg_file, fd_manager);
     }catch(std::runtime_error &e){
-        cout << "Config Error:" << e.what() << endl;
+        cout << "Webserv Config Error:" << e.what() << endl;
+        exit(1);
+    }catch(std::out_of_range &e){
+        cout << "Webserv Config Error:" << e.what() << endl;
+        exit(1);
+    }catch(...){
+        cout << "Webserv Config Error:" << endl;
         exit(1);
     }
 

@@ -27,7 +27,7 @@ bool WebservEvent::check_died_child()
 {
     if(this->entity_ && this->entity_->app_result() && this->entity_->app_result()->is_cgi()){
         int wstatus = 0;
-        DEBUG("WebservEvent::check_died_child");
+        DEBUG("WebservEvent::check_died_child pid:" + this->entity_->app_result()->pid().to_string());
         waitpid(this->entity_->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
         //ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
 

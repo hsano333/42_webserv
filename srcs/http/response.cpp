@@ -124,6 +124,7 @@ void Response::set_header(Split &sp, size_t offset)
 //Response* Response::from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location)
 Response* Response::from_cgi_header_line(FileDiscriptor const &fd, Split &header_line, WebservFile *file)
 {
+    DEBUG("from_cgi_header_line");
     //(void)location;
     Response *res = new Response();
     res->file = file;

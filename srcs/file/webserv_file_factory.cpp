@@ -4,6 +4,7 @@
 #include "multi_normal_file.hpp"
 #include "socket_chunk_file.hpp"
 #include "pipe_file.hpp"
+#include "vector_read_cgi_file.hpp"
 //#include "socket_reader.hpp"
 //#include "socket_writer.hpp"
 
@@ -140,9 +141,9 @@ WebservFile *WebservFileFactory::make_result_file_for_cgi(FileDiscriptor const &
     //return (new WebservFile(file, DefaultFunc::open<ApplicationResult>, DefaultFunc::read<ApplicationResult>, DefaultFunc::write<ApplicationResult>, DefaultFunc::close<ApplicationResult>, DummyFunc::remove<ApplicationResult>, DummyFunc::can_read<ApplicationResult>, DummyFunc::can_write<ApplicationResult>, DummyFunc::path<ApplicationResult>, DummyFunc::size<ApplicationResult>, DefaultFunc::is_chunk<ApplicationResult>, DummyFunc::set_chunk<ApplicationResult>, DefaultFunc::completed<ApplicationResult>));
 }
 
-WebservFile *WebservFileFactory::make_vector_file_for_cgi(FileDiscriptor const &fd, size_t buf_size)
+WebservFile *WebservFileFactory::make_vector_file_for_cgi(FileDiscriptor const &fd, size_t buf_size, ProcessID const &pid)
 {
-    VectorFile *vector_file = VectorFile::from_buf_size(buf_size);
+    VectorReadCGIFile *vector_file = VectorReadCGIFile::from_buf_size(buf_size, pid);
     return (this->make_webserv_file(fd, vector_file, CommonFunc::open, DefaultFunc::read, DefaultFunc::write, CommonFunc::close, DummyFunc::remove, DummyFunc::can_read, DummyFunc::can_write, DummyFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, CheckSocketReadEndForCGIFunc::completed ));
 }
 

@@ -207,7 +207,7 @@ E_EpollEvent WebservMakeResponseForPostCGIEvent::epoll_event(WebservEvent *event
         DEBUG("WebservMakeResponseForPostCGIEvent::epoll_event() No.1");
         return (EPOLL_WRITE_FOR_POST_CGI);
     }
-    return (EPOLL_NONE);
+    return (EPOLL_FOR_CGI_WAIT_CGI);
 
     /*
     if (event->entity()->completed()){

@@ -84,7 +84,7 @@ class WebservFileFactory
         WebservFile *make_socket_chunk_file_for_write(FileDiscriptor const &fd, WebservFile *file, std::vector<char> &buffer );
         WebservFile *make_error_file(FileDiscriptor const &fd, StatusCode const &status_code);
         WebservFile *make_result_file_for_cgi(FileDiscriptor const &fd, ApplicationResult *file);
-        WebservFile *make_vector_file_for_cgi(FileDiscriptor const &fd, size_t buf_size);
+        WebservFile *make_vector_file_for_cgi(FileDiscriptor const &fd, size_t buf_size, ProcessID const &pid);
         WebservFile *make_vector_file_for_socket(FileDiscriptor const &fd, size_t buf_size);
         WebservFile *make_vector_file(FileDiscriptor const &fd, std::string const& buf_ref);
         WebservFile *make_vector_file(FileDiscriptor const &fd, char *buf, size_t size);

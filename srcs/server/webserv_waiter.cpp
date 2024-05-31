@@ -68,6 +68,7 @@ void WebservWaiter::fetch_events()
             DEBUG("DEBUG waiter check True timeout");
             //event = event_factory->make_timeout_event(*ite);
             Request *req = (*ite)->entity()->request();
+            //DEBUG("DEBUG waiter check True timeout has_body()=" + Utility::to_string(req->has_body()));
             if((req && req->has_body() == false) || (req && req->read_completed())){
                 // timeout in server process
                 event = event_factory->make_event_from_http_error(*ite, "504");
