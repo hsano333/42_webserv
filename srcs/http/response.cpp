@@ -128,9 +128,10 @@ Response* Response::from_cgi_header_line(FileDiscriptor const &fd, Split &header
     //(void)location;
     Response *res = new Response();
     res->file = file;
-    res->set_header(header_line, 0);
-    std::string status_code = res->headers.find(STATUS_CODE_CGI);
     try{
+        res->set_header(header_line, 0);
+        std::string status_code = res->headers.find(STATUS_CODE_CGI);
+
         if(status_code == res->headers.not_find()){
             res->status_code = StatusCode::from_int(200);
         }else{
@@ -139,7 +140,7 @@ Response* Response::from_cgi_header_line(FileDiscriptor const &fd, Split &header
             res->headers.erase(STATUS_CODE_CGI);
         }
     }catch(std::invalid_argument &e){
-        ERROR("Making Response ERROR: Status Code is invalid " + status_code);
+        ERROR("Making Response ERROR: header line is invalid " );
         delete res;
         throw HttpException("500");
     }

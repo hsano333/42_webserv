@@ -258,7 +258,7 @@ FileDiscriptor &ApplicationResult::cgi_out()
     return (this->cgi_out_);
 }
 
-ProcessID &ApplicationResult::pid()
+ProcessID ApplicationResult::pid()
 {
     return (this->pid_);
 }

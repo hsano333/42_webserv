@@ -72,6 +72,26 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
         throw HttpException("500");
     }
 
+    cout << "cgi read_size:" << read_size << endl;
+    cout << "cgi data:[" <<  data <<  "]" << endl;
+    //cout << "cgi body_p:[" << body_p <<  "]" << endl;
+
+
+    printf("data=[[[[[[[[");
+    for(int i=0;i<read_size;i++){
+        if((data)[i] == '\r'){
+            printf("R");
+        }else if((data)[i] == '\n'){
+            printf("N");
+        }else{
+            printf("%c", (data)[i]);
+        }
+    }
+    printf("]\nbuffer size =[%d]\n\n", read_size);
+
+
+
+
     // RFC3875にはNL(New Line)の具体的な定義がないため、
     // 改行文字はLFとする(Linuxでの運用を想定しているため)
     char *body_p = Utility::strnstr(data, LF2, read_size);
@@ -86,23 +106,6 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
         throw HttpException("exceed CGI Response Status Line:" + Utility::to_string(header_size));
     }
     *body_p = '\0';
-    cout << "cgi header_size:" << header_size << endl;
-    cout << "cgi data:[" <<  data <<  "]" << endl;
-    cout << "cgi body_p:[" << body_p <<  "]" << endl;
-
-
-    printf("data=[[[[[[[[");
-    for(size_t i=0;i<header_size;i++){
-        if((data)[i] == '\r'){
-            printf("R");
-        }else if((data)[i] == '\n'){
-            printf("N");
-        }else{
-            printf("%c", (data)[i]);
-        }
-    }
-    printf("]\nbuffer size =[%zu]\n\n", header_size);
-
 
 
     Split headers_line(data, LF, false, true);

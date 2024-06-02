@@ -10,12 +10,12 @@ FileDiscriptor::~FileDiscriptor()
     ;
 }
 
-FileDiscriptor::FileDiscriptor() : fd(-1)
+FileDiscriptor::FileDiscriptor() : fd(-1), is_close_(false)
 {
     ;
 }
 
-FileDiscriptor::FileDiscriptor(int fd) : fd(fd)
+FileDiscriptor::FileDiscriptor(int fd) : fd(fd), is_close_(false)
 {
     ;
 }
@@ -24,12 +24,14 @@ FileDiscriptor::FileDiscriptor(FileDiscriptor const &fd)
 {
     //DEBUG("FileDiscriptor::FileDiscriptor");
     this->fd = fd.fd;
+    this->is_close_ = fd.is_close_;
 }
 
 FileDiscriptor& FileDiscriptor::operator=(FileDiscriptor const &fd)
 {
     //DEBUG("FileDiscriptor& FileDiscriptor::operator=");
     this->fd = fd.fd;
+    this->is_close_ = fd.is_close_;
     return (*this);
 }
 
@@ -59,11 +61,16 @@ std::string const FileDiscriptor::to_string() const
     return (Utility::to_string(fd));
 }
 
+bool FileDiscriptor::is_close() const
+{
+    return (this->is_close_);
+}
 
 void FileDiscriptor::close() const
 {
-    if(this->fd >= 0){
+    if(this->fd >= 0 && this->is_close_ == false){
         ::close(this->fd);
+        //this->is_close_ = true;
     }
 }
 
@@ -131,5 +138,6 @@ std::ostream& operator<<(std::ostream& os, const FileDiscriptor &fd)
     os << out;
     return (os);
 }
+
 
 

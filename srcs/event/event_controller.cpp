@@ -126,3 +126,13 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     }
 }
 
+/*
+void EventController::erase_epoll_event(FileDiscriptor const &fd)
+{
+    this->io_multi_controller->erase(fd);
+
+}
+*/
+
+
+

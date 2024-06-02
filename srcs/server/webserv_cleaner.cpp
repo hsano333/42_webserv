@@ -35,6 +35,20 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     DEBUG("WebservCleaner::clean fd:" + Utility::to_string(fd));
     DEBUG("WebservCleaner::clean fd:" + fd.to_string());
 
+    //close fd of cgi
+    if(entity->app_result()){
+        try{
+            this->io_multi_controller->erase(entity->io().get_write_fd());
+        }catch(std::runtime_error &e){
+            WARNING("This error is ignored:" + Utility::to_string(e.what()));
+        }
+        try{
+            this->io_multi_controller->erase(entity->io().get_read_fd());
+        }catch(std::runtime_error &e){
+            WARNING("This error is ignored:" + Utility::to_string(e.what()));
+        }
+    }
+
     // delete all registered files;
     file_manager->erase(fd);
 
@@ -50,6 +64,15 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     if(force_close){
         DEBUG("force close ::clean fd:" + Utility::to_string(fd));
         DEBUG("force close:" + fd.to_string());
+        //this->io_multi_controller->erase(fd);
+        try{
+            this->io_multi_controller->erase(fd);
+        }catch(std::runtime_error &e){
+            WARNING("This error is ignored:" + Utility::to_string(e.what()));
+        }
+
+
+
         fd.close();
         delete entity;
     }

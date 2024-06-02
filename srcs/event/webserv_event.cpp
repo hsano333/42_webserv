@@ -27,8 +27,9 @@ bool WebservEvent::check_died_child()
 {
     if(this->entity_ && this->entity_->app_result() && this->entity_->app_result()->is_cgi()){
         int wstatus = 0;
-        DEBUG("WebservEvent::check_died_child pid:" + this->entity_->app_result()->pid().to_string());
-        waitpid(this->entity_->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
+        DEBUG("WebservEvent::check_died_child pid:" + Utility::to_string(this->entity_->app_result()->pid().to_int()));
+        int result = waitpid(this->entity_->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
+        DEBUG("WebservEvent::check_died_child No.2 result:" + Utility::to_string(result));
         //ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
 
         if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {

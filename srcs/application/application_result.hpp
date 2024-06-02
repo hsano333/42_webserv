@@ -48,7 +48,7 @@ class ApplicationResult
         //Application    *app();
         FileDiscriptor &cgi_in();
         FileDiscriptor &cgi_out();
-        ProcessID      &pid();
+        ProcessID      pid();
         bool            is_chunk();
     private:
         ApplicationResult();

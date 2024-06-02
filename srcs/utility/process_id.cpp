@@ -31,6 +31,7 @@ ProcessID ProcessID::from_int(int pid)
 
 int ProcessID::to_int() const
 {
+    DEBUG("to_int():");
     return (this->pid);
 }
 
