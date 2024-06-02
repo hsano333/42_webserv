@@ -10,6 +10,7 @@ typedef enum E_Error
 {
     None,
     Timeout,
+    Timeout2,
     DiedChild,
 } EventError;
 

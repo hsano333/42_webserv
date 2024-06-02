@@ -93,7 +93,7 @@ WebservEvent *WebservErrorEvent::from_event(WebservEvent *event, StatusCode &cod
     event->entity()->set_error_code(code);
     //WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
 
-    return (new WebservEvent( error_event, free_func::handle_error, event->entity()));
+    return (new WebservEvent( error_event, free_func::handle_error, event->entity(), TIMEOUT_EVENT));
 
     //return (new_event);
 }

@@ -95,7 +95,7 @@ Response* WebservMakeResponseForPostCGIEvent::make_response_for_cgi(ApplicationR
     cout << "cgi data:[" <<  data <<  "]" << endl;
     cout << "cgi body_p:[" << body_p <<  "]" << endl;
 
-    Split headers_line(data, LF, false, true);
+    Split headers_line(data, NL_CGI, false, true);
     for(size_t i=0;i<headers_line.size();i++){
         cout << "headers_line[" << i << "]=" << headers_line[i] << endl;
     }

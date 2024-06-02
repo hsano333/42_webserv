@@ -71,8 +71,6 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
             WARNING("This error is ignored:" + Utility::to_string(e.what()));
         }
 
-
-
         fd.close();
         delete entity;
     }

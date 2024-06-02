@@ -141,7 +141,11 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
         DEBUG("epoll wait size:" + Utility::to_string(this->events_waiting_epoll.size()));
         while(ite != end){
             if(ite->second->check_timeout(now)){
-                ite->second->entity()->set_event_error(Timeout);
+                if(ite->second->entity()->event_error() == Timeout){
+                    ite->second->entity()->set_event_error(Timeout2);
+                }else{
+                    ite->second->entity()->set_event_error(Timeout);
+                }
                 timeout_fds.push_back(ite->first);
             }
             if(ite->second->which() != KEEP_ALIVE_EVENT && ite->second->check_died_child()){

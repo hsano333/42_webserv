@@ -564,7 +564,7 @@ void Request::set_has_body(bool flag)
 
 bool Request::has_body()
 {
-    DEBUG("Request::has_body");
+    DEBUG("Request::has_body:" + Utility::to_string(this->has_body_));
     return (this->has_body_);
 }
 

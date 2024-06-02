@@ -65,7 +65,7 @@ void WebservWaiter::fetch_events()
     while(ite != end){
         WebservEvent *event;
         if((*ite)->entity()->event_error() == Timeout){
-            (*ite)->entity()->set_force_close(true);
+            //(*ite)->entity()->set_force_close(true);
             DEBUG("DEBUG waiter check True timeout");
             //event = event_factory->make_timeout_event(*ite);
             Request *req = (*ite)->entity()->request();
@@ -77,6 +77,11 @@ void WebservWaiter::fetch_events()
                 // timeout in waiting request
                 event = event_factory->make_event_from_http_error(*ite, "408");
             }
+            event->entity()->set_force_close(true);
+        }else if((*ite)->entity()->event_error() == Timeout2){
+            DEBUG("DEBUG waiter check True died child");
+            //event = event_factory->make_event_from_http_error(*ite, "500");
+            event = this->event_factory->make_clean_event(*ite, true);
         }else if((*ite)->entity()->event_error() == DiedChild){
             DEBUG("DEBUG waiter check True died child");
             event = event_factory->make_event_from_http_error(*ite, "500");

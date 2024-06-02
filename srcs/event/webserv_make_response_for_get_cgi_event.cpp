@@ -94,7 +94,7 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
 
     // RFC3875にはNL(New Line)の具体的な定義がないため、
     // 改行文字はLFとする(Linuxでの運用を想定しているため)
-    char *body_p = Utility::strnstr(data, LF2, read_size);
+    char *body_p = Utility::strnstr(data, NL2_CGI, read_size);
     if(!body_p){
         ERROR("CGI Statement Error: not find LFLF(double New Line)");
         throw HttpException("500");
@@ -108,7 +108,7 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
     *body_p = '\0';
 
 
-    Split headers_line(data, LF, false, true);
+    Split headers_line(data, NL_CGI, false, true);
     for(size_t i=0;i<headers_line.size();i++){
         cout << "headers_line[" << i << "]=" << headers_line[i] << endl;
     }

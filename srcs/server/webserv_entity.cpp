@@ -1,5 +1,6 @@
 #include "webserv_entity.hpp"
 #include "request.hpp"
+#include "utility.hpp"
 #include "response.hpp"
 
 WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL), app_result_(NULL), completed_(false), force_close_(false),event_error_(None), error_code_(StatusCode::from_int(0))
@@ -170,7 +171,8 @@ void WebservEntity::set_body(Body &body)
 
 void WebservEntity::set_force_close(bool flag)
 {
-    this->force_close_ = flag;
+    DEBUG("WebservEntity::set_force_close flag:" + Utility::to_string(flag || this->force_close_));
+    this->force_close_ = flag || this->force_close_;
 }
 
 EventError WebservEntity::event_error()
