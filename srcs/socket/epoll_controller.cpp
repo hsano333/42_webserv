@@ -114,7 +114,7 @@ void EpollController::add(FileDiscriptor const &fd_obj, uint32_t event)
     ev.events = event;
     ev.data.fd = fd;
     if (int err = epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_ADD, fd, &ev) != 0) {
-        ERROR("Epoll add Error fd=" + fd_obj.to_string());
+        WARNING("Epoll add Error fd=" + fd_obj.to_string());
         cout << "epoll add error=" << err << endl;
         throw std::runtime_error("Epoll add Error");
     }

@@ -57,6 +57,10 @@ bool prepare_clean(WebservCleanEvent *event, WebservEntity *entity)
     (void)event;
     bool is_close = entity->force_close();
     DEBUG("prepare_clean() + is_close=" + Utility::to_string(is_close));
+    entity->set_completed(true);
+    if(entity == NULL){
+        return true;
+    }
     if (entity->request()){
         std::string const &conect = entity->request()->header().find(CONNECTION);
         if (conect == "close"){

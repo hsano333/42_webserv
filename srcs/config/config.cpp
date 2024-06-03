@@ -211,12 +211,11 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
 {
     DEBUG("Config::get_server");
 
-    DEBUG("Config::get_server No.1");
     map<pair<Port, string>, ConfigServer const*>::iterator cash_ite = servers_cache.find(make_pair(port, host));
     if (cash_ite != servers_cache.end()){
         return (cash_ite->second);
     }
-    DEBUG("Config::get_server No.2");
+
     if(servers_cache.size() > 100){
         servers_cache.clear();
     }
@@ -237,21 +236,13 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
 
     this->check();
 
-    DEBUG("Config::get_server No.4");
     //std::vector<Port>
-    cout << "http test NULL?" << endl;
-    printf("http=%p\n", http);
-    cout << "http test NULL No.2?" << endl;
     ConfigServer const *default_server = NULL;
     for (size_t i = 0; i < http->get_server_size(); i++) {
-    DEBUG("Config::get_server No.5");
         if (http->server(i)->listen() == port){
-    DEBUG("Config::get_server No.6");
             if(default_server == NULL){
-    DEBUG("Config::get_server No.7");
                 default_server = http->server(i);
             }
-    DEBUG("Config::get_server No.8");
 
             IP_Address config_address = IP_Address::from_string_or_name(http->server(i)->server_name());
             MYINFO("config_address:" + config_address.to_string());
@@ -267,10 +258,7 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
         return (default_server);
     }
 
-    DEBUG("Config::get_server No.6");
     return (http->server(0));
-    //return (http->server(i));
-    //return (NULL);
 }
 
 ConfigLocation const *Config::get_location(ConfigServer const *server, const Request *req) const
@@ -286,7 +274,9 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
     }
 
     const ConfigLocation* tmp_location = NULL;
+    const ConfigLocation* slash_location = NULL;
     int max_point = 0;
+    //bool slash_flag = false;
     for (size_t i = 0; i < server->get_location_size(); i++) {
 
         if (tmp_location){
@@ -297,26 +287,13 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
             std::string const &location_path = server->location(i)->pathes()[j];
             DEBUG("Config::get_location location_path:" + location_path);
 
-            /*
-            if(location_path == "/"){
-                tmp_location = server->location(i);
-                break;
+            if(location_path == "/" && slash_location == NULL){
+                slash_location = server->location(i);
             }
-            */
 
             Split lp(location_path, "/");
-
             size_t min_num = std::min(lp.size(), path_sp.size());
 
-            if (path_sp.size() == 1){
-                DEBUG("location_path=" + location_path);
-                DEBUG("path=" + path);
-                if (location_path == "/" && path[0] == '/'){
-                    DEBUG("OK?");
-                    tmp_location = server->location(i);
-                    break;
-                }
-            }
             if (path_sp.size() > 0){
                 int tmp_point = 0;
                 for(size_t k=0;k<min_num;k++){
@@ -330,12 +307,25 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
                     tmp_location = server->location(i);
                 }
             }
+            if (path_sp.size() == 1){
+                DEBUG("location_path=" + location_path);
+                DEBUG("path=" + path);
+                if (location_path == "/" && path[0] == '/'){
+                    tmp_location = server->location(i);
+                    break;
+                }
+            }
         }
     }
 
     if (tmp_location == NULL){
-        ERROR("Config::get_location() cant't find location");
-        throw HttpException("404");
+
+        if(slash_location){
+            tmp_location = slash_location;
+        }else{
+            ERROR("Config::get_location() cant't find location");
+            throw HttpException("404");
+        }
     }
     if(Config::locations_cache.size() > 100){
         Config::locations_cache.clear();
