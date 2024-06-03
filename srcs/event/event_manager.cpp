@@ -244,7 +244,7 @@ void EventManager::add_events_will_deleted(FileDiscriptor const &fd, WebservEven
 
 }
 
-void EventManager::erase_events_will_deleted(FileDiscriptor const &fd)
+void EventManager::erase_events_will_deleted_event(FileDiscriptor const &fd)
 {
     DEBUG("erase_events_will_deleted");
     std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
@@ -257,6 +257,24 @@ void EventManager::erase_events_will_deleted(FileDiscriptor const &fd)
             ite_event++;
         }
         this->events_will_deleted.erase(ite);
+    }
+}
+
+void EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const &fd)
+{
+    DEBUG("erase_events_will_deleted_except_keepout");
+    std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
+    if(ite != this->events_will_deleted.end()){
+        std::set<WebservEvent*>::iterator ite_event = ite->second.begin();
+        std::set<WebservEvent*>::iterator end_event = ite->second.end();
+        while(ite_event != end_event){
+            DEBUG("delete erase_events_will_deleted address:" + Utility::to_string(*ite_event));
+            if((*ite_event)->which() != KEEP_ALIVE_EVENT){
+                delete *ite_event;
+            }
+            ite_event++;
+        }
+        //this->events_will_deleted.erase(ite);
     }
 }
 

@@ -58,13 +58,11 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     // delete all registered files;
     file_manager->erase(fd);
 
-    // delete all registered events;
-    event_manager->erase_events_will_deleted(fd);
 
-    if(entity){
-        DEBUG("delete entity in clean event address::" + Utility::to_string(entity));
-        DEBUG("end delete entity in clean event");
-    }
+    //if(entity){
+        //DEBUG("delete entity in clean event address::" + Utility::to_string(entity));
+        //DEBUG("end delete entity in clean event");
+    //}
 
     // except keep-alive
     if(force_close){
@@ -77,7 +75,9 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
             WARNING("This error is ignored:" + Utility::to_string(e.what()));
         }
 
-        fd.close();
+        this->fd_manager->close_socket(fd);
+        event_manager->erase_events_will_deleted_event(fd);
+        //fd.close();
         delete entity;
     }
 
