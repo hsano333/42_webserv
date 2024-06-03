@@ -34,8 +34,7 @@ WebservEventFactory::WebservEventFactory(
         IWriter *normal_writer,
         IWriter *socket_writer,
         IReader *normal_reader,
-        IReader *socket_reader,
-        WebservCleaner *cleaner
+        IReader *socket_reader
         ) :
         cfg(cfg),
         file_factory(file_factory),
@@ -47,8 +46,7 @@ WebservEventFactory::WebservEventFactory(
         normal_writer(normal_writer),
         socket_writer(socket_writer),
         normal_reader(normal_reader),
-        socket_reader(socket_reader),
-        cleaner(cleaner)
+        socket_reader(socket_reader)
 {
 ;
 }

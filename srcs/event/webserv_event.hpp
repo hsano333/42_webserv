@@ -91,6 +91,11 @@ class WebservEvent
         }
         EWebservEvent which()
         {
+            DEBUG("WebservEvent which()");
+            if(pimpl_ == NULL){
+                DEBUG("pimpl is NULL");
+                return (OTHER_EVENT);
+            }
             return (pimpl_->which());
         }
         void check_complted(){(pimpl_->check_completed());};

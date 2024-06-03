@@ -12,11 +12,13 @@ using std::endl;
 WebservCleaner::WebservCleaner(
                     IOMultiplexing *io_multi_controller,
                     EventManager *event_manager,
+                    EventController *event_controller,
                     FDManager *fd_manager,
                     FileManager *file_manager
                     ):
                     io_multi_controller(io_multi_controller),
                     event_manager(event_manager),
+                    event_controller(event_controller),
                     fd_manager(fd_manager),
                     file_manager(file_manager)
 {
@@ -37,6 +39,9 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
     //close fd of cgi
     if(entity->app_result()){
+        this->event_controller->erase_epoll_event(entity->io().get_write_fd());
+        this->event_controller->erase_epoll_event(entity->io().get_read_fd());
+        /*
         try{
             this->io_multi_controller->erase(entity->io().get_write_fd());
         }catch(std::runtime_error &e){
@@ -47,6 +52,7 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
         }catch(std::runtime_error &e){
             WARNING("This error is ignored:" + Utility::to_string(e.what()));
         }
+        */
     }
 
     // delete all registered files;

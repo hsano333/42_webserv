@@ -140,6 +140,10 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         DEBUG("epoll wait size:" + Utility::to_string(this->events_waiting_epoll.size()));
         while(ite != end){
+            if(ite->second == NULL){
+                ite++;
+                continue;
+            }
             if(ite->second->check_timeout(now)){
                 if(ite->second->entity()->event_error() == Timeout){
                     ite->second->entity()->set_event_error(Timeout2);
@@ -148,10 +152,14 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
                 }
                 timeout_fds.push_back(ite->first);
             }
+            DEBUG("test No.1");
+            DEBUG("test No.1:" + Utility::to_string(ite->second->which()));
+            DEBUG("test No.2");
             if(ite->second->which() != KEEP_ALIVE_EVENT && ite->second->check_died_child()){
                 ite->second->entity()->set_event_error(DiedChild);
                 execve_error_fds.push_back(ite->first);
             }
+            DEBUG("test No.2");
             ite++;
         }
         for(size_t i=0;i<execve_error_fds.size();i++){

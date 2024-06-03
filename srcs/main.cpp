@@ -200,7 +200,6 @@ int main(int argc, char const* argv[])
     SocketWriter *socket_writer = SocketWriter::get_instance();
     NormalReader *normal_reader = NormalReader::get_instance();
     EventManager *event_manager = new EventManager();
-    WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
     WebservFileFactory *file_factory = WebservFileFactory::get_instance(file_manager);
 
     PostApplication::get_instance(file_factory);
@@ -216,8 +215,7 @@ int main(int argc, char const* argv[])
             normal_writer,
             socket_writer,
             normal_reader,
-            socket_reader,
-            cleaner
+            socket_reader
             );
     EventController *event_controller = new EventController(
             event_manager,
@@ -231,6 +229,8 @@ int main(int argc, char const* argv[])
     application_factory->set_cgi(cgi);
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
+    WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, event_controller, fd_manager, file_manager);
+    //WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
     Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter, cleaner);
     while (1) {
         try{

@@ -133,13 +133,17 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
     }
 }
 
-/*
 void EventController::erase_epoll_event(FileDiscriptor const &fd)
 {
-    this->io_multi_controller->erase(fd);
+    DEBUG("EventController::erase_epoll_event");
+    this->event_manager->erase_event_waiting_epoll(fd);
+    try{
+        this->io_multi_controller->erase(fd);
+    }catch(std::runtime_error &e){
+        WARNING("[EventController::erase_epoll_event] This error is ignored:" + Utility::to_string(e.what()));
+    }
 
 }
-*/
 
 
 

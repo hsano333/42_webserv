@@ -25,6 +25,7 @@ bool WebservEvent::check_timeout(std::time_t now)
 
 bool WebservEvent::check_died_child()
 {
+    DEBUG("WebservEvent::check_died_child");
     if(this->entity_ && this->entity_->app_result() && this->entity_->app_result()->is_cgi()){
         int wstatus = 0;
         DEBUG("WebservEvent::check_died_child pid:" + Utility::to_string(this->entity_->app_result()->pid().to_int()));
