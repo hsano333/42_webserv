@@ -41,6 +41,7 @@ void WebservWaiter::fetch_events()
     DEBUG("WebservWaiter::fetch_event() event_size:" + Utility::to_string(event_manager->event_size()));
 
     int executable_event_size = io_multi_controller->executable_event_number();
+    DEBUG("WebservWaiter::fetch_event() executable_event_size:" + Utility::to_string(executable_event_size));
     if(executable_event_size > 0){
         int event_size = io_multi_controller->executable_event_number();
         t_epoll_event *io_event = io_multi_controller->event_return_wrapper();
@@ -71,13 +72,15 @@ void WebservWaiter::fetch_events()
             Request *req = (*ite)->entity()->request();
             //DEBUG("DEBUG waiter check True timeout has_body()=" + Utility::to_string(req->has_body()));
             if((req && req->has_body() == false) || (req && req->read_completed())){
+                DEBUG("timeout 504");
                 // timeout in server process
                 event = event_factory->make_event_from_http_error(*ite, "504");
             }else{
+                DEBUG("timeout 408");
                 // timeout in waiting request
                 event = event_factory->make_event_from_http_error(*ite, "408");
             }
-            event->entity()->set_force_close(true);
+            //event->entity()->set_force_close(true);
         }else if((*ite)->entity()->event_error() == Timeout2){
             DEBUG("DEBUG waiter check True died child");
             //event = event_factory->make_event_from_http_error(*ite, "500");

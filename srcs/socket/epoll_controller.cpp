@@ -157,6 +157,7 @@ void EpollController::erase(FileDiscriptor const &fd_obj)
         //return (true);
     //}
     //t_epoll_event* ev = (*ite_ev);
+    DEBUG("epoll fd:" + Utility::to_string(this->epoll.fd().to_int()));
     if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_DEL, fd, &ev) != 0) {
         ERROR("Epoll erase Error");
         throw std::runtime_error("Epoll erase Error");

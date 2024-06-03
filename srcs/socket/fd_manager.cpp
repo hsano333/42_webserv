@@ -46,6 +46,7 @@ void FDManager::close_socket(FileDiscriptor fd)
     DEBUG("FDManager::close_socket fd:" + fd.to_string());
     std::vector< FileDiscriptor>::iterator ite = find(fd_of_sockets.begin(), fd_of_sockets.end(), fd);
     if(ite != fd_of_sockets.end()){
+        DEBUG("FDManager::close_socket close fd:" + (*ite).to_string());
         fd_of_sockets.erase(ite);
         close((*ite).to_int());
     }

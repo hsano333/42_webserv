@@ -7,6 +7,7 @@
 #include <stack>
 #include <queue>
 #include <set>
+#include <vector>
 
 class WebservEvent;
 class WebservCleaner;
@@ -30,7 +31,7 @@ class EventManager
         bool find(FileDiscriptor &fd);
 
         void add_events_will_deleted(FileDiscriptor const &fd, WebservEvent* event);
-        void erase_events_will_deleted_except_keepout(FileDiscriptor const &fd);
+        void erase_events_will_deleted_except_keepout(FileDiscriptor const &fd, std::vector<FileDiscriptor> *delete_fd);
         void erase_events_will_deleted_event(FileDiscriptor const &fd);
 
         //void add_child_events_will_deleted(FileDiscriptor const &fd, WebservEvent* event);

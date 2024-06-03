@@ -4,6 +4,7 @@
 #include "header_word.hpp"
 #include "webserv_timeout_event.hpp"
 #include "webserv_entity.hpp"
+#include "io_multiplexing.hpp"
 
 
 using std::cout;
@@ -57,7 +58,12 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
     // delete all registered files;
     file_manager->erase(fd);
-
+    std::vector<FileDiscriptor> fd_vec;
+    event_manager->erase_events_will_deleted_except_keepout(fd, &fd_vec);
+    for(size_t i=0;i<fd_vec.size();i++){
+        this->io_multi_controller->erase(fd_vec[i]);
+        fd_vec[i].close();
+    }
 
     //if(entity){
         //DEBUG("delete entity in clean event address::" + Utility::to_string(entity));

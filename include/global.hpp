@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 02:47:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/06/02 15:49:31 by sano             ###   ########.fr       */
+/*   Updated: 2024/06/03 16:50:24 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,10 @@
 #define CRLF "\r\n"
 #define CRLF2 "\r\n\r\n"
 //#define NL_CGI "\n"
-#define NL_CGI "\r\n"
-#define NL2_CGI "\r\n\r\n"
+//#define NL_CGI "\r\n"
+//#define NL2_CGI "\r\n\r\n"
+#define NL_CGI "\n"
+#define NL2_CGI "\n\n"
 
 //32GB
 #define MAX_BODY_SIZE (34359738368ul)

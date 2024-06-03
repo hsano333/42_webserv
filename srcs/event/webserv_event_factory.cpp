@@ -102,6 +102,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             io_fd = this->socket_controller->accept_request(fd);
             MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
             this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
+            //this->event_manager->add_event_waiting_epoll(fd, NULL);
             this->io_multi_controller->add(io_fd, EPOLLIN  | EPOLLONESHOT );
 
             return (NULL);

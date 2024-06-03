@@ -75,9 +75,16 @@ bool EventManager::find(FileDiscriptor &fd)
 
 void EventManager::add_event_waiting_epoll(FileDiscriptor const &fd, WebservEvent* event)
 {
+
     DEBUG("add_event_waiting_epoll() fd:" + fd.to_string());
     DEBUG("EventManager::events_waiting_epoll No.0 size:" + Utility::to_string(events_waiting_epoll.size()));
-    this->events_waiting_epoll.insert(std::make_pair(fd, event));
+    std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.find(fd);
+    if(ite == this->events_waiting_epoll.end()){
+        this->events_waiting_epoll.insert(std::make_pair(fd, event));
+    }else{
+        this->events_waiting_epoll[fd] = event;
+    }
+
     DEBUG("EventManager::events_waiting_epoll No.1 size:" + Utility::to_string(events_waiting_epoll.size()));
 }
 
@@ -108,7 +115,7 @@ bool EventManager::check_timeout()
         std::map<FileDiscriptor, WebservEvent*>::iterator ite = this->events_waiting_epoll.begin();
         std::map<FileDiscriptor, WebservEvent*>::iterator end = this->events_waiting_epoll.end();
         while(ite != end){
-            if(ite->second->check_timeout(now)){
+            if(ite->second && ite->second->check_timeout(now)){
                 DEBUG("EventManager::check_timeout true epoll");
                 return (true);
             }
@@ -119,7 +126,7 @@ bool EventManager::check_timeout()
         MutantStack<WebservEvent *>::iterator ite;
         MutantStack<WebservEvent *>::iterator end;
         while(ite != end){
-            if((*ite)->check_timeout(now)){
+            if(*ite && (*ite)->check_timeout(now)){
                 DEBUG("EventManager::check_timeout true Event");
                 return (true);
             }
@@ -151,6 +158,8 @@ void EventManager::retrieve_clean_events(std::set<WebservEvent *> &event_return)
                     ite->second->entity()->set_event_error(Timeout);
                 }
                 timeout_fds.push_back(ite->first);
+                ite++;
+                continue;
             }
             DEBUG("test No.1");
             DEBUG("test No.1:" + Utility::to_string(ite->second->which()));
@@ -260,21 +269,53 @@ void EventManager::erase_events_will_deleted_event(FileDiscriptor const &fd)
     }
 }
 
-void EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const &fd)
+void EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const &fd, std::vector<FileDiscriptor> *delete_fd)
 {
+
+    std::map<WebservEvent*, FileDiscriptor> tmp_map;
+    std::map<FileDiscriptor, WebservEvent*>::iterator wait_ite = this->events_waiting_epoll.begin();
+    std::map<FileDiscriptor, WebservEvent*>::iterator wait_end = this->events_waiting_epoll.end();
+    while(wait_ite != wait_end){
+        tmp_map.insert(std::make_pair(wait_ite->second, wait_ite->first));
+        wait_ite++;
+    }
+    
+
+
     DEBUG("erase_events_will_deleted_except_keepout");
     std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
     if(ite != this->events_will_deleted.end()){
+        //std::set<WebservEvent*> tmp_set = ite->second;
+        std::set<WebservEvent*> save_set;
         std::set<WebservEvent*>::iterator ite_event = ite->second.begin();
         std::set<WebservEvent*>::iterator end_event = ite->second.end();
         while(ite_event != end_event){
+        //for(size_t i=0;i<tmp_set.size();i++){
+            WebservEvent *event = *ite_event;
             DEBUG("delete erase_events_will_deleted address:" + Utility::to_string(*ite_event));
-            if((*ite_event)->which() != KEEP_ALIVE_EVENT){
-                delete *ite_event;
+            if(event->which() != KEEP_ALIVE_EVENT){
+
+                //WebservEvent* event = *ite_event;
+                //std::map<WebservEvent*, FileDiscriptor>::iterator = 
+                if(tmp_map.find(event) != tmp_map.end()){
+                    FileDiscriptor const &tmp_fd = tmp_map[event];
+                    //this->erase_event_waiting_epoll(tmp_map.find(event));
+                    this->events_waiting_epoll.erase(tmp_fd);
+                    //if(tmp_fd.to_int() != fd.to_int()){
+                        delete_fd->push_back(fd);
+                        //io_multi_controller->erase(tmp_map[event]);
+
+                    //}
+                }
+
+                delete event;
+            }else{
+                save_set.insert(event);
             }
             ite_event++;
         }
         //this->events_will_deleted.erase(ite);
+        this->events_will_deleted[fd] = save_set;
     }
 }
 

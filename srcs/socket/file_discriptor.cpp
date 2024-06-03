@@ -68,6 +68,7 @@ bool FileDiscriptor::is_close() const
 
 void FileDiscriptor::close() const
 {
+    DEBUG("close fd:" + this->to_string());
     if(this->fd >= 0 && this->is_close_ == false){
         ::close(this->fd);
         //this->is_close_ = true;
