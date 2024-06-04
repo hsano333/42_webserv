@@ -62,7 +62,8 @@ Request::Request(FileDiscriptor const &fd) :
     read_completed_(false),
     is_cgi_(false),
     read_body_size_(0),
-    has_body_(false)
+    has_body_(false),
+    auth_("")
     //source_file(NULL)
     //is_redable_darectory(false)
 {
@@ -442,6 +443,19 @@ void Request::set_file(WebservFile *file)
 {
     this->file_ = file;
 }
+
+
+void Request::set_auth(std::string const &str)
+{
+    this->auth_ = str;
+}
+
+std::string const &Request::auth()
+{
+    return (this->auth_);
+}
+
+
 /*
 
 int Request::open()

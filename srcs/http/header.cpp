@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 23:24:19 by hsano             #+#    #+#             */
-/*   Updated: 2024/05/21 15:41:22 by sano             ###   ########.fr       */
+/*   Updated: 2024/06/05 03:40:41 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,6 +201,17 @@ std::string const &Header::get_host() const
     }
     return (value);
 }
+
+string const &Header::cookie() const
+{
+    std::string name = "cookie";
+    string const &value = find(name);
+    if (value == this->_not_find){
+        return (this->_not_find);
+    }
+    return (value);
+}
+
 
 size_t Header::size() const
 {

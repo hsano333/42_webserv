@@ -4,6 +4,7 @@
 #include "socket_file.hpp"
 #include "global.hpp"
 #include "base64.hpp"
+#include "split.hpp"
 
 WebservMakeRequestEvent::WebservMakeRequestEvent()
 {
@@ -141,6 +142,12 @@ void WebservMakeRequestEvent::check_auth(Request *req, const ConfigLocation *loc
     std::string buf;
     while (getline(ifs, buf)) {
         if(decoded_auth == buf){
+            Split sp(decoded_auth, ":");
+            if(sp.size() == 2){
+                req->set_auth(sp[0]);
+            }else{
+                throw HttpException("401");
+            }
             return ;
         }
     }

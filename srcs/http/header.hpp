@@ -38,6 +38,7 @@ class Header{
         bool is_chunked() const;
         std::string const &get_host() const;
         static Header from_splited_data(Split &sp, size_t offset);
+        std::string const &cookie() const;
 
         //std::pair<string, string> const &operator[](size_t i) const;
         std::map<std::string, std::string >::iterator begin();

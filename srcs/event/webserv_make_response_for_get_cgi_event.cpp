@@ -119,8 +119,6 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
     WebservFile *file = file_factory->make_pipe_file(entity->fd(),  result->cgi_out(), reader);
     Request const *req = entity->request();
     ConfigServer const *server = entity->config()->get_server(req);
-
-
     Response *res = Response::from_cgi_header_line(entity->fd(), headers_line, file);
 
     int tmp_size = read_size - header_size - 2;

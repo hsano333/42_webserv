@@ -353,8 +353,8 @@ void ConfigLocation::check()
     }
 
     if(this->auth_basic_ && Utility::is_readable_file(this->auth_basic_path_) == false){
-        ERROR("ConfigLocation::check(), Only one of autoindex and index directive is True");
-        throw std::runtime_error("ConfigLocation::check(), Only one of autoindex and index directive is True");
+        ERROR("ConfigLocation::check(), auth file is not readable");
+        throw std::runtime_error("ConfigLocation::check(), auth file is not readable");
     }
 
     if((this->index_ && this->autoindex_)){

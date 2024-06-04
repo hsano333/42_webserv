@@ -1,0 +1,92 @@
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        figure {
+            margin: 10px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ccc;
+            width: 300px;
+            text-align: center;
+        }
+        figcaption {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+	.pagination {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+
+	.cart{
+		margin-top:5px;
+		color: white;
+		background-color:gray;
+		padding:1px 20px;
+		border-radius:10px;
+		border:none;
+	}
+	.cart::after{
+		content:"カート内";
+	}
+
+	.check-out{
+		margin-top:5px;
+		color: white;
+		background-color:#0084ff;
+		padding:1px 20px;
+		border-radius:10px;
+		border:none;
+	}
+	.check-out::after{
+		content:"貸出可能";
+	}
+	.check-out:hover{
+	    cursor:pointer;
+	}
+
+	.checked-out{
+		margin-top:5px;
+		color:red;
+	}
+	.checked-out::after{
+		content:"貸出中";
+	}
+
+	.header {
+	    display: flex;
+	    width:100%;
+	    justify-content: end;
+	    align-items: start;
+	    #background-color: #fff;
+	    padding: 10px 20px;
+	    #border-bottom: 1px solid #ccc;
+	    margin-bottom: 20px;
+	}
+
+	.mypage-link {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+	    right:0px;
+        }
+        .mypage-link:hover {
+            text-decoration: underline;
+        }

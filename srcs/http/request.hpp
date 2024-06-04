@@ -105,6 +105,10 @@ class Request
 
         void set_file(WebservFile *file);
         void add_read_body_size(size_t size);
+
+        void set_auth(std::string const &auth);
+        std::string const &auth();
+
         //BufferController const &get_buffer();
         WebservFile *file();
 
@@ -146,6 +150,7 @@ class Request
         bool            is_cgi_;
         size_t          read_body_size_;
         bool            has_body_;
+        std::string     auth_;
         //BufferController buffer;
         //File *source;
 

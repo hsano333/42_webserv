@@ -159,15 +159,21 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     string const remote_host = "REMOTE_HOST=" + req->header().get_host();
     string const request_method= "REQUEST_METHOD=" + method.to_string();
     string const script_name = "SCRIPT_NAME=" + script_file_name;
-    string const server_port = "SERVER_NAME=" + server->listen().to_string();
+    //string const server_name = "SERVER_NAME=http://" + server->server_name();
+    string const server_name = "SERVER_NAME=" + server->server_name();
+    string const server_port = "SERVER_PORT=" + server->listen().to_string();
     string const server_protocol = "SERVER_PROTOCOL=" + req->req_line().version().to_string();
     string const server_software = "SERVER_SOFTWARE=Webserv 0.0.1";
-    string const remote_USER = "REMOTE_USER=";
+    string const remote_USER = "REMOTE_USER=" + req->auth();
 
     string const content_length = "CONTENT_LENGTH=" + req->header().get_content_length_str();
     string const content_type = "CONTENT_TYPE=" + req->header().get_content_type();
     string const env_query = "QUERY_STRING=" + query;
     string const path_info = "PATH_INFO=" + location->root() + "/" + req->tmp_path_info();
+    string const cookie = "HTTP_COOKIE=" + req->header().cookie();
+    DEBUG("req->tmp_path_info():" + req->tmp_path_info());
+    DEBUG("req->root():" + location->root());
+    DEBUG("path_info:" + path_info);
 
     //対応しない
     ////string const remote_addr = "REMOTE_ADDR=";
@@ -198,6 +204,9 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     env[11] = const_cast<char*>(content_type.c_str());
     env[12] = const_cast<char*>(env_query.c_str());
     env[13] = const_cast<char*>(path_info.c_str());
+    env[14] = const_cast<char*>(server_name.c_str());
+    env[15] = const_cast<char*>(cookie.c_str());
+
     /*
     char* env[3] = {NULL};
     env[0] = const_cast<char*>(env_query.c_str());

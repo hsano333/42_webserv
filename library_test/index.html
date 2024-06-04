@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<HTML>
+    <HEAD>
+        <TITLE>Hello CGI</TITLE>
+        <meta charset="UTF-8">
+    </HEAD>
+    <BODY>
+        <a href="/cgi/library.pl/db">図書館へ</a>
+        <form action="/signup.pl/db" method="post">
+            <div for="a">アカウントがない方は先にsign upしてください</div>
+            <div>
+                <span>ユーザー名：</span>
+            <input type="text" id="user" name="user"  pattern="^[a-zA-Z0-9_]+$"  minlength="2" maxlength="10"   required>
+            </div>
+            <div>
+                <span>パスワード：</span>
+            <input type="text" id="password" name="password"  pattern="^[a-zA-Z0-9_]+$"  minlength="4" maxlength="16" required>
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+    </BODY>
+</HTML>
