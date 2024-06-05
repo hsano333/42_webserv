@@ -40,25 +40,40 @@ namespace free_func{
         Response const *current_res = entity->response();
         DEBUG("WebservErrorEvent handle_error() delete response address:" + Utility::to_string(current_res));
         StatusCode &code = entity->error_code();
+        DEBUG("WebservErrorEvent handle_error() code:" + code.to_string());
 
         Response *res = Response::from_error_status_code(entity->fd(), code);
         event->check_completed(entity);
 
-        if(code.to_int() == 405){
-            const Config *cfg = entity->config();
-            Request const *req = entity->request();
+        const Config *cfg = entity->config();
+        Request const *req = entity->request();
+        if(req){
             ConfigServer const *server = entity->config()->get_server(req);
             ConfigLocation const *location = cfg->get_location(server, req);
             ConfigLimit const *limit = location->limit();
-            std::string allowed_methods = limit->allowed_method_str();
-            res->add_header(ALLOW, allowed_methods);
+
+            if(code.to_int() == 405){
+                std::string allowed_methods = limit->allowed_method_str();
+                res->add_header(ALLOW, allowed_methods);
+            }else if(code.to_int() == 401){
+                res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
+            }else if(code.to_int() >= 300 && code.to_int() < 400){
+
+                DEBUG("Redirect No.2");
+                if(location->is_redirect()){
+                DEBUG("Redirect No.3");
+                    res->add_header(LOCATION, location->redirect().second);
+                }else{
+                    code = StatusCode::from_int(500);
+                }
+            }
+
+        }else{
+            if(code.to_int() == 401){
+                res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
+            }
         }
-        if(code.to_int() == 401){
-            res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
-        }
-        if(code.to_int() == 301){
-            //res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
-        }
+
         entity->set_response(res);
 
         return (true);

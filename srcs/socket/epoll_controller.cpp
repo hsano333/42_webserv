@@ -132,8 +132,8 @@ void EpollController::modify(FileDiscriptor const &fd_obj, uint32_t event)
     ev.events = event;
     ev.data.fd = fd;
     if (epoll_ctl(this->epoll.fd().to_int(), EPOLL_CTL_MOD, fd, &ev) != 0) {
-        ERROR("Epoll modify Error");
-        throw std::runtime_error("Epoll modify Error");
+        WARNING("Epoll modify Error");
+        //throw std::runtime_error("Epoll modify Error");
     }
 }
 

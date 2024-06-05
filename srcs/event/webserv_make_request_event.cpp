@@ -19,7 +19,7 @@ namespace free_func{
     bool make_request(WebservMakeRequestEvent *event, WebservEntity *entity)
     {
         Request *req = event->make_request(entity);
-        entity->set_request(req);
+        (void)req;
         entity->set_completed(true);
         return (true);
     }
@@ -293,14 +293,24 @@ Request *WebservMakeRequestEvent::make_request(WebservEntity *entity)
     DEBUG("WebservMakeRequestEvent::make_request() address:" + Utility::to_string(req));
     try{
         this->parse_request(req, entity->io().source());
-
         const ConfigServer *server = entity->config()->get_server(req);
         const ConfigLocation *location = entity->config()->get_location(server, req);
+
+
 
         req->set_requested_filepath(location);
         this->check_body_size(req, server);
         this->check_auth(req, location);
         req->set_cgi(check_cgi(req, location));
+
+
+        entity->set_request(req);
+
+        if(location->is_redirect()){
+            DEBUG("Redirect!");
+            throw HttpException(location->redirect().first.to_string());
+        }
+
     }catch(HttpException &e){
         ERROR("WebservMakeRequestEvent::make_request:" + Utility::to_string(e.what()));
         //delete req;

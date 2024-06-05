@@ -130,7 +130,6 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                         cached_event->entity()->io().get_read_fd().close();
                     }
 
-
                     delete cached_event->entity();
                     delete cached_event;
                 }

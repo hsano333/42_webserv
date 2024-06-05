@@ -24,4 +24,6 @@
 #define WWW_AUTHENTICATE "www-authenticate"
 #define AUTHENTICATE_BASIC "Basic"
 
+#define LOCATION "location"
+
 #endif
