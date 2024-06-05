@@ -25,7 +25,7 @@ class FileDiscriptor : PositiveNumber
         bool operator>(int fd) const;
         bool operator<=(int fd) const;
         bool operator<(int fd) const;
-        void close();
+        void close() const;
         int to_int() const;
         int to_int();
         bool is_close() const;

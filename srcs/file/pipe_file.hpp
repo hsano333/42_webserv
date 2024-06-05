@@ -14,7 +14,7 @@
 class PipeFile
 {
     public:
-        PipeFile(FileDiscriptor &fd, WebservFile *file);
+        PipeFile(FileDiscriptor const &fd, WebservFile *file);
         ~PipeFile();
         static PipeFile* from_fd(FileDiscriptor const &fd, IWriter* iwriter, IReader* ireader);
         static PipeFile* from_file(FileDiscriptor const &fd, WebservFile *file, IWriter* iwriter, IReader* ireader);
