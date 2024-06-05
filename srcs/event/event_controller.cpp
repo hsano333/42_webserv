@@ -143,6 +143,7 @@ void EventController::erase_epoll_event(FileDiscriptor const &fd)
     }catch(std::runtime_error &e){
         WARNING("[EventController::erase_epoll_event] This error is ignored:" + Utility::to_string(e.what()));
     }
+    fd.close();
 }
 
 

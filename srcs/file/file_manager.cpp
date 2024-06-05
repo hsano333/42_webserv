@@ -127,7 +127,6 @@ void FileManager::erase(FileDiscriptor const &fd)
             continue;
         }
 
-
         void *address = file->file_address();
         DEBUG("child file address:" + Utility::to_string(address));
 
@@ -147,6 +146,7 @@ void FileManager::erase(FileDiscriptor const &fd)
         //file->close();
         if(file_cnt == 1){
             DEBUG("delete file:" + Utility::to_string(address));
+            file->close();
             file->delete_file();
             DEBUG("end  deleting file:" + Utility::to_string(address));
             //deleted_address_vector.push_back(address);

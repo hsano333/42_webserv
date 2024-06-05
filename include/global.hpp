@@ -6,7 +6,7 @@
 /*   By: hsano <hsano@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 02:47:33 by hsano             #+#    #+#             */
-/*   Updated: 2024/06/04 00:09:57 by sano             ###   ########.fr       */
+/*   Updated: 2024/06/05 13:00:54 by sano             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@
 #define ERROR(STR)  (Log::write(__FILE__, __LINE__,  "[ERROR]", STR, LOG_LEVEL_ERROR))
 
 //unit is second
-#define TIMEOUT 10
+#define TIMEOUT 2
 #define LF "\n"
 #define LF2 "\n\n"
 #define CRLF "\r\n"

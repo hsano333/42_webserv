@@ -34,7 +34,17 @@ bool WebservEvent::check_died_child()
         //ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
 
         if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {
-            MYINFO("WebservEvent::check_died_child True");
+            if(this->entity_->io().get_write_fd() > 0){
+                this->entity_->io().get_write_fd().close();
+                this->entity_->io().set_write_fd(FileDiscriptor());
+            }
+            if(entity_->io().get_read_fd() > 0){
+                this->entity_->io().get_read_fd().close();
+                this->entity_->io().set_read_fd(FileDiscriptor());
+            }
+
+            MYINFO("WebservEvent::check_died_child True close:write_fd" + this->entity_->io().get_write_fd().to_string());
+            MYINFO("WebservEvent::check_died_child True close:reade_fd" + this->entity_->io().get_read_fd().to_string());
             return (true);
         }
     }

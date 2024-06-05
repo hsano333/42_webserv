@@ -24,7 +24,7 @@ class WebservCleaner
                     FileManager *file_manager
                 );
         ~WebservCleaner();
-        bool delete_event(WebservEvent *event, WebservEvent *next_event);
+        bool delete_event(WebservEvent *event);
         void clean(WebservEntity *entity, bool force_close);
         void close_fd(FileDiscriptor const &fd);
         //void clean_timeout_events();

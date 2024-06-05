@@ -22,6 +22,7 @@ PipeFile::PipeFile(FileDiscriptor const &fd, WebservFile *file) :
 
 PipeFile::~PipeFile()
 {
+    this->close();
     DEBUG("PipeFile Destructor");
 }
 
@@ -81,9 +82,9 @@ int PipeFile::read(char **buf, size_t max_size)
     if (!(this->state == FILE_OPEN || this->state == FILE_READING)){
         return (0);
     }
-    DEBUG("PipeFile::read() max_read_size=" + Utility::to_string(max_size));
     //return (this->reader->read(this->fd, *buf, max_size, NULL));
     int tmp =  (this->reader->read(this->fd, *buf, max_size, NULL));
+    DEBUG("PipeFile::read() result=" + Utility::to_string(tmp));
     if(tmp <= 0){
         this->state = FILE_CLOSE;
         this->close();
@@ -137,7 +138,9 @@ int PipeFile::close()
 {
     DEBUG("PipeFile::close(");
     this->state = FILE_CLOSE;
-    this->fd.close();
+    if(this->state != FILE_CLOSE){
+        this->fd.close();
+    }
     return (0);
 }
 

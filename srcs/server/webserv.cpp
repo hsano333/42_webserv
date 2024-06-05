@@ -74,6 +74,7 @@ void Webserv::communication()
         waiter.fetch_events();
 
         size_t cur_size = this->event_manager->event_size();
+        std::set<WebservEvent*> clean_event;
         for(size_t i=0; i < cur_size; i++)
         {
             WebservEvent *event = this->event_manager->pop_first();
@@ -86,6 +87,7 @@ void Webserv::communication()
                 DEBUG("start handle() event address:" + Utility::to_string(event));
                 handle(event);
             }catch(ConnectionException &e){
+                ERROR("ConnectionException fd:" + Utility::to_string(event->entity()->fd().to_string()));
                 ERROR("ConnectionException:" + Utility::to_string(e.what()));
                 event_manager->add_events_will_deleted(event->entity()->fd(), event);
 
@@ -161,25 +163,30 @@ void Webserv::communication()
                 this->event_controller->change_write_event(next_event);
             }
 
-            if(this->cleaner->delete_event(event, next_event)){
+            if(event->which() == CLEAN_EVENT){
+                clean_event.insert(event);
+            }
+        }
+
+        std::set<WebservEvent*>::iterator ite = clean_event.begin();
+        std::set<WebservEvent*>::iterator end = clean_event.end();
+
+        while(ite != end){
+            WebservEvent *event = *ite;
+            if(this->cleaner->delete_event(event)){
 #ifdef TEST
                 cnt++;
                 if(cnt > 10){
                     DEBUG("exit_flag True");
                     exit_flag = true;
+                    break;
                 }
 #endif
             }
+            ite++;
         }
-
-
-#ifdef TEST
-        if(exit_flag){
-            break;
-        }
-#endif
-        DEBUG("while end");
     }
+    DEBUG("while end");
 }
 
 void Webserv::reset()

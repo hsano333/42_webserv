@@ -47,6 +47,8 @@ int CGI::make_thread(int* fd_in, int* fd_out)
 
         *fd_in = stdin_fd[1];
         *fd_out = stdout_fd[0];
+        DEBUG("cgi fd_in fd:" + Utility::to_string(*fd_in));
+        DEBUG("cgi fd_out fd:" + Utility::to_string(*fd_out));
     }
     return pid;
 }

@@ -1,7 +1,7 @@
 #include "webserv_io.hpp"
 #include "http_exception.hpp"
 
-WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), is_read_completed_(false), is_write_completed_(false), total_write_size_(0), cgi_divided_(false), is_cgi_read_(true)
+WebservIO::WebservIO() : source_(NULL), destination_(NULL), read_source_(NULL), read_destination_(NULL), write_source_(NULL), write_destination_(NULL), write_fd_(FileDiscriptor()), read_fd_(FileDiscriptor()), is_read_completed_(false), is_write_completed_(false), total_write_size_(0), cgi_divided_(false), is_cgi_read_(true)
 {
     DEBUG("WebservIO() Constructor");
 }
@@ -68,11 +68,13 @@ void WebservIO::set_read_io(WebservFile *src, WebservFile *dst)
 
 void WebservIO::set_write_fd(FileDiscriptor const &fd)
 {
+    DEBUG("WebservIO::set_write_fd:" + fd.to_string());
     this->write_fd_ = fd;
 }
 
 void WebservIO::set_read_fd(FileDiscriptor const &fd)
 {
+    DEBUG("WebservIO::set_read_fd:" + fd.to_string());
     this->read_fd_ = fd;
 }
 

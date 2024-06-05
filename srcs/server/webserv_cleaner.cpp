@@ -40,8 +40,14 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
     //close fd of cgi
     if(entity->app_result()){
-        this->event_controller->erase_epoll_event(entity->io().get_write_fd());
-        this->event_controller->erase_epoll_event(entity->io().get_read_fd());
+        if(entity->io().get_write_fd().to_int() > 0){
+            this->event_controller->erase_epoll_event(entity->io().get_write_fd());
+            entity->io().set_write_fd(FileDiscriptor());
+        }
+        if(entity->io().get_read_fd().to_int() > 0){
+            this->event_controller->erase_epoll_event(entity->io().get_read_fd());
+            entity->io().set_read_fd(FileDiscriptor());
+        }
         /*
         try{
             this->io_multi_controller->erase(entity->io().get_write_fd());
@@ -83,24 +89,33 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
         this->fd_manager->close_socket(fd);
         event_manager->erase_events_will_deleted_event(fd);
-        //fd.close();
+        fd.close();
+        if(entity->io().get_write_fd().to_int() > 0){
+            DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
+            entity->io().get_write_fd().close();
+        }
+        if(entity->io().get_read_fd().to_int() > 0){
+            DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
+            entity->io().get_read_fd().close();
+        }
         delete entity;
     }
 
 }
 
-bool WebservCleaner::delete_event(WebservEvent *event, WebservEvent *next_event)
+bool WebservCleaner::delete_event(WebservEvent *event)
 {
     DEBUG("delete_event register event :" + Utility::to_string(event));
+    this->clean(event->entity(), event->entity()->force_close());
     //event_manager->add_events_will_deleted(event->entity()->fd(), event);
-    if(event->which() == CLEAN_EVENT){
-        DEBUG("WebservCleaner::delete_event");
-        this->clean(event->entity(), event->entity()->force_close());
-        return (true);
-    }else if(event != next_event){
-        DEBUG("delete");
-    }
-    return (false);
+    //if(event->which() == CLEAN_EVENT){
+        //DEBUG("WebservCleaner::delete_event");
+        //this->clean(event->entity(), event->entity()->force_close());
+        //return (true);
+    //}else if(event != next_event){
+        //DEBUG("delete");
+    //}
+    return (true);
 }
 
 void WebservCleaner::close_fd(FileDiscriptor const &fd)
