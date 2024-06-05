@@ -20,7 +20,7 @@ WebservFileFactory::~WebservFileFactory()
 
 WebservFile *WebservFileFactory::make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode)
 {
-    DEBUG("WebservFileFactory::make_normal_file");
+    DEBUG("WebservFileFactory::make_normal_file file:" + filepath);
     NormalFile *normal_file = NormalFile::from_filepath(filepath, mode);
     return (this->make_webserv_file(fd, normal_file, DefaultFunc::open, DefaultFunc::read, DefaultFunc::write, DefaultFunc::close, DefaultFunc::remove, DefaultFunc::can_read, DefaultFunc::can_write, DefaultFunc::path, DefaultFunc::size, DummyFunc::is_chunk, DummyFunc::set_chunk, DummyFunc::completed));
 }

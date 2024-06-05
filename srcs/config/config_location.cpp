@@ -3,7 +3,7 @@
 #include "utility.hpp"
 #include <iostream>
 
-ConfigLocation::ConfigLocation() : root_(""), limit_(NULL), autoindex_(false), index_(false), is_redirect_(false), auth_basic_(false), auth_basic_path_("")
+ConfigLocation::ConfigLocation() : root_(""), limit_(NULL), autoindex_(false), index_(false), is_redirect_(false), auth_basic_(false), auth_basic_path_(""), error_replaced_code_(StatusCode())
 {
     ;
 }
@@ -239,6 +239,12 @@ std::map<StatusCode, std::string> const &ConfigLocation::error_pages() const
     return (this->error_pages_);
 }
 
+StatusCode const &ConfigLocation::error_replaced_code() const
+{
+    DEBUG("error_replaced_code() code:" + this->error_replaced_code_.to_string());
+    return (this->error_replaced_code_);
+}
+
 std::string ConfigLocation::get_error_file_path(StatusCode &code) const
 {
     if(this->error_pages_.find(code) == this->error_pages_.end()){
@@ -257,8 +263,24 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
     }
     std::string path = Utility::remove_obstruction_in_uri(vec[vec.size()-1]);
     for(size_t i=1;i<vec.size()-1;i++){
-        StatusCode status_code = StatusCode::from_string(vec[i]);
-        this->error_pages_.insert(std::make_pair(status_code, path));
+        DEBUG("Config_location vec=[" + vec[i]);
+        if(vec[i][0] == '='){
+            DEBUG("Config_location No.1 vec=[" + vec[i]);
+            if(this->error_replaced_code_.to_int() != 0){
+                throw std::runtime_error("config parser error:location [error_page]:" + vec[i]);
+            }
+            std::string tmp_code = vec[i].substr(1);
+            DEBUG("Config_location No.2 vec=[" + tmp_code);
+            this->error_replaced_code_ = StatusCode::from_string(tmp_code);
+            DEBUG("Config_location No.3 vec=[" + this->error_replaced_code_.to_string());
+        }else{
+            StatusCode status_code = StatusCode::from_string(vec[i]);
+            if(status_code >= 300){
+                this->error_pages_.insert(std::make_pair(status_code, path));
+            }else{
+                throw std::runtime_error("config parser error:location [error_page] error status code is invalid:" + status_code.to_string());
+            }
+        }
     }
 }
 
@@ -340,6 +362,10 @@ void ConfigLocation::check()
         ERROR("ConfigLocation::check(),  root is not specified");
         throw std::runtime_error("ConfigLocation::check(), root is not specified");
     }
+    if(Utility::is_directory(root_) == false){
+        ERROR("ConfigLocation::check(),  root is not directory");
+        throw std::runtime_error("ConfigLocation::check(), root is not directory");
+    }
 
     //if (this->index_.size() > 1){
         //ERROR("ConfigLocation::check(), index file is duplicated");
@@ -360,6 +386,21 @@ void ConfigLocation::check()
     if((this->index_ && this->autoindex_)){
         ERROR("ConfigLocation::check(), both index and autoindex cannot set at the same time");
         throw std::runtime_error("ConfigLocation::check(), both index and autoindex cannot set at the same time");
+    }
 
+    std::map<StatusCode, std::string>::iterator ite = this->error_pages_.begin();
+    std::map<StatusCode, std::string>::iterator end = this->error_pages_.end();
+    if(ite != end){
+        std::string error_file_path = ite->second;
+        error_file_path = root_ + "/" + error_file_path;
+        if(Utility::is_readable_file(error_file_path) == false){
+            ERROR("ConfigLocation::check(), error_file is not redable:" + error_file_path);
+            throw std::runtime_error("ConfigLocation::check(), error_file is not redable");
+        }
+        while(ite != end){
+            ite->second = error_file_path;
+
+            ite++;
+        }
     }
 }

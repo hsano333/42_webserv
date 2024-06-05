@@ -77,6 +77,9 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     //}
 
     // except keep-alive
+    entity->set_request(NULL);
+    entity->set_response(NULL);
+    entity->set_result(NULL);
     if(force_close){
         DEBUG("force close ::clean fd:" + Utility::to_string(fd));
         DEBUG("force close:" + fd.to_string());

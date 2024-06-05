@@ -42,8 +42,8 @@ namespace free_func{
         StatusCode &code = entity->error_code();
         DEBUG("WebservErrorEvent handle_error() code:" + code.to_string());
 
-        Response *res = Response::from_error_status_code(entity->fd(), code);
-        event->check_completed(entity);
+
+        Response *res = NULL;
 
         const Config *cfg = entity->config();
         Request const *req = entity->request();
@@ -51,6 +51,10 @@ namespace free_func{
             ConfigServer const *server = entity->config()->get_server(req);
             ConfigLocation const *location = cfg->get_location(server, req);
             ConfigLimit const *limit = location->limit();
+
+
+            res = Response::from_error_status_code(entity->fd(), code, location);
+            event->check_completed(entity);
 
             if(code.to_int() == 405){
                 std::string allowed_methods = limit->allowed_method_str();
@@ -69,6 +73,8 @@ namespace free_func{
             }
 
         }else{
+            res = Response::from_error_status_code(entity->fd(), code, NULL);
+            event->check_completed(entity);
             if(code.to_int() == 401){
                 res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
             }
@@ -120,11 +126,12 @@ WebservEvent* WebservErrorEvent::make_next_event(WebservEvent* event, WebservEve
     (void)event;
 
     //SocketWriter *socket_writer = SocketWriter::get_instance();
+    Response *res = event->entity()->response();
     WebservFileFactory *file_factory =  WebservFileFactory::get_instance();
     //WebservFile *dst = file_factory->make_socket_file(event->entity()->fd(), event->entity()->fd(), socket_writer, NULL);
     //WebservFile *result_file = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
 
-    WebservFile *file = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->response());
+    WebservFile *file = file_factory->make_webserv_file_regular(event->entity()->fd(), res);
     return (event_factory->make_io_socket_event_as_write(event, file));
     //return (event_factory->make_making_response_event(event, result_file, dst));
     //return (WebservMakeResponseEvent::from_event(event, result_file, dst));

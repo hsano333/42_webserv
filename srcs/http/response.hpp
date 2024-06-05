@@ -29,15 +29,14 @@ class Response
         ~Response();
         Response(Response const &res);
         Response& operator=(Response const &res);
-        static Response* from_success_status_code(FileDiscriptor const &fd, StatusCode &code, WebservFile *file);
-        static Response* from_error_status_code(FileDiscriptor const &fd, StatusCode &code);
-        //static Response* from_error_file(WebservFile *file, StatusCode &code);
-        //static Response* from_cgi_header_line(Split &header_line, File *file, ConfigServer const *server, ConfigLocation const *location);
+        static Response* from_success_status_code(FileDiscriptor const &fd, StatusCode &code, WebservFile *file, ConfigLocation const *location);
+        static Response* from_error_status_code(FileDiscriptor const &fd, StatusCode &code, ConfigLocation const *location);
         static Response* from_cgi_header_line(FileDiscriptor const &fd, Split &header_line, WebservFile *file);
         void   set_header(Split &sp, size_t offset);
         //static Response* from_error_page(ErrorPage &page);
 
         static Response* from_redirect(StatusCode &code, std::string const &filepath);
+        static Response* change_error_code(Response* res, FileDiscriptor const &fd, StatusCode &code, ConfigLocation const *location);
         //static Response* from_file(WebservFile *file);
         void add_header(std::string const &key, std::string const &value);
         //static Response* from_file(std::string const &filepath);
@@ -76,6 +75,7 @@ class Response
         std::vector<char> &buffer();
         void clear_buffer();
         void set_satus_code(StatusCode &code);
+        //bool is_changed_status_code();
 
     private:
         StatusCode status_code;
@@ -101,6 +101,7 @@ class Response
 
         size_t written_body_size;
         size_t header_index;
+        //bool is_changed_status_code_;
 
 };
 

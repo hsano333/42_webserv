@@ -20,6 +20,7 @@ Response::Response() :
     is_chunked(false),
     written_body_size(0),
     header_index(0)
+    //is_changed_status_code_(false)
     //exist_body_(false)
 {
     DEBUG("Response Constructor");
@@ -52,29 +53,87 @@ Response& Response::operator=(Response const &res)
     return (*this);
 }
 
-
-Response* Response::from_success_status_code(FileDiscriptor const &fd, StatusCode &code, WebservFile *file)
+/*
+bool Response::is_changed_status_code()
 {
+    return (is_changed_status_code_);
+}
+*/
+
+Response *Response::change_error_code(Response* res, FileDiscriptor const &fd, StatusCode &code, ConfigLocation const *location)
+{
+    DEBUG("Response::change_error_code:" + code.to_string());
+    (void)fd;
+    std::map<StatusCode, std::string> const errors = location->error_pages();
+    std::map<StatusCode, std::string>::const_iterator error_ite = errors.find(code);
+    if(error_ite != errors.end()){
+        DEBUG("Response::change_error_code No.1:" + code.to_string());
+        if(location->error_replaced_code().to_int() != 0){
+        DEBUG("Response::change_error_code No.2:" + code.to_string());
+            res->status_code = location->error_replaced_code();
+        }else{
+        DEBUG("Response::change_error_code No.3:" + code.to_string());
+            res->status_code = code;
+        }
+        WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+        (void)file_factory;
+        //res->file = NormalFile::from_filepath(error_ite->second, );
+        DEBUG("Response::change_error_code No.4:" + code.to_string());
+        res->file = file_factory->make_normal_file(fd, error_ite->second, std::ios::in);
+        res->add_header(CONTENT_LENGTH, Utility::to_string(res->file->size()));
+        //res->is_changed_status_code_ = true;
+        res->has_body_ = true;
+        //res->file = file;
+    //}else{
+        //res->status_code = code;
+        //res->file = file;
+    }
+
+        DEBUG("Response::change_error_code No.5:" + code.to_string());
+    return (res);
+}
+
+Response* Response::from_success_status_code(FileDiscriptor const &fd, StatusCode &code, WebservFile *file, ConfigLocation const *location)
+{
+    (void)location;
     DEBUG("Response::from_success_status_code");
     Response *res = new Response();
-    res->status_code = code;
-    res->file = file;
 
+    std::map<StatusCode, std::string> const errors = location->error_pages();
+    std::map<StatusCode, std::string>::const_iterator error_ite = errors.find(code);
 
-    (void)fd;
-    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    WebservFile *dummy = file_factory->make_dummy_file(fd, res);
-    (void)dummy;
+    if(error_ite != errors.end()){
+        res = res->change_error_code(res, fd, code, location);
+    //}else{
+        //WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+        //WebservFile *dummy = file_factory->make_dummy_file(fd, res);
+        //(void)dummy;
+    }else{
+        res->status_code = code;
+        res->file = file;
+    }
 
     //res->exist_body_ = false;
     return (res);
 }
 
-Response* Response::from_error_status_code(FileDiscriptor const &fd, StatusCode &code)
+Response* Response::from_error_status_code(FileDiscriptor const &fd, StatusCode &code, ConfigLocation const *location)
 {
     DEBUG("Response::from_error_status_code fd:" + fd.to_string());
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     Response *res = new Response();
+
+    if(location){
+        DEBUG("Response::from_error_status_code No.1 fd:" + fd.to_string());
+        std::map<StatusCode, std::string> const errors = location->error_pages();
+        std::map<StatusCode, std::string>::const_iterator error_ite = errors.find(code);
+
+        if(error_ite != errors.end() && Utility::is_readable_file(error_ite->second)){
+            DEBUG("Response::from_error_status_code No.2 fd:" + fd.to_string());
+            res = res->change_error_code(res, fd, code, location);
+            return (res);
+        }
+    }
     res->status_code = code;
     //res->file = ErrorFile::from_status_code(code);
     res->file = file_factory->make_error_file(fd, code);

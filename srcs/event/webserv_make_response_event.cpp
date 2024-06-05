@@ -21,11 +21,16 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, Web
 {
     DEBUG("WebservMakeResponseEvent::make_response()");
     StatusCode code = result->status_code();
+    const Config *cfg = entity->config();
+    Request const *req = entity->request();
+    ConfigServer const *server = entity->config()->get_server(req);
+    ConfigLocation const *location = cfg->get_location(server, req);
     DEBUG("WebservMakeResponseEvent::make_response() No.1");
     Response *res = Response::from_success_status_code(
             entity->fd(),
             code,
-            result->file()
+            result->file(),
+            location
     );
     DEBUG("WebservMakeResponseEvent::make_response() No.2");
 
@@ -124,10 +129,11 @@ WebservEvent *WebservMakeResponseEvent::from_event(WebservEvent *event, WebservF
 WebservEvent* WebservMakeResponseEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservMakeResponseEvent::make_next_event");
+    Response *res = event->entity()->response();
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    WebservFile *file = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->response());
+    WebservFile *file = file_factory->make_webserv_file_regular(event->entity()->fd(), res);
 
-    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, file));
+    WebservEvent *new_event = (event_factory->make_io_socket_event_as_write(event, file ));
     return (new_event);
 }
 

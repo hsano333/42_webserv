@@ -5,7 +5,7 @@
 using std::make_pair;
 
 
-StatusCode::StatusCode()
+StatusCode::StatusCode(): code(0)
 {
     ;
 }

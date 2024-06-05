@@ -25,6 +25,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         bool is_redirect() const;
         const std::pair<StatusCode, std::string> &redirect() const;
         std::map<StatusCode, std::string> const &error_pages() const;
+        StatusCode const &error_replaced_code() const;
         std::string get_error_file_path(StatusCode &code) const;
         bool auth_basic() const;
         std::string const &auth_basic_path() const;
@@ -68,6 +69,7 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         std::pair<StatusCode, std::string> redirect_;
         bool auth_basic_;
         std::string auth_basic_path_;
+        StatusCode error_replaced_code_;
 
 };
 
