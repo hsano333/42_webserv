@@ -42,11 +42,11 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     if(entity->app_result()){
         if(entity->io().get_write_fd().to_int() > 0){
             this->event_controller->erase_epoll_event(entity->io().get_write_fd());
-            entity->io().set_write_fd(FileDiscriptor());
+            //entity->io().set_write_fd(FileDiscriptor());
         }
         if(entity->io().get_read_fd().to_int() > 0){
             this->event_controller->erase_epoll_event(entity->io().get_read_fd());
-            entity->io().set_read_fd(FileDiscriptor());
+            //entity->io().set_read_fd(FileDiscriptor());
         }
         /*
         try{

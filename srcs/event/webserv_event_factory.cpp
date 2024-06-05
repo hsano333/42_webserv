@@ -117,6 +117,20 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 //if(cached_event && cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
                     MYINFO("WebservEvent::from_epoll_event() delete keep alive event");
+
+
+                    this->fd_manager->close_socket(fd);
+                    this->event_manager->erase_events_will_deleted_event(fd);
+                    if(cached_event->entity()->io().get_write_fd().to_int() > 0){
+                        DEBUG("close cgi pipe:" + cached_event->entity()->io().get_write_fd().to_string());
+                        cached_event->entity()->io().get_write_fd().close();
+                    }
+                    if(cached_event->entity()->io().get_read_fd().to_int() > 0){
+                        DEBUG("close cgi pipe:" + cached_event->entity()->io().get_write_fd().to_string());
+                        cached_event->entity()->io().get_read_fd().close();
+                    }
+
+
                     delete cached_event->entity();
                     delete cached_event;
                 }

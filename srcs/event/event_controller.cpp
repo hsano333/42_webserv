@@ -137,13 +137,13 @@ void EventController::erase_epoll_event(FileDiscriptor const &fd)
         return;
     }
     DEBUG("EventController::erase_epoll_event fd:" + fd.to_string());
-    this->event_manager->erase_event_waiting_epoll(fd);
+        this->event_manager->erase_event_waiting_epoll(fd);
     try{
         //this->io_multi_controller->erase(fd);
     }catch(std::runtime_error &e){
         WARNING("[EventController::erase_epoll_event] This error is ignored:" + Utility::to_string(e.what()));
     }
-    fd.close();
+    //fd.close();
 }
 
 
