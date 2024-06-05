@@ -186,13 +186,25 @@ const ConfigServer* Config::get_server(Request const *req) const
 
         try{
             //FileDiscriptor sockfd = req->sockfd();
+            DEBUG("test No.1");
+            if(this->fd_manager_ == NULL){
+            DEBUG("test No.1");
+            DEBUG("test No.1");
+            DEBUG("test No.1");
+            DEBUG("test No.1");
+
+            }
             FileDiscriptor sockfd = this->fd_manager_->socket_fd_from_epoll_fd(req->fd());
+            DEBUG("test No.2");
             if(getsockname(sockfd.to_int(), (struct sockaddr*)&addr, &len) < 0){
                 WARNING("failure to get port number");
                 throw HttpException("500");
             }
+            DEBUG("test No.3");
             Port port = Port::from_int(ntohs(addr.sin_port));
+            DEBUG("test No.4");
             const ConfigServer *server = this->get_server(port, "");
+            DEBUG("test No.5");
             return (server);
         }catch(std::invalid_argument &e){
             throw HttpException("500");
@@ -566,6 +578,7 @@ void Config::check(SocketRepository *socket_repository)
         cout << "rval1:" << rval << endl;
         if (rval < 0) {
             ERROR("Host name is invalid:" + http->server(i)->server_name());
+            continue;
             //throw std::runtime_error("hostname is invalid");
         }
         freeaddrinfo(res);

@@ -82,6 +82,7 @@ bool FDManager::is_registered(FileDiscriptor epoll_fd)
 }
 FileDiscriptor &FDManager::socket_fd_from_epoll_fd(FileDiscriptor epoll_fd)
 {
+    DEBUG("FDManager::socket_fd_from_epoll_fd");
     DEBUG("FDManager::socket_fd_from_epoll_fd fd:" + epoll_fd.to_string());
     if(this->is_registered(epoll_fd)){
         return (epoll_fd_and_socket[epoll_fd]);

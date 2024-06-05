@@ -33,6 +33,7 @@ WebservEvent *EventManager::pop_first()
     }
     DEBUG("EventManager::pop_first() event_size:" + Utility::to_string(this->events.size()));
     DEBUG("EventManager::pop_first() which:" + Utility::to_string((top->which())));
+    DEBUG("EventManager::pop_first() event fd:" + Utility::to_string((top->entity()->fd().to_string())));
     return (top);
 }
 

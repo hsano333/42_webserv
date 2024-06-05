@@ -36,11 +36,12 @@ void WebservIOSocketEvent::delete_myself()
 
 WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, WebservFile *src, WebservFile *dst, WebservEntity *entity)
 {
+    (void)read_fd;
     DEBUG("WebservIOSocketEvent::as_read fd:" + read_fd.to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, entity);
     new_event->entity()->io().set_read_io(src, dst);
-    new_event->entity()->io().set_read_fd(read_fd);
+    //new_event->entity()->io().set_read_fd(read_fd);
     new_event->entity()->io().switching_io(EPOLLIN);
     new_event->entity()->io().set_total_write_size(0);
 
@@ -54,18 +55,20 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
     //WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, event->entity());
     WebservEvent *new_event = new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
-    new_event->entity()->io().set_write_fd(write_fd);
+    (void)write_fd;
+    //new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLOUT);
     return (new_event);
 }
 
 WebservEvent *WebservIOSocketEvent::as_chunked_write(WebservEvent *event, FileDiscriptor const &write_fd, WebservFile *src, WebservFile *dst)
 {
+    (void)write_fd;
     DEBUG("WebservIOSocketEvent::from_fd fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
-    new_event->entity()->io().set_write_fd(write_fd);
+    //new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLOUT);
     return (new_event);
 }

@@ -80,11 +80,13 @@ void WebservIO::set_read_fd(FileDiscriptor const &fd)
 
 void WebservIO::set_write_fd(FileDiscriptor &fd)
 {
+    DEBUG("WebservIO::set_write_fd fd:" + fd.to_string());
     this->write_fd_ = fd;
 }
 
 void WebservIO::set_read_fd(FileDiscriptor &fd)
 {
+    DEBUG("WebservIO::set_read_fd fd:" + fd.to_string());
     this->read_fd_ = fd;
 }
 
