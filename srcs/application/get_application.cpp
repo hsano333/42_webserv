@@ -182,7 +182,7 @@ bool GetApplication::execute(WebservEntity *entity)
         const string &file_path = req->requested_path();
         if(Utility::is_readable_file(file_path)){
             code = StatusCode::from_int(200);
-            file = file_factory->make_normal_file(fd, file_path, std::ios::in);
+            file = file_factory->make_normal_file(fd, file_path, std::ios::in | std::ios::binary);
             extension = GetApplication::check_content(file_path);
         }else{
             throw HttpException("403");
@@ -194,7 +194,7 @@ bool GetApplication::execute(WebservEntity *entity)
         DEBUG("directory No.2 index path:" + index_path);
 
         if(index_path != ""){
-            file = file_factory->make_normal_file(fd, index_path, std::ios::in);
+            file = file_factory->make_normal_file(fd, index_path, std::ios::in | std::ios::binary);
             code = StatusCode::from_int(200);
             extension = GetApplication::check_content(index_path);
         }else if(is_existed){
@@ -218,7 +218,7 @@ bool GetApplication::execute(WebservEntity *entity)
             DEBUG("directory No.5  default path:" + index_path);
 
             if(index_path != ""){
-                file = file_factory->make_normal_file(fd, index_path, std::ios::in);
+                file = file_factory->make_normal_file(fd, index_path, std::ios::in | std::ios::binary);
                 code = StatusCode::from_int(200);
                 extension = GetApplication::check_content(index_path);
             }else if(is_existed){

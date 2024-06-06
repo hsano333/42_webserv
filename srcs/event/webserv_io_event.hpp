@@ -24,7 +24,7 @@ bool io_work(EventT *event, WebservEntity *entity)
     source->open();
     destination->open();
     entity->set_completed(false);
-    char buf[MAX_READ_SIZE+1];
+    char buf[MAX_READ_SIZE+1] = {0};
     ssize_t read_size_total = 0;
 
     char *buf_p = (buf);
@@ -44,6 +44,7 @@ bool io_work(EventT *event, WebservEntity *entity)
         read_size_total += read_size;
         buf_p = &(buf[0]);
         read_size += load_size;
+        DEBUG("io read() read_size:" + Utility::to_string(read_size));
         /*
         size_t tmp_size = read_size;
 
@@ -63,6 +64,7 @@ bool io_work(EventT *event, WebservEntity *entity)
 
         DEBUG("io write()");
         ssize_t write_size = destination->write(&buf_p, read_size);
+        DEBUG("io write() write_size:" + Utility::to_string(write_size));
         if(write_size <= 0){
             MYINFO("write end");
             entity->io().save(buf_p, 0, read_size);

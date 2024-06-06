@@ -25,6 +25,60 @@ NormalWriter *NormalWriter::get_instance()
 int NormalWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
     DEBUG("NormalWriter::write fd=" + fd.to_string());
+    if(buf == NULL){
+        DEBUG("NormalWriter::write buf is NULL");
+    }
+        DEBUG("NormalWriter::write No.2");
+        printf("\n size=%zu buf=[[[[[[[[[[[[[[[[[[[[[[", size);
+        for(size_t i=0;i<size;i++){
+            printf("%c", buf[i]);
+        }
+        printf("]]]]]]]]]]]]]]]]]]] end\n\n");
+        DEBUG("printf test");
+
+        if(!ifs){
+            DEBUG("printf test No.0");
+            return -1;
+        }
+
+        if(ifs->fail()){
+            DEBUG("printf test No.1");
+            return -1;
+        }
+        DEBUG("printf test No.2");
+
+
+        ifs->write(buf, size);
+        if(ifs->fail()){
+            return -1;
+        }
+        return (ifs->gcount());
+        //int val = ::write(fd.to_int(), &(buf[i]), 1);
+        //DEBUG("val=" + Utility::to_string(val));
+        //int cnt = 0;
+        /*
+        for(size_t i=0;i<size;i++){
+            int val = ::write(fd.to_int(), &(buf[i]), 1);
+            DEBUG("val=" + Utility::to_string(val));
+            DEBUG("cnt=" + Utility::to_string(cnt));
+            if(val == 1){
+                cnt += val;
+            }else{
+                break;
+            }
+        }
+        */
+            /*
+        try{
+            val = ::write(fd.to_int(), &(buf[1]), size-1);
+            DEBUG("NormalWriter::write No.2 val:" + Utility::to_string(val));
+            return val;
+        }catch(...){
+            DEBUG("NormalWriter::write No.3 val try catch");
+
+        }
+        */
+        //return val;
     (void)ifs;
-    return ::write(fd.to_int(), buf, size);
+    //return ::write(fd.to_int(), buf, size);
 }

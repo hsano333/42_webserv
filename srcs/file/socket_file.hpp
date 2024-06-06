@@ -65,11 +65,14 @@ namespace BufferFunc{
         if(file->file()){
             int result = (file->file()->read(data, size));
             if(result <= 0){
+                DEBUG("BufferFunc::read() No.1");
                 file->clear_file();
             }else{
+                DEBUG("BufferFunc::read() No.2");
                 return (result);
             }
         }
+            DEBUG("BufferFunc::read() No.3");
         return (file->read(data, size));
     }
 

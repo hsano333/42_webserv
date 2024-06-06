@@ -67,6 +67,7 @@ E_EpollEvent WebservMakeRequestEvent::epoll_event(WebservEvent *event)
 
 bool WebservMakeRequestEvent::check_body_size(Request *req, const ConfigServer *server)
 {
+    DEBUG("WebservMakeRequestEvent::check_body_size");
 
     ssize_t max_body_size = (ssize_t)server->get_max_body_size();
 

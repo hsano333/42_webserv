@@ -113,7 +113,7 @@ bool DeleteApplication::execute(WebservEntity *entity)
     DEBUG("DeleteApplication::invoke No.3");
             code = StatusCode::from_int(200);
     DEBUG("DeleteApplication::invoke No.4");
-            file = file_factory->make_normal_file(fd, file_path, std::ios::in);
+            file = file_factory->make_normal_file(fd, file_path, std::ios::in | std::ios::binary);
     DEBUG("DeleteApplication::invoke No.5");
             if(file->remove() < 0){
     DEBUG("DeleteApplication::invoke No.6");

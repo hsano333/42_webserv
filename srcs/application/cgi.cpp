@@ -176,6 +176,7 @@ ApplicationResult *CGI::execute(WebservEntity *entity, const Method &method)
     DEBUG("req->tmp_path_info():" + req->tmp_path_info());
     DEBUG("req->root():" + location->root());
     DEBUG("path_info:" + path_info);
+    //chdir(location->root().c_str());
 
     //対応しない
     ////string const remote_addr = "REMOTE_ADDR=";
