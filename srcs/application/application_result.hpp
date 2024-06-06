@@ -50,7 +50,7 @@ class ApplicationResult
         FileDiscriptor &cgi_out();
         ProcessID      pid();
         void           clear_pid();
-        bool            is_chunk();
+        bool           is_chunk();
     private:
         ApplicationResult();
         ApplicationResult(StatusCode &code, Method const &method);

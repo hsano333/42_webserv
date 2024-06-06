@@ -82,7 +82,7 @@ for ($count = $page*30; $count < ($page+1)*30; $count++ ){
     my @record = @{$records[$count]};
 
     print "<figure>";
-    print "    <img src=\"/img/@record[2].jpg\" alt=\"Image @record[0]\" width=\"300\">";
+    print "    <img src=\"/img/@record[2].jpg\" alt=\"Image @record[0]\" width=\"200\">";
     print "    <figcaption>@record[3]</figcaption>";
     if(int(@record[1]) >= 1){
         print "    <button class=\"check-out\" id=\"@record[0]\"></button>";

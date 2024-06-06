@@ -87,7 +87,7 @@ void Socket::init()
         this->close_fd();
         freeaddrinfo(res);
         ERROR("Error bind:");
-        throw std::runtime_error("Failed to bind()\n");
+        throw std::runtime_error("Error:Failed to bind() exit webserv \n");
     }
     freeaddrinfo(res);
     listen(this->sock_fd.to_int(), _SOCKET_NUM);
