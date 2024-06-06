@@ -48,6 +48,11 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
             this->event_controller->erase_epoll_event(entity->io().get_read_fd());
             //entity->io().set_read_fd(FileDiscriptor());
         }
+
+        if(entity->event_error() == Timeout){
+            entity->app_result()->pid().kill();
+        }
+
         /*
         try{
             this->io_multi_controller->erase(entity->io().get_write_fd());

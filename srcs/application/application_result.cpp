@@ -258,6 +258,11 @@ FileDiscriptor &ApplicationResult::cgi_out()
     return (this->cgi_out_);
 }
 
+void ApplicationResult::clear_pid()
+{
+    this->pid_ = ProcessID();
+}
+
 ProcessID ApplicationResult::pid()
 {
     return (this->pid_);

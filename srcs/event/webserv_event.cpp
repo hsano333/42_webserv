@@ -34,6 +34,7 @@ bool WebservEvent::check_died_child()
         //ERROR("Child Process ERROR result:" +  Utility::to_string(result_exe));
 
         if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {
+            this->entity_->app_result()->clear_pid();
             if(this->entity_->io().get_write_fd() > 0){
                 this->entity_->io().get_write_fd().close();
                 this->entity_->io().set_write_fd(FileDiscriptor());

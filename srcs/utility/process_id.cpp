@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <signal.h>
 
-ProcessID::ProcessID()
+ProcessID::ProcessID() : pid(-1)
 {
 ;
 }
@@ -40,9 +40,11 @@ std::string const ProcessID::to_string() const
     return (Utility::to_string(this->pid));
 }
 
-void ProcessID::close() const
+void ProcessID::kill()
 {
     if(this->pid >= 0){
+        DEBUG("Process close:pid=" + this->to_string());
         ::kill(this->pid, SIGINT);
+        this->pid = -1;
     }
 }

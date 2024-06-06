@@ -12,7 +12,7 @@ class ProcessID : PositiveNumber
         static ProcessID from_int(int pid);
         int to_int() const;
         std::string const to_string() const;
-        void close() const;
+        void kill();
     private:
         ProcessID(int pid);
         int pid;

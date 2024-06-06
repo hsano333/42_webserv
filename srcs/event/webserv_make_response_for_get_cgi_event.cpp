@@ -121,13 +121,13 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
     ConfigServer const *server = entity->config()->get_server(req);
     Response *res = Response::from_cgi_header_line(entity->fd(), headers_line, file);
 
-    int tmp_size = read_size - header_size - 2;
+    int tmp_size = read_size - header_size - NL_OFFSET;
     cout << "body_p[2+i]:[" ;
     for(int i=0;i<tmp_size;i++){
-        cout << body_p[2+i];
+        cout << body_p[NL_OFFSET+i];
     }
     cout << "]" << endl;
-    res->set_buf_body(body_p + 2, tmp_size);
+    res->set_buf_body(body_p + NL_OFFSET, tmp_size);
     if(!res->check_body_size(server))
     {
         delete res;

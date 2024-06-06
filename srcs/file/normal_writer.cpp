@@ -37,8 +37,9 @@ int NormalWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, 
         DEBUG("printf test");
 
         if(!ifs){
-            DEBUG("printf test No.0");
-            return -1;
+            int val = ::write(fd.to_int(), buf, size);
+            DEBUG("NormalWriter::write No.2 val:" + Utility::to_string(val));
+            return val;
         }
 
         if(ifs->fail()){

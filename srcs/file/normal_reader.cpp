@@ -28,9 +28,16 @@ int NormalReader::read(FileDiscriptor const &fd, char *buf, size_t size, std::fs
     //int rval = ::read(fd.to_int(), buf, size);
     //
     
-    if(!ifs || ifs->fail()){
+    if(!ifs){
+        int rval = ::read(fd.to_int(), buf, size);
+        return rval;
+    }
+
+    if(ifs->fail()){
+        DEBUG("printf test No.1");
         return -1;
     }
+
     ifs->read(buf, size);
     if(ifs->fail()){
         return -1;
