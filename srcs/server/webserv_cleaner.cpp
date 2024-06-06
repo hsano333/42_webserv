@@ -95,9 +95,11 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
             WARNING("This error is ignored:" + Utility::to_string(e.what()));
         }
 
-        this->fd_manager->close_socket(fd);
+        //this->fd_manager->close_socket(fd);
+        this->fd_manager->close_fd(fd);
         event_manager->erase_events_will_deleted_event(fd);
         fd.close();
+        /*
         if(entity->io().get_write_fd().to_int() > 0){
             DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
             entity->io().get_write_fd().close();
@@ -106,7 +108,8 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
             DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
             entity->io().get_read_fd().close();
         }
-        delete entity;
+        */
+        //delete entity;
     }
 
 }

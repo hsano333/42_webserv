@@ -76,9 +76,7 @@ WebservEvent *WebservEventFactory::make_keep_alive_event(WebservEvent *event)
     DEBUG("WebservEventFactory::make_keep_alive_event");
     WebservEvent *new_event = WebservKeepAliveEvent::from_event(event);
 
-
-    // keep_aliveのみ削除しない
-    //this->register_event(new_event);
+    this->register_event(new_event);
     return (new_event);
 }
 
@@ -116,11 +114,13 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
                 //if(cached_event && cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
-                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event");
+                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event fd:" + fd.to_string());
+                    //WebservEntity *entity = cached_event->entity();
 
-
-                    this->fd_manager->close_socket(fd);
+                    //this->fd_manager->close_socket(fd);
+                    //this->fd_manager->close_fd(fd);
                     this->event_manager->erase_events_will_deleted_event(fd);
+                    /*
                     if(cached_event->entity()->io().get_write_fd().to_int() > 0){
                         DEBUG("close cgi pipe:" + cached_event->entity()->io().get_write_fd().to_string());
                         cached_event->entity()->io().get_write_fd().close();
@@ -129,9 +129,13 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                         DEBUG("close cgi pipe:" + cached_event->entity()->io().get_write_fd().to_string());
                         cached_event->entity()->io().get_read_fd().close();
                     }
+                    */
 
-                    delete cached_event->entity();
-                    delete cached_event;
+                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event No.1");
+                    //delete entity;
+                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event No.2");
+                    //delete cached_event;
+                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event No.3");
                 }
 
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
@@ -147,6 +151,7 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
                 WebservFile *socket_io = this->file_factory->make_socket_file(fd_ref, fd_ref, socket_writer, socket_reader);
                 WebservFile *read_dst = this->file_factory->make_vector_file_for_socket(fd_ref, MAX_REAUEST_EXCEPT_BODY);
                 WebservEvent *event = WebservIOSocketEvent::as_read(fd_ref, socket_io, read_dst, entity);
+                DEBUG("new event address:" + Utility::to_string(event));
                 this->cfg->check();
                 event->entity()->config()->check();
 

@@ -66,7 +66,7 @@ void WebservWaiter::fetch_events()
     while(ite != end){
         WebservEvent *event;
         if((*ite)->entity()->event_error() == Timeout){
-            //(*ite)->entity()->set_force_close(true);
+            (*ite)->entity()->set_force_close(true);
             DEBUG("DEBUG waiter check True timeout");
             //event = event_factory->make_timeout_event(*ite);
             Request *req = (*ite)->entity()->request();

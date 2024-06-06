@@ -17,6 +17,7 @@ class FDManager
     FileDiscriptor &socket_fd_from_epoll_fd(FileDiscriptor epoll_fd);
     bool is_registered(FileDiscriptor epoll_fd);
     FileDiscriptor get_sockfd(FileDiscriptor fd);
+    std::map<FileDiscriptor, FileDiscriptor> &fd_sockets();
 
 
   private:

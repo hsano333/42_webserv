@@ -61,8 +61,8 @@ void Webserv::communication()
     int wait_time;
 
 #ifdef TEST
-    bool exit_flag = false;
     int cnt = 0;
+    bool exit_flag = false;
 #endif
     while(1)
     {
@@ -185,6 +185,11 @@ void Webserv::communication()
             }
             ite++;
         }
+#ifdef TEST
+        if(exit_flag){
+            break;
+        }
+#endif
     }
     DEBUG("while end");
 }

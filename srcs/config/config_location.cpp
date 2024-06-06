@@ -378,8 +378,9 @@ void ConfigLocation::check()
         throw std::runtime_error("ConfigLocation::check(), auth basic file path is not specified");
     }
 
+    this->auth_basic_path_ = root_ + "/" + this->auth_basic_path_;
     if(this->auth_basic_ && Utility::is_readable_file(this->auth_basic_path_) == false){
-        ERROR("ConfigLocation::check(), auth file is not readable");
+        ERROR("ConfigLocation::check(), auth file is not readable:" + this->auth_basic_path_);
         throw std::runtime_error("ConfigLocation::check(), auth file is not readable");
     }
 

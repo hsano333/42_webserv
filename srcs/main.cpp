@@ -108,13 +108,25 @@ void server(Webserv& webserv)
 #include "uri.hpp"
 
 
-void clean_all(WebservCleaner *cleaner, EventManager *event_manager)
+void clean_all(WebservCleaner *cleaner, EventManager *event_manager, FDManager *fd_manager, FileManager *file_manager)
 {
+    std::map<FileDiscriptor, FileDiscriptor> fds = fd_manager->fd_sockets();
+    std::map<FileDiscriptor, FileDiscriptor>::iterator ite = fds.begin();
+    std::map<FileDiscriptor, FileDiscriptor>::iterator end = fds.end();
+
+    while(ite != end){
+        DEBUG("clean_all fd:" + ite->first.to_string());
+        event_manager->erase_events_will_deleted_event(ite->first);
+        file_manager->erase(ite->first);
+        ite->first.close();
+        ite++;
+    }
+    //fd_manager->
     DEBUG("clean_all()");
     (void)cleaner;
     (void)event_manager;
-    event_manager->close_all_events();
-    event_manager->close_all_events_waiting_epoll(cleaner);
+    //event_manager->close_all_events();
+    //event_manager->close_all_events_waiting_epoll(cleaner);
 }
 
 Config *create_config(std::string &cfg_file, FDManager* fd_manager)
@@ -240,14 +252,14 @@ int main(int argc, char const* argv[])
         }catch(std::bad_alloc &e){
             WARNING("Webserv BadAlloc:");
             WARNING(e.what());
-            clean_all(cleaner, event_manager);
+            clean_all(cleaner, event_manager, fd_manager, file_manager);
         }catch(...){
             WARNING("Webserv Exception:");
-            clean_all(cleaner, event_manager);
+            clean_all(cleaner, event_manager, fd_manager, file_manager);
         }
     }
     DEBUG("end server communication loop");
-    clean_all(cleaner, event_manager);
+    clean_all(cleaner, event_manager, fd_manager, file_manager);
 
 
     delete ApplicationFactory::get_instance();

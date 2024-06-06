@@ -100,6 +100,13 @@ FileDiscriptor FDManager::get_sockfd(FileDiscriptor fd)
     return (epoll_fd_and_socket[fd]);
 }
 
+std::map<FileDiscriptor, FileDiscriptor> &FDManager::fd_sockets()
+{
+    return (this->epoll_fd_and_socket);
+
+}
+
+
 /*
 void FDManager::insert(Request* req)
 {
