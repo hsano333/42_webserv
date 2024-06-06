@@ -176,7 +176,7 @@ void Webserv::communication()
             if(this->cleaner->delete_event(event)){
 #ifdef TEST
                 cnt++;
-                if(cnt > 10){
+                if(cnt > 7){
                     DEBUG("exit_flag True");
                     exit_flag = true;
                     break;

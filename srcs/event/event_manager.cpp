@@ -257,8 +257,9 @@ void EventManager::add_events_will_deleted(FileDiscriptor const &fd, WebservEven
 
 }
 
-void EventManager::erase_events_will_deleted_event(FileDiscriptor const &fd)
+WebservEntity *EventManager::erase_events_will_deleted_event(FileDiscriptor const &fd)
 {
+    WebservEntity *entity = NULL;
     DEBUG("erase_events_will_deleted");
     std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
     if(ite != this->events_will_deleted.end()){
@@ -266,7 +267,7 @@ void EventManager::erase_events_will_deleted_event(FileDiscriptor const &fd)
         std::set<WebservEvent*>::iterator end_event = ite->second.end();
         while(ite_event != end_event){
             DEBUG("delete erase_events_will_deleted address:" + Utility::to_string(*ite_event));
-            WebservEntity *entity = (*ite_event)->entity();
+            entity = (*ite_event)->entity();
             if(entity->io().get_write_fd().to_int() > 0){
                 DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
                 entity->io().get_write_fd().close();
@@ -276,17 +277,19 @@ void EventManager::erase_events_will_deleted_event(FileDiscriptor const &fd)
                 entity->io().get_read_fd().close();
             }
             DEBUG("delete entity address:" + Utility::to_string(entity));
-            delete entity;
             delete *ite_event;
             DEBUG("delete erase_events_will_deleted address No.1:" + Utility::to_string(*ite_event));
             ite_event++;
         }
         this->events_will_deleted.erase(ite);
     }
+    delete entity;
+    return entity;
 }
 
-void EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const &fd, std::vector<FileDiscriptor> *delete_fd)
+WebservEntity *EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const &fd, std::vector<FileDiscriptor> *delete_fd)
 {
+    WebservEntity *entity = NULL;
 
     std::map<WebservEvent*, FileDiscriptor> tmp_map;
     std::map<FileDiscriptor, WebservEvent*>::iterator wait_ite = this->events_waiting_epoll.begin();
@@ -302,12 +305,14 @@ void EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const
     std::map<FileDiscriptor, std::set<WebservEvent*> >::iterator ite = this->events_will_deleted.find(fd);
     if(ite != this->events_will_deleted.end()){
         //std::set<WebservEvent*> tmp_set = ite->second;
+        //std::set<WebservEntity*> entity_set;
         std::set<WebservEvent*> save_set;
         std::set<WebservEvent*>::iterator ite_event = ite->second.begin();
         std::set<WebservEvent*>::iterator end_event = ite->second.end();
         while(ite_event != end_event){
         //for(size_t i=0;i<tmp_set.size();i++){
             WebservEvent *event = *ite_event;
+            entity = event->entity();
             DEBUG("delete erase_events_will_deleted address:" + Utility::to_string(*ite_event));
             if(event->which() != KEEP_ALIVE_EVENT){
                 DEBUG("delete erase_events_will_deleted No.1 address:" + Utility::to_string(*ite_event));
@@ -335,6 +340,7 @@ void EventManager::erase_events_will_deleted_except_keepout(FileDiscriptor const
         //this->events_will_deleted.erase(ite);
         this->events_will_deleted[fd] = save_set;
     }
+    return entity;
 }
 
 

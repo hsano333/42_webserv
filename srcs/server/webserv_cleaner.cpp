@@ -70,7 +70,7 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
     // delete all registered files;
     file_manager->erase(fd);
     std::vector<FileDiscriptor> fd_vec;
-    event_manager->erase_events_will_deleted_except_keepout(fd, &fd_vec);
+    WebservEntity *not_delete_entity = event_manager->erase_events_will_deleted_except_keepout(fd, &fd_vec);
     for(size_t i=0;i<fd_vec.size();i++){
         this->io_multi_controller->erase(fd_vec[i]);
         fd_vec[i].close();
@@ -97,7 +97,16 @@ void WebservCleaner::clean(WebservEntity *entity, bool force_close)
 
         //this->fd_manager->close_socket(fd);
         this->fd_manager->close_fd(fd);
-        event_manager->erase_events_will_deleted_event(fd);
+        WebservEntity *deleted_entity = event_manager->erase_events_will_deleted_event(fd);
+
+        // メモリリーク対策
+        // ここは本来keep alive eventのメモリを解放する場所だが、前段でそれ以外のeventを削除するが、
+        // entityだけは削除しない。entityはここで削除するから。
+        // しかし、Connection切断時、ここに入るのはkeep alive以外のeventであるが、
+        // そのイベントは上段で削除されるため、ここでは削除されないがentityだけが残ってしまう
+        if(not_delete_entity && not_delete_entity!= deleted_entity){
+            delete not_delete_entity;
+        }
         fd.close();
         /*
         if(entity->io().get_write_fd().to_int() > 0){
