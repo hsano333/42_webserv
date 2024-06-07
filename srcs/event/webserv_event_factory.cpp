@@ -90,10 +90,6 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
 
     if(event_epoll.events & EPOLLRDHUP){
         DEBUG("WebservEvent::from_epoll_event: EPOLLRDHUP");
-        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-        if(cached_event){
-            this->make_clean_event(cached_event, true);
-        }
     }else if(event_epoll.events & EPOLLIN){
 
         DEBUG("WebservEvent::from_epoll_event: EPOLLIN");
@@ -155,23 +151,10 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         return (cached_event);
     }else if(event_epoll.events & EPOLLERR){
         WARNING("Epoll event type is EPOLLERR");
-        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-        if(cached_event){
-            this->make_clean_event(cached_event, true);
-        }
     }else if(event_epoll.events & EPOLLHUP){
         WARNING("Epoll event type is EPOLLHUP");
-        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-        if(cached_event){
-            this->make_clean_event(cached_event, true);
-        }
     }else{
         WARNING("Epoll event type is undefined");
-        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
-        if(cached_event){
-            this->make_clean_event(cached_event, true);
-        }
-        //throw std::runtime_error("Epoll event type is undefined");
     }
     return (NULL);
 }
