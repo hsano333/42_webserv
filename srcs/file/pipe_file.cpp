@@ -63,6 +63,7 @@ int PipeFile::read(char **buf, size_t max_size)
 
 int PipeFile::write(char **buf, size_t size)
 {
+    DEBUG("PipeFile::write");
     if (!(this->state == FILE_OPEN || this->state == FILE_WRITING)){
         return (0);
     }

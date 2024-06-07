@@ -36,7 +36,7 @@ bool WebservEvent::check_died_child()
                 this->entity_->io().get_write_fd().close();
                 this->entity_->io().set_write_fd(FileDiscriptor());
             }
-            if(entity_->io().get_read_fd() > 0){
+            if(this->entity_->io().get_read_fd() > 0){
                 this->entity_->io().get_read_fd().close();
                 this->entity_->io().set_read_fd(FileDiscriptor());
             }

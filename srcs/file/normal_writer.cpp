@@ -24,14 +24,17 @@ NormalWriter *NormalWriter::get_instance()
 
 int NormalWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
-    DEBUG("NormalWriter::write fd=" + fd.to_string());
     if(buf == NULL){
         DEBUG("NormalWriter::write buf is NULL");
+        return -1;
     }
 
     if(!ifs){
-        int val = ::write(fd.to_int(), buf, size);
-        return val;
+        if(fd.to_int() > 0){
+            int val = ::write(fd.to_int(), buf, size);
+            return val;
+        }
+        return -1;
     }
 
     if(ifs->fail()){

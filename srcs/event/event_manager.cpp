@@ -258,10 +258,12 @@ WebservEntity *EventManager::erase_events_will_deleted_event(FileDiscriptor cons
             if(entity->io().get_write_fd().to_int() > 0){
                 DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
                 entity->io().get_write_fd().close();
+                entity->io().set_write_fd(FileDiscriptor());
             }
             if(entity->io().get_read_fd().to_int() > 0){
                 DEBUG("close cgi pipe:" + entity->io().get_write_fd().to_string());
                 entity->io().get_read_fd().close();
+                entity->io().set_read_fd(FileDiscriptor());
             }
             DEBUG("delete entity address:" + Utility::to_string(entity));
             delete *ite_event;

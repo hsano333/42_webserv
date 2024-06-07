@@ -46,8 +46,9 @@ WebservEvent *WebservIOPostCGIEvent::from_event(WebservEvent *event)
 WebservEvent* WebservIOPostCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
     DEBUG("WebservIOPostCGIEvent::make_next_event() is_cgi_read:" + Utility::to_string(event->entity()->io().is_cgi_read()));
-
-    if (event->entity()->request()->read_completed() && event->entity()->io().is_cgi_read() == false){
+    if(event->entity()->event_error() == DiedChild){
+        return (event_factory->make_clean_event(event, false));
+    }else if (event->entity()->request()->read_completed() && event->entity()->io().is_cgi_read() == false){
         return (event_factory->make_clean_event(event, false));
     }
     return (event_factory->make_waiting_post_cgi(event));
@@ -81,15 +82,42 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
             is_completed = false;
         }
 
-        if(is_completed){
-            char tmp[2] = {0};
-            tmp[0] = EOF;
-            char *tmp_p = tmp;
-            int result = file->write(&tmp_p, 1);
-            if(result <= 0){
-                is_completed = false;
+        bool is_died = entity->event_error() == DiedChild;
+        if(is_died){
+            is_completed = true;
+        }else if(is_completed){
+            int wstatus = 0;
+            waitpid(entity->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WCONTINUED | WNOHANG);
+
+            if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0) {
+                MYINFO("WebservEvent::check_died_child True");
+                entity->app_result()->clear_pid();
+                if(entity->io().get_write_fd() > 0){
+                    entity->io().get_write_fd().close();
+                    entity->io().set_write_fd(FileDiscriptor());
+                }
+                if(entity->io().get_read_fd() > 0){
+                    entity->io().get_read_fd().close();
+                    entity->io().set_read_fd(FileDiscriptor());
+                }
+
+                is_completed = true;
+                entity->set_event_error(DiedChild);
+
+            }else{
+
+                DEBUG("WebservIOPostCGIEvent:: write EOF");
+                char tmp[2] = {0};
+                tmp[0] = EOF;
+                char *tmp_p = tmp;
+                int result = file->write(&tmp_p, 1);
+                if(result <= 0){
+                    is_completed = false;
+                }
             }
         }
+
+        DEBUG("WebservIOPostCGIEvent::check_completed :" + Utility::to_string(is_completed));
         entity->request()->set_read_completed(is_completed);
         entity->set_completed(true);
         return ;
