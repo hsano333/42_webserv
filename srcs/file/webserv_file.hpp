@@ -125,8 +125,6 @@ class WebservFile
             pimpl_->delete_file();
         };
         bool is_chunk(){
-            std::cout << "is_chunk test" << std::endl;
-
             return pimpl_->is_chunk();
         };
 

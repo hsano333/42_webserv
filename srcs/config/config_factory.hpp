@@ -28,7 +28,6 @@ class ConfigFactory
         ~ConfigFactory();
         Config* create(FDManager *fd_manager);
     private:
-        //Reader &reader;
         IConfigRawGetter<std::string> &raw_getter;
         ConfigParser<Config, ConfigHttp> &parser_config;
         ConfigParser<ConfigHttp, ConfigServer> &parser_http;
@@ -42,7 +41,6 @@ class ConfigFactory
         std::vector<ConfigLocation*> create_location(ConfigParseredData &parsered_data);
         std::vector<ConfigLimit*> create_limit(ConfigParseredData &parsered_data);
         std::vector<ConfigCgi*> create_cgi(ConfigParseredData &parsered_cgi_data);
-        //ConfigHttp& http;
 
 };
 #endif

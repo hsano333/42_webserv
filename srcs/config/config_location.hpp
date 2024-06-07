@@ -18,7 +18,6 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         size_t get_limit_size() const;
         std::vector<std::string> const & pathes() const;
         std::string const & root() const;
-        //std::string const & cgi_pass() const;
         bool autoindex() const;
         bool index() const;
         std::string const &index_file() const;
@@ -29,26 +28,15 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
         std::string get_error_file_path(StatusCode &code) const;
         bool auth_basic() const;
         std::string const &auth_basic_path() const;
-        //std::map<StatusCode, std::string> const &error_pages() const;
-
-        //std::vector<std::string> urls;
-        //std::map<std::string, std::vector<std::string> > properties;
         void assign_properties(std::vector<std::vector<std::string> > &properties);
         void assign_out_properties(std::vector<std::string> &properties);
         void push_all(std::vector<ConfigLimit*> const &vec);
         bool is_allowed_method(Method method) const;
         void check();
 
-        //std::vector<std::string> out_properties;
-        //std::string location;
-        //std::vector<std::string> pathes;
-        //std::map<StatusCode, std::string> error_pages;
-        //std::vector<std::string> indexes;
-
     private:
 
         void set_root(std::vector<std::string> &vec);
-        //void set_cgi_pass(std::vector<std::string> &vec);
         void set_autoindex(std::vector<std::string> &vec);
         void set_index(std::vector<std::string> &vec);
         void set_return(std::vector<std::string> &vec);
@@ -58,7 +46,6 @@ class ConfigLocation : public ConfigObject<ConfigLimit*>
 
         std::vector<std::string> pathes_;
         std::string root_;
-        //std::string cgi_pass_;
         ConfigLimit* limit_;
         bool autoindex_;
         bool index_;

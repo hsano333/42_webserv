@@ -68,6 +68,8 @@ void WebservWaiter::fetch_events()
             DEBUG("DEBUG waiter check True timeout");
             Request *req = (*ite)->entity()->request();
             if((req && req->has_body() == false) || (req && req->read_completed())){
+                std::cerr << "Timeout" << endl;
+
                 event = event_factory->make_event_from_http_error(*ite, "504");
             }else{
                 event = event_factory->make_event_from_http_error(*ite, "408");

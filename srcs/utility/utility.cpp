@@ -51,7 +51,6 @@ char* Utility::memcpy(char* dst, const char* src, size_t n)
     dst_p = (unsigned char*)dst;
     src_p = (unsigned char*)src;
     while (i--) {
-        // cout << "i=" << i << endl;
         *(dst_p++) = *(src_p++);
     }
     return (dst);
@@ -185,20 +184,6 @@ void Utility::sort_orderby_len(std::vector<std::string>& str)
     (sort(str.begin(), str.end(), orderby_string_len));
 }
 
-/*
-int char_to_hex(char c)
-{
-    if ('0' <= c && c <='9'){
-        return (c-'0');
-    }else if ('a' <= c && c <= 'f'){
-        return (c-'a' + 10);
-    }else if ('A' <= c && c <= 'F'){
-        return (c-'A' + 10);
-    }
-    return (-1);
-}
-*/
-
 unsigned char char_to_hex(char c)
 {
     if ('0' <= c && c <='9'){
@@ -241,8 +226,6 @@ char Utility::hex_string_to_int(const std::string& hex_string)
 
 unsigned char Utility::hex_string_to_uchar(const std::string& hex_string)
 {
-    //sstream ss;
-    //unsigned char tmp;
     if (hex_string.size () > 2){
         WARNING("Utility::hex_string_to_int() error: invalid argument:" + hex_string);
         throw std::invalid_argument("Utility::hex_string_to_int() error: invalid argument");
@@ -260,25 +243,6 @@ unsigned char Utility::hex_string_to_uchar(const std::string& hex_string)
     return (0);
 }
 
-char** Utility::cp_env(char** environ, std::vector<string> vec)
-{
-    size_t i=0;
-    while(environ[i]){
-        i++;
-    }
-    char **env = (char **)malloc(sizeof(char*) * (i+vec.size()+1));
-    i = 0;
-    while(environ[i])
-    {
-        env[i] = Utility::strdup(environ[i]);
-        i++;
-    }
-    for(size_t j=0; j<vec.size();j++){
-        env[i+j] = Utility::strdup(vec[j].c_str());
-    }
-    env[i+vec.size()] = NULL;
-    return (env);
-}
 
 std::string Utility::to_hexstr(size_t i)
 {
@@ -290,13 +254,8 @@ std::string Utility::to_hexstr(size_t i)
 std::string Utility::uchar_to_hexstr(unsigned char c)
 {
     unsigned int i = c;
-    //printf("Utility::%d\n\n", c);
-    //DEBUG("Utility::uchar_to_hexstr:" + Utility::to_string(c));
     stringstream ss;
     ss << std::hex << i;
-    //DEBUG("Utility::uchar_to_hexstr:" + ss.str());
-    //ss << std::hex << 250;
-    //DEBUG("Utility::uchar_to_hexstr test:" + ss.str());
     return (ss.str());
 }
 
@@ -417,40 +376,6 @@ ssize_t Utility::to_ssize_t(string const &str)
     return (Utility::to_ssize_t(str));
 }
 
-/*
-size_t Utility::to_size_t(string &str)
-{
-    size_t cvt;
-    stringstream ss;
-    ss << str;
-    ss >> cvt;
-
-    return (cvt);
-}
-
-size_t Utility::to_size_t(string const &str)
-{
-    return Utility::to_size_t(str);
-}
-*/
-
-/*
-int Utility::read_body_and_copy(char *src, char** dst, size_t size)
-{
-    char *tmp = *dst;
-    int chunk_size = 20;
-
-    // chunkサイズは16進数
-    string size_str = Utility::to_hexstr(size);
-    size_str += "\r\n";
-    size_t len = size_str.size();
-    Utility::memcpy(&(tmp[chunk_size]), src, size);
-    Utility::memcpy(&(tmp[chunk_size-len]), size_str.c_str(), len);
-    *dst= &(tmp[chunk_size-len]);
-    return (size+len);
-}
-*/
-
 size_t Utility::get_map_str_size(map<string, string> &data)
 {
     map<string,string>::iterator ite = data.begin();
@@ -462,23 +387,12 @@ size_t Utility::get_map_str_size(map<string, string> &data)
     return (size);
 }
 
-std::string Utility::extract_json_object(const std::string &target, std::string &str)
-{
-
-    cout << target << endl;
-    cout << str << endl;
-    std::string tmp = "test";
-    return tmp;
-}
-
 bool Utility::is_regular_file(std::string const &path)
 {
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0){
-        cout << "stat error" << endl;
         return false;
     }
-    cout << "stat OK" << endl;
     return (fileInfo.st_mode & S_IFREG);
 }
 
@@ -579,7 +493,6 @@ size_t Utility::get_file_size(std::string const &filepath)
         return (0);
     }
     return (fileInfo.st_size);
-    //return (fileInfo.st_blocks);
 }
 
 std::string Utility::get_file_updated_date(std::string const &filepath)
@@ -591,12 +504,8 @@ std::string Utility::get_file_updated_date(std::string const &filepath)
 
     char datetime[64];
     Utility::memset(datetime, 0, 64);
-    //std::time_t now = std::time(NULL);
-    //std::time_t now = fileInfo.st_ctime;
-    //std::strftime(datetime, sizeof(datetime), " %T", std::gmtime(&now));
     std::strftime(datetime, sizeof(datetime), "%d-%b-%Y %T", std::gmtime(&fileInfo.st_ctime));
     return (datetime);
-    //return std::ctime(&fileInfo.st_ctime);
 }
 
 std::string Utility::adjust_filesize(size_t filesize)
@@ -633,79 +542,6 @@ bool Utility::is_redable_directory_not_stat(std::string const &filepath)
 
     return (false);
 }
-
-/*
-string Utility::init_http_status_message(string status_code)
-{
-    // 1xx
-    StatusCode::code_message_list.insert(make_pair("100", "Continue"));
-    StatusCode::code_message_list.insert(make_pair("101", "Switching Protocols"));
-    StatusCode::code_message_list.insert(make_pair("102", "Processing"));
-    // 2xx
-    StatusCode::code_message_list.insert(make_pair("200", "OK"));
-    StatusCode::code_message_list.insert(make_pair("201", "Created"));
-    StatusCode::code_message_list.insert(make_pair("202", "Accepted"));
-    StatusCode::code_message_list.insert(make_pair("203", "Non-Authoritative Information"));
-    StatusCode::code_message_list.insert(make_pair("204", "No Content"));
-    StatusCode::code_message_list.insert(make_pair("205", "Reset Content"));
-    StatusCode::code_message_list.insert(make_pair("206", "Partial Content"));
-    StatusCode::code_message_list.insert(make_pair("207", "Multi-Status"));
-    StatusCode::code_message_list.insert(make_pair("208", "Already Reported"));
-    StatusCode::code_message_list.insert(make_pair("226", "IM Used"));
-    // 3xx
-    StatusCode::code_message_list.insert(make_pair("300", "Multiple Choices"));
-    StatusCode::code_message_list.insert(make_pair("301", "Moved Permanently"));
-    StatusCode::code_message_list.insert(make_pair("302", "Found"));
-    StatusCode::code_message_list.insert(make_pair("303", "See Other"));
-    StatusCode::code_message_list.insert(make_pair("304", "Not Modified"));
-    StatusCode::code_message_list.insert(make_pair("305", "Use Proxy"));
-    StatusCode::code_message_list.insert(make_pair("307", "Temporary Redirect"));
-    StatusCode::code_message_list.insert(make_pair("308", "Permanent Redirect"));
-    // 4xx
-    StatusCode::code_message_list.insert(make_pair("400", "Bad Request"));
-    StatusCode::code_message_list.insert(make_pair("401", "Unauthorized"));
-    StatusCode::code_message_list.insert(make_pair("402", "Payment Required"));
-    StatusCode::code_message_list.insert(make_pair("403", "Forbidden"));
-    StatusCode::code_message_list.insert(make_pair("404", "Not Found"));
-    StatusCode::code_message_list.insert(make_pair("405", "Method Not Allowed"));
-    StatusCode::code_message_list.insert(make_pair("406", "Not Acceptable"));
-    StatusCode::code_message_list.insert(make_pair("407", "Proxy Authentication Required"));
-    StatusCode::code_message_list.insert(make_pair("408", "Request Timeout"));
-    StatusCode::code_message_list.insert(make_pair("409", "Conflict"));
-    StatusCode::code_message_list.insert(make_pair("410", "Gone"));
-    StatusCode::code_message_list.insert(make_pair("411", "Length Required"));
-    StatusCode::code_message_list.insert(make_pair("412", "Precondition Failed"));
-    StatusCode::code_message_list.insert(make_pair("413", "Payload Too Large"));
-    StatusCode::code_message_list.insert(make_pair("414", "URI Too Long"));
-    StatusCode::code_message_list.insert(make_pair("415", "Unsupported Media Type"));
-    StatusCode::code_message_list.insert(make_pair("416", "Range Not Satisfiable"));
-    StatusCode::code_message_list.insert(make_pair("417", "Expectation Failed"));
-    StatusCode::code_message_list.insert(make_pair("418", "I'm a teapot"));
-    StatusCode::code_message_list.insert(make_pair("421", "Misdirected Request"));
-    StatusCode::code_message_list.insert(make_pair("422", "Unprocessable Entity"));
-    StatusCode::code_message_list.insert(make_pair("423", "Locked"));
-    StatusCode::code_message_list.insert(make_pair("424", "Failed Dependency"));
-    StatusCode::code_message_list.insert(make_pair("425", "Too Early"));
-    StatusCode::code_message_list.insert(make_pair("426", "Upgrade Required"));
-    StatusCode::code_message_list.insert(make_pair("428", "Precondition Required"));
-    StatusCode::code_message_list.insert(make_pair("429", "Too Many Requests"));
-    StatusCode::code_message_list.insert(make_pair("431", "Request Header Fields Too Large"));
-    StatusCode::code_message_list.insert(make_pair("451", "Unavailable For Legal Reasons"));
-    // 5xx
-    StatusCode::code_message_list.insert(make_pair("500", "Internal Server Error"));
-    StatusCode::code_message_list.insert(make_pair("501", "Not Implemented"));
-    StatusCode::code_message_list.insert(make_pair("502", "Bad Gateway"));
-    StatusCode::code_message_list.insert(make_pair("503", "Service Unavailable"));
-    StatusCode::code_message_list.insert(make_pair("504", "Gateway Timeout"));
-    StatusCode::code_message_list.insert(make_pair("505", "HTTP Version Not Supported"));
-    StatusCode::code_message_list.insert(make_pair("506", "Variant Also Negotiates"));
-    StatusCode::code_message_list.insert(make_pair("507", "Insufficient Storage"));
-    StatusCode::code_message_list.insert(make_pair("508", "Loop Detected"));
-    StatusCode::code_message_list.insert(make_pair("510", "Not Extended"));
-    StatusCode::code_message_list.insert(make_pair("511", "Network Authentication Required"));
-    return status_codes[status_code];
-}
-*/
 
 #ifdef UNIT_TEST
 #include "doctest.h"

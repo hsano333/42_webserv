@@ -13,23 +13,9 @@ ConfigCgi::ConfigCgi()
 }
 
 
-/*
-ConfigCgi::ConfigCgi(std::string &str)
-{
-    std::cout << str << std::endl;
-}
-*/
-
 ConfigCgi::~ConfigCgi()
 {
 }
-
-/*
-void ConfigCgi::parse()
-{
-}
-*/
-
 
 const std::map<std::string, std::string> &ConfigCgi::get_extensions() const
 {
@@ -63,11 +49,6 @@ void ConfigCgi::assign_out_properties(std::vector<std::string> &properties)
 {
     (void)properties;
     WARNING("ConfigCgi::assign_out_properties() does not used");
-    /*
-    for(size_t i=0;i<properties.size();i++){
-        this->allowed_method_.push_back(Method::from_string(properties[i]));
-    }
-    */
 }
 
 void ConfigCgi::push_all(std::vector<ConfigLastObject*> const &vec)
@@ -83,8 +64,6 @@ void ConfigCgi::check()
     while(ite != end){
         std::string ext = ite->first;
         std::string &path = ite->second;
-        cout << "ext:" << ext << endl;
-        cout << "path:" << path << endl;
         if(ext[0] != '.'){
             ERROR("ConfigCgi::check() [.]dot is necessary at the begining:" + ext);
             throw std::runtime_error("ConfigCgi::check() [.]dot is necessary at the begining");
@@ -93,8 +72,6 @@ void ConfigCgi::check()
             ERROR("Invalid Config Error: file is not regular file or not executable: " + path);
             throw std::runtime_error("Invalid Config Error: file is not regular file or not executable");
         }
-        //if (stat(path.c_str(), &fileInfo) != 0)
-
         ite++;
     }
 }

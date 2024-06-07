@@ -17,7 +17,6 @@ class RequestLine
         Method      const &method() const;
         URI         const &uri() const;
         HttpVersion const &version() const;
-        //std::string &version();
     private:
         Method      method_;
         URI         uri_;

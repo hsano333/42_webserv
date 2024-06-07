@@ -71,10 +71,6 @@ TEST_CASE("HTTP_VERSION")
     CHECK_THROWS_AS(HttpVersion::from_string("HTTPS/1.1") ,std::invalid_argument);
     CHECK_THROWS_AS(HttpVersion::from_string("SHTTP/1.1") ,std::invalid_argument);
 
-    //IP_Address addr09 = HttpVersion::from_string("HTTP/0.9");
-    //IP_Address addr10 = HttpVersion::from_string("HTTP/1.0");
-    //IP_Address addr11 = HttpVersion::from_string("HTTP/1.1");
-
     CHECK(HttpVersion::from_string("HTTP/0.9").to_string() == "HTTP/0.9");
     CHECK(HttpVersion::from_string("HTTP/1.0").to_string() == "HTTP/1.0");
     CHECK(HttpVersion::from_string("HTTP/1.1").to_string() == "HTTP/1.1");

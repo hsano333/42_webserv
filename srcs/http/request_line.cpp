@@ -36,7 +36,7 @@ RequestLine& RequestLine::operator=(RequestLine const &line)
 RequestLine RequestLine::from_string(std::string const &str)
 {
 
-    cout << "RequestLine::from_string: " << str << endl;
+    //cout << "RequestLine::" << str << endl;
     Split sp(str, " ");
     if(sp.size() != 3){
         ERROR("Request line doesn't divided to three str=" + str);
@@ -44,7 +44,6 @@ RequestLine RequestLine::from_string(std::string const &str)
     }
     RequestLine req_line;
 
-    //cout << "test sp1:"
     req_line.method_ = Method::from_string(sp[0]);
     req_line.uri_ = URI::from_string(sp[1]);
     req_line.version_ = HttpVersion::from_string(sp[2]);

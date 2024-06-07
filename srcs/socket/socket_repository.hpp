@@ -9,8 +9,6 @@ class SocketRepository
         ~SocketRepository();
         void insert(Socket socket);
         void close_all();
-        //Socket get(int id);
-        //std::map<int, Socket> const & socket();
         size_t size();
         std::map<FileDiscriptor, Socket>::const_iterator begin();
         std::map<FileDiscriptor, Socket>::const_iterator end();

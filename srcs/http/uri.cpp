@@ -59,48 +59,12 @@ URI URI::from_string(std::string const &uri_raw)
         uri.query_ = "";
     }
 
-    //std::string &uri_last = *(uri.path_sp.end() -1);
-    /*
-    size_t pos = uri.raw_.find("?");
-    std::string tmp_uri;
-    if (pos != std::string::npos){
-        uri.query = Split(uri.raw_.substr(pos+1), "&");
-
-        std::string &query_last = *(uri.query.end() -1);
-        Split tmp_fragment(query_last, "#");
-        if (query_last[0] != '#'){
-            query_last = tmp_fragment[0];
-        }else{
-            query_last = "";
-        }
-        tmp_uri = uri.raw_.substr(0,pos);
-    }else{
-        pos = uri.raw_.find("#");
-        if (pos != std::string::npos){
-            tmp_uri = uri.raw_.substr(0,pos);
-        }else{
-            tmp_uri = uri.raw_;
-        }
-    }
-    */
-
-
     uri.path_sp = Split(tmp_uri , "/");
     uri.encoded_path_sp = uri.path_sp;
-    //DEBUG("url pre encoded:" + uri.encoded_path_sp);
-    //uri.path_ = tmp_uri;
 
     for(size_t i=0;i<uri.encoded_path_sp.size();i++){
-        //uri.uri_decode(uri.encoded_path_sp[i]);
         uri.path_ = uri.path_ + "/" + uri.uri_decode(uri.encoded_path_sp[i]);
-        DEBUG("url encoded:" + uri.path_);
     }
-    DEBUG("end url encoded:" + uri.path_);
-    /*
-    for(size_t i=0;i<uri.query.size();i++){
-        uri.uri_decode(uri.query[i]);
-    }
-    */
 
     return (uri);
 }
@@ -127,8 +91,6 @@ const Split &URI::splited_path() const
 
 std::string URI::uri_decode(std::string const &raw_uri_)
 {
-    //std::string s = "a-b-c";
-//std::replace(s.begin(), s.end(), '-', '=');
     std::string raw_uri = raw_uri_;
     for(size_t i=0;i<raw_uri.size();i++){
         if(raw_uri[i] == '+'){
@@ -136,7 +98,6 @@ std::string URI::uri_decode(std::string const &raw_uri_)
         }
     }
 
-    //std::replace(raw_uri.begin(), raw_uri.end(), "+", " ");
     char* pos = &(raw_uri[0]);
     size_t cnt = 0;
     char tmp_hex[2];
@@ -158,8 +119,6 @@ std::string URI::uri_decode(std::string const &raw_uri_)
             }else{
                 ERROR("Uri encorded error:" + raw_uri);
                 std::runtime_error("Uri encorded error");
-                //cout << ("INFO Uri parse start loop No.3") << endl;
-                //todo error
             }
         }
         *dst = *pos;
@@ -171,7 +130,6 @@ std::string URI::uri_decode(std::string const &raw_uri_)
     cout << endl;
     pos[0] = '\0';
     dst[0] = '\0';
-    //_endorded_uri = string(bk);
     raw_uri = std::string(bk);
     delete[] (bk) ;
     return (raw_uri);
@@ -213,9 +171,6 @@ std::string URI::uri_encode(std::string path)
         if(must_encode(path[i])){
             encoded_str += "%";
             encoded_str += Utility::uchar_to_hexstr((unsigned char)path[i]);
-            DEBUG("pre encode :" + path[i]);
-            DEBUG("pre2 encode :" + Utility::to_string(path[i]));
-            DEBUG("encode :%" + Utility::uchar_to_hexstr(((unsigned char)path[i])));
         }else{
             encoded_str += path[i];
         }
@@ -233,13 +188,6 @@ void URI::print_info() const
     }
     cout << "path=" << this->path() << endl;
     cout << "query=" << this->query() << endl;
-    /*
-    for(size_t i=0;i<query.size();i++){
-        cout << "query[" << i << "]=" << query[i] << endl;
-    }
-    */
-
-
     cout << "|--------------------------|" << endl;
 }
 

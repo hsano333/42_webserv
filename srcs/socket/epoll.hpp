@@ -16,15 +16,13 @@ typedef enum E_EpollEvent
     EPOLL_READ_FOR_POST_CGI,
     EPOLL_WRITE_FOR_POST_CGI,
     EPOLL_FOR_CGI_WAIT_CGI,
-    //EPOLL_FOR_CGI_IN,
     EPOLL_FOR_CGI_GET_OUT,
-    //EPOLL_FOR_GET_CGI, //5
-    EPOLL_CONTINUE, 
+    EPOLL_CONTINUE,
     EPOLL_CLOSE,
     EPOLL_CGI_IN,
     EPOLL_CGI_OUT,
-    EPOLL_CGI_STOP, //10
-    EPOLL_CGI, 
+    EPOLL_CGI_STOP,
+    EPOLL_CGI,
     EPOLL_NONE,
 } E_EpollEvent;
 
@@ -40,14 +38,8 @@ class Epoll
         void init();
         FileDiscriptor const &fd();
         t_epoll_event *event_return();
-        //t_epoll_event const *event_related_with_fd(FileDiscriptor fd);
-        //size_t allocated_event_size() const;
         void save_executable_events_number(int number);
-        //void expand_allocated_space();
-        //void contract_allocated_space();
-        //std::vector<t_epoll_event> &get_events();
         int executable_event_number();
-        //t_epoll_event *event_from_fd(int fd);
     private:
         FileDiscriptor epfd;
         int executable_event_number_;

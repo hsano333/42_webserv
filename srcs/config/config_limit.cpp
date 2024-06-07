@@ -7,37 +7,15 @@ ConfigLimit::ConfigLimit() : cgi_(NULL)
     ;
 }
 
-
-/*
-ConfigLimit::ConfigLimit(std::string &str)
-{
-    std::cout << str << std::endl;
-}
-*/
-
 ConfigLimit::~ConfigLimit()
 {
-    //for(size_t i=0;i<this->cgis.size();i++){
     delete this->cgi_;
-    //}
 }
 
-/*
-void ConfigLimit::parse()
-{
-}
-*/
 const ConfigCgi *ConfigLimit::cgi() const
 {
     return (this->cgi_);
 }
-
-/*
-size_t ConfigLimit::get_cgi_size() const
-{
-    return (this->cgis.size());
-}
-*/
 
 void ConfigLimit::set_cidr(std::vector<std::string> &vec, bool flag)
 {
@@ -117,6 +95,5 @@ std::vector<std::pair<CIDR, bool> > const & ConfigLimit::allowed_cidr() const
 
 void ConfigLimit::check()
 {
-    //nothing to do;
     ;
 }

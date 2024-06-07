@@ -151,7 +151,6 @@ IP_Address IP_Address::from_string_or_name(std::string const &str)
         }catch(std::invalid_argument &e){
             WARNING("IP_Address::from_string_or_name(): string is not ip address :" + str);
             return (IP_Address::from_string("127.0.0.1"));
-            //throw std::invalid_argument("IP_Address::from_string_or_name(): string is not ip address");
         }
     }
 }

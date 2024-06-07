@@ -34,8 +34,6 @@ void ConfigLocation::assign_properties(std::vector<std::vector<std::string> > &p
         std::vector<std::string> &tmp_vec = *ite;
         if(tmp_vec[0] == "root"){
             set_root(tmp_vec);
-        //}else if(tmp_vec[0] == "cgi_pass"){
-            //set_cgi_pass(tmp_vec);
         }else if(tmp_vec[0] == "autoindex"){
             set_autoindex(tmp_vec);
         }else if(tmp_vec[0] == "index"){
@@ -85,27 +83,10 @@ std::string const & ConfigLocation::root() const
     return (this->root_);
 }
 
-
-// will remove
-/*
-std::string const & ConfigLocation::cgi_pass() const
-{
-    return (this->cgi_pass_);
-}
-*/
-
 bool ConfigLocation::autoindex() const
 {
     return (this->autoindex_);
 }
-
-/*
-std::map<StatusCode, std::string> const & ConfigLocation::error_pages() const
-{
-    return (this->error_pages_);
-}
-*/
-
 
 bool ConfigLocation::index() const
 {
@@ -154,24 +135,6 @@ void ConfigLocation::set_root(std::vector<std::string> &vec)
     }
 }
 
-/*
-void ConfigLocation::set_cgi_pass(std::vector<std::string> &vec)
-{
-    size_t word_cnt = vec.size();
-    if(word_cnt != 2)
-    {
-        ERROR("Invalid Config Error: cgi_pass directive is invalid");
-        throw std::runtime_error("config parser error:location [cgi_pass]");
-    }
-    if (this->root_ != "")
-    {
-        ERROR("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
-        throw std::runtime_error("Invalid Config Location Error: you cannot set both [root] and [cgi_pass]");
-    }
-    this->cgi_pass_ = Utility::remove_obstruction_in_uri(vec[1]);
-}
-*/
-
 void ConfigLocation::set_autoindex(std::vector<std::string> &vec)
 {
     size_t word_cnt = vec.size();
@@ -180,6 +143,7 @@ void ConfigLocation::set_autoindex(std::vector<std::string> &vec)
         ERROR("Invalid Config Error: autoindex directive is invalid");
         throw std::runtime_error("config parser error:location [autoindex]");
     }
+
     if(vec[1] == "on"){
         this->autoindex_ = true;
     }else if(vec[1] == "off"){
@@ -199,12 +163,6 @@ void ConfigLocation::set_index(std::vector<std::string> &vec)
         throw std::runtime_error("config parser error:location [index]");
     }
     this->index_file_ = Utility::remove_obstruction_in_uri(vec[1]);
-    /*
-    if(Utility::is_readable_file(this->index_file_)){
-        ERROR("Invalid Config Error: index file is not readable");
-        throw std::runtime_error("config parser error:location [index]");
-    }
-    */
     this->index_ = true;
 }
 
@@ -265,14 +223,11 @@ void ConfigLocation::set_error_page(std::vector<std::string> &vec)
     for(size_t i=1;i<vec.size()-1;i++){
         DEBUG("Config_location vec=[" + vec[i]);
         if(vec[i][0] == '='){
-            DEBUG("Config_location No.1 vec=[" + vec[i]);
             if(this->error_replaced_code_.to_int() != 0){
                 throw std::runtime_error("config parser error:location [error_page]:" + vec[i]);
             }
             std::string tmp_code = vec[i].substr(1);
-            DEBUG("Config_location No.2 vec=[" + tmp_code);
             this->error_replaced_code_ = StatusCode::from_string(tmp_code);
-            DEBUG("Config_location No.3 vec=[" + this->error_replaced_code_.to_string());
         }else{
             StatusCode status_code = StatusCode::from_string(vec[i]);
             if(status_code >= 300){
@@ -312,25 +267,6 @@ void ConfigLocation::set_auth_basic_user_file(std::vector<std::string> &vec)
     auth_basic_path_ = vec[1];
 }
 
-
-/*
-void ConfigLocation::set_error_page(std::vector<std::string> &vec)
-{
-    size_t word_cnt = vec.size();
-    if(word_cnt <= 1)
-    {
-        ERROR("Invalid Config Error: error_page directive is invalid");
-        throw std::runtime_error("config parser error:location [error_page]");
-    }
-    std::string path = vec[vec.size()-1];
-    for(size_t i=1;i<vec.size()-1;i++){
-        StatusCode status_code = StatusCode::from_string(vec[i]);
-        this->error_pages_.insert(std::make_pair(status_code, path));
-    }
-}
-*/
-
-
 bool ConfigLocation::is_allowed_method(Method method) const
 {
     DEBUG("ConfigLocation::is_allowed_method:method=" + method.to_string());
@@ -340,12 +276,10 @@ bool ConfigLocation::is_allowed_method(Method method) const
 
     while(begin != end){
         if(method == *begin){
-        DEBUG("ConfigLocation::is_allowed_method: No.1 method=" + method.to_string());
             return (true);
         }
         begin++;
     }
-        DEBUG("ConfigLocation::is_allowed_method: No.2 method=" + method.to_string());
     return (false);
 }
 
@@ -366,12 +300,6 @@ void ConfigLocation::check()
         ERROR("ConfigLocation::check(),  root is not directory");
         throw std::runtime_error("ConfigLocation::check(), root is not directory");
     }
-
-    //if (this->index_.size() > 1){
-        //ERROR("ConfigLocation::check(), index file is duplicated");
-        //throw std::runtime_error("ConfigLocation::check(), index file is duplicated");
-    //}
-
 
     if(this->auth_basic_ && this->auth_basic_path_ == ""){
         ERROR("ConfigLocation::check(), auth basic file path is not specified ");

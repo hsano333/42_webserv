@@ -159,7 +159,6 @@ bool StatusCode::operator>=(int code) const
 }
 
 
-//static StatusCode::code_message_list;
 std::map<int, std::string> StatusCode::code_message_list;
 void StatusCode::init_http_status_message()
 {
@@ -230,7 +229,6 @@ void StatusCode::init_http_status_message()
     StatusCode::code_message_list.insert(make_pair(508, "Loop Detected"));
     StatusCode::code_message_list.insert(make_pair(510, "Not Extended"));
     StatusCode::code_message_list.insert(make_pair(511, "Network Authentication Required"));
-    //return StatusCode::code_message_list[status_code];
 }
 
 

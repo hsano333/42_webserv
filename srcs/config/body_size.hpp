@@ -17,10 +17,6 @@ class BodySize
         size_t to_number() const;
     private:
         size_t size;
-        //size_t string_to_number(std::string &string, bool unit);
-        //bool check_over(ssize_t value, ssize_t unit);
-        //ssize_t get_unit_size(char c);
-
 };
 
 #endif

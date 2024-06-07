@@ -8,7 +8,6 @@ using std::string;
 
 SocketData::SocketData() : _timeout_cnt(0){}
 
-//SocketData::SocketData() :  {}
 SocketData::~SocketData() {}
 
 bool SocketData::increment_timeout(int time)
@@ -25,9 +24,3 @@ void SocketData::clear_timeout()
     _timeout_cnt = 0;
 }
 
-/*
-Config const* SocketData::get_config() const
-{
-    return _config;
-}
-*/

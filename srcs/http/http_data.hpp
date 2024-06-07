@@ -15,8 +15,6 @@ class HttpData
         virtual int close_source_file() = 0;
         virtual ssize_t get_data(char** data) = 0;
 
-        //virtual int raw_buf_space();
-        //virtual char* get_raw_buf_pointer();
     private:
 };
 

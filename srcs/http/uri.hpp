@@ -30,7 +30,6 @@ class URI
     std::string path_;
     std::string path_info_;
     std::string query_;
-    //Split query;
     Split path_sp;
     Split encoded_path_sp;
     std::string uri_decode(std::string const &raw_uri);

@@ -24,12 +24,10 @@ void SocketRepository::close_all()
     std::map<FileDiscriptor, Socket>::iterator end = this->sockets.end();
 
     while(ite != end){
-
         DEBUG("SocketRepository::fd:" + Utility::to_string(ite->first.to_int()));
         ite->first.close();
         ite++;
     }
-    //sockets.clear();
 }
 
 size_t SocketRepository::size()

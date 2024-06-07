@@ -3,7 +3,6 @@
 #include "normal_writer.hpp"
 #include "normal_reader.hpp"
 #include "normal_file.hpp"
-//#include "cgi_file.hpp"
 #include "directory_file.hpp"
 #include "webserv_event.hpp"
 #include "socket_writer.hpp"
@@ -38,25 +37,13 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
     Request *req = event->entity()->request();
     WebservFile *req_file = file_factory->make_request_file_read_buf(event->entity()->fd(), req);
     WebservFile *file = file_factory->make_socket_file_for_post_cgi(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
-    //WebservFile *file = file_factory->make_pipe_file(event->entity()->fd(), req_file, SocketWriter::get_instance(), SocketReader::get_instance());
 
     if(event->entity()->request()->header().is_chunked()){
         file = file_factory->make_socket_chunk_file_for_post_cgi(event->entity()->fd(), file);
     }
 
-    //todo 
     WebservFile *from_socket_to_cgi_src = file;
-
-    /*
-    char test_read[2000] = {0};
-    char *test_read_p = test_read;
-    int tmp = file->read(&test_read_p, 100);
-    cout << "tmp=" << tmp << endl;
-    cout << "test_read_p=" << test_read_p << endl;
-    exit(1);
-    */
     WebservFile *from_cgi_to_socket_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
-    //WebservFile *read_dst = file_factory->make_result_file_for_cgi(event->entity()->fd(), event->entity()->app_result());
     ApplicationResult *result = event->entity()->app_result();
     WebservFile *result_file = file_factory->make_vector_file_for_cgi(event->entity()->fd(), MAX_BUF, result->pid());
     result->set_file(result_file);
@@ -73,11 +60,6 @@ WebservEvent* PostCGIApplication::next_event(WebservEvent *event, WebservEventFa
     event->entity()->io().set_read_fd(result->cgi_in());
     event->entity()->io().set_write_fd(result->cgi_out());
 
-    //todo
-    //return (event_factory->make_io_socket_for_cgi(event, write_src, read_dst, result));
-    //return (event_factory->make_io_socket_for_cgi(event));
-
-
     return (event_factory->make_waiting_post_cgi(event));
 }
 
@@ -85,89 +67,16 @@ E_EpollEvent PostCGIApplication::epoll_event(WebservEntity *entity)
 {
     (void)entity;
     return (EPOLL_FOR_CGI_POST);
-    //return (EPOLL_NONE);
 }
 
 bool PostCGIApplication::execute(WebservEntity *entity)
 {
     DEBUG("PostCGIApplication::execute");
-    //(void)entity;
-    
-    /*
-
-    Request *req = entity->request();
-    Config const *cfg = entity->config();
-    ConfigServer const *server = cfg->get_server(req);
-    ConfigLocation const *location = cfg->get_location(server, req);
-    req->set_path_info(location->root());
-    */
-    //std::string path_info = location->root() + "/" + req->tmp_path_info();
     ApplicationResult *result = this->cgi->execute(entity, this->which());
     entity->set_result(result);
 
-    /*
-
-
-        int wstatus;
-        ERROR("CGI post Child Process ERROR pid:" +  Utility::to_string(entity->app_result()->pid().to_int()));
-        int result_exe = waitpid(entity->app_result()->pid().to_int(), &wstatus,  WUNTRACED | WNOHANG | WCONTINUED);
-        ERROR("CGI post Child Process ERROR result:" +  Utility::to_string(result_exe));
-
-        if(result_exe == -1){
-            ERROR("Child Process ERROR");
-            throw HttpException("500");
-        }
-
-            //flag = true;
-        if(WIFEXITED(wstatus)){
-            int exit_status = WEXITSTATUS(wstatus);
-            DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(exit_status)));
-            if(exit_status == EXIT_FAILURE){
-                DEBUG("Child EROOR!!!!!!!!!!!!!!!!!!!!!!");
-
-            }
-        } 
-        if (WIFSIGNALED(wstatus)) {
-            DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
-            DEBUG("killed by  status=" + Utility::to_string(WCOREDUMP(wstatus)));
-        }
-        if (WIFSTOPPED(wstatus)) {
-            DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
-        }
-        if (WIFCONTINUED(wstatus)) {
-            DEBUG("continued\n");
-
-        }
-
-        */
-
-
     return (true);
 }
-
-
-/*
-ApplicationResult *PostCGIApplication::get_result()
-{
-    return (this->result_);
-}
-*/
-
-//PostCGIApplication* PostCGIApplication::from_location()
-//{
-    //PostCGIApplication *app = new PostCGIApplication();
-
-
-    /*
-    app->cfg = cfg;
-    app->server = cfg->get_server(req);
-    app->location = cfg->get_location(app->server, req);
-    app->req = req;
-    app->cgi = cgi;
-    app->path_info_ = app->location->root() + "/" + app->req->tmp_path_info();
-    */
-    //return (app);
-//}
 
 
 const Method &PostCGIApplication::which() const

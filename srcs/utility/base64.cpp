@@ -26,9 +26,7 @@ std::string Base64::encode(std::string const &str)
         return ("");
     }
 
-    //size_t size = ((str.size() / 3) + 1) * 4;
     size_t size = (((str.size()-1) / 3) + 1) * 4;
-    //size_t size = ((str.size() * 8) / 6) + ((str.size() * 8) / 6) % 6 ;
     char bits[size + 1];
     const char* char_str = str.c_str();
     unsigned char c;
@@ -81,9 +79,7 @@ static unsigned char to_bit(char c)
 std::string Base64::decode(std::string const &str)
 {
     unsigned char rest_array[] = {0b00000000, 0b00100000, 0b00110000, 0b00111000, 0b00111100, 0b00111110, 0b00111111};
-    //size_t size = (str.size() * 3) / 4;
     size_t size = (str.size() / 4) * 3;
-    //size_t size = (((str.size()-1) / 3) + 1) * 4;
     const char* char_str = str.c_str();
     char decode_char[size + 1];
     size_t i = 0;

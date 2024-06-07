@@ -24,10 +24,6 @@ class ConfigCgi : public ConfigObject<ConfigLastObject*>
         std::vector<Method> const & allowed_method() const;
     private:
         std::map<std::string, std::string> extensions;
-        //std::vector<Method> allowed_method_;
-
-        //void set_cidr(std::vector<std::string> &vec, bool flag);
-
 
 };
 

@@ -2,7 +2,6 @@
 #define SOCKET_DATA_HPP
 
 #include "split.hpp"
-// #include "soket_data.hpp"
 #include <map>
 #include <string>
 

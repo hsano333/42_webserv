@@ -26,35 +26,12 @@ using std::vector;
 
 #define BODY_TMP_DIRECTORY_PATH "/tmp/webserv_body_tmp/"
 
-/*
-Request::Request() :
-    file(NULL),
-    //fd_(std::move(FileDiscriptor::from_int(0))),
-    //raw_buf_pos_(0),
-    buf_body_size(0),
-    // -1 is for '\0'
-    //raw_buf_rest_size_(MAX_BUF-1),
-    is_file_(false),
-    is_directory_(false),
-    is_not_executable_parent_dir_(false)
-    //source_file(NULL)
-    //is_redable_darectory(false)
-{
-
-    //fd_ = FileDiscriptor::from_int(0);
-    DEBUG("Request::Request()");
-}
-*/
 
 Request::Request(FileDiscriptor const &fd) :
     file_(NULL),
     fd_(fd),
-    //buf_body(NULL),
-    //raw_buf_pos_(0),
     buf_body_size(0),
     buf_body_p(0),
-    // -1 is for '\0'
-    //raw_buf_rest_size_(MAX_BUF-1),
     is_file_(false),
     is_directory_(false),
     is_not_executable_parent_dir_(false),
@@ -64,8 +41,6 @@ Request::Request(FileDiscriptor const &fd) :
     read_body_size_(0),
     has_body_(false),
     auth_("")
-    //source_file(NULL)
-    //is_redable_darectory(false)
 {
     DEBUG("Request::Request()");
 }
@@ -73,7 +48,6 @@ Request::Request(FileDiscriptor const &fd) :
 Request::~Request()
 {
     DEBUG("Request: Destructor()");
-    //delete (this->buf_body);
 }
 
 
@@ -82,15 +56,10 @@ Request *Request::from_fd(FileDiscriptor const &fd)
     DEBUG("Request::from_fd");
     Request *req = new Request(fd);
 
-
-    // for memory leak
     (void)fd;
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     WebservFile *dummy = file_factory->make_dummy_file(fd, req);
     (void)dummy;
-    DEBUG("Request::from_fd reques address:" + Utility::to_string(req));
-    //req->fd_ = fd;
-    //req->sockfd_ = sockfd;
     return (req);
 }
 
@@ -99,49 +68,6 @@ FileDiscriptor Request::fd() const
     DEBUG("Request::fd");
     return (this->fd_);
 }
-
-/*
-FileDiscriptor Request::sockfd() const
-{
-    return (this->sockfd_);
-}
-*/
-
-
-/*
-int Request::load_buf(FileDiscriptor fd, IReader *ireader)
-{
-;
-}
-
-void Request::insert_buf(char *buf, int size)
-{
-    //int max = MAX_BUF;
-    int rest = MAX_BUF - (raw_buf_size + size);
-    if(rest < 0){
-        //WARNING("Request");
-
-    }
-    Utility::memcpy(this->raw_buf, buf, size);
-    raw_buf
-}
-char *Request::buf()
-{
-    return (this->raw_buf);
-}
-*/
-
-/*
-void Request::decrement_raw_buf_size(size_t size)
-{
-    this->raw_buf_point -= size;
-}
-
-void Request::clear_raw_buf()
-{
-    this->raw_buf_pos_ = 0;
-}
-*/
 
 void Request::add_buf_body_p(size_t size)
 {
@@ -156,31 +82,19 @@ char *Request::get_buf_body(size_t *size)
     if(*size == 0){
         return NULL;
     }
-    DEBUG("Request::get_buf_body size:" + Utility::to_string(this->buf_body_size));
     return &(this->buf_body[this->buf_body_p]);
 }
 
 void Request::set_buf_body(char *body, size_t size)
 {
-    //this->buf_body.push_back(str);
     DEBUG("Request::set_buf_body size:" + Utility::to_string(size));
     if(size <= 0){
-    DEBUG("Request::set_buf_body No.1 size:" + Utility::to_string(size));
         this->buf_body_size = 0;
-    DEBUG("Request::set_buf_body No.2 size:" + Utility::to_string(size));
         this->buf_body.clear();
-    DEBUG("Request::set_buf_body No.3 size:" + Utility::to_string(size));
         return ;
     }
-    //if(this->buf_body != ""){
-        //ERROR("buf_body is not NULL. set_buf_body must be used only once");
-        //throw std::runtime_error("buf_body is not NULL");
-    //}
     this->buf_body.resize(size+1);
 
-    DEBUG("Request::set_buf_body No.4 size:" + Utility::to_string(size));
-    //this->buf_body = new char[size+1];
-    DEBUG("Request::set_buf_body No.5 size:" + Utility::to_string(size));
     for(size_t i=0;i<size;i++){
         this->buf_body[i] = body[i];
     }
@@ -193,9 +107,6 @@ void Request::clear_buf_body()
     DEBUG("Request::clear_buf_body");
     this->buf_body_size = 0;
     this->buf_body.clear();
-    //delete (this->buf_body);
-    //this->buf_body = NULL;
-    //this->buf_body.clear();
 }
 
 std::string const &Request::requested_filepath() const
@@ -222,36 +133,6 @@ std::string const &Request::parent_dir_path() const
     return (this->parent_dir_path_);
 }
 
-
-/*
-File Request::get_target_file(const ConfigLocation *location)
-{
-
-    //return &(this->raw_buf[this->raw_buf_point]);
-}
-
-int Request::raw_buf_space()
-{
-    DEBUG("Request::raw_buf_space()  raw_buf_pos_:" + Utility::to_string(this->raw_buf_pos_));
-    return (MAX_BUF - 1 - this->raw_buf_pos_);
-}
-
-void Request::set_buf_pos(size_t pos)
-{
-    DEBUG("Request::set_buf_pos():" + Utility::to_string(pos));
-    this->raw_buf_pos_ = pos;
-    //DEBUG("Request::raw_buf_space()  raw_buf_rest_size_:" + Utility::to_string(this->raw_buf_rest_size_));
-    //return (raw_buf_pos_);
-}
-
-*/
-/*
-void Request::renew_raw_buf_space(int space)
-{
-    this->raw_buf_rest_size_ = space;
-    this->raw_buf_point = MAX_BUF-space;
-}
-*/
 
 void Request::set_request_line(std::string const &str)
 {
@@ -303,11 +184,8 @@ void Request::set_requested_filepath(const ConfigLocation *location)
     std::string const &root = location->root();
 
     std::string path = root + uri_path;
-    cout << "root:" << root << endl;
-    cout << "uri_path:" << uri_path << endl;
     this->requested_path_ = path;
     this->tmp_path_info_ = "";
-    MYINFO("Request::set_requested_filepath() requested_path=" + this->requested_path_);
 
     bool first = true;
     for(int i=uri_sp.size()-1; i >= 0;i--){
@@ -317,22 +195,13 @@ void Request::set_requested_filepath(const ConfigLocation *location)
                 this->tmp_path_info_ += uri_sp[k] + "/";
                 k++;
             }
-            cout << "tmp path info:" << this->tmp_path_info_ << endl;
-            cout << "tmp path info:" << this->tmp_path_info_ << endl;
-            cout << "tmp path info:" << this->tmp_path_info_ << endl;
-            cout << "tmp path info:" << this->tmp_path_info_ << endl;
-            //requested_uri.set_path_info(tmp_path_info);
 
             this->requested_filepath_ = path;
             this->is_file_ = true;
-            //this->is_redable_darectory = true;
-            //this->is_redable_darectory = true;
-            MYINFO("Request::set_requested_filepath filepath=" + path);
             return;
         }
         size_t pos = path.rfind(uri_sp[i]);
         if(pos == string::npos){
-            //error
             return;
         }
         path = path.substr(0, pos-1);
@@ -350,7 +219,6 @@ void Request::set_requested_filepath(const ConfigLocation *location)
         this->is_directory_ = true;
     }
     this->requested_filepath_ = "";
-    //this->requested_directory_path = this->requested_path_;
 }
 
 void Request::set_is_file(bool flag)
@@ -409,36 +277,6 @@ Header const &Request::header() const
     return (this->header_);
 }
 
-
-/*
-void Request::set_source_file(File *file)
-{
-    this->source = file;
-}
-*/
-
-/*
-File *Request::get_source_file()
-{
-    return (this->source);
-}
-
-int Request::open_source_file()
-{
-    return (this->source->open());
-}
-
-int Request::close_source_file()
-{
-    return (this->source->close());
-}
-
-ssize_t Request::get_data(char** data)
-{
-    return (this->source->read(data, MAX_READ_SIZE));
-}
-*/
-
 void Request::set_file(WebservFile *file)
 {
     this->file_ = file;
@@ -455,33 +293,6 @@ std::string const &Request::auth()
     return (this->auth_);
 }
 
-
-/*
-
-int Request::open()
-{
-    if (this->file){
-        return (this->file->open());
-    }
-    return 0;
-}
-
-int Request::close()
-{
-    //if (this->file){
-        //return (this->file->close());
-    //}
-    return 0;
-}
-
-int Request::write(char **data, size_t size)
-{
-    (void)data;
-    (void)size;
-    return (0);
-}
-*/
-
 // body以外のステータスライン、ヘッダーのサイズを返す
 size_t Request::size()
 {
@@ -489,47 +300,10 @@ size_t Request::size()
     return (0);
 }
 
-/*
-int Request::save(char *buf, size_t size)
-{
-    for(size_t i=0;i<size;i++){
-        this->tmp_buf.push_back(buf[i]);
-    }
-    return (this->tmp_buf.size());
-}
-
-bool Request::can_read()
-{
-    return (true);
-}
-
-bool Request::is_chunk()
-{
-    return (false);
-}
-
-size_t Request::size()
-{
-    return (0);
-}
-
-int Request::remove()
-{
-    return (0);
-}
-
-std::string const &Request::path()
-{
-    throw std::runtime_error("don't use method()");
-}
-*/
-
-
 int Request::read(char** data, size_t max_read_size)
 {
     DEBUG("Request::read() max_size=" + Utility::to_string(max_read_size));
     int tmp = (this->file_->read(data, max_read_size));
-    DEBUG("Request::read() No.2 max_size=" + Utility::to_string(max_read_size));
     return (tmp);
 }
 
@@ -556,13 +330,6 @@ bool Request::can_read()
     DEBUG("Request::can_read False");
     return (false);
 }
-
-/*
-BufferController const &Request::get_buffer()
-{
-    return (this->buffer);
-}
-*/
 
 WebservFile *Request::file()
 {
@@ -598,8 +365,6 @@ void Request::print_info() const
     cout << "tmp_path_info_ = " << this->tmp_path_info_ << endl;
     this->req_line_.print_info();
     this->header_.print_info();
-    //cout << " uri_raw: " << this->req_line.uri().raw() << endl;
-    //cout << " version: " << this->req_line.version().to_string() << endl;
 
     cout << "|--------------------------|" << endl;
 }

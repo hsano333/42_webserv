@@ -13,8 +13,6 @@ void TCPSocket::init()
 {
     this->_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (this->_sock_fd < 0) {
-        cout << strerror(errno) << endl;
-        // throw std::exception();
         throw std::runtime_error("Failed to create sock_fdet\n");
     }
 
@@ -27,13 +25,11 @@ void TCPSocket::init()
     int err = getaddrinfo(NULL, this->port.c_str(), &hint, &res);
     if (err != 0) {
         this->close_fd();
-        cout << "Error getaddrinfo() :" << gai_strerror(err) << endl;
         throw std::runtime_error("Failed to init()\n");
     }
     if (bind(this->_sock_fd, res->ai_addr, res->ai_addrlen) != 0) {
         this->close_fd();
         freeaddrinfo(res);
-        cout << "Error bind:" << strerror(errno) << endl;
         throw std::runtime_error("Failed to bind()\n");
     }
     freeaddrinfo(res);

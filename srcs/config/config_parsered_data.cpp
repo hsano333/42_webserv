@@ -10,21 +10,6 @@ ConfigParseredData::~ConfigParseredData()
     ;
 }
 
-/*
-void ConfigParseredData::assign_next_target_properties(std::vector<std::vector<std::string> > &properties)
-{
-    for(size_t i=0;i<properties.size();i++){
-        next_target_properties.push_back(properties[i]);
-    }
-}
-
-void ConfigParseredData::set_next_string(std::vector<std::string> &vec)
-{
-    for(size_t i=0;i<vec.size();i++){
-        next_raw_data.push_back(vec[i]);
-    }
-}
-*/
 
 void ConfigParseredData::push_back_next_string(std::string const &str)
 {
@@ -39,8 +24,6 @@ void ConfigParseredData::push_back_next_properties(std::vector<std::string> &vec
     }
     next_target_properties.push_back(tmp);
 }
-
-
 
 std::string ConfigParseredData::raw_data(size_t i)
 {

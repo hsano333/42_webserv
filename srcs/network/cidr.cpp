@@ -21,13 +21,10 @@ CIDR::~CIDR()
 bool CIDR::in(IP_Address const & address) const
 {
     (void)address;
-    //(void)address;
     unsigned int target_addr = address.to_uint();
     (void)target_addr ;
     unsigned int addr = this->address.to_uint();
     unsigned int subnet = this->subnet;
-    //unsigned int min_address = address >> (32-subnet);
-    //min_address = min_address << (32-subnet);
 
     unsigned int bit = 0;
     for(unsigned int i=0;i<subnet;i++){
@@ -38,8 +35,6 @@ bool CIDR::in(IP_Address const & address) const
 
     unsigned int min_address = addr & bit;
     unsigned int max_address = (min_address | (bit ^ 0xffffffff));
-    //cout << "min_address:" << min_address << endl;
-    //cout << "max_address:" << max_address << endl;
 
     if(min_address <= target_addr && target_addr <= max_address)
     {

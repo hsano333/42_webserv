@@ -55,7 +55,6 @@ void Log::check_writable()
 void Log::write_log(const char *file,int line, string& str)
 {
     std::time_t now = std::time(NULL);
-    //std::time_t local = std::localtime(&now);
     ofs << std::setw(5) << now - Log::boot_time << " ";
     ofs << file << " " << line << ", ";
     ofs << "[" << str << "]" << endl << std::flush;

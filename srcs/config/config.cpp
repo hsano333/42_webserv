@@ -24,21 +24,9 @@ using std::endl;
 
 Config *Config::_singleton = NULL;
 std::string Config::_filepath = "webserv.conf";
-//std::ifstream Config::_fin;
-//
-//
-
-/*
-void Config::make_repository(std::string &filepath)
-{
-     repository.set_data(factory.make(filepath));
-}
-*/
 
 void make_http(char *str)
 {
-    //Config *cfg = Config::get_instance();
-    //cfg->http = new ConfigHttp();
     cout << str << endl;
 }
 
@@ -46,33 +34,17 @@ Config::Config(
         FDManager *fd_manager
         )
     : fd_manager_(fd_manager)
-//Config::Config() : fd_manager(fd_manager)
 {
-    //std::string tmp = "tmp";
-    //this->http = new ConfigHttp(tmp);
-    /*
-    _fin.open(_filepath.c_str());
-    if (!_fin){
-        throw std::runtime_error("can not open file");
-    }
-    std::map<string, string> tmp;
-    retrieve(content_word,tmp, make_http);
-
-    this->http.parse();
-    _fin.close();
-    */
 }
 
 Config::~Config()
 {
     DEBUG("Config::~Config Destructor");
     delete http;
-    //delete Config::_singleton;
 }
 
 void Config::load()
 {
-    //this->repository.load_file();
 }
 
 void Config::retrieve(const string &word, map<string, string> &map, void(*f)(char *str))
@@ -124,25 +96,13 @@ void Config::set_filepath(const char *filepath)
     Config::_filepath = string(filepath);
 }
 
-/*
-Config* Config::get_instance()
-{
-    //if (Config::_singleton == NULL){
-        //Config::_singleton =  new Config();
-    //}
-    //return (Config::_singleton);
-    return (NULL);
-}
-*/
 
 map<pair<Port, string>, const ConfigServer*> Config::servers_cache;
-//map<pair<Port, string>, vector<string> > Config::locations_cache;
 map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * > Config::locations_cache;
 map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_content_cache;
 map<pair<pair<Port, string>, string>, map<string, vector<string> > > Config::_locations_properties_cache;
 
 
-/*
 const ConfigServer* Config::get_server(Request const *req) const
 {
     if(req == NULL){
@@ -153,65 +113,24 @@ const ConfigServer* Config::get_server(Request const *req) const
     std::string const &header_hostname = header.get_host();
     Split sp(header_hostname, ":");
     if(sp.size() != 2){
-        ERROR("There is no Host in Headers");
-        throw HttpException("400");
-    }
-    std::string name = sp[0];
-    std::string port_str = sp[1];
-    Port port = Port::from_string(port_str);
-
-    const ConfigServer *server = this->get_server(port, name);
-    return (server);
-
-}
-*/
-
-
-
-const ConfigServer* Config::get_server(Request const *req) const
-{
-    //(void)sockfd;
-    if(req == NULL){
-        return NULL;
-    }
-    Header const &header = req->header();
-
-    std::string const &header_hostname = header.get_host();
-    Split sp(header_hostname, ":");
-    if(sp.size() != 2){
-    //if(true){
         WARNING("There is no Host in Headers");
         struct sockaddr_in addr;
         socklen_t len = sizeof(addr);
 
         try{
-            //FileDiscriptor sockfd = req->sockfd();
-            DEBUG("test No.1");
-            if(this->fd_manager_ == NULL){
-            DEBUG("test No.1");
-            DEBUG("test No.1");
-            DEBUG("test No.1");
-            DEBUG("test No.1");
-
-            }
             FileDiscriptor sockfd = this->fd_manager_->socket_fd_from_epoll_fd(req->fd());
-            DEBUG("test No.2");
             if(getsockname(sockfd.to_int(), (struct sockaddr*)&addr, &len) < 0){
                 WARNING("failure to get port number");
                 throw HttpException("500");
             }
-            DEBUG("test No.3");
             Port port = Port::from_int(ntohs(addr.sin_port));
-            DEBUG("test No.4");
             const ConfigServer *server = this->get_server(port, "");
-            DEBUG("test No.5");
             return (server);
         }catch(std::invalid_argument &e){
             throw HttpException("500");
         }
     }
     std::string name = sp[0];
-    //std::string port_str = sp[1];
     Port port = Port::from_string(sp[1]);
 
     const ConfigServer *server = this->get_server(port, name);
@@ -232,23 +151,11 @@ const ConfigServer *Config::get_server(Port const& port, string const& host) con
         servers_cache.clear();
     }
 
-    DEBUG("Config::get_server No.3");
     vector<ConfigServer const*> servers;
-
-    /*
-    for (size_t i = 0; i < http->get_server_size(); i++) {
-        if (http->server(i)->listen() == port && http->server(i)->server_name() == host && http->server(i)->is_default_server()) {
-            servers_cache.insert(make_pair(make_pair(port, host), http->server(i)));
-            return (http->server(i));
-        }
-    }
-    */
-
     IP_Address host_address = IP_Address::from_string_or_name(host);
 
     this->check();
 
-    //std::vector<Port>
     ConfigServer const *default_server = NULL;
     for (size_t i = 0; i < http->get_server_size(); i++) {
         if (http->server(i)->listen() == port){
@@ -278,7 +185,6 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
     string const &path = req->req_line().uri().path();
     DEBUG("Config path:" + path);
     const Split &path_sp = req->req_line().uri().splited_path();
-    DEBUG("Config::get_location path_sp size:" + Utility::to_string(path_sp.size()));
 
     map<std::pair<ConfigServer const *, std::string>, ConfigLocation const * >::iterator cash_ite = Config::locations_cache.find(make_pair(server, path));
     if (cash_ite != Config::locations_cache.end()){
@@ -288,7 +194,6 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
     const ConfigLocation* tmp_location = NULL;
     const ConfigLocation* slash_location = NULL;
     int max_point = 0;
-    //bool slash_flag = false;
     for (size_t i = 0; i < server->get_location_size(); i++) {
 
         if (tmp_location){
@@ -320,8 +225,6 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
                 }
             }
             if (path_sp.size() == 1){
-                DEBUG("location_path=" + location_path);
-                DEBUG("path=" + path);
                 if (location_path == "/" && path[0] == '/'){
                     tmp_location = server->location(i);
                     break;
@@ -348,12 +251,6 @@ ConfigLocation const *Config::get_location(ConfigServer const *server, const Req
 
 vector<string> Config::get_location_paths(Port const& port, string const& host) const
 {
-    /*
-    map<pair<Port, string>, vector<string> >::iterator cash_ite = locations_cache.find(make_pair(port, host));
-    if (cash_ite != locations_cache.end()) {
-        return (cash_ite->second);
-    }
-    */
     ConfigServer const* servers = get_server(port, host);
     vector<string> locations;
 
@@ -363,87 +260,8 @@ vector<string> Config::get_location_paths(Port const& port, string const& host) 
         }
     }
     Utility::sort_orderby_len(locations);
-    //locations_cache.insert(make_pair(make_pair(port, host), locations));
     return (locations);
 }
-
-//map<string, vector<string> > Config::get_locations_contents(Port const& port, string const& host,
-//                                                            string const& location) const
-//{
-//    /*
-//    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
-//        _locations_content_cache.find(make_pair(make_pair(port, host), location));
-//    if (cash_ite != _locations_content_cache.end()) {
-//        return (cash_ite->second);
-//    }
-//    */
-//
-//    vector<map<string, vector<string> > > properties;
-//    ConfigServer const* servers = get_server(port, host);
-//    for (size_t j = 0; j < servers->get_location_size(); j++) {
-//        for (size_t k = 0; k < servers->location(j)->pathes().size(); k++) {
-//            if (servers->location(j)->pathes()[k] == location) {
-//                //_locations_content_cache.insert(
-//                    //make_pair(make_pair(make_pair(port, host), location), servers->location(j)->properties));
-//
-//                return (servers->location(j)->properties);
-//            }
-//        }
-//    }
-//    map<string, vector<string> > rval;
-//    return (rval);
-//}
-
-//static string get_partial_equaled_path(Split& req_path_sp, Split& cgi_path_sp)
-//{
-//    string path = "";
-//    for (size_t i = 0; i < cgi_path_sp.size(); i++) {
-//        if (req_path_sp[i] == cgi_path_sp[i]) {
-//            path += "/";
-//            path += req_path_sp[i];
-//        } else {
-//            break;
-//        }
-//    }
-//    return (path);
-//}
-
-
-//std::map<std::string, std::vector<std::string> > Config::get_locations_properties(Port const &port,
-//                                                                                  const string& host,
-//                                                                                  const string& filepath) const
-//{
-//    /*
-//    map<pair<pair<Port, string>, string>, map<string, vector<string> > >::iterator cash_ite =
-//        _locations_properties_cache.find(make_pair(make_pair(port, host), filepath));
-//    if (cash_ite != _locations_properties_cache.end()) {
-//        return (cash_ite->second);
-//    }
-//    */
-//
-//    const std::vector<std::string> lo = Config::get_location_paths(port, host);
-//    Split req_path_sp(filepath, "/");
-//
-//    string path;
-//    string tmp_path_cfg;
-//    for (size_t i = 0; i < lo.size(); i++) {
-//        tmp_path_cfg = lo[i];
-//        Split cgi_path_sp(tmp_path_cfg, "/");
-//        if (req_path_sp.size() > 0)
-//            path = get_partial_equaled_path(req_path_sp, cgi_path_sp);
-//        if (path != "") {
-//            break;
-//        } else if (path == "" && lo[i] == "/") {
-//            path = "/";
-//            break;
-//        }
-//    }
-//
-//    //std::map<std::string, std::vector<std::string> > properties =
-//        //Config::get_locations_contents(port, host, tmp_path_cfg);
-//    //_locations_properties_cache.insert(make_pair(make_pair(make_pair(port, host), filepath), properties));
-//    return (properties);
-//}
 
 void Config::assign_properties(std::vector<std::vector<std::string> > &properties)
 {
@@ -467,8 +285,6 @@ void Config::push_all(std::vector<ConfigHttp*> const &vec)
     DEBUG("Config::push_all");
     if(vec.size() == 1){
         this->http = vec[0];
-        DEBUG("Config::push_all No.2");
-        printf("http=%p\n", http);
     }else{
         ERROR("Invalid Config Error: http is only one");
         throw std::runtime_error("config parser error: http is only one");
@@ -495,7 +311,6 @@ void Config::print_cfg()
             cout << "location No." << j << endl;
             ConfigLocation const *tmp = cfg->http->server(i)->location(j);
             cout << "location root:" << tmp->root() << endl;
-            //cout << "location cgi_pass:" << tmp->cgi_pass() << endl;
             cout << "location autoindex:" << tmp->autoindex() << endl;
 
             std::map<StatusCode, std::string> const & error_page = tmp->error_pages();
@@ -512,9 +327,6 @@ void Config::print_cfg()
             for(size_t i=0;i<pathes.size();i++){
                 cout << "location path[" << i << "]:" << pathes[i] << endl;
             }
-            //for(size_t i=0;i<tmp->indexs().size();i++){
-                //cout << "location index[" << i << "]:" << tmp->indexes()[i] << endl;
-            //}
             for(size_t i=0;i<tmp->get_limit_size();i++){
                 const ConfigLimit *limit = tmp->limit();
 
@@ -545,7 +357,6 @@ void Config::print_cfg()
 void Config::check()
 {
     DEBUG("Config::check()");
-    printf("http=%p\n", http);
     if(http == NULL){
         ERROR("Config::check(),  http is null");
         throw std::runtime_error("Config::check(),  http is null");
@@ -573,9 +384,7 @@ void Config::check(SocketRepository *socket_repository)
     for (size_t i = 0; i < http->get_server_size(); i++)
     {
         char const *hostname = http->server(i)->server_name().c_str();
-        cout << "hostname:" << hostname << endl;
         int rval = getaddrinfo(hostname, NULL, &hints, &res);
-        cout << "rval1:" << rval << endl;
         if (rval < 0) {
             ERROR("Host name is invalid:" + http->server(i)->server_name());
             continue;
@@ -585,33 +394,4 @@ void Config::check(SocketRepository *socket_repository)
     }
 
 }
-
-/*
-File *Config::get_error_file(Request const *req, StatusCode &code) const
-{
-    DEBUG("Config::get_error_file");
-    const ConfigServer *server = NULL;
-    const ConfigLocation *location= NULL;
-    File *file = NULL;
-
-    try{
-        server = this->get_server(req);
-        location = this->get_location(server, req);
-    }catch (...){
-        file = NULL;
-    }
-
-    if(server && location){
-        try{
-            std::string page_path = location->get_error_file_path(code);
-            //cout << page_path << endl;
-            file = NormalFile::from_filepath(page_path, std::ios::in | std::ios::binary);
-        }catch(std::runtime_error &e){
-            delete file;
-            return (NULL);
-        }
-    }
-    return (file);
-}
-*/
 

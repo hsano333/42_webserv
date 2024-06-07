@@ -9,8 +9,6 @@ class ConfigParseredData
     public:
         ConfigParseredData();
         ~ConfigParseredData();
-        //void assign_next_target_properties(std::vector<std::string> &properties);
-        //void set_next_string(std::vector<std::string> &vec);
         void push_back_next_string(std::string const &str);
         void push_back_next_properties(std::vector<std::string> &vec);
         std::string raw_data(size_t i);

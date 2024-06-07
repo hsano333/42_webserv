@@ -10,8 +10,6 @@
 #include "delete_application.hpp"
 #include "method.hpp"
 #include "http_exception.hpp"
-//#include "post_application.hpp"
-//#include "delete_application.hpp"
 
 ApplicationFactory::ApplicationFactory() : cgi(NULL)
 {
@@ -30,7 +28,6 @@ ApplicationFactory *ApplicationFactory::get_instance()
 
 ApplicationFactory::~ApplicationFactory()
 {
-    //delete (singleton);
 }
 
 std::string ApplicationFactory::get_server_name()
@@ -38,40 +35,10 @@ std::string ApplicationFactory::get_server_name()
     return ("");
 }
 
-/*
-{
-    return (true);
-}
-*/
-
 std::string ApplicationFactory::get_target_path()
 {
     return ("");
 }
-
-
-/*
-const ConfigServer *ApplicationFactory::get_server(Request *req)
-{
-    Header const &header = req->header();
-
-    std::string const &header_hostname = header.get_host();
-    Split sp(header_hostname, ":");
-    if(sp.size() != 2){
-        ERROR("There is no Host in Headers");
-        throw HttpException("400");
-    }
-    std::string name = sp[0];
-    std::string port_str = sp[1];
-    Port port = Port::from_string(port_str);
-
-    const ConfigServer *server = this->cfg->get_server(port, name);
-    return (server);
-
-}
-*/
-
-
 
 void ApplicationFactory::set_cgi(CGI *cgi_)
 {
@@ -82,7 +49,6 @@ void ApplicationFactory::set_cgi(CGI *cgi_)
     this->cgi = cgi_;
 }
 
-//Application* ApplicationFactory::make_application(WebservApplicationEvent *event, IReader *ireader)
 Application* ApplicationFactory::make_application(WebservEntity *entity)
 {
     DEBUG("ApplicationFactory::make_application()");
@@ -94,9 +60,6 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
 
     const ConfigLocation *location = cfg->get_location(cfg->get_server(req), req);
     bool is_cgi = cgi->check_cgi_application_path(req, location);
-    if(location->is_allowed_method(method) == false){
-        throw HttpException("405");
-    }
 
     switch(method.to_enum())
     {
@@ -120,7 +83,6 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
             break;
         case DELETE:
             DEBUG("ApplicationFactory::make_application() make Delete");
-            //app = DeleteApplication::from_location(cfg, req);
             app = DeleteApplication::get_instance();
             break;
         case PUT:
@@ -132,6 +94,9 @@ Application* ApplicationFactory::make_application(WebservEntity *entity)
         default:
             ERROR("ApplicationFactory::make_application(): Invalid method");;
             throw HttpException("501");
+    }
+    if(location->is_allowed_method(method) == false){
+        throw HttpException("405");
     }
     return (app);
 }

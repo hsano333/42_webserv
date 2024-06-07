@@ -27,19 +27,6 @@ FileDiscriptor SocketController::accept_request(FileDiscriptor sock_fd)
     MYINFO("SocketController::accept_request fd:" + Utility::to_string(sock_fd.to_int()) + ", new fd:" + Utility::to_string(tmp_fd));
     FileDiscriptor fd = FileDiscriptor::from_int(tmp_fd);
     
-    /*
-    if (fd < 0) {
-        ERROR("Error socket accept() fd:" + Utility::to_string(sock_fd.to_int()));
-        throw std::runtime_error("Error socket:failure to accept()");
-    }
-    */
-
-    /*
-    FDManager* fd_m = new FDManager(fd);
-    this->_fd_map.insert(std::make_pair(fd, fd_m));
-    */
-    //int cur_flags = fcntl(fd.to_int(), F_GETFL, 0);
-    //cur_flags |= O_NONBLOCK;
     fcntl(fd.to_int(), F_SETFL, O_NONBLOCK);
     return (fd);
 }

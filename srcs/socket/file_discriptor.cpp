@@ -22,14 +22,12 @@ FileDiscriptor::FileDiscriptor(int fd) : fd(fd), is_close_(false)
 
 FileDiscriptor::FileDiscriptor(FileDiscriptor const &fd)
 {
-    //DEBUG("FileDiscriptor::FileDiscriptor");
     this->fd = fd.fd;
     this->is_close_ = fd.is_close_;
 }
 
 FileDiscriptor& FileDiscriptor::operator=(FileDiscriptor const &fd)
 {
-    //DEBUG("FileDiscriptor& FileDiscriptor::operator=");
     this->fd = fd.fd;
     this->is_close_ = fd.is_close_;
     return (*this);
@@ -46,13 +44,11 @@ FileDiscriptor FileDiscriptor::from_int(int fd)
 
 int FileDiscriptor::to_int() const
 {
-    //DEBUG("FileDiscriptor::to_int() const");
     return (this->fd);
 }
 
 int FileDiscriptor::to_int()
 {
-    //DEBUG("FileDiscriptor::to_int()");
     return (this->fd);
 }
 
@@ -69,11 +65,8 @@ bool FileDiscriptor::is_close() const
 void FileDiscriptor::close() const
 {
     DEBUG("close fd:" + Utility::to_string(this->fd));
-    DEBUG("close is_close_:" + Utility::to_string(this->is_close_));
     if(this->fd > 0 && this->is_close_ == false){
-        DEBUG("close No.2 is_close_:" + Utility::to_string(this->is_close_));
         ::close(this->fd);
-        //this->is_close_ = true;
     }
 }
 
@@ -133,14 +126,10 @@ bool FileDiscriptor::operator<=(int fd) const
     return (this->fd <= fd);
 }
 
-//friend std::ostream& operator<<(std::ostream& stream, const FileDiscriptor &fd);
-
 std::ostream& operator<<(std::ostream& os, const FileDiscriptor &fd)
 {
     std::string out = Utility::to_string(fd.to_int());
     os << out;
     return (os);
 }
-
-
 

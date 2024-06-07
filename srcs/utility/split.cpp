@@ -38,8 +38,6 @@ void split_delimiters(std::string const& str, std::string delimiters, vector<str
 {
     vector<string> &splitted_strs = vec;
 
-    //size_t del_len = delimiter.size();
-    //std::vector<char> = 
     size_t del_size = delimiters.size();
     size_t del_len = 1;
     std::string::size_type offset = std::string::size_type(0);
@@ -66,18 +64,13 @@ void split_delimiters(std::string const& str, std::string delimiters, vector<str
                     splitted_strs.push_back(last);
                 }
             }
-            //if (last != delimiter && last.size() != 0) {
-                //splitted_strs.push_back(last);
-            //}
             break;
         }
         if (pos - offset > 0) {
             splitted_strs.push_back(str.substr(offset, pos - offset));
-            //this->_splitted_string.push_back(str.substr(offset, pos - offset));
         }
         offset = pos + del_len;
     }
-    //cout << "splitted_strs" << splitted_strs.size() << endl;
 }
 
 static void split(std::string const &str, std::string const &delimiter, vector<string> &vec)
@@ -92,23 +85,19 @@ static void split(std::string const &str, std::string const &delimiter, vector<s
         if (pos == string::npos) {
             string last = str.substr(offset);
             if (last != delimiter && last.size() != 0) {
-                //this->_splitted_string.push_back(last);
                 splitted_strs.push_back(last);
             }
             break;
         }
         if (pos - offset > 0) {
             splitted_strs.push_back(str.substr(offset, pos - offset));
-            //this->_splitted_string.push_back(str.substr(offset, pos - offset));
         }
         offset = pos + del_len;
     }
-    //cout << "splitted_strs" << splitted_strs.size() << endl;
 }
 
 void Split::set_word(std::string &str, std::string const &delimiter)
 {
-    //string tmp = string(str);
     size_t del_len = delimiter.size();
     if (del_len == 0) {
         this->_splitted_string.push_back(str);
@@ -126,7 +115,6 @@ void Split::split_not_delete_delimiter(std::string const &str, std::string const
         pos = str.find(delimiter, offset);
         if (pos == string::npos) {
             string last = str.substr(offset);
-            //cout << "last:" << last << endl;
             if (last != delimiter && last.size() != 0) {
                 this->_splitted_string.push_back(last);
             }
@@ -173,7 +161,6 @@ Split::Split(std::string const& str, std::string const &delimiter, bool multi_de
     }
 }
 
-//bool compare_lower(std::pair<char, int> &a, std::pair<char, int> &b)
 bool compare_lower(std::map<char, int>::iterator &a, std::map<char, int>::iterator &b)
 {
     return (a->second > b->second);
@@ -198,7 +185,7 @@ static std::string find_used_delimiter(std::string const &str, std::string const
     for(size_t i=42;i<ascii.size()-1;i++){
         ascii_count.insert(std::make_pair(ascii[i],i));
     }
-    //cout << "asci size:" << ascii.size() << endl;
+
     std::multimap<int,char>::iterator ite = ascii_count.begin();
     std::multimap<int,char>::iterator end = ascii_count.end();
     int cnt = 0;
@@ -250,7 +237,6 @@ Split::Split(std::string const& raw_str, std::string const &delimiter, bool mult
                         replace_cnt++;
                         str.replace(pos, delimiter.size(), random_word);
                         backup.push_back(delimiter);
-                        //pos += (random_word.size());
                         pos += (random_word.size());
                         end = str.find('\"', pos);
                         pos = str.find(delimiter, pos);
@@ -270,7 +256,6 @@ Split::Split(std::string const& raw_str, std::string const &delimiter, bool mult
         size_t backup_i = 0;
         for(size_t i=0;i<_splitted_string.size();i++){
             std::string &word = _splitted_string[i];
-            //cout << word << endl;
             size_t pos = word.find(random_word);
             while(pos != std::string::npos){
                 std::string backup_word = backup[backup_i];
@@ -281,26 +266,6 @@ Split::Split(std::string const& raw_str, std::string const &delimiter, bool mult
         }
     }
 }
-
-
-
-/*
-Split::Split(std::string const& str, std::string delimiter, bool rest_delimiter)
-{
-    size_t del_len = delimiter.size();
-    if (del_len == 0) {
-        this->_splitted_string.push_back(str);
-        return;
-    }
-
-    if (rest_delimiter){
-        split(str, delimiter,_splitted_string);
-    }else{
-        split(str, delimiter,_splitted_string);
-        //this->split_not_delete_delimiter(str, delimiter);
-    }
-}
-*/
 
 void Split::concat(std::string& str, std::string delimiter)
 {
@@ -352,7 +317,6 @@ void Split::split_cp(std::string const& str, std::string delimiter, std::vector<
     }else{
         split(str, delimiter, dst);
     }
-    //cout << "dst size:" << dst.size() << endl;
 }
 
 void Split::print()

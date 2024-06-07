@@ -20,7 +20,6 @@ std::string ConfigRawLoader::get_raw_data()
     std::string all_data;
     this->file->open();
     char buf[MAX_BUF+1];
-    //char *buf = &(tmp_buf[0]);
     char *tmp = &(buf[0]);
     int size = this->file->read(&tmp, MAX_BUF);
 

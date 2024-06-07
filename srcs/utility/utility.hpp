@@ -1,6 +1,6 @@
 #ifndef UTILITY_H
 #define UTILITY_H
-//#include "config.hpp"
+
 #include "utility.hpp"
 #include "ip_address.hpp"
 #include <sstream>
@@ -38,7 +38,6 @@ class Utility
     static std::string delete_duplicated_slash(std::string str);
     static void sort_orderby_len(std::vector<std::string>& str);
     static unsigned char hex_string_to_uchar(const std::string& hex_string);
-    static char** cp_env(char** environ, std::vector<std::string> vec);
     static char* strdup(const char* str);
 
     template <typename T>
@@ -51,25 +50,17 @@ class Utility
     static int to_int(std::string const &str);
     static int to_int(char const *str);
     static ssize_t to_ssize_t(std::string const &str);
-    //static size_t to_size_t(std::string &str);
     static size_t to_size_t(std::string const &str);
     static std::string to_hexstr(size_t i);
     static std::string uchar_to_hexstr(unsigned char i);
     static size_t hex_string_to_number(const std::string &str);
     static IP_Address name_to_address(std::string name);
-    //static unsigned char char_to_hex(char c);
 
     static char hex_string_to_int(const std::string& hex_string);
-    //static std::string get_http_status_message(std::string status_code);
     template <typename T>
     static void print_vector(std::vector<T> v);
-    //static int read_body_and_copy(int fd, char** dst, size_t size);
-    //static int read_body_and_copy(int fd, char** buf, int size, std::string str);
-    //static int read_body_and_copy(ByteVector str, char** buf, int size);
-    //static int read_body_and_copy(char *src, char** dst, size_t size);
     static size_t get_map_str_size(std::map<std::string, std::string> &data);
 
-    static std::string extract_json_object(const std::string &target, std::string &str);
     static bool is_regular_file(std::string const &path);
     static bool is_executable_file(std::string const &path);
     static bool is_readable_file(std::string const &path);

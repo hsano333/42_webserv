@@ -102,7 +102,6 @@ void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &pro
     std::vector<std::vector<std::string> >::iterator end = properties.end();
     while(ite != end){
         std::vector<std::string> &tmp_vec = *ite;
-        cout << "tmp_vec = " << tmp_vec[0] << endl;
         if(tmp_vec[0] == "listen"){
             set_listen(tmp_vec);
         }else if(tmp_vec[0] == "server_names"){
@@ -122,8 +121,6 @@ void ConfigServer::assign_properties(std::vector<std::vector<std::string> > &pro
 void ConfigServer::assign_out_properties(std::vector<std::string> &properties)
 {
     if(properties.size() > 0){
-        std::cout << "NG:" << properties.size() << std::endl;
-        std::cout << "NG:[" << properties[0] << "]" << std::endl;
         ERROR("Invalid Config Error: There is invalid word between \"server\" and \"{\" ");
         throw std::runtime_error("config parser error:server");
     }
@@ -147,11 +144,6 @@ void ConfigServer::check()
         ERROR("ConfigServer::check(),  Port is invalid");
         throw std::runtime_error("ConfigServer::check(),  Port is invalid");
     }
-    //if(this->server_name() == ""){
-
-    //}
-    //else if()
-
 }
 
 

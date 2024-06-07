@@ -19,7 +19,6 @@ void FDManager::close_all()
         std::map<FileDiscriptor, FileDiscriptor>::iterator ite = epoll_fd_and_socket.begin();
         std::map<FileDiscriptor, FileDiscriptor>::iterator end = epoll_fd_and_socket.end();
         while(ite != end){
-            //close((ite->first).to_int());
             close((ite->second).to_int());
             ite++;
         }
@@ -38,7 +37,6 @@ void FDManager::add_socket(FileDiscriptor fd)
 {
     fd_of_sockets.push_back(fd);
     DEBUG("FDManager::add_socket fd" + fd.to_string());
-    DEBUG("FDManager::add_socket event size:" + Utility::to_string(fd_of_sockets.size()));
 }
 
 void FDManager::close_socket(FileDiscriptor fd)
@@ -56,7 +54,6 @@ void FDManager::add_socket_and_epoll_fd(FileDiscriptor io_fd, FileDiscriptor soc
 {
     DEBUG("FDManager::add_socket_and_epoll_fd fd:" + socket_fd.to_string());
     epoll_fd_and_socket.insert(std::make_pair(io_fd, socket_fd));
-    DEBUG("FDManager::add_socket_and_epoll_fd event_size:" + Utility::to_string(epoll_fd_and_socket.size()));
 }
 
 void FDManager::close_fd(FileDiscriptor fd)
@@ -83,7 +80,6 @@ bool FDManager::is_registered(FileDiscriptor epoll_fd)
 FileDiscriptor &FDManager::socket_fd_from_epoll_fd(FileDiscriptor epoll_fd)
 {
     DEBUG("FDManager::socket_fd_from_epoll_fd");
-    DEBUG("FDManager::socket_fd_from_epoll_fd fd:" + epoll_fd.to_string());
     if(this->is_registered(epoll_fd)){
         return (epoll_fd_and_socket[epoll_fd]);
     }
@@ -106,59 +102,3 @@ std::map<FileDiscriptor, FileDiscriptor> &FDManager::fd_sockets()
 
 }
 
-
-/*
-void FDManager::insert(Request* req)
-{
-    if (this->_req) {
-        delete this->_req;
-    }
-    this->_req = req;
-}
-
-void FDManager::insert(Response* res)
-{
-    if (this->_res) {
-        delete this->_res;
-    }
-    this->_res = res;
-}
-
-Request* FDManager::get_req()
-{
-    return (this->_req);
-}
-
-Response* FDManager::get_res()
-{
-    return (this->_res);
-}
-
-void FDManager::delete_req()
-{
-    if (this->_req){
-        delete (this->_req);
-        this->_req = NULL;
-    }
-}
-
-void FDManager::delete_res()
-{
-    if (this->_res){
-        delete (this->_res);
-        this->_res = NULL;
-    }
-}
-
-void FDManager::delete_all()
-{
-    this->delete_res();
-    this->delete_req();
-}
-
-void FDManager::close_fd()
-{
-    cout << "fd manager close:" << _fd << endl;
-    close(_fd);
-}
-*/

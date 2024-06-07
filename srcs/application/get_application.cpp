@@ -19,62 +19,10 @@ GetApplication::~GetApplication()
 ;
 }
 
-/*
-WebservFile *GetApplication::get_requested_file(FileDiscriptor const &fd)
-{
-    DEBUG("GetApplication::get_requested_file()");
-    WebservFile *file = NULL;
-    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    try{
-        if (this->req->is_not_executable_parent_dir()){
-            ERROR("Parent directory is not x permission:" + this->req->parent_dir_path());
-            throw HttpException("403");
-        }else if(this->req->is_directory()){
-            std::string const &host = this->req->header().get_host();
-            std::string const &relative_path= this->req->req_line().uri().path();
-            file = file_factory->make_directory_file(fd, this->req->requested_path(), relative_path, host);  DirectoryFile::from_path(this->req->requested_path(), relative_path, host);
-            if(this->location->autoindex()){
-                return (file);
-            }
-            delete file;
-            std::vector<std::string> const &index_pathes = this->location->indexes();
-
-            if (index_pathes.size() == 0){
-                ERROR("autoindex is OFF and index file is not set");
-                throw HttpException("403");
-            }
-            std::string index_path = this->location->root() + "/" + index_pathes[0];
-            MYINFO("index_path:" + index_path);
-            file =  file_factory->make_normal_file(fd, index_path, std::ios::in | std::ios::binary);
-            return (file);
-
-        }else if (Utility::is_regular_file(this->req->requested_path())){
-            file =  file_factory->make_normal_file(fd, this->req->requested_path(), std::ios::in | std::ios::binary);
-            return (file);
-        }
-        ERROR("File does not exist:" + this->req->requested_path());
-        throw HttpException("404");
-    }catch(std::invalid_argument &e){
-        delete file;
-        ERROR("GetApplication::get_requested_file:" + string(e.what()));
-        throw HttpException("404");
-    }
-}
-*/
-
-
 bool GetApplication::is_cgi() const
 {
     return (false);
 }
-
-/*
-ApplicationResult *GetApplication::get_result()
-{
-    return (this->result_);
-}
-*/
-
 
 string GetApplication::check_content(string const &filepath)
 {
@@ -122,12 +70,9 @@ string GetApplication::get_index_path(Request *req, ConfigLocation const *locati
     DEBUG("get_index_path has_index:" + location->index());
     if(location->index()){
         string index_path = req->requested_path() + "/" +  location->index_file();
-        DEBUG("index_path=" + index_path);
         if(Utility::is_regular_file(index_path)){
             *is_existed = true;
-            DEBUG("get_index_path No.3 has_index:" + location->index());
             if(Utility::is_readable_file(index_path)){
-            DEBUG("get_index_path No.4 has_index:" + location->index());
                 return (index_path);
             }
         }
@@ -171,7 +116,6 @@ bool GetApplication::execute(WebservEntity *entity)
 
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
     FileDiscriptor const &fd = entity->fd();
-    //Request *req = entity->request();
     WebservFile *file = NULL;
     string extension = "";
     StatusCode code;
@@ -188,10 +132,8 @@ bool GetApplication::execute(WebservEntity *entity)
             throw HttpException("403");
         }
     }else if(req->is_directory()){
-        DEBUG("directory No.1");
         bool is_existed = false;
         string index_path = get_index_path(req, location, &is_existed);
-        DEBUG("directory No.2 index path:" + index_path);
 
         if(index_path != ""){
             file = file_factory->make_normal_file(fd, index_path, std::ios::in | std::ios::binary);
@@ -200,10 +142,8 @@ bool GetApplication::execute(WebservEntity *entity)
         }else if(is_existed){
             throw HttpException("403");
         }else if(location->autoindex()){
-            //if(location->autoindex())
             std::string const &host = req->header().get_host();
             std::string const &relative_path= req->req_line().uri().path();
-            //file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
             WebservFile *directory_file = file_factory->make_directory_file(fd, req->requested_path(), relative_path, host);
             file = file_factory->make_socket_chunk_file_for_autoindex(entity->fd(), directory_file);
             file->set_chunk(true);
@@ -212,25 +152,24 @@ bool GetApplication::execute(WebservEntity *entity)
         }
         else
         {
-            DEBUG("directory No.4  default path:");
             is_existed = false;
             string index_path = get_default_index_path(req, &is_existed);
-            DEBUG("directory No.5  default path:" + index_path);
 
             if(index_path != ""){
                 file = file_factory->make_normal_file(fd, index_path, std::ios::in | std::ios::binary);
                 code = StatusCode::from_int(200);
                 extension = GetApplication::check_content(index_path);
             }else if(is_existed){
+                ERROR("403 Error");
                 throw HttpException("403");
             }else{
+                ERROR("404 Error");
                 throw HttpException("404");
             }
         }
     }else{
+        ERROR("404 Error");
         throw HttpException("404");
-        //code = StatusCode::from_int(404);
-        //file = file_factory->make_error_file(fd, code);
     }
 
     ApplicationResult *result_ = ApplicationResult::from_status_code(entity->fd(), code, this->method);
@@ -249,131 +188,6 @@ bool GetApplication::execute(WebservEntity *entity)
     entity->set_result(result_);
     return (true);
 }
-
-
-/*
-bool GetApplication::execute(WebservEvent *event)
-{
-    DEBUG("GetApplication::execute()");
-
-    WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    FileDiscriptor const &fd = event->entity()->fd();
-    Request *req = event->entity()->request();
-    WebservFile *file = NULL;
-    string extension = "";
-    StatusCode code;
-    bool is_directory = false;
-
-    if(req->is_file())
-    {
-        const string &file_path = req->requested_path();
-        if(Utility::is_readable_file(file_path)){
-            code = StatusCode::from_int(200);
-            //file = NormalFile::from_filepath(file_path, std::ios::in);
-            file =  file_factory->make_normal_file(fd, file_path, std::ios::in);
-            extension = GetApplication::check_content(file_path);
-        }else{
-            code = StatusCode::from_int(403);
-        }
-    }else if(req->is_directory()){
-        bool is_existed = false;
-        string index_path = get_index_path(req, &is_existed);
-
-        if(index_path != ""){
-            //file = NormalFile::from_filepath(index_path, std::ios::in);
-            file =  file_factory->make_normal_file(fd, index_path, std::ios::in);
-            code = StatusCode::from_int(200);
-            extension = GetApplication::check_content(index_path);
-        }
-        else
-        {
-            if(this->location->autoindex())
-            {
-                std::string const &host = req->header().get_host();
-                std::string const &relative_path= req->req_line().uri().path();
-                //file = DirectoryFile::from_path(req->requested_path(), relative_path, host);
-                file =  file_factory->make_directory_file(fd, req->requested_path(), relative_path, host);
-                code = StatusCode::from_int(200);
-                is_directory = true;
-            }
-            else
-            {
-                if(is_existed){
-                    code = StatusCode::from_int(403);
-                }else{
-                    code = StatusCode::from_int(404);
-                }
-            }
-        }
-    }else{
-        code = StatusCode::from_int(404);
-        //file = ErrorFile::from_status_code(code);
-        file = file_factory->make_error_file(fd, code);
-    }
-
-    this->result_ = ApplicationResult::from_status_code(code);
-    if(extension != ""){
-        this->result_->add_header(CONTENT_TYPE, extension);
-    }
-    if(file){
-        if(is_directory){
-            this->result_->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
-        }else{
-            string file_size = Utility::to_string(Utility::get_file_size(file->path()));
-            this->result_->add_header(CONTENT_LENGTH, file_size);
-        }
-    }
-    this->result_->set_file(file);
-    return (true);
-}
-*/
-
-/*
-GetApplication* GetApplication::from_location(const Config *cfg, const Request *req)
-{
-    GetApplication *app = new GetApplication();
-    app->cfg = cfg;
-    app->server = cfg->get_server(req);
-    app->location = cfg->get_location(app->server, req);
-    app->req = req;
-
-    return (app);
-}
-*/
-
-/*
-Response* GetApplication::make_response(FileDiscriptor const &fd)
-{
-    DEBUG("GetApplication::make_response()");
-    WebservFile *file = this->get_requested_file(fd);
-    if(file == NULL){
-        cout << "file is NULL" << endl;
-    }
-    Response *res = NULL;
-
-    if(this->location->is_redirect()){
-        res = Response::from_file(file);
-    }else if (this->req->is_file() || this->req->is_directory()){
-        res = Response::from_file(file);
-    }else if (this->req->is_directory()){
-        res = Response::from_file(file);
-    }else{
-        ERROR("GetApplication::make_response(): Neither file nor directory");
-        //delete file;
-        delete res;
-        throw HttpException("403");
-    }
-
-    std::map<std::string, std::string>::iterator ite = this->tmp_headers.begin();
-    std::map<std::string, std::string>::iterator end = this->tmp_headers.end();
-    while(ite != end){
-        res->add_header(ite->first, ite->second);
-        ite++;
-    }
-    return (res);
-}
-*/
-
 
 const Method &GetApplication::which() const
 {

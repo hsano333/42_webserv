@@ -36,26 +36,8 @@ SocketRepository *SocketFactory::create_socket_repository(Config *cfg)
     return (socket_repository);
 }
 
-/*
-SocketManager *SocketFactory::create(Config *cfg)
-{
-    SocketManager* manager = new SocketManager();
-    SocketRepository* socket_repository = this->create_socket_repository(cfg);
-    //cout << "repository size:" << socket_repository->size() << endl;
-
-    manager->set_base_repository(socket_repository);
-    manager->set_rw_repository(new SocketRepository());
-    return (manager);
-}
-*/
-
 SocketRepository *SocketFactory::create_from_config(Config *cfg)
 {
-    //SocketManager* manager = new SocketManager();
     SocketRepository* socket_repository = this->create_socket_repository(cfg);
-    //cout << "repository size:" << socket_repository->size() << endl;
-
-    //manager->set_base_repository(socket_repository);
-    //manager->set_rw_repository(new SocketRepository());
     return (socket_repository);
 }

@@ -39,12 +39,7 @@ class Request
         ~Request();
 
         static Request *from_fd(FileDiscriptor const &fd);
-        //char*   buf();
         void    clear_raw_buf();
-        //size_t  buf_size();
-        //char*   get_raw_buf_pointer();
-        //char*   get_raw_buf_begin();
-        //int     raw_buf_space();
         int      get_buf_body_size();
         char    *get_buf_body(size_t *size);
         void    add_buf_body_p(size_t size);
@@ -72,9 +67,6 @@ class Request
         void set_has_body(bool flag);
         bool has_body();
 
-        //void    set_buf_pos(size_t pos);
-        //
-        //
 
         void        set_path_info(std::string const &path);
         std::string const &requested_filepath() const;
@@ -82,55 +74,32 @@ class Request
         std::string const &tmp_path_info() const;
         std::string const &path_info() const;
         std::string const &parent_dir_path() const;
-        //File    get_target_file(const ConfigLocation *location);
 
         void    print_info() const;
         RequestLine const &req_line() const;
         Header const &header() const;
 
         FileDiscriptor fd() const;
-        //FileDiscriptor sockfd() const;
 
         // File Interface
-        //int open();
-        //int close();
         int read(char **buf, size_t size);
-        //int write(char **buf, size_t size);
-        //int save(char *data, size_t size);
         bool can_read();
         size_t size();
-        //bool is_chunk();
-        //int remove();
-        //std::string const &path();
 
         void set_file(WebservFile *file);
         void add_read_body_size(size_t size);
 
         void set_auth(std::string const &auth);
         std::string const &auth();
-
-        //BufferController const &get_buffer();
         WebservFile *file();
 
-        //void set_source_file(File *source);
-        //File *get_source_file();
-        //int open_source_file();
-        //int close_source_file();
-        //ssize_t get_data(char** data);
-        //
     private:
         Request();
         Request(FileDiscriptor const &fd);
 
         WebservFile *file_;
         FileDiscriptor const &fd_;
-        //FileDiscriptor sockfd_;
-        //char    raw_buf[MAX_BUF];
-        //char    raw_buf[200];
-        //int     raw_buf_point;
-        //size_t  raw_buf_pos_;
         std::vector<char> buf_body;
-        //vector<string> buf_body;
         int     buf_body_size;
         size_t  buf_body_p;
         bool    is_file_;
@@ -146,13 +115,10 @@ class Request
         std::string    tmp_path_info_;
         std::string    path_info_;
         bool           read_completed_;
-        //std::vector<char> tmp_buf;
         bool            is_cgi_;
         size_t          read_body_size_;
         bool            has_body_;
         std::string     auth_;
-        //BufferController buffer;
-        //File *source;
 
 };
 
@@ -160,28 +126,18 @@ namespace RequestBufferFunc{
     template <class FileT>
     int read(FileT *file, char **data, size_t size)
     {
-        DEBUG("RequestBufferFunc::read()");
         size_t buf_size;
         char *tmp = file->get_buf_body(&buf_size);
-        DEBUG("RequestBufferFunc::buf_size:" + Utility::to_string(buf_size));
         if(buf_size <= 0 || tmp == NULL){
             return (buf_size);
         }
         if(size > buf_size){
             size = buf_size;
         }
-        printf("Request read buf data test=*****[");
-        for(size_t i=0;i<buf_size;i++){
-            //(*data)[i] = tmp[i];
-            printf("%c", (tmp)[i]);
-        }
-        printf("]******Request read end size=%zu\n", size);
-        printf("Request read test=[[[[[");
+
         for(size_t i=0;i<size;i++){
             (*data)[i] = tmp[i];
-            printf("%c", (*data)[i]);
         }
-        printf("]]]]Request read end size=%zu\n", size);
         file->add_buf_body_p(size);
         return (size);
     }

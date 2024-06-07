@@ -15,7 +15,6 @@ class IOMultiplexing
         virtual void add(FileDiscriptor const &fd, uint32_t event) = 0;
         virtual void modify(FileDiscriptor const &fd, uint32_t event) = 0;
         virtual FileDiscriptor const &fd() = 0;
-        //virtual bool have_executable_events() = 0;
         virtual t_epoll_event *event_return_wrapper() = 0;
         virtual int executable_event_number() = 0;
 };

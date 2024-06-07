@@ -42,7 +42,6 @@ std::vector<ConfigCgi*> ConfigFactory::create_cgi(ConfigParseredData &parsered_c
     for(size_t i=0; i<parsered_cgi_data.size();i++){
         ConfigCgi *cgi = new ConfigCgi();
         parser_cgi.parser(parsered_cgi_data.raw_data(i), cgi);
-        //cgi->assign_out_properties(parsered_cgi_data.properties(i));
         cgi->check();
         cgis.push_back(cgi);
     }
@@ -53,7 +52,6 @@ std::vector<ConfigCgi*> ConfigFactory::create_cgi(ConfigParseredData &parsered_c
 std::vector<ConfigLimit*> ConfigFactory::create_limit(ConfigParseredData &parsered_limit_data)
 {
     std::vector<ConfigLimit*> limits;
-    cout << "No.1111111111111111 parsered_limit_data.size():" << parsered_limit_data.size() << endl;
     for(size_t i=0; i<parsered_limit_data.size();i++){
         ConfigLimit *limit = new ConfigLimit();
         ConfigParseredData parsered_cgi_data = parser_limit.parser(parsered_limit_data.raw_data(i), limit);
@@ -106,7 +104,6 @@ std::vector<ConfigHttp*> ConfigFactory::create_http(ConfigParseredData &parsered
         ConfigHttp *http = new ConfigHttp();
         ConfigParseredData parsered_server_http = parser_http.parser(parsered_http_data.raw_data(0), http);
         http->assign_out_properties(parsered_http_data.properties(0));
-        //ConfigServer *tmp = this->create_server(parsered_server_http);
         http->push_all(this->create_server(parsered_server_http));
         http->check();
         https.push_back(http);
@@ -114,10 +111,6 @@ std::vector<ConfigHttp*> ConfigFactory::create_http(ConfigParseredData &parsered
         ERROR("Invalid Config Error: There is no http directive or more than 2 ");
         throw std::runtime_error("config parser error:http");
     }
-    //for(size_t i=0; i<servers_http.target_strings.size();i++){
-        //ConfigServer *tmp = this->create_server(servers_http.target_strings[i]);
-        //http->servers.push_back(tmp);
-    //}
     return (https);
 }
 
@@ -126,17 +119,10 @@ Config* ConfigFactory::create(FDManager *fd_manager)
 {
     (void)fd_manager;
     Config *config = new Config(fd_manager);
-    //Config *config = new Config();
     std::string raw_data = raw_getter.get_raw_data();
     ConfigParseredData servers_http = parser_config.parser(raw_data, config);
 
     config->push_all(this->create_http(servers_http));
-    //if(servers_http.target_strings.size() == 1){
-    //}else{
-        //ERROR("Invalid Config Error: There is no http directive or more than 2 ");
-        //throw std::runtime_error("config parser error:http");
-    //}
 
-    //config->check();
     return (config);
 }

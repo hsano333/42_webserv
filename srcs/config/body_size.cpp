@@ -36,14 +36,12 @@ BodySize BodySize::from_number(ssize_t file_size)
         ERROR("BodySize error: valid file size is 1 to " + Utility::to_string(MAX_BODY_SIZE) + ". but input file_size:" + Utility::to_string(file_size));
         throw std::invalid_argument("BodySize invalid argument error");
     }
-    //object.size = file_size;
     return (BodySize(file_size));
 }
 
 
 static bool check_over(ssize_t value, ssize_t unit)
 {
-    //ssize_t byte_2G = 2u*1024u*1024u*1024u;
     if((size_t)value <= (MAX_BODY_SIZE)/unit){
         return true;
     }else{
@@ -62,14 +60,6 @@ static ssize_t get_unit_size(char c)
         return k;
     }else if(c == 'm' || c == 'M'){
         return m;
-        /*
-        if(tmp <= LONG_MAX/m){
-            tmp *= m;
-        }else{
-            ERROR("BodySize error: valid file size is 1 to INT_MAX-1. input file_size:" + Utility::to_string(file_size));
-            throw std::invalid_argument("BodySize invalid argument error");
-        }
-        */
     }else if(c == 'g' || c == 'G'){
         return g;
     }else{
@@ -130,7 +120,6 @@ BodySize BodySize::from_number_string(std::string &file_size)
 
 BodySize BodySize::from_string(std::string const &const_file_size)
 {
-    //std::string file_size = const_file_size;
     size_t size = string_to_number(const_cast<std::string&>(const_file_size), true);
     return from_number(size);
 }
@@ -203,8 +192,6 @@ TEST_CASE("HTTP_VERSION")
     CHECK(BodySize::from_number(34359738367).to_number() == 34359738367ul);
     CHECK(BodySize::from_number(34359738368).to_number() == 34359738368ul);
     CHECK_THROWS_AS(BodySize::from_number(34359738369), std::invalid_argument);
-
-
 
 }
 #endif
