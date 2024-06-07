@@ -16,7 +16,6 @@
 #include "log.hpp"
 #include "webserv_file.hpp"
 #include "normal_file.hpp"
-//#include "normal_webserv_file.hpp"
 #include "normal_reader.hpp"
 #include "stream_reader.hpp"
 #include "stream_writer.hpp"
@@ -57,11 +56,8 @@
 #include "webserv_make_response_for_post_cgi_event.hpp"
 #include "webserv_nothing_event.hpp"
 #include "webserv_timeout_event.hpp"
-//#include "webserv_waiting_cgi_out_event.hpp"
 #include "webserv_waiting_get_cgi_event.hpp"
 #include "webserv_waiting_post_cgi_event.hpp"
-//#include "directory_reader.hpp"
-//#include "socket_reader_chunked.hpp"
 #include "delete_application.hpp"
 #include "get_application.hpp"
 #include "get_cgi_application.hpp"
@@ -69,6 +65,21 @@
 #include "post_cgi_application.hpp"
 #include "delete_application.hpp"
 #include "webserv_error_event.hpp"
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <iomanip>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include "uri.hpp"
 
 #ifdef UNIT_TEST
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -88,8 +99,6 @@ __attribute__((destructor)) void f(void){
     system("leaks webserv");
 }
 
-
-// std::string base_path = "/home/sano/work/42/webserv/github/webserv/srcs/dir";
 std::string base_path = "srcs/dir";
 
 void server(Webserv& webserv)
@@ -101,11 +110,6 @@ void server(Webserv& webserv)
         webserv.reset();
     }
 }
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "uri.hpp"
 
 
 void clean_all(WebservCleaner *cleaner, EventManager *event_manager, FDManager *fd_manager, FileManager *file_manager)
@@ -121,12 +125,9 @@ void clean_all(WebservCleaner *cleaner, EventManager *event_manager, FDManager *
         ite->first.close();
         ite++;
     }
-    //fd_manager->
     DEBUG("clean_all()");
     (void)cleaner;
     (void)event_manager;
-    //event_manager->close_all_events();
-    //event_manager->close_all_events_waiting_epoll(cleaner);
 }
 
 Config *create_config(std::string &cfg_file, FDManager* fd_manager)
@@ -159,16 +160,6 @@ SocketRepository *create_sockets(Config *cfg, FDManager *fd_manager)
     return (socket_repository );
 }
 
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <iomanip>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include <stdint.h>
-#include <stdlib.h>
 
 int main(int argc, char const* argv[])
 {
@@ -242,12 +233,10 @@ int main(int argc, char const* argv[])
 
     WebservWaiter waiter(epoll_controller, event_manager, event_factory);
     WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, event_controller, fd_manager, file_manager);
-    //WebservCleaner *cleaner = new WebservCleaner(epoll_controller, event_manager, fd_manager, file_manager);
     Webserv webserv(cfg, event_factory, event_manager, event_controller, waiter, cleaner);
     while (1) {
         try{
             server(webserv);
-            DEBUG("end server communication");
             break;
         }catch(std::bad_alloc &e){
             WARNING("Webserv BadAlloc:");
@@ -270,73 +259,32 @@ int main(int argc, char const* argv[])
     delete PostCGIApplication::get_instance();
 
 
-    /*
-
-    delete DirectoryReader::get_instance();
-    delete NormalReader::get_instance();
-    delete NormalWriter::get_instance();
-    delete SocketReader::get_instance();
-    delete SocketReaderChunked::get_instance();
-    delete SocketWriter::get_instance();
-    delete StreamReader::get_instance();
-    delete StreamWriter::get_instance();
-    delete WebservFileFactory::get_instance();
-    delete Endian::get_instance();
-
-
-    delete WebservApplicationEvent::get_instance();
-    delete WebservApplicationUploadEvent::get_instance();
-    delete WebservCleanEvent::get_instance();
-    delete WebservIOGetCGIEvent::get_instance();
-    delete WebservIOPostCGIEvent::get_instance();
-    delete WebservIOSocketEvent::get_instance();
-    delete WebservKeepAliveEvent::get_instance();
-    delete WebservMakeRequestEvent::get_instance();
-    delete WebservMakeResponseEvent::get_instance();
-    delete WebservMakeResponseForGetCGIEvent::get_instance();
-    delete WebservMakeResponseForPostCGIEvent::get_instance();
-    delete WebservNothingEvent::get_instance();
-    delete WebservTimeoutEvent::get_instance();
-    delete WebservWaitingGetCGIEvent::get_instance();
-    delete WebservWaitingPostCGIEvent::get_instance();
-    */
-    DEBUG("end server communication loop No.1");
     WebservApplicationEvent::delete_myself();
     WebservApplicationUploadEvent::delete_myself();
     WebservCleanEvent::delete_myself();
-    DEBUG("end server communication loop No.12");
     WebservIOGetCGIEvent::delete_myself();
     WebservIOPostCGIEvent::delete_myself();
     WebservIOSocketEvent::delete_myself();
-    DEBUG("end server communication loop No.13");
     WebservMakeRequestEvent::delete_myself();
     WebservMakeResponseEvent::delete_myself();
     WebservMakeResponseForGetCGIEvent::delete_myself();
     WebservMakeResponseForPostCGIEvent::delete_myself();
     WebservNothingEvent::delete_myself();
     WebservTimeoutEvent::delete_myself();
-    //WebservWaitingCGIOUTEvent::delete_myself();
-    DEBUG("end server communication loop No.14");
     WebservWaitingGetCGIEvent::delete_myself();
     WebservWaitingPostCGIEvent::delete_myself();
     WebservKeepAliveEvent::delete_myself();
-    DEBUG("end server communication loop No.15");
     WebservErrorEvent::delete_myself();
-    DEBUG("end server communication loop No.2");
 
-    //delete DirectoryReader::get_instance();
     delete WebservFileFactory::get_instance();
     delete NormalReader::get_instance();
     delete NormalWriter::get_instance();
     delete SocketReader::get_instance();
-    //delete SocketReaderChunked::get_instance();
     delete SocketWriter::get_instance();
     delete StreamReader::get_instance();
     delete StreamWriter::get_instance();
     delete Endian::get_instance();
 
-
-    DEBUG("end server communication loop No.3");
 
     delete fd_manager;
     delete file_manager;
@@ -344,28 +292,12 @@ int main(int argc, char const* argv[])
     delete epoll_controller;
     delete event_manager;
     delete event_controller;
-    //delete socket_manager;
     delete cfg;
     delete event_factory;
-    //delete (normal_writer);
-    //delete (socket_writer);
-    //delete (normal_reader);
-    //delete (socket_reader);
-    DEBUG("delete No.1");
     delete socket_repository;
-    DEBUG("delete No.2");
-    //delete application_factory;
-    DEBUG("delete No.3");
-    //delete stream_reader;
     delete cgi;
-    DEBUG("delete No.4");
-    DEBUG("delete No.5");
-    DEBUG("delete No.6");
-    DEBUG("end webserv");
     delete cleaner;
     Log::delete_instance();
-
-
 
     return 0;
 }

@@ -45,11 +45,9 @@ WebservEvent *WebservIOPostCGIEvent::from_event(WebservEvent *event)
 
 WebservEvent* WebservIOPostCGIEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
 {
-    DEBUG("WebservIOPostCGIEvent::make_next_event() completed:" + Utility::to_string(event->entity()->completed()));
     DEBUG("WebservIOPostCGIEvent::make_next_event() is_cgi_read:" + Utility::to_string(event->entity()->io().is_cgi_read()));
 
     if (event->entity()->request()->read_completed() && event->entity()->io().is_cgi_read() == false){
-        DEBUG("WebservIOPostCGIEvent::make_next_event() clean");
         return (event_factory->make_clean_event(event, false));
     }
     return (event_factory->make_waiting_post_cgi(event));
@@ -82,94 +80,22 @@ void WebservIOPostCGIEvent::check_completed(WebservEntity * entity)
         }else{
             is_completed = false;
         }
-        DEBUG("WebservIOPostCGIEvent::check_completed No.1 completed:" + Utility::to_string(is_completed));
-        //if(is_completed){
-        //is_completed = true;
 
         if(is_completed){
-        DEBUG("WebservIOPostCGIEvent::check_completed No.2 completed:" + Utility::to_string(is_completed));
             char tmp[2] = {0};
             tmp[0] = EOF;
-            //tmp[0] = '\n';
             char *tmp_p = tmp;
             int result = file->write(&tmp_p, 1);
             if(result <= 0){
                 is_completed = false;
-            //}else{
-                //entity->request()->set_read_completed(true);
             }
         }
         entity->request()->set_read_completed(is_completed);
-
-        // because of returing WebservWaitingPostCGIEvent
         entity->set_completed(true);
         return ;
     }else{
         // read from CGI, write to socket
-        //WebservFile *dst = entity->io().destination_for_read();
-        bool flag = entity->response()->read_completed();
-        //bool flag = dst->completed();
-        DEBUG("WebservIOPostCGIEvent::check_completed write No.1 completed:" + Utility::to_string(flag));
-        //entity->set_completed(flag);
         entity->set_completed(true);
         return ;
     }
-    return ;
-
-    //todo 
-    //
-    //entity->set_completed(true);
-    //return 
-    //todo
-    DEBUG("WebservIOPostCGIEvent::check_completed");
-    //entity->set_completed(true);
-    //return ;
-
-    // copy from WebservIOSocketEvent
-    size_t total_size = entity->io().destination()->size();
-    DEBUG("WebservIOPostCGIEvent::check_completed size=" + Utility::to_string(total_size));
-
-    bool flag = false;
-    if(entity->io().in_out() == EPOLLIN){
-        // CGI Scriptからの読み取りのみによって決定する。
-        DEBUG("WebservIOSocketEvent::check_completed EPOLLIN");
-        WebservFile *dst = entity->io().destination_for_read();
-        flag = dst->completed();
-    }else{ //EPOLL_OUT
-        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
-        flag = entity->response()->read_completed();
-
-        /*
-            int wstatus;
-            int result = waitpid(entity->app_result()->pid().to_int(), &wstatus,   WNOWAIT );
-
-        if(result == -1){
-            DEBUG("waitpid ERROR");
-        }else{
-        DEBUG("WebservIOPostCGIEvent::check_completed EPOLLOUT No.2");
-
-
-            //flag = true;
-        if(result == -1){
-            DEBUG("waitpid ERROR");
-        }else{
-            if(WIFEXITED(wstatus)){
-                DEBUG("exited, status=" + Utility::to_string(WEXITSTATUS(wstatus)));
-            } else if (WIFSIGNALED(wstatus)) {
-                DEBUG("killed by  status=" + Utility::to_string(WTERMSIG(wstatus)));
-            } else if (WIFSTOPPED(wstatus)) {
-                DEBUG("stopped by signal =" + WSTOPSIG(wstatus));
-            } else if (WIFCONTINUED(wstatus)) {
-                DEBUG("continued\n");
-
-            }
-
-        }
-        }
-        */
-
-    }
-
-    DEBUG("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));
-    entity->set_completed(flag);
 }

@@ -1,5 +1,4 @@
 #include "webserv_timeout_event.hpp"
-//#include "webserv_cleaner.hpp"
 
 WebservTimeoutEvent::WebservTimeoutEvent()
 {
@@ -25,22 +24,6 @@ void WebservTimeoutEvent::delete_myself()
     if(WebservTimeoutEvent::singleton)
         delete WebservTimeoutEvent::singleton;
 }
-
-
-/*
-bool clean_timeout_events(WebservTimeoutEvent *event, WebservEntity *entity)
-{
-    (void)entity;
-    std::vector<WebservEvent *> timeout_events;
-
-    event->cleaner()->clean_timeout_events();
-    entity->set_completed(true);
-    //for(size_t i=0;i<timeout_events.size();i++){
-        //event->clean(timeout_events[i]->entity(), true);
-    //}
-    return (true);
-}
-*/
 
 bool none(WebservTimeoutEvent *event, WebservEntity *entity)
 {
@@ -80,7 +63,6 @@ WebservEvent *WebservTimeoutEvent::make(WebservEvent *event)
     DEBUG("WebservTimeoutEvent::make()");
     event->entity()->set_completed(true);
     WebservTimeoutEvent *timeout_event = WebservTimeoutEvent::get_instance();
-    //WebservEvent *new_event = new WebservEvent( timeout_event, clean_timeout_events, NULL);
     WebservEvent *new_event = new WebservEvent( timeout_event, none, event->entity());
     return (new_event);
 }

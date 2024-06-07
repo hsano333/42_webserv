@@ -189,8 +189,6 @@ size_t WebservIO::total_status_header_size()
 {
 
     DEBUG("WebservIO::total_status_header_size:" + Utility::to_string(this->total_status_header_size_));
-    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(&this->total_write_size_));
-    //DEBUG("WebservIO::total_write_size:" + Utility::to_string(this));
     return (this->total_status_header_size_);
 }
 

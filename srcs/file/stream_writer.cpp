@@ -9,7 +9,6 @@ StreamWriter::StreamWriter()
 
 StreamWriter::~StreamWriter()
 {
-    //delete (singleton);
 }
 
 StreamWriter* StreamWriter::singleton = NULL;
@@ -23,7 +22,6 @@ StreamWriter *StreamWriter::get_instance()
 
 int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, std::fstream *ifs)
 {
-    DEBUG("StreamWriter::write: size:" + Utility::to_string(size));
     (void)fd;
     (void)buf;
     size_t before = ifs->tellp();
@@ -33,7 +31,5 @@ int StreamWriter::write(FileDiscriptor const &fd, char const *buf, size_t size, 
         return -1;
     }
     size_t after = ifs->tellp();
-    //ifs->close();
-    DEBUG("StreamWriter:: written size:" + Utility::to_string(after - before));
     return (after - before);
 }

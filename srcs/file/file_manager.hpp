@@ -14,7 +14,6 @@ class FileManager
     public:
         FileManager();
         ~FileManager();
-        //WebservFile *make( FP_FUNC func);
         void insert(FileDiscriptor const &fd, WebservFile *event);
         void erase(FileDiscriptor const &fd);
 

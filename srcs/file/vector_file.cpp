@@ -10,12 +10,10 @@ using std::map;
 
 VectorFile::VectorFile(): max_buf_size(MAX_BUF)
 {
-    //this->buf.resize(max_buf_size);
 }
 
 VectorFile::VectorFile(size_t max_buf_size) : max_buf_size(max_buf_size)
 {
-    //this->buf.resize(max_buf_size);
 }
 
 VectorFile::~VectorFile()
@@ -28,18 +26,6 @@ VectorFile* VectorFile::from_buf(char *buf, size_t size)
     DEBUG("VectorFile::from_buf()");
     VectorFile *file = new VectorFile(size);
     file->buffer.save(buf, size);
-    //file->buf.resize(size);
-    /*
-    for(size_t i=0;i<size;i++){
-        file->buf[i] = buf[i];
-    }
-    */
-    //this->buf_size = size;
-
-    // will remove
-    //buf[size] = '\0';
-    //DEBUG("VectorFile::from_buf() buf=" + Utility::to_string(buf));
-    //file->index = size;
     return (file);
 }
 
@@ -47,114 +33,39 @@ VectorFile* VectorFile::from_ref(std::string const& buf_ref)
 {
     DEBUG("VectorFile::from_ref() size:" + Utility::to_string(buf_ref.size()));
     VectorFile *file = new VectorFile(buf_ref.size());
-    DEBUG("VectorFile::from_ref() No.1");
 
     file->buffer.save(&(buf_ref[0]), buf_ref.size());
-    //file->buf.resize(buf_ref.size());
-    /*
-    for(size_t i=0;i<buf_ref.size();i++){
-        file->buf[i] = buf_ref[i];
-    }
-    this->buf_size = buf_ref.size();
-    */
-
-    DEBUG("VectorFile::from_ref() No.2");
-    //file->index = buf_ref.size();
     return (file);
 }
 
 VectorFile* VectorFile::from_buf_size(size_t buf_size)
 {
     DEBUG("VectorFile::from_buf_size()");
-    
-    //(void)buf_size;
+
     VectorFile *file = new VectorFile(buf_size);
-    //file->buf = std::vector<char> new_buf(buf_size);
     return (file);
 }
 
 
 int VectorFile::read(char **buf, size_t size)
 {
-    DEBUG("vector file test No.1");
     if(this->state == FILE_COMPLETED_READ){
-        DEBUG("vector file test No.2");
         return (-1);
     }
-    //return (this->reader(buf, size));
 
-    DEBUG("VectorFile::read() buf_size=" + Utility::to_string(this->buffer.size()));
-        DEBUG("vector file test No.3");
-    // sizeは無視する(ポインタを渡すのでサイズの大小に関係がない)
     (void)size;
-    //this->buf.push_back('\0');
-        DEBUG("vector file test No.4");
-
-    //this->buf.push_back('\0');
-    //this->buf[this->buf.size()] = '\0';
-    //*buf = &(this->buffer[0]);
     this->buffer.ref(buf, size);
     return (this->buffer.size());
 
-    /*
-    printf("\n\nvector_file test[");
-        DEBUG("vector file test No.5");
-    for(size_t i=0;i<this->buf.size();i++){
-        printf("%c", this->buf[i]);
-    }
-    printf("]\n\n");
-    //buf[this->buf.size()-1] = '\0';
-
-    //string tmp = *buf;
-        //DEBUG("vector file test No.6 buf=" + tmp);
-    this->state = FILE_COMPLETED_READ;
-    printf("vector file buffer=%s\n", *buf);
-
-    return (this->buf.size());
-    */
 }
 
 int VectorFile::write(char **buf, size_t size)
 {
-    DEBUG("VectorFile::write() size=" + Utility::to_string(size));
     size_t current_size = this->buffer.size();
     (this->buffer.append(*buf, size));
     size_t new_size = this->buffer.size();
 
     return (int)(new_size - current_size);
-
-    /*
-    size_t buf_size = this->buffer.size();
-    if(size + buf_size > this->buf.size()){
-        ERROR("VectorFile: write exceed");
-        throw std::runtime_error("VectorFile: write exceed");
-    }
-    char *p_buf = *buf;
-    p_buf[size] = '\0';
-    DEBUG("VectorFile::write() buf=" + Utility::to_string(p_buf));
-    //size_t 
-    //size_t rest = this->max_buf_size - this->index - 1;
-    //size_t min = Utility::min(size, rest);
-    for(size_t i=0; i<size;i++){
-        //DEBUG("VectorFile::write() i=" + Utility::to_string(i));
-        //DEBUG("VectorFile::write() this->index=" + Utility::to_string(this->index));
-        this->buf[buf_size + i] = p_buf[i];
-    }
-    //DEBUG("VectorFile::write()min =" + Utility::to_string(min));
-    //DEBUG("VectorFile::write()rest=" + Utility::to_string(rest));
-    return (size);
-    */
-
-    //if(min != size){
-        //return (this->max_buf_size-this->index);
-        //WARNING("buf size=" + Utility::to_string(this->buf.size()));
-        //WARNING("max size=" + Utility::to_string(this->max_buf_size));
-        // 指定したサイズを超過した際、-1を返すことで次の処理(パーサー処理)に移行する。
-        // ステータスコードの超過なのか、あるいはbodyに入っているかどうかは
-        // 次の処理で判定する。
-        //return (-1);
-    //}
-    //return (size);
 }
 
 int VectorFile::save(char *buf, size_t size)
@@ -164,16 +75,6 @@ int VectorFile::save(char *buf, size_t size)
     this->buffer.append(buf, size);
     size_t new_size = this->buffer.size();
     return (int)(new_size - current_size);
-    /*
-    for(size_t i=0;i<size;i++){
-        this->buf.push_back(buf[i]);
-    }
-    if(this->buf.size() > max_buf_size){
-        ERROR("exceed vecotor size");
-        throw std::runtime_error("exceed vecotr size");
-    }
-    return (this->buf.size());
-    */
 }
 
 
@@ -187,19 +88,4 @@ void VectorFile::clear_read()
 {
     this->state = FILE_OPEN;
 }
-
-/*
-size_t VectorFile::change_reader(IReader *reader)
-{
-    this->reader = reader;
-}
-*/
-
-/*
-bool VectorFile::is_chunk()
-{
-    return (false);
-}
-*/
-
 

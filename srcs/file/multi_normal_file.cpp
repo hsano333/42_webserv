@@ -13,7 +13,6 @@ MultiNormalFile::MultiNormalFile(std::string const &directory_path, std::string 
     completed_(false),
     register_file_flag_(false),
     uploaded_number_of_files_(0)
-    //option(option)
 {
     this->state_ = FILE_NOT_OPEN;
 }
@@ -39,20 +38,6 @@ std::string const &MultiNormalFile::directory_path()
     return (this->directory_path_);
 }
 
-
-/*
-MultiNormalFile* MultiNormalFile::from_directory_path(std::string const &directory_path, std::ios_base::openmode mode)
-{
-    StreamReader *ireader = StreamReader::get_instance();
-    if((mode & std::ios::in) == std::ios::in){
-        MYINFO("MultiNormalFile::from_filepath() Reader");
-        return (new MultiNormalFile(ireader, directory_path, mode));
-    }
-    ERROR("MultiNormalFile::from_filepath() can't use as write file");
-    throw std::invalid_argument("MultiNormalFile::from_filepath() can't use as write file");
-}
-*/
-
 FileState const &MultiNormalFile::state()
 {
     return (this->state_);
@@ -63,22 +48,6 @@ int MultiNormalFile::open()
     DEBUG("MultiNormalFile::open()");
     this->state_ = FILE_OPEN;
     return (true);
-    /*
-    if (this->state != FILE_NOT_OPEN){
-        WARNING("MultiNormalFile::open() state is  not FILE_NOT_OPEN");
-    }
-
-    this->iofs.open(this->path().c_str(), this->option);
-    if (this->iofs.is_open()){
-        this->state = FILE_OPEN;
-        return (0);
-    }else{
-        ERROR("can't open file:" + this->path());
-        this->state = FILE_ERROR;
-        throw std::runtime_error("can't open file");
-    }
-    */
-    return (-1);
 }
 
 int MultiNormalFile::close()
@@ -100,7 +69,6 @@ int MultiNormalFile::write(char **buf, size_t size)
 {
     DEBUG("MultiNormalFile::write size:" + Utility::to_string(size));
     if(file){
-        DEBUG("MultiNormalFile::write No.2 size:" + Utility::to_string(size));
         return (file->write(buf, size));
     }
     return (-1);
@@ -112,7 +80,6 @@ std::string const &MultiNormalFile::path()
         this->file->path();
     }
     return (this->directory_path_);
-    //return (this->file);
 }
 
 FileDiscriptor const &MultiNormalFile::fd()
@@ -147,7 +114,6 @@ bool MultiNormalFile::can_write_file()
     if(this->file == NULL){
         return (false);
     }
-    DEBUG("MultiNormalFile::can_write_file No.2");
     StatusCode &status = this->uploaded_files_[this->file];
     if(status.to_int() == 200){
         return (true);
@@ -157,9 +123,6 @@ bool MultiNormalFile::can_write_file()
 
 void MultiNormalFile::set_file(WebservFile *file)
 {
-    //if(!this->file){
-        //this->register_file(file, 200);
-    //}
     this->file = file;
 }
 
@@ -238,9 +201,3 @@ void MultiNormalFile::set_uploaded_number_of_files(size_t size){
     this->uploaded_number_of_files_ = size;
 }
 
-/*
-std::string &MultiNormalFile::path()
-{
-    this->file->path();
-}
-*/

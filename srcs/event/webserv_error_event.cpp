@@ -37,8 +37,6 @@ namespace free_func{
     bool handle_error(WebservErrorEvent *event, WebservEntity *entity)
     {
         (void)event;
-        Response const *current_res = entity->response();
-        DEBUG("WebservErrorEvent handle_error() delete response address:" + Utility::to_string(current_res));
         StatusCode &code = entity->error_code();
         DEBUG("WebservErrorEvent handle_error() code:" + code.to_string());
 
@@ -62,10 +60,7 @@ namespace free_func{
             }else if(code.to_int() == 401){
                 res->add_header(WWW_AUTHENTICATE, AUTHENTICATE_BASIC);
             }else if(code.to_int() >= 300 && code.to_int() < 400){
-
-                DEBUG("Redirect No.2");
                 if(location->is_redirect()){
-                DEBUG("Redirect No.3");
                     res->add_header(LOCATION, location->redirect().second);
                 }else{
                     code = StatusCode::from_int(500);
@@ -81,42 +76,16 @@ namespace free_func{
         }
 
         entity->set_response(res);
-
         return (true);
-        //if(current_res){
-            //current_res->set_satus_code(code);
-            //delete current_res;
-            //entity->set_response(NULL);
-        //}
-
-        WebservFileFactory *file_factory =  WebservFileFactory::get_instance();
-        WebservFile *file = file_factory->make_error_file(entity->fd(), code);
-        /*
-        if(entity->app_result() != NULL){
-            delete entity->app_result();
-            entity->set_result(NULL);
-        }
-        */
-        ApplicationResult *result = ApplicationResult::from_status_code(entity->fd(), code, "NONE");
-        result->set_file(file);
-        entity->set_result(result);
-
-        return (true);
-
     }
 }
 
 WebservEvent *WebservErrorEvent::from_event(WebservEvent *event, StatusCode &code)
 {
     DEBUG("WebservErrorEvent::from_event");
-    //Response const *current_res = event->entity()->response();
     WebservErrorEvent *error_event = WebservErrorEvent::get_instance();
     event->entity()->set_error_code(code);
-    //WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
-
     return (new WebservEvent( error_event, free_func::handle_error, event->entity(), TIMEOUT_EVENT));
-
-    //return (new_event);
 }
 
 WebservEvent* WebservErrorEvent::make_next_event(WebservEvent* event, WebservEventFactory *event_factory)
@@ -125,16 +94,10 @@ WebservEvent* WebservErrorEvent::make_next_event(WebservEvent* event, WebservEve
     (void)event_factory;
     (void)event;
 
-    //SocketWriter *socket_writer = SocketWriter::get_instance();
     Response *res = event->entity()->response();
     WebservFileFactory *file_factory =  WebservFileFactory::get_instance();
-    //WebservFile *dst = file_factory->make_socket_file(event->entity()->fd(), event->entity()->fd(), socket_writer, NULL);
-    //WebservFile *result_file = file_factory->make_webserv_file_regular(event->entity()->fd(), event->entity()->app_result());
-
     WebservFile *file = file_factory->make_webserv_file_regular(event->entity()->fd(), res);
     return (event_factory->make_io_socket_event_as_write(event, file));
-    //return (event_factory->make_making_response_event(event, result_file, dst));
-    //return (WebservMakeResponseEvent::from_event(event, result_file, dst));
 }
 
 E_EpollEvent WebservErrorEvent::epoll_event(WebservEvent *event)

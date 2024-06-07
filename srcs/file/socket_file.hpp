@@ -26,7 +26,6 @@ class SocketFile
         BufferController const &get_buffer();
         bool can_read();
         FileState   state;
-        //void save(std::vector<char> &buffer);
 
         size_t chunked_size();
         void set_chunked_size(size_t size);
@@ -43,7 +42,6 @@ class SocketFile
         size_t chunked_size_;
         bool   is_chunked_;
         size_t total_write_size;
-        //std::vector<char> tmp_buf;
 };
 
 namespace BufferFunc{
@@ -51,7 +49,6 @@ namespace BufferFunc{
 
     template <class FileT>
     int write(FileT *file, char **data, size_t size){
-        DEBUG("BufferFunc::write()");
         if(file->file()){
             int result = (file->file()->write(data, size));
             file->clear_file();
@@ -61,18 +58,14 @@ namespace BufferFunc{
     }
     template <class FileT>
     int read(FileT *file, char **data, size_t size){
-        DEBUG("BufferFunc::read()");
         if(file->file()){
             int result = (file->file()->read(data, size));
             if(result <= 0){
-                DEBUG("BufferFunc::read() No.1");
                 file->clear_file();
             }else{
-                DEBUG("BufferFunc::read() No.2");
                 return (result);
             }
         }
-            DEBUG("BufferFunc::read() No.3");
         return (file->read(data, size));
     }
 
@@ -81,11 +74,8 @@ namespace BufferFunc{
         DEBUG("BufferFunc::can_read()");
         BufferController const buffer = file->get_buffer();
         if(buffer.size() > 0){
-            DEBUG("BufferFunc::can_read() True No.1");
             return (true);
         }else if(file->file()){
-            //BufferController const buffer2 = file->file()->get_buffer();
-            DEBUG("BufferFunc::read() True No.2");
             return (file->file()->can_read());
         }
         return (false);

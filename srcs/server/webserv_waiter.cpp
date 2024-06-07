@@ -46,7 +46,6 @@ void WebservWaiter::fetch_events()
         int event_size = io_multi_controller->executable_event_number();
         t_epoll_event *io_event = io_multi_controller->event_return_wrapper();
         for(int i=0;i<event_size;i++){
-            MYINFO("WebservWaiter::fetch_event() event_manager->check_timeout():" + Utility::to_string(event_manager->check_timeout()));
             WebservEvent *event = this->event_factory->from_epoll_event(io_event[i]);
             if(event){
                 event->update_time();
@@ -62,28 +61,19 @@ void WebservWaiter::fetch_events()
     std::set<WebservEvent *>::iterator ite = killed_events.begin();
     std::set<WebservEvent *>::iterator end = killed_events.end();
 
-    MYINFO("WebservWaiter::fetch_event() killed_events count:" + Utility::to_string(killed_events.size()));   //for(size_t i=0;i<timeout_events.size();i++){
     while(ite != end){
         WebservEvent *event;
         if((*ite)->entity()->event_error() == Timeout){
             (*ite)->entity()->set_force_close(true);
             DEBUG("DEBUG waiter check True timeout");
-            //event = event_factory->make_timeout_event(*ite);
             Request *req = (*ite)->entity()->request();
-            //DEBUG("DEBUG waiter check True timeout has_body()=" + Utility::to_string(req->has_body()));
             if((req && req->has_body() == false) || (req && req->read_completed())){
-                DEBUG("timeout 504");
-                // timeout in server process
                 event = event_factory->make_event_from_http_error(*ite, "504");
             }else{
-                DEBUG("timeout 408");
-                // timeout in waiting request
                 event = event_factory->make_event_from_http_error(*ite, "408");
             }
-            //event->entity()->set_force_close(true);
         }else if((*ite)->entity()->event_error() == Timeout2){
-            DEBUG("DEBUG waiter check True died child");
-            //event = event_factory->make_event_from_http_error(*ite, "500");
+            DEBUG("DEBUG waiter check Timeout2");
             event = this->event_factory->make_clean_event(*ite, true);
         }else if((*ite)->entity()->event_error() == DiedChild){
             DEBUG("DEBUG waiter check True died child");
@@ -94,7 +84,4 @@ void WebservWaiter::fetch_events()
     }
     return ;
 }
-
-
-
 

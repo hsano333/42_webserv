@@ -1,5 +1,3 @@
-
-//#include "object_file.hpp"
 #include "global.hpp"
 
 using std::string;
@@ -20,7 +18,6 @@ ResponseFile::~ResponseFile()
 ResponseFile* ResponseFile::from_status_code(StatusCode const &code)
 {
     ResponseFile *file = new ResponseFile();
-    //file.code = code;
 
     const std::string str1 = "<div>\
   <div style=\"text-align:center;\">\
@@ -34,10 +31,6 @@ ResponseFile* ResponseFile::from_status_code(StatusCode const &code)
 </div>";
 
     file->text = str1 + code.to_string() + str2 + string(code.message()) + str3;
-    //j.file->text = str1;
-    //std::cout << code.to_string() << std::endl;
-    //cout << "str:" << page.text << endl;
-
     return (file);
 }
 
@@ -53,9 +46,7 @@ int ResponseFile::read(char **buf, size_t size)
     if (this->state != FILE_OPEN){
         return (0);
     }
-    std::cout << "ResponseFile::read No.3" << std::endl;
     *buf = const_cast<char*>(&(this->text[0]));
-    std::cout << "ResponseFile::read No.4:" << this->text << std::endl;
 
     this->state = FILE_CLOSE;
     return this->text.size();
@@ -101,7 +92,6 @@ bool ResponseFile::is_chunk()
 
 int ResponseFile::remove()
 {
-    // error file is not exist
     return (-1);
 }
 

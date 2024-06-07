@@ -11,19 +11,6 @@ WebservEntity::WebservEntity() : req_(NULL), res_(NULL), cfg_(NULL), app_(NULL),
 WebservEntity::~WebservEntity()
 {
     DEBUG("WebservEntity() Destructor address:" + Utility::to_string(this));
-    /*
-    DEBUG("WebservEntity() Destructor request address:" + Utility::to_string(this->req_));
-    if(this->req_)
-        delete this->req_;
-    DEBUG("WebservEntity() Destructor No.1 response address:" + Utility::to_string(this->res_));
-    if(this->res_)
-        delete this->res_;
-    DEBUG("WebservEntity() Destructor No.2");
-    */
-    DEBUG("WebservEntity() Destructor No.1 response address:" + Utility::to_string(this->app_result_));
-    //if(this->app_result_)
-        //delete this->app_result_;
-    //delete this->app_;
 }
 
 
@@ -71,11 +58,6 @@ void WebservEntity::set_result(ApplicationResult *result)
     if(this->app_result_ == result){
         return ;
     }
-    if(this->app_result_){
-        // must not delete because of double free;
-        //delete this->app_result_;
-
-    }
     this->app_result_ = result;
 }
 
@@ -83,10 +65,6 @@ void WebservEntity::set_request(Request *req)
 {
     if(this->req_ == req){
         return ;
-    }
-    if(this->req_ != NULL){
-        // must not delete because of double free;
-        //delete this->req_;
     }
     this->req_ = req;
 }
@@ -96,11 +74,6 @@ void WebservEntity::set_response(Response *res)
     DEBUG("WebservEntity::set_response address:" + Utility::to_string(res));
     if(this->res_ == res){
         return ;
-    }
-    DEBUG("WebservEntity::set_response No.1 address:" + Utility::to_string(res));
-    if(this->res_){
-        // must not delete because of double free;
-        //delete this->res_;
     }
     this->res_ = res;
 }

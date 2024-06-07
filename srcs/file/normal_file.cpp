@@ -43,12 +43,9 @@ NormalFile::~NormalFile()
 {
     DEBUG("NormalFile Destructor");
     if (this->state == FILE_OPEN || this->state == FILE_READING){
-        DEBUG("NormalFile Destructor No.1");
         ::close(fd.to_int());
         this->state = FILE_NOT_OPEN;
-        DEBUG("NormalFile Destructor No.2");
     }
-        DEBUG("NormalFile Destructor No.3");
 }
 
 

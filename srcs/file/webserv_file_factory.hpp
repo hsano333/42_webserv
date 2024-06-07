@@ -23,24 +23,6 @@
 #include <cstdio>
 #include <stdlib.h>
 
-
-
-
-
-/*
-namespace DummyFunc{
-int open_dummy();
-int close_dummy();
-int remove_dummy();
-bool can_read_dummy();
-int read_dummy(char **data, size_t size);
-int write_dummy(char **data, size_t size);
-//int remove_dummy();
-bool can_read_dummy();
-string const &path_dummy();
-};
-*/
-
 typedef int(* FUNC)(void);
 typedef int(* IO_FUNC)(char **data, size_t size);
 typedef bool(* BOOL_FUNC)();
@@ -52,8 +34,6 @@ class WebservFileFactory
         static WebservFileFactory *get_instance(FileManager *file_manager);
         static WebservFileFactory *get_instance();
         ~WebservFileFactory();
-        //File *make();
-        //
         template <class FileT>
         WebservFile *make_webserv_directory_file(FileDiscriptor const &fd, FileT *file);
         template <class FileT>
@@ -66,9 +46,7 @@ class WebservFileFactory
         template <class FileT>
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *));
         template <class FileT>
-        //WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, FUNC open, FUNC close, IO_FUNC read, IO_FUNC write, FUNC remove, BOOL_FUNC can_read, STRING_FUNC path);
         WebservFile *make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), bool(*  can_write)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *));
-        //
         WebservFile *make_normal_file(FileDiscriptor const &fd, std::string const &filepath, std::ios_base::openmode mode);
         WebservFile *make_pipe_file(FileDiscriptor const &fd, FileDiscriptor const &pipe_fd , IReader *reader);
         WebservFile *make_multi_normal_file(std::string const &directory_path, std::string const &boundary, FileDiscriptor const &fd);
@@ -96,7 +74,6 @@ class WebservFileFactory
         template<typename FilePointer> 
         WebservFile *make_dummy_file(FileDiscriptor const &fd, FilePointer *file);
 
-        // for dummy_func; not use;
         static string string_ref;
     private:
         WebservFileFactory();
@@ -333,11 +310,8 @@ WebservFile *WebservFileFactory::make_webserv_file_regular(FileDiscriptor const 
     return (new_file);
 }
 
-//WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *))
-
 
 template <class FileT>
-//WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag))
 WebservFile *WebservFileFactory::make_webserv_file(FileDiscriptor const &fd, FileT *file, int(* open)(FileT *), int(*  read)(FileT *, char **data, size_t size), int(*  write)(FileT *, char **data, size_t size), int(* close)(FileT *),  int(*  remove)(FileT *), bool(*  can_read)(FileT *), bool(*  can_write)(FileT *), string const&(*  path)(FileT *), size_t(size)(FileT *), bool(is_chunk)(FileT *), void(set_chunk)(FileT *, bool flag), bool(completed)(FileT *) )
 {
     WebservFile *new_file = new WebservFile(file, open, read, write, close, remove, can_read, can_write, path, size, is_chunk, set_chunk, completed);

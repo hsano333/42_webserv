@@ -21,7 +21,6 @@ class NormalFile
 {
     public:
         ~NormalFile();
-        //static NormalFile* from_filepath(IReader* iread, std::string &filepath, RWOption option);
         static NormalFile* from_filepath(std::string const &filepath, std::ios_base::openmode mode);
         int open();
         int close();
@@ -37,13 +36,11 @@ class NormalFile
 
     private:
         NormalFile();
-        //NormalFile(IReader* iread, std::string const &filepath, RWOption option);
         NormalFile(IReader* iread, std::string const &filepath, std::ios_base::openmode option);
         NormalFile(IWriter* iwriter, std::string const &filepath, std::ios_base::openmode option);
         IReader *ireader;
         IWriter *iwriter;
         std::string filepath;
-        //RWOption    option;
         std::ios_base::openmode option;
         FileDiscriptor fd;
         FileState   state;

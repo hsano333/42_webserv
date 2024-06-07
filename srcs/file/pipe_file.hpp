@@ -23,7 +23,6 @@ class PipeFile
         int open();
         int close();
         WebservFile *file();
-        //bool can_read();
         FileState   state;
 
         size_t chunked_size();
@@ -41,35 +40,6 @@ class PipeFile
         size_t chunked_size_;
         bool   is_chunked_;
         size_t total_write_size;
-        //std::vector<char> tmp_buf;
 };
-
-/*
-namespace BufferFunc{
-    template <class FileT>
-    int write(FileT *file, char **data, size_t size){
-        DEBUG("BufferFunc::write()");
-        if(file->file()){
-            int result = (file->file()->write(data, size));
-            file->clear_file();
-            return (result);
-        }
-        return (file->write(data, size));
-    }
-    template <class FileT>
-    int read(FileT *file, char **data, size_t size){
-        DEBUG("BufferFunc::read()");
-        if(file->file()){
-            int result = (file->file()->read(data, size));
-            if(result <= 0){
-                file->clear_file();
-            }else{
-                return (result);
-            }
-        }
-        return (file->read(data, size));
-    }
-}
-*/
 
 #endif

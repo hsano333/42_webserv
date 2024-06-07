@@ -37,28 +37,9 @@ WebservEvent *WebservMakeResponseForGetCGIEvent::from_event(WebservEvent *event)
     DEBUG("WebservMakeResponseForGetCGIEvent::from_fd");
     WebservMakeResponseForGetCGIEvent *res_event = WebservMakeResponseForGetCGIEvent::get_instance();
     WebservEvent *new_event = new WebservEvent( res_event, io_work_reverse_io<WebservMakeResponseForGetCGIEvent>, event->entity());
-    //new_event->entity()->io().set_source(src);
-    //new_event->entity()->io().set_destination(dst);
-    //WebservMakeResponseForGetCGIEvent *io_event = WebservMakeResponseForGetCGIEvent::get_instance();
-    //WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservMakeResponseForGetCGIEvent>, event->entity());
     return (new_event);
 }
 
-/*
-WebservEvent *WebservMakeResponseForGetCGIEvent::from_fd(FileDiscriptor &write_fd, FileDiscriptor &read_fd, WebservFile *read_src, WebservFile *read_dst, WebservFile *write_src, WebservFile *write_dst, WebservEvent * event)
-{
-    DEBUG("WebservMakeResponseForGetCGIEvent::from_fd");
-    WebservMakeResponseForGetCGIEvent *io_event = WebservMakeResponseForGetCGIEvent::get_instance();
-    WebservEvent *new_event =  new WebservEvent( io_event, dummy_func<WebservMakeResponseForGetCGIEvent>, event->entity());
-    new_event->entity()->io().set_read_io(read_src, read_dst);
-    new_event->entity()->io().set_write_io(write_src, write_dst);
-
-    new_event->entity()->io().set_read_fd(read_fd);
-    new_event->entity()->io().set_write_fd(write_fd);
-    new_event->entity()->io().switching_io(EPOLLIN);
-    return (new_event);
-}
-*/
 
 Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationResult *result, WebservEntity *entity)
 {
@@ -72,28 +53,6 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
         throw HttpException("500");
     }
 
-    cout << "cgi read_size:" << read_size << endl;
-    cout << "cgi data:[" <<  data <<  "]" << endl;
-    //cout << "cgi body_p:[" << body_p <<  "]" << endl;
-
-
-    printf("data=[[[[[[[[");
-    for(int i=0;i<read_size;i++){
-        if((data)[i] == '\r'){
-            printf("R");
-        }else if((data)[i] == '\n'){
-            printf("N");
-        }else{
-            printf("%c", (data)[i]);
-        }
-    }
-    printf("]\nbuffer size =[%d]\n\n", read_size);
-
-
-
-
-    // RFC3875にはNL(New Line)の具体的な定義がないため、
-    // 改行文字はLFとする(Linuxでの運用を想定しているため)
     char *body_p = Utility::strnstr(data, NL2_CGI, read_size);
     if(!body_p){
         ERROR("CGI Statement Error: not find LFLF(double New Line)");
@@ -109,24 +68,15 @@ Response* WebservMakeResponseForGetCGIEvent::make_response_for_cgi(ApplicationRe
 
 
     Split headers_line(data, NL_CGI, false, true);
-    for(size_t i=0;i<headers_line.size();i++){
-        cout << "headers_line[" << i << "]=" << headers_line[i] << endl;
-    }
     IReader *reader = NormalReader::get_instance();
 
     WebservFileFactory *file_factory = WebservFileFactory::get_instance();
-    //WebservFile *file = file_factory->make_socket_file(result->cgi_out(), NULL, reader );
     WebservFile *file = file_factory->make_pipe_file(entity->fd(),  result->cgi_out(), reader);
     Request const *req = entity->request();
     ConfigServer const *server = entity->config()->get_server(req);
     Response *res = Response::from_cgi_header_line(entity->fd(), headers_line, file);
 
     int tmp_size = read_size - header_size - NL_OFFSET;
-    cout << "body_p[2+i]:[" ;
-    for(int i=0;i<tmp_size;i++){
-        cout << body_p[NL_OFFSET+i];
-    }
-    cout << "]" << endl;
     res->set_buf_body(body_p + NL_OFFSET, tmp_size);
     if(!res->check_body_size(server))
     {
@@ -168,48 +118,10 @@ WebservEvent* WebservMakeResponseForGetCGIEvent::make_next_event(WebservEvent* e
 
     entity->set_response(res);
 
-    //WebservFile *read_dst = entity->io().destination_for_read();
     WebservFile *read_dst = file_factory->make_socket_file(event->entity()->fd(), event->entity()->fd(), SocketWriter::get_instance(), NULL);
     entity->io().set_write_io(res_file, read_dst);
-    //read_dst->open();
-    /*
-
-    char buf[2000]={0};
-    char *buf_p = &(buf[0]);
-    int read_result = res_file->read(&buf_p, 1000);
-    int write_result = 0;
-    if(read_result > 0){
-        write_result = read_dst->write(&buf_p, read_result);
-    }
-    printf("result=%d, buf_p=[%s], write_result=%d\n", read_result, buf_p, write_result);
-    read_result = res_file->read(&buf_p, 1000);
-    if(read_result > 0){
-        write_result = read_dst->write(&buf_p, read_result);
-    }
-    printf("result=%d, buf_p=[%s], write_result=%d\n", read_result, buf_p, write_result);
-    read_result = res_file->read(&buf_p, 1000);
-    if(read_result > 0){
-        write_result = read_dst->write(&buf_p, read_result);
-    }
-    printf("result=%d, buf_p=[%s], write_result=%d\n", read_result, buf_p, write_result);
-    read_result = res_file->read(&buf_p, 1000);
-    if(read_result > 0){
-        write_result = read_dst->write(&buf_p, read_result);
-    }
-    printf("result=%d, buf_p=[%s], write_result=%d\n", read_result, buf_p, write_result);
-    */
-
-
-    //entity->io().set_read_fd(res->get_file()->fd());
-
-    //if(event->entity()->io().in_out() == EPOLLIN){
-        //DEBUG("WebservMakeResponseForGetCGIEvent::make_next_event() No.1");
-        //return (event_factory->make_making_response_event(event, event->entity()->io().destination_for_read()));
-    //}
-    //return (event_factory->make_waiting_out_cgi(event, write_src, read_dst, result));
 
     return (event_factory->make_io_socket_for_get_cgi(event));
-    //return (event);
 }
 
 E_EpollEvent WebservMakeResponseForGetCGIEvent::epoll_event(WebservEvent *event)
@@ -218,34 +130,10 @@ E_EpollEvent WebservMakeResponseForGetCGIEvent::epoll_event(WebservEvent *event)
     DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event()");
 
     if (event->entity()->completed()){
-        DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
         return (EPOLL_WRITE);
     }
-    //return (EPOLL_NONE);
     return (EPOLL_FOR_CGI_WAIT_CGI);
 
-    /*
-    if (event->entity()->completed()){
-        DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
-        return (EPOLL_NONE);
-    }
-    return (EPOLL_FOR_CGI);
-
-
-    DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event()");
-    //return (EPOLL_FOR_CGI);
-    if(event->entity()->io().in_out() == EPOLLIN){
-        if (event->entity()->completed()){
-            DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.1");
-            return (EPOLL_NONE);
-        }else{
-            DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.2");
-            return (EPOLL_READ);
-        }
-    }
-            DEBUG("WebservMakeResponseForGetCGIEvent::epoll_event() No.3");
-    return (EPOLL_NONE);
-    */
 }
 
 void WebservMakeResponseForGetCGIEvent::check_completed(WebservEntity * entity)
@@ -253,8 +141,5 @@ void WebservMakeResponseForGetCGIEvent::check_completed(WebservEntity * entity)
     WebservFile *dst = entity->io().destination_for_write();
     bool flag = dst->completed();
     DEBUG("WebservMakeResponseForGetCGIEvent::check_completed flag:" + Utility::to_string(flag));
-    //if(flag == false){
-
-    //}
     entity->set_completed(flag);
 }

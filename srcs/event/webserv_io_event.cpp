@@ -3,28 +3,9 @@
 bool write_buffer_data(WebservEntity *entity, char *buf_p)
 {
     DEBUG("write_buffer_data()");
-    //char buf[MAX_READ_SIZE+1];
-    //char *buf_p = &(buf[0]);
     WebservFile *destination = entity->io().destination();
     size_t loaded_size = entity->io().load(&buf_p);
-    /*
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("-----------------------------------------\n");
-    printf("write buffer test buf=[");
-    size_t tmp_size = loaded_size;
-    int i=0;
-    while(tmp_size > 0){
-        printf("%c", (buf_p)[i]);
-        i++;
-        tmp_size--;
-    }
-    printf("]\nbuffer size =[%zu]\n\n", loaded_size);
-    */
+
     if(loaded_size != 0){
         ssize_t write_size = destination->write(&buf_p, loaded_size);
         if(write_size < 0){

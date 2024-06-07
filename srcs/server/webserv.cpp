@@ -1,4 +1,3 @@
-
 #include "webserv.hpp"
 #include <errno.h>
 #include <string.h>
@@ -87,49 +86,35 @@ void Webserv::communication()
                 DEBUG("start handle() event address:" + Utility::to_string(event));
                 handle(event);
             }catch(ConnectionException &e){
-                ERROR("ConnectionException fd:" + Utility::to_string(event->entity()->fd().to_string()));
                 ERROR("ConnectionException:" + Utility::to_string(e.what()));
-                event_manager->add_events_will_deleted(event->entity()->fd(), event);
 
-                //event = this->event_factory->make_event_from_http_error(event, e.what());
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
                 event = this->event_factory->make_clean_event(event, true);
                 handle(event);
-                //this->event_manager->push(next_event);
             }catch(HttpException &e){
                 ERROR("HttpException:" + Utility::to_string(e.what()));
 
-                // delete current event, and make new event for error process;
                 event_manager->add_events_will_deleted(event->entity()->fd(), event);
                 event = this->event_factory->make_event_from_http_error(event, e.what());
                 handle(event);
-                //delete event;
-                //event = error_event;
-
-                /*
-                this->event_manager->push(next_event);
-                try{
-                    this->event_controller->change_write_event(next_event);
-                }catch(std::runtime_error &e){
-                    ERROR("IO Error in HttpException: end event");
-                    next_event = this->event_factory->make_clean_event(event, true);
-                    this->event_manager->push(next_event);
-                }
-                */
             }catch(std::runtime_error &e){
-                WARNING("Wevserv RuntimeError:");
-                WARNING(e.what());
-                next_event = this->event_factory->make_clean_event(event, false);
-                //this->event_manager->push(next_event);
+                ERROR("RunTimeError:" + Utility::to_string(e.what()));
+
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
+                event = this->event_factory->make_event_from_http_error(event, "500");
+                handle(event);
             }catch(std::invalid_argument &e){
-                WARNING("Wevserv InvalidArgument:");
-                WARNING(e.what());
-                next_event = this->event_factory->make_clean_event(event, false);
-                //event_manager->push(next_event);
+                ERROR("InvalidArgument:" + Utility::to_string(e.what()));
+
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
+                event = this->event_factory->make_event_from_http_error(event, "500");
+                handle(event);
             }catch(std::exception &e){
-                WARNING("Wevserv Exception:");
-                WARNING(e.what());
-                next_event = this->event_factory->make_clean_event(event, false);
-                //event_manager->push(next_event);
+                ERROR("Exception:" + Utility::to_string(e.what()));
+
+                event_manager->add_events_will_deleted(event->entity()->fd(), event);
+                event = this->event_factory->make_event_from_http_error(event, "500");
+                handle(event);
             }
 
 
@@ -176,7 +161,7 @@ void Webserv::communication()
             if(this->cleaner->delete_event(event)){
 #ifdef TEST
                 cnt++;
-                if(cnt > 7){
+                if(cnt > 50){
                     DEBUG("exit_flag True");
                     exit_flag = true;
                     break;

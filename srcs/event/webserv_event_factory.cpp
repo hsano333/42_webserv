@@ -104,7 +104,6 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             }
             MYINFO("WebservEvent::from_epoll_event() accept request fd:" + fd.to_string() + ",and new epoll_fd:" + io_fd.to_string());
             this->fd_manager->add_socket_and_epoll_fd(io_fd, fd);
-            //this->event_manager->add_event_waiting_epoll(fd, NULL);
             this->io_multi_controller->add(io_fd, EPOLLIN  | EPOLLONESHOT );
 
             return (NULL);
@@ -112,30 +111,9 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
             MYINFO("WebservEvent::from_epoll_event() fd:" + fd.to_string() + " is registred");
             WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
             if(cached_event == NULL || cached_event->which() == KEEP_ALIVE_EVENT){
-                //if(cached_event && cached_event->which() == KEEP_ALIVE_EVENT){
                 if(cached_event){
                     MYINFO("WebservEvent::from_epoll_event() delete keep alive event fd:" + fd.to_string());
-                    //WebservEntity *entity = cached_event->entity();
-
-                    //this->fd_manager->close_socket(fd);
-                    //this->fd_manager->close_fd(fd);
                     this->event_manager->erase_events_will_deleted_event(fd);
-                    /*
-                    if(cached_event->entity()->io().get_write_fd().to_int() > 0){
-                        DEBUG("close cgi pipe:" + cached_event->entity()->io().get_write_fd().to_string());
-                        cached_event->entity()->io().get_write_fd().close();
-                    }
-                    if(cached_event->entity()->io().get_read_fd().to_int() > 0){
-                        DEBUG("close cgi pipe:" + cached_event->entity()->io().get_write_fd().to_string());
-                        cached_event->entity()->io().get_read_fd().close();
-                    }
-                    */
-
-                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event No.1");
-                    //delete entity;
-                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event No.2");
-                    //delete cached_event;
-                    MYINFO("WebservEvent::from_epoll_event() delete keep alive event No.3");
                 }
 
                 FileDiscriptor sockfd = fd_manager->get_sockfd(fd);
@@ -175,13 +153,16 @@ WebservEvent *WebservEventFactory::from_epoll_event(t_epoll_event const &event_e
         return (cached_event);
     }else if(event_epoll.events & EPOLLERR){
         WARNING("Epoll event type is EPOLLERR");
-        //todo
+        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+        this->make_clean_event(cached_event, true);
     }else if(event_epoll.events & EPOLLHUP){
         WARNING("Epoll event type is EPOLLHUP");
-        //todo
+        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+        this->make_clean_event(cached_event, true);
     }else{
         WARNING("Epoll event type is undefined");
-        throw std::runtime_error("Epoll event type is undefined");
+        WebservEvent *cached_event = this->event_manager->pop_event_waiting_epoll(fd);
+        this->make_clean_event(cached_event, true);
     }
     return (NULL);
 }
@@ -212,39 +193,10 @@ WebservEvent *WebservEventFactory::make_waiting_post_cgi(WebservEvent *event)
     return (new_event);
 }
 
-/*
-WebservEvent *WebservEventFactory::make_waiting_cgi(WebservEvent *event, WebservFile *write_dst, WebservFile *read_src, ApplicationResult *result)
-{
-    DEBUG("WebservEventFactory::make_waiting_cgi fd=" + event->entity()->fd().to_string());
-    WebservFile *read_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    WebservFile *write_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-
-    WebservEvent *new_event = WebservWaitingPostCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
-
-    return (new_event);
-}
-*/
-
-/*
-WebservEvent *WebservEventFactory::make_waiting_out_cgi(WebservEvent *event, WebservFile *write_src, WebservFile *read_dst, ApplicationResult *result)
-{
-    DEBUG("WebservEventFactory::make_waiting_out_cgi fd=" + event->entity()->fd().to_string());
-    //WebservFile *write_dst = this->file_factory->make_socket_file(result->cgi_in(), normal_writer, NULL);
-    //WebservFile *read_src = this->file_factory->make_socket_file(result->cgi_out(), NULL, normal_reader);
-    FileDiscriptor socketfd = fd_manager->get_sockfd(event->entity()->fd());
-
-    WebservEvent *new_event = WebservWaitingGetCGIEvent::from_fd(result->cgi_in(), result->cgi_out(),  read_src, read_dst, write_src, write_dst, event);
-
-    return (new_event);
-}
-*/
-
 WebservEvent *WebservEventFactory::make_io_socket_for_post_cgi(WebservEvent *event)
 {
     DEBUG("WebservEventFactory::make_io_socket_for_post_cgi fd=" + event->entity()->fd().to_string());
     WebservEvent *new_event = WebservIOPostCGIEvent::from_event(event);
-    DEBUG("new_event address:" + Utility::to_string(new_event));
 
     this->register_event(new_event);
     return (new_event);
@@ -368,33 +320,6 @@ WebservEvent *WebservEventFactory::make_making_upload_event(WebservEvent *event,
 WebservEvent *WebservEventFactory::make_event_from_http_error(WebservEvent *event, char const *code_c)
 {
     DEBUG("WebservEventFactory::make_event_from_http_error");
-    /*
-    Response const *current_res = event->entity()->response();
-    if(current_res){
-        delete current_res;
-    }
-
-    std::string code_str = code_c;
-    StatusCode code;
-    try{
-        code = StatusCode::from_string(code_str);
-    }catch (std::runtime_error &e){
-        code = StatusCode::from_string("500");
-    }
-
-    WebservFile *dst = this->file_factory->make_socket_file(event->entity()->fd(), event->entity()->fd(), socket_writer, NULL);
-
-    WebservFile *file = this->file_factory->make_error_file(event->entity()->fd(), code);
-    if(event->entity()->app_result() != NULL){
-        delete event->entity()->app_result();
-    }
-    ApplicationResult *result = ApplicationResult::from_status_code(code, "NONE");
-    result->set_file(file);
-    event->entity()->set_result(result);
-
-    WebservFile *result_file = this->file_factory->make_webserv_file_regular(event->entity()->fd(), result);
-    WebservEvent *new_event = WebservMakeResponseEvent::from_event(event, result_file, dst);
-    */
 
     std::string code_str = code_c;
     StatusCode code;

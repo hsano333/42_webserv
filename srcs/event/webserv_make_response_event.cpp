@@ -25,14 +25,12 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, Web
     Request const *req = entity->request();
     ConfigServer const *server = entity->config()->get_server(req);
     ConfigLocation const *location = cfg->get_location(server, req);
-    DEBUG("WebservMakeResponseEvent::make_response() No.1");
     Response *res = Response::from_success_status_code(
             entity->fd(),
             code,
             result->file(),
             location
     );
-    DEBUG("WebservMakeResponseEvent::make_response() No.2");
 
     std::map<std::string, std::string>::const_iterator ite = result->header().cbegin();
     std::map<std::string, std::string>::const_iterator end = result->header().cend();
@@ -40,12 +38,8 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, Web
         res->add_header(ite->first, ite->second);
         ite++;
     }
-    DEBUG("WebservMakeResponseEvent::make_response() No.3");
     WebservFile *file = res->get_file();
-    DEBUG("WebservMakeResponseEvent::make_response() No.4");
     if(file){
-    DEBUG("WebservMakeResponseEvent::make_response() No.5");
-    printf("file=%p", file);
         if(file->is_chunk()){
             MYINFO("Transfer-Encoding: chunked");
             res->add_header(TRANSFER_ENCODING, CHUNKED);
@@ -54,10 +48,8 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, Web
             res->add_header(CONTENT_LENGTH, Utility::to_string(file->size()));
         }
     }
-    DEBUG("WebservMakeResponseEvent::make_response() No.5-1");
     if(!res->check_body_and_chunk()){
-    DEBUG("WebservMakeResponseEvent::make_response() No.5-2");
-        //res->add_header(CONTENT_LENGTH, "0");
+        DEBUG("WebservMakeResponseEvent::make_response() ");
     }
 
     if(code.to_int() == 405){
@@ -71,7 +63,6 @@ Response* WebservMakeResponseEvent::make_response(ApplicationResult *result, Web
         res->add_header(ALLOW, allowed_methods);
     }
 
-    DEBUG("WebservMakeResponseEvent::make_response() No.6");
     return (res);
 }
 
@@ -80,12 +71,7 @@ Response *WebservMakeResponseEvent::make(WebservEntity *entity)
     ApplicationResult *result = entity->app_result();
     DEBUG("WebservMakeResponseEvent::make()");
     Response *res;
-    //if(result->is_cgi()){
-        //res = make_response_for_cgi(result, entity);
-    //}else{
     res = make_response(result, entity);
-    DEBUG("make response address:" + Utility::to_string(res));
-    //}
     return (res);
 }
 

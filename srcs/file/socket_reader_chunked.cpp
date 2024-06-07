@@ -13,7 +13,6 @@ SocketReaderChunked::SocketReaderChunked()
 }
 SocketReaderChunked::~SocketReaderChunked()
 {
-    //delete (singleton);
 }
 
 
@@ -29,8 +28,6 @@ SocketReaderChunked *SocketReaderChunked::get_instance()
 
 int SocketReaderChunked::read(FileDiscriptor const &fd, char *buf, size_t size, std::fstream *ifs)
 {
-    //todo
-    DEBUG("SocketReaderChunked::read");
     (void)ifs;
     (void)buf;
 
@@ -52,11 +49,6 @@ int SocketReaderChunked::read(FileDiscriptor const &fd, char *buf, size_t size, 
     Utility::memcpy(buf, pos, exceed_str_size);
     buf += exceed_str_size;
 
-    MYINFO("SocketReaderChunked::chunked_size = " + Utility::to_string(chunked_size));
-    //cout << "chunked_size:" << chunked_size << endl;
-    //size_t size = std::strtol(tmp_buf, NULL, 16);
-
-    DEBUG("SocketReaderChunked::read() fd=" + fd.to_string());
     ssize_t read_size = ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);
 
 

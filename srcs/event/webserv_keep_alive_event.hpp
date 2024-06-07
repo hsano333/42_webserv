@@ -5,7 +5,6 @@
 #include "ireader.hpp"
 #include "webserv_entity.hpp"
 
-//class WebservEvent;
 class WebservKeepAliveEvent
 {
     public:

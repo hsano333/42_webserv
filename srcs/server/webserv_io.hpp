@@ -77,8 +77,6 @@ class WebservIO
         size_t total_status_header_size_;
         size_t total_write_size_;
         bool cgi_divided_;
-
-        // when read from socket and write to cgi, it is true;
         bool is_cgi_read_;
 };
 

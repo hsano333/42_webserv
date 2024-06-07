@@ -27,7 +27,6 @@ class WebservCleaner
         bool delete_event(WebservEvent *event);
         void clean(WebservEntity *entity, bool force_close);
         void close_fd(FileDiscriptor const &fd);
-        //void clean_timeout_events();
     private:
         IOMultiplexing *io_multi_controller;
         EventManager *event_manager;

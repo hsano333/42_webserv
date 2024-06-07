@@ -26,9 +26,6 @@ DirectoryFile* DirectoryFile::from_path(std::string const &path, std::string con
     dir->path_ = path;
     dir->state = FILE_NOT_OPEN;
 
-    //size_t pos = path.find(root);
-    //pos += root.size();
-
     dir->relative_path = relative_path;
     dir->domain = domain;
     return (dir);
@@ -78,17 +75,13 @@ int DirectoryFile::read(char **buf, size_t size)
     if (this->state == FILE_OPEN){
 
         size_t pos = this->path_.find(this->relative_path);
-        //size_t pos = this->dir.rfind("/");
-        //std::string up_dir = this->dir.rfind("/");
         std::string relative = this->path_.substr(pos);
         std::string up_dir = "http://" + this->domain + "/";
         pos = relative.rfind("/");
         if(pos != std::string::npos){
             up_dir += relative.substr(0, pos);
         }
-        
 
-        //std::string up_dir = relative.
         std::string directory_path = WRITE_OPEN1 + relative + WRITE_OPEN2 + up_dir + WRITE_OPEN3 + "<br>";
         Utility::memcpy(*buf, &(directory_path[0]), directory_path.size());
         this->state = FILE_READING;
@@ -100,7 +93,6 @@ int DirectoryFile::read(char **buf, size_t size)
         throw std::runtime_error("DirectoryFile::read() state is not READING");
     }
     struct dirent *dirr;
-    //dirr = readdir(this->dir);
     while(1){
         dirr = readdir(this->dir);
         if (!dirr){
@@ -114,12 +106,9 @@ int DirectoryFile::read(char **buf, size_t size)
 
     string tmp_path = string(dirr->d_name);
     tmp_path = (tmp_path);
-    DEBUG("relative_path=" + tmp_path);
-    DEBUG("tmp_path=" + relative_path);
     std::string uri = "http://" + this->domain \
         + "/" + (URI::uri_encode(Utility::trim_char(relative_path, '/'))) \
         + "/" + (URI::uri_encode(Utility::trim_char(tmp_path, '/')));
-    DEBUG("uri=" + uri);
     std::string filepath = this->path_ + "/" +  dirr->d_name;
     size_t filesize = Utility::get_file_size(filepath);
     std::string filesize_str = Utility::adjust_filesize(filesize);
@@ -131,7 +120,6 @@ int DirectoryFile::read(char **buf, size_t size)
 
     std::stringstream ss;
     ss  << std::setfill(' ') << std::left << std::setw(128) << tmp << date << " " << std::setfill(' ') << std::right << std::setw(8) << filesize_str << "</div>";
-    //ss  << std::setfill('\r') << std::left << std::setw(64) << tmp << "<br>";
     std::string returned_str = ss.str();
 
     Utility::memcpy(*buf, &(returned_str[0]), returned_str.size());
@@ -175,10 +163,6 @@ bool DirectoryFile::can_read()
 
 size_t DirectoryFile::size()
 {
-    std::cout << "directory file????:"  << std::endl;
-    std::cout << "directory file????:"  << std::endl;
-    std::cout << "directory file????:"  << std::endl;
-    std::cout << "directory file????:"  << std::endl;
     return (0);
 }
 
@@ -190,8 +174,6 @@ bool DirectoryFile::is_chunk()
 int DirectoryFile::remove()
 {
     return (std::remove(this->path_.c_str()));
-    // This server can't delete directory because of security;
-    //return (-1);
 }
 
 std::string const &DirectoryFile::path()

@@ -17,30 +17,20 @@ class VectorReadCGIFile
     public:
         VectorReadCGIFile();
         ~VectorReadCGIFile();
-        //static VectorReadCGIFile* from_ref(std::string const& buf_ref);
         static VectorReadCGIFile* from_buf_size(size_t buf_size, ProcessID const &pid);
-        //static VectorReadCGIFile* from_buf(char *buf, size_t size);
         int read(char **buf, size_t size);
         int write(char **buf, size_t size);
         int save(char *data, size_t size);
         size_t size();
-        //bool is_chunk();
         FileState   state;
         void        clear_read();
         bool        completed();
 
     private:
         VectorReadCGIFile(size_t max_buf_size, ProcessID const &pid);
-        //change_reader(IReader *ireader);
-        //std::vector<char> buf;
         BufferController buffer;
         size_t max_buf_size;
         ProcessID pid;
-        //IReader *reader;
-        //IWriter *writer;
-        //size_t buf_size;
-        //std::vector<char> tmp_buf;
-        //char buf_c[MAX_BUF];
 };
 
 namespace CheckSocketReadEndForCGIFunc{

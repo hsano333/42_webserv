@@ -1,4 +1,3 @@
-
 #include "webserv_application_upload_event.hpp"
 #include "webserv_event.hpp"
 #include "webserv_io_event.hpp"
@@ -41,7 +40,6 @@ WebservEvent *WebservApplicationUploadEvent::from_event(WebservEvent *event, Web
     WebservEvent *new_event = new WebservEvent(upload_event, io_work<WebservApplicationUploadEvent>, event->entity());
 
     new_event->entity()->io().set_read_io(src, dst);
-    //new_event->entity()->io().set_read_fd(event->entity()->fd());
     new_event->entity()->io().switching_io(EPOLLIN);
     new_event->entity()->io().set_total_write_size(0);
     return (new_event);
@@ -56,7 +54,7 @@ WebservEvent* WebservApplicationUploadEvent::make_next_event(WebservEvent* event
         return event_factory->make_making_response_event(event, NULL, NULL);
     }else{
         DEBUG("WebservApplicationUploadEvent:: 207 Multi Response");
-       WebservFileFactory *file_factory = WebservFileFactory::get_instance();
+        WebservFileFactory *file_factory = WebservFileFactory::get_instance();
         ApplicationResult *result = event->entity()->app_result();
         result->add_header(TRANSFER_ENCODING, TRANSFER_ENCODING_CHUNKED);
         WebservFile *multi_file = event->entity()->io().destination();
@@ -83,10 +81,7 @@ void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
     size_t total_size = entity->io().total_write_size();
     size_t content_length = entity->request()->header().get_content_length();
     bool is_completed = file->completed();
-    DEBUG("content_length=" + Utility::to_string(content_length));
-    DEBUG("total_size=" + Utility::to_string(total_size));
-    DEBUG("is_completed=" + Utility::to_string(is_completed));
-    DEBUG("file->is_chunk()=" + Utility::to_string(file->is_chunk()));
+
     if((file->is_chunk() == false && content_length == total_size) && is_completed){
         is_completed = true;
     }else if(file->is_chunk() == true  && is_completed){
@@ -94,7 +89,6 @@ void WebservApplicationUploadEvent::check_completed(WebservEntity * entity)
     }else{
         is_completed = false;
     }
-    DEBUG("WebservApplicationUploadEvent::check_completed :" + Utility::to_string(is_completed));
     DEBUG("WebservApplicationUploadEvent::total_size :" + Utility::to_string(total_size));
     entity->set_completed(is_completed);
     entity->request()->set_read_completed(true);

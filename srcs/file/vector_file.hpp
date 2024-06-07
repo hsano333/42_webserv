@@ -22,21 +22,13 @@ class VectorFile
         int write(char **buf, size_t size);
         int save(char *data, size_t size);
         size_t size();
-        //bool is_chunk();
         FileState   state;
         void        clear_read();
 
     private:
         VectorFile(size_t max_buf_size);
-        //change_reader(IReader *ireader);
-        //std::vector<char> buf;
         BufferController buffer;
         size_t max_buf_size;
-        //IReader *reader;
-        //IWriter *writer;
-        //size_t buf_size;
-        //std::vector<char> tmp_buf;
-        //char buf_c[MAX_BUF];
 };
 
 
@@ -55,7 +47,6 @@ namespace CheckSocketReadEndFunc{
             }
             char *pos = Utility::strnstr(buf, CRLF2, read_size);
             if(pos){
-                DEBUG("CheckSocketReadEndFunc::completed() True");
                 flag = true;
             }
         }

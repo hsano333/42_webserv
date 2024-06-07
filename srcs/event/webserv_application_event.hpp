@@ -37,14 +37,9 @@ namespace App{
         ApplicationFactory *factory = ApplicationFactory::get_instance();
         bool is_completed;
 
-        //if(entity->app() == NULL){
-            //Application *app = factory->make_application(entity);
-            //is_completed = app->init(entity);
-        //}else{
         Application *app = factory->make_application(entity);
         entity->set_app(app);
         is_completed = app->execute(entity);
-        //}
 
         entity->set_completed(is_completed);
         return (is_completed);

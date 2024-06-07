@@ -46,94 +46,34 @@ PipeFile* PipeFile::from_file(FileDiscriptor const &fd, WebservFile *buf_file,  
     return (file);
 }
 
-/*
-PipeFile* PipeFile::from_fd(IReader* reader, FileDiscriptor fd)
-{
-    DEBUG("PipeFile::from_fd reader()");
-    PipeFile *file = new PipeFile();
-    file->fd = fd;
-    file->reader = reader;
-    file->state = FILE_NOT_OPEN;
-    return (file);
-}
-
-PipeFile* PipeFile::from_fd(IWriter* iwriter, FileDiscriptor fd)
-{
-    DEBUG("PipeFile::from_fd writer()");
-    PipeFile *file = new PipeFile();
-    file->fd = fd;
-    file->writer = iwriter;
-    file->state = FILE_NOT_OPEN;
-    return (file);
-}
-
-int PipeFile::open()
-{
-    DEBUG("PipeFile::open()");
-    this->state = FILE_OPEN;
-    return 0;
-}
-*/
-
-
-
 int PipeFile::read(char **buf, size_t max_size)
 {
     if (!(this->state == FILE_OPEN || this->state == FILE_READING)){
         return (0);
     }
-    //return (this->reader->read(this->fd, *buf, max_size, NULL));
     int tmp =  (this->reader->read(this->fd, *buf, max_size, NULL));
-    DEBUG("PipeFile::read() result=" + Utility::to_string(tmp));
     if(tmp <= 0){
         this->state = FILE_CLOSE;
         this->close();
         return (0);
     }
     this->state = FILE_READING;
-    DEBUG("PipeFile::read() read size=" + Utility::to_string(tmp));
     return (tmp);
 }
 
 int PipeFile::write(char **buf, size_t size)
 {
-    DEBUG("PipeFile::write() size=" + Utility::to_string(size));
     if (!(this->state == FILE_OPEN || this->state == FILE_WRITING)){
         return (0);
     }
-    /*
-    DEBUG("write cgi_in=" + Utility::to_string(this->fd));
-    cout << "write buf=" ;
-    for(size_t i=0;i<size;i++){
-        cout << (*buf)[i];
-    }
-    cout << endl;
-    cout << "this->fd=" << this->fd << endl;
-    (void)size;
-    this->state = FILE_WRITING;
-    //return this->writer->write(this->fd, *buf, size, NULL);
-
-    */
-    //int rval = this->writer->write(this->fd, *buf, size, NULL);
     int result = (this->writer->write(this->fd, *buf, size, NULL));
     if(result > 0){
         total_write_size += result;
     }
     this->state = FILE_WRITING;
     return (result);
-    //DEBUG("write rval=" + Utility::to_string(rval));
-    //return (rval);
 }
 
-/*
-int PipeFile::open()
-{
-    DEBUG("PipeFile::open()");
-    this->state = FILE_OPEN;
-    return 0;
-}
-
-*/
 int PipeFile::close()
 {
     DEBUG("PipeFile::close(");
@@ -144,37 +84,6 @@ int PipeFile::close()
     return (0);
 }
 
-/*
-int PipeFile::save(char *buf, size_t size)
-{
-    return (this->buffer.save(buf, size));
-}
-
-int PipeFile::save(char **buf, size_t size)
-{
-    (void)size;
-    if (this->state != FILE_OPEN){
-        return (0);
-    }
-    return this->reader->read(this->fd, *buf, size, NULL);
-}
-*/
-
-
-
-/*
-int PipeFile::close()
-{
-    DEBUG("PipeFile::close(");
-    this->state = FILE_CLOSE;
-    return (0);
-}
-
-bool PipeFile::can_read()
-{
-    return (true);
-}
-*/
 
 size_t PipeFile::chunked_size()
 {
@@ -211,10 +120,4 @@ void PipeFile::clear_file()
     this->file_ = NULL;
 }
 
-/*
-bool PipeFile::is_chunk()
-{
-    return (false);
-}
-*/
 

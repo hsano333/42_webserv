@@ -35,36 +35,6 @@ SocketChunkFile* SocketChunkFile::from_file(FileDiscriptor const &fd, WebservFil
     return (new_file);
 }
 
-/*
-SocketChunkFile* SocketChunkFile::from_fd(IReader* reader, FileDiscriptor fd)
-{
-    DEBUG("SocketChunkFile::from_fd reader()");
-    SocketChunkFile *file = new SocketChunkFile();
-    file->fd = fd;
-    file->reader = reader;
-    file->state = FILE_NOT_OPEN;
-    return (file);
-}
-
-SocketChunkFile* SocketChunkFile::from_fd(IWriter* iwriter, FileDiscriptor fd)
-{
-    DEBUG("SocketChunkFile::from_fd writer()");
-    SocketChunkFile *file = new SocketChunkFile();
-    file->fd = fd;
-    file->writer = iwriter;
-    file->state = FILE_NOT_OPEN;
-    return (file);
-}
-
-int SocketChunkFile::open()
-{
-    DEBUG("SocketChunkFile::open()");
-    this->state = FILE_OPEN;
-    return 0;
-}
-
-*/
-
 int SocketChunkFile::open()
 {
     DEBUG("SocketChunkFile::open()");
@@ -112,15 +82,6 @@ void SocketChunkFile::set_buf_p(size_t pos)
 {
     this->buf_p_ = pos;
 }
-/*
-void append_buf(char *data, size_t size){
-    size_t buf_size = this->buf_.size();
-    this->buf_.resize(buf_size + size);
-    for(size_t i=0;i<size;i++){
-        this->buf_[buf_size + i] = data[i];
-    }
-}
-*/
 
 size_t SocketChunkFile::buf_p()
 {
@@ -162,7 +123,6 @@ int SocketChunkFile::read(char **buf, size_t max_size)
 {
 
     int size = buffer.retrieve(buf, max_size);
-    DEBUG("SocketChunkFile::read buffer_size=" + Utility::to_string(size));
     if(size > 0){
         return size;
     }
@@ -171,32 +131,11 @@ int SocketChunkFile::read(char **buf, size_t max_size)
 
 int SocketChunkFile::write(char **buf, size_t size)
 {
-    DEBUG("SocketChunkFile::write() size=" + Utility::to_string(size));
-    /*
-    if (!(this->state == FILE_OPEN || this->state == FILE_WRITING)){
-        return (0);
-    }
-    DEBUG("write cgi_in=" + Utility::to_string(this->fd));
-    cout << "write buf=" ;
-    for(size_t i=0;i<size;i++){
-        cout << (*buf)[i];
-    }
-    cout << endl;
-    cout << "this->fd=" << this->fd << endl;
-    (void)size;
-    this->state = FILE_WRITING;
-    //return this->writer->write(this->fd, *buf, size, NULL);
-
-    */
-    //int rval = this->writer->write(this->fd, *buf, size, NULL);
     size_t result = (this->writer->write(this->fd, *buf, size, NULL));
     if(result > 0){
         total_write_size += result;
     }
     return (result);
-
-    //DEBUG("write rval=" + Utility::to_string(rval));
-    //return (rval);
 }
 
 
@@ -205,28 +144,6 @@ void SocketChunkFile::save(std::vector<char> &buf)
     DEBUG("SocketChunkFile::save");
     return (this->buffer.copy(buf));
 }
-
-/*
-int SocketChunkFile::save(char **buf, size_t size)
-{
-    (void)size;
-    if (this->state != FILE_OPEN){
-        return (0);
-    }
-    return this->reader->read(this->fd, *buf, size, NULL);
-}
-*/
-
-
-
-/*
-int SocketChunkFile::close()
-{
-    DEBUG("SocketChunkFile::close(");
-    this->state = FILE_CLOSE;
-    return (0);
-}
-*/
 
 bool SocketChunkFile::can_read()
 {
@@ -273,9 +190,7 @@ size_t SocketChunkFile::size()
 
 void SocketChunkFile::clear_read()
 {
-    if(this->file_){
-        //this->file_->clear_read();
-    }
+    ;
 }
 
 BufferController const &SocketChunkFile::get_buffer()
@@ -283,11 +198,4 @@ BufferController const &SocketChunkFile::get_buffer()
     DEBUG("SocketChunkFile::get_buffer");
     return (this->buffer);
 }
-
-/*
-bool SocketChunkFile::is_chunk()
-{
-    return (false);
-}
-*/
 

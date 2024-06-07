@@ -10,7 +10,6 @@ SocketReader::SocketReader()
 }
 SocketReader::~SocketReader()
 {
-    //delete (singleton);
 }
 
 
@@ -27,7 +26,6 @@ SocketReader *SocketReader::get_instance()
 int SocketReader::read(FileDiscriptor const &fd, char *buf, size_t size, std::fstream *ifs)
 {
     (void)ifs;
-    DEBUG("SocketReader::read() fd=" + fd.to_string());
     ssize_t read_size = ::recv(fd.to_int(), buf, size, MSG_DONTWAIT);
     if(read_size == 0){
         ERROR("Client Read Close");

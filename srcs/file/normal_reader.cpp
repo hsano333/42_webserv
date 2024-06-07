@@ -9,7 +9,6 @@ NormalReader::NormalReader()
 
 NormalReader::~NormalReader()
 {
-    //delete (singleton);
 }
 
 NormalReader *NormalReader::singleton = NULL;
@@ -25,16 +24,13 @@ int NormalReader::read(FileDiscriptor const &fd, char *buf, size_t size, std::fs
 {
     DEBUG("NormalReader::read fd:" + fd.to_string());
     (void)ifs;
-    //int rval = ::read(fd.to_int(), buf, size);
-    //
-    
+
     if(!ifs){
         int rval = ::read(fd.to_int(), buf, size);
         return rval;
     }
 
     if(ifs->fail()){
-        DEBUG("printf test No.1");
         return -1;
     }
 
@@ -42,6 +38,7 @@ int NormalReader::read(FileDiscriptor const &fd, char *buf, size_t size, std::fs
     if(ifs->fail()){
         return -1;
     }
+
     DEBUG("NormalReader::read size:" + Utility::to_string(ifs->gcount()));
     return (ifs->gcount());
 }

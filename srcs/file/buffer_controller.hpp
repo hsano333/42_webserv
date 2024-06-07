@@ -15,7 +15,6 @@ class BufferController
         int retrieve(char **data, size_t max_size);
         void ref(char **data, size_t size);
         void clear();
-        
         size_t size() const;
     private:
         std::vector<char> buf;

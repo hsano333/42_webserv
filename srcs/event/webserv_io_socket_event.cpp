@@ -41,7 +41,6 @@ WebservEvent *WebservIOSocketEvent::as_read(FileDiscriptor const &read_fd, Webse
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, entity);
     new_event->entity()->io().set_read_io(src, dst);
-    //new_event->entity()->io().set_read_fd(read_fd);
     new_event->entity()->io().switching_io(EPOLLIN);
     new_event->entity()->io().set_total_write_size(0);
 
@@ -52,12 +51,10 @@ WebservEvent *WebservIOSocketEvent::as_write(WebservEvent *event, FileDiscriptor
 {
     DEBUG("WebservIOSocketEvent::as_write fd:" + event->entity()->fd().to_string());
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
-    //WebservEvent *new_event =  new WebservEvent( io_event, io_work<WebservIOSocketEvent>, event->entity());
     WebservEvent *new_event;
     new_event = new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
     (void)write_fd;
-    //new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLOUT);
     return (new_event);
 }
@@ -69,7 +66,6 @@ WebservEvent *WebservIOSocketEvent::as_chunked_write(WebservEvent *event, FileDi
     WebservIOSocketEvent *io_event = WebservIOSocketEvent::get_instance();
     WebservEvent *new_event =  new WebservEvent( io_event, io_work_ref<WebservIOSocketEvent>, event->entity());
     new_event->entity()->io().set_write_io(src, dst);
-    //new_event->entity()->io().set_write_fd(write_fd);
     new_event->entity()->io().switching_io(EPOLLOUT);
     return (new_event);
 }
@@ -89,36 +85,24 @@ E_EpollEvent WebservIOSocketEvent::epoll_event(WebservEvent *event)
     DEBUG("WebservIOSocketEvent::epoll_event()");
     if(event->entity()->io().in_out() == EPOLLIN){
         if (event->entity()->completed()){
-            DEBUG("WebservIOSocketEvent::epoll_event() No.1");
             return (EPOLL_NONE);
         }else{
-            DEBUG("WebservIOSocketEvent::epoll_event() No.2");
             return (EPOLL_READ);
         }
     }else{ 
         //EPOLLOUT
         if (event->entity()->completed()){
-            DEBUG("WebservIOSocketEvent::epoll_event() No.3");
             return (EPOLL_NONE);
         }else{
-            DEBUG("WebservIOSocketEvent::epoll_event() No.4");
             return (EPOLL_WRITE);
         }
 
     }
-            DEBUG("WebservIOSocketEvent::epoll_event() No.5");
     return (EPOLL_NONE);
 }
 
 void WebservIOSocketEvent::check_completed(WebservEntity * entity)
 {
-    DEBUG("WebservIOSocketEvent::check_completed");
-    size_t total_size = entity->io().destination()->size();
-    DEBUG("WebservIOSocketEvent::check_completed size=" + Utility::to_string(total_size));
-
-    //todo
-    //entity->set_completed(true);
-    //return;
     bool flag = false;
     if(entity->io().in_out() == EPOLLIN){
         DEBUG("WebservIOSocketEvent::check_completed EPOLLIN");
@@ -126,17 +110,9 @@ void WebservIOSocketEvent::check_completed(WebservEntity * entity)
         flag = dst->completed();
     }else{
         DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT");
-        WebservFile *src = entity->io().source_for_write();
-        DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT write_size:" + Utility::to_string(src->size()));
-        //DEBUG("WebservIOSocketEvent::check_completed EPOLLOUT get_content_length():" + Utility::to_string(entity->request()->header().get_content_length()));
-
-
-        //EPOLLOUT 
-        //  src : Response
         Response *res= entity->response();
         flag = res->read_completed();
     }
 
-    DEBUG("WebservIOSocketEvent::check_completed end flag:" + Utility::to_string(flag));
     entity->set_completed(flag);
 }

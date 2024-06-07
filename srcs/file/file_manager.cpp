@@ -12,16 +12,6 @@ FileManager::~FileManager()
     ;
 }
 
-/*
-WebservFile *FileManager::make(FP_FUNC func)
-{
-
-    func();
-    WebservFile *file = NULL;
-    return (file);
-}
-*/
-
 void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
 {
     DEBUG("FileManager::push_back() fd=" + fd.to_string());
@@ -31,52 +21,25 @@ void FileManager::insert(FileDiscriptor const &fd, WebservFile *file)
         DEBUG("FileManager::push_back() file is NULL");
         return ;
     }
-    printf("file manager file=%p\n", file);
-    DEBUG("filemanager:: file=" + Utility::to_string(file));
 
     std::map<FileDiscriptor, std::set<WebservFile*> >::iterator ite = this->file_list.begin();
     std::map<FileDiscriptor, std::set<WebservFile*> >::iterator end = this->file_list.end();
 
-    DEBUG("test file_manager No.1");
-
-    //DEBUG("No.1 this->file_list size=" + Utility::to_string(this->file_list.size()));
-
     bool exist_flag = false;
     while(ite != end)
     {
-    DEBUG("test file_manager No.2");
-        cout << "fd:" << ite->first.to_string() << endl;
-        //DEBUG("ite->second size=" + Utility::to_string(ite->second.size()));
-
         if(ite->first == fd){
-        //DEBUG("ite->second No.1 size=" + Utility::to_string(ite->second.size()));
             ite->second.insert(file);
-        //DEBUG("ite->second No.2 size=" + Utility::to_string(ite->second.size()));
             exist_flag = true;
             break;
         }
         ite++;
     }
-    DEBUG("test file_manager No.3");
-    //DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
     if(!exist_flag){
         std::set<WebservFile *> file_vector;
         this->file_list.insert(std::make_pair(fd, file_vector));
         this->file_list[fd].insert(file);
     }
-    DEBUG("test file_manager No.4");
-    //DEBUG("ite->second No.3 size=" + Utility::to_string(ite->second.size()));
-    //DEBUG("No.2 this->file_list size=" + Utility::to_string(this->file_list.size()));
-
-    std::map<FileDiscriptor, std::set<WebservFile*> >::iterator ite2 = this->file_list.begin();
-    std::map<FileDiscriptor, std::set<WebservFile*> >::iterator end2 = this->file_list.end();
-
-    while(ite2 != end2)
-    {
-        //DEBUG("No.2 ite->second size=" + Utility::to_string(ite2->second.size()));
-        ite2++;
-    }
-    DEBUG("test file_manager No.5");
 
 }
 
@@ -94,20 +57,16 @@ void FileManager::erase(FileDiscriptor const &fd)
     std::set<WebservFile*>::iterator end = tmp_vector.end();
 
     std::map<void*, int> file_counts;
-    //std::set<void *> file_address;
 
     while(ite != end)
     {
         WebservFile *file = *ite;
         void *address = file->file_address();
         DEBUG("address info :" + Utility::to_string(address));
-        DEBUG("address info2:" + Utility::to_string(file));
-        //file_address.insert(file->file_address());
         std::map<void *, int>::iterator cnt_ite = file_counts.find(address);
         if(cnt_ite == file_counts.end()){
             file_counts.insert(std::make_pair(address, 1));
         }else{
-            DEBUG("count up");
             cnt_ite->second++;
         }
         ite++;
@@ -128,49 +87,20 @@ void FileManager::erase(FileDiscriptor const &fd)
         }
 
         void *address = file->file_address();
-        DEBUG("child file address:" + Utility::to_string(address));
-
-        /*
-        std::vector<void *>::iterator address_ite = deleted_address_vector.begin();
-        std::vector<void *>::iterator address_end = deleted_address_vector.end();
-        while(address_ite != address_end){
-            if(*address_ite == address){
-                break;
-            }
-            address_ite++;
-        }
-        */
         int file_cnt = file_counts[address];
-        DEBUG("file_cnt=" + Utility::to_string(file_cnt));
 
-        //file->close();
         if(file_cnt == 1){
             DEBUG("delete file:" + Utility::to_string(address));
             file->close();
             file->delete_file();
-            DEBUG("end  deleting file:" + Utility::to_string(address));
-            //deleted_address_vector.push_back(address);
         }else{
             file_counts[address]--;
             DEBUG("already delete file:" + Utility::to_string(address));
-            DEBUG("already delete count:" + Utility::to_string(file_counts[address]));
         }
 
-        DEBUG("FileManager::erase file=" + Utility::to_string(file));
         delete file;
         ite++;
-
     }
-
-    /*
-    std::map<void*, int>::iterator address_ite = file_counts.begin();
-    std::map<void*, int>::iterator address_end = file_counts.end();
-    while(address_ite != address_end){
-        void *address = address_ite->first;
-        delete static_cast<char*>(address);
-        address_ite++;
-    }
-    */
 
     this->file_list.erase(fd);
 }

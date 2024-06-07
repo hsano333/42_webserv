@@ -23,7 +23,6 @@ class FileConcept
 {
     public:
         virtual ~FileConcept(){};
-        //virtual File *make() const = 0;
         virtual int open() = 0;
         virtual int read(char **data, size_t size) = 0;
         virtual int write(char **data, size_t size) = 0;
@@ -45,11 +44,7 @@ class OwningFileModel : public FileConcept
 {
     public:
         OwningFileModel(FilePointer *file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close, RemoveStrategyPointer remove, CanReadStrategyPointer can_read, CanWriteStrategyPointer can_write, PathStrategyPointer path, SizeStrategyPointer size, IsChunkStrategyPointer is_chunk, SetChunkStrategyPointer set_chunk, CompletedStrategyPointer completed) : file_(file), open_(open), read_(read), write_(write), close_(close), remove_(remove), can_read_(can_read), can_write_(can_write), path_(path), size_(size), is_chunk_(is_chunk), set_chunk_(set_chunk), completed_(completed){};
-        //OwningFileModel(FilePointer file, OpenStrategyPointer open, ReadStrategyPointer read, WriteStrategyPointer write, CloseStrategyPointer close) :file_(file), open_(open), read_(read), write_(write), read_(read){};
-        //kkOwningFileModel(FilePointer file) :file_(file), open_(NULL), read_(NULL), write_(NULL), read_(NULL){};
         ~OwningFileModel(){
-            //DEBUG("WebservFile Destractor:" + Utility::to_string(file_));
-            //delete file_;
         };
         int open()  {return open_(file_);}
         int read(char **data, size_t size)  {return read_(file_, data, size);}
@@ -141,36 +136,6 @@ class WebservFile
 
     private:
         FileConcept *pimpl_;
-        /*
-        friend int open(WebservFile *file)
-        {
-            return file->pimpl_->open();
-        }
-        friend int read(WebservFile *file, char **data, size_t size)
-        {
-            return file->pimpl_->read(data, size);
-        }
-        friend int write(WebservFile *file, char **data, size_t size)
-        {
-            return file->pimpl_->write(data, size);
-        }
-        friend int close(WebservFile *file)
-        {
-            return file->pimpl_->close();
-        }
-        friend int remove(WebservFile *file)
-        {
-            return file->pimpl_->remove();
-        }
-        friend bool can_read(WebservFile *file)
-        {
-            return file->pimpl_->can_read();
-        }
-        friend std::string const &path(WebservFile *file)
-        {
-            return file->pimpl_->path();
-        }
-        */
 };
 
 #endif

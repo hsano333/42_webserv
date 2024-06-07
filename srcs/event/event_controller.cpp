@@ -55,14 +55,6 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         MYINFO("EventController::next is epoll add writing");
         this->io_multi_controller->add(next_event->entity()->fd(), EPOLLOUT | EPOLLONESHOT);
         this->event_manager->add_event_waiting_epoll(next_event->entity()->fd(), next_event);
-    //}else if (next_epoll_event == EPOLL_FOR_CGI_OUT){  // from cgi out to socket
-        //MYINFO("EventController::next is epoll EPOLL_FOR_CGI_OUT");
-        //FileDiscriptor const &socket_fd = next_event->entity()->socket_fd();
-
-        //this->io_multi_controller->add(next_event->entity()->io().get_write_fd(), EPOLLOUT | EPOLLONESHOT);
-        //this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_write_fd(), next_event);
-        //this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_write_fd(), socket_fd);
-    //}else if (next_epoll_event == EPOLL_NONE_FOR_GET_CGI){  // from cgi out to socket
 
     }else if (next_epoll_event == EPOLL_READ_FOR_POST_CGI){ // from socket to cgi in
         MYINFO("EventController::next is epoll read for post cgi fd=" + next_event->entity()->fd().to_string());
@@ -92,15 +84,6 @@ void EventController::set_next_epoll_event(WebservEvent *event, WebservEvent *ne
         }
         this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_write_fd(), next_event);
         this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_write_fd(), socket_fd);
-        /*
-    }else if (next_epoll_event == EPOLL_FOR_CGI_IN){ // from socket to cgi in
-        MYINFO("EventController::next is epoll EPOLL_FOR_CGI_IN");
-        FileDiscriptor const &socket_fd = next_event->entity()->socket_fd();
-
-        this->io_multi_controller->add(next_event->entity()->io().get_read_fd(), EPOLLIN | EPOLLONESHOT);
-        this->event_manager->add_event_waiting_epoll(next_event->entity()->io().get_read_fd(), next_event);
-        this->fd_manager->add_socket_and_epoll_fd(next_event->entity()->io().get_read_fd(), socket_fd);
-        */
 
     }else if (next_epoll_event == EPOLL_FOR_CGI_POST){
         MYINFO("EventController::next is epoll EPOLL_FOR_CGI_POST read_fd:" + Utility::to_string(next_event->entity()->io().get_read_fd()));
@@ -137,13 +120,7 @@ void EventController::erase_epoll_event(FileDiscriptor const &fd)
         return;
     }
     DEBUG("EventController::erase_epoll_event fd:" + fd.to_string());
-        this->event_manager->erase_event_waiting_epoll(fd);
-    try{
-        //this->io_multi_controller->erase(fd);
-    }catch(std::runtime_error &e){
-        WARNING("[EventController::erase_epoll_event] This error is ignored:" + Utility::to_string(e.what()));
-    }
-    //fd.close();
+    this->event_manager->erase_event_waiting_epoll(fd);
 }
 
 
