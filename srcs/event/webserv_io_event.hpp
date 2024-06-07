@@ -113,7 +113,7 @@ bool io_work_ref(EventT *event, WebservEntity *entity)
 
     char *buf_p = (buf);
     size_t load_size = 0;
-    
+
     while(1)
     {
         buf_p = &(buf[load_size]);

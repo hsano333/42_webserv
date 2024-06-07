@@ -126,8 +126,6 @@ std::string URI::uri_decode(std::string const &raw_uri_)
         pos++;
         cnt++;
     }
-    cout << endl;
-    cout << endl;
     pos[0] = '\0';
     dst[0] = '\0';
     raw_uri = std::string(bk);
