@@ -1,0 +1,54 @@
+<HTML>
+    <HEAD>
+        <TITLE>Webserv</TITLE>
+        <meta charset="UTF-8">
+    </HEAD>
+    <BODY>
+        <h1>Webserv Test</h1>
+        <A HREF="http://localhost:11111/">Port 11111</A><BR>
+        <A HREF="http://localhost:11112/">Port 11112</A><BR>
+        <A HREF="http://localhost:11111/redirect">Redirect to Google</A><BR>
+        <A HREF="http://localhost:11114/">42 Top Page</A><BR>
+        <A HREF="http://localhost:11112/aaaaaaaaaaaaaaaaaaaa">Error Page 404 -> 400</A><BR>
+        <A HREF="http://localhost:11111/aaaaaaaaaaaaaaaaaaaa">Error Page 404</A><BR>
+        <A HREF="http://localhost:11111/cgi_test/get.py">GET CGI: EXECUTE</A><BR>
+        <A HREF="http://localhost:11112/cgi_test/get.py">GET CGI: NOT EXECUTE</A><BR>
+        <A HREF="http://localhost:11111/cgi_test/infinite_loop.py">GET CGI: 無限ループ</A><BR>
+
+
+        <div><br>Post CGIテスト</div>
+        <form method="post" action="http://localhost:11111/cgi_test/post.py" >
+            <div>
+                <div>
+                <span>文字:</span>
+                <input type="text" name="a">
+                </div>
+                <div>
+                <span>個数:</span>
+                <input type="text" name="b" type="number"  pattern="\d*" >
+                <input type="submit" value="send", name="send">
+                </div>
+            </div>
+        </form>
+
+        <A HREF="/cgi_test/delete.py/delete_files">Delete TEST</A><BR>
+
+        <span><br>Upload Test</span>
+        <ol>
+            <li>
+                curl -XPOST -F"test1=file1" -F"test2=file3" http://127.0.0.1:11111/delete_files/
+            </li>
+            <li>
+                curl -XPOST -d"a=0123456789" -d"b=1000000" -o downloaded_file1 http://localhost:11111/cgi_test/post.py
+            </li>
+            <li>
+                curl -X POST -F "uploaded_file1=@[絶対パス]/downloaded_file1" http://localhost:11111/
+            </li>
+            <li>
+                curl -X GET -o  downloaded_file2  http://localhost:11111/uploaded_file1
+            </li>
+        </ol>
+
+        <A HREF="http://localhost:11113">Bonus TEST</A><BR>
+    </BODY>
+</HTML>
