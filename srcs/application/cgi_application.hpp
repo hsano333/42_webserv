@@ -11,7 +11,7 @@ typedef enum E_CGIApplication
 
 class CGIApplication : public Application
 {
-    bool is_cgi();
+    //bool is_cgi();
 
 };
 

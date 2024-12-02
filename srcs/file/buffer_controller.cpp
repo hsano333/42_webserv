@@ -31,7 +31,7 @@ int BufferController::save(char *data, size_t size)
 
 int BufferController::save(char const *data, size_t size)
 {
-    this->save(const_cast<char const *>(data), size);
+    this->save(const_cast<char *>(data), size);
     return (this->buf.size());
 }
 

@@ -373,7 +373,8 @@ ssize_t Utility::to_ssize_t(string &str)
 
 ssize_t Utility::to_ssize_t(string const &str)
 {
-    return (Utility::to_ssize_t(str));
+    std::string tmp = str;
+    return (Utility::to_ssize_t(tmp));
 }
 
 size_t Utility::get_map_str_size(map<string, string> &data)
